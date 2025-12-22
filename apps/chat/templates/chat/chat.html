@@ -100,7 +100,12 @@
             </main>
         </div>
     <script src="{% static 'chat/js/script.js' %}"></script>
-<script>
+
+    
+
+
+
+    <script>
 document.addEventListener("DOMContentLoaded", () => {
 
   const msgs = Array.from(document.querySelectorAll(".chat-message"));
@@ -110,36 +115,32 @@ document.addEventListener("DOMContentLoaded", () => {
   let index = 0;
   let busy = false;
 
-  if (!btn || !player || msgs.length === 0) {
-    console.error("Elementos não encontrados");
-    return;
-  }
+  if (!btn || !player || msgs.length === 0) return;
 
-  // garante que nada aparece no início
+  // tudo começa escondido
   msgs.forEach(m => m.style.display = "none");
 
   btn.addEventListener("click", () => {
     if (busy) return;
 
-    // acabou
     if (index >= msgs.length) {
       btn.disabled = true;
       btn.textContent = "✔️ Fim";
       return;
     }
 
+    // 🔑 PEGA A FRASE ATUAL E JÁ AVANÇA
     const msg = msgs[index];
     const lineId = msg.dataset.id;
+    index++; // <<< AQUI ESTÁ A CORREÇÃO
 
-    // mostra a frase CORRETA da tabela
+    // mostra a frase correta
     msg.style.display = "block";
 
-    // trava botão
     busy = true;
     btn.disabled = true;
     btn.textContent = "🔊 Gerando...";
 
-    // gera áudio DA FRASE ATUAL
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -147,15 +148,17 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(r => r.json())
     .then(data => {
-      if (!data.file) {
-        throw new Error("TTS não retornou arquivo");
-      }
+      if (!data.file) throw new Error("TTS sem arquivo");
+
+      // força reload do áudio (evita cache silencioso)
+      player.pause();
+      player.src = "";
+      player.load();
 
       player.src = "/media/cache/" + data.file;
-      player.play();
+      player.play().catch(() => {});
 
       player.onended = () => {
-        index++;                 // AVANÇA PARA A PRÓXIMA FRASE
         busy = false;
         btn.disabled = false;
         btn.textContent = "🔊 Próxima";
@@ -172,6 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script>
+
 
 
 
