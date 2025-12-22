@@ -1,0 +1,388 @@
+/* VARIAVEIS GLOBAIS */
+:root {
+    --color-black: #000000;
+    --color-white: #ffffff;
+    --color-danger: #ff0000;
+    --color-danger-light: #ffb3b3;
+    --color-primary: #3b82f6;
+    --color-primary-light: #cee0fd;
+    --color-warning: #b37700;
+    --color-warning-light: #ffd480;
+    --color-secondary: #64748b;
+    --color-secondary-light: #c4cbd4;
+    --color-success: #1f6442; 
+    --color-success-light: #8cd9b3;
+    /* AQUI USAR UMA DAS CORES ACIMA */
+    --color-tittle-footer: #cee0fd;
+    --color-font-tittle-footer: #3b82f6;
+
+    --color-sidebar: #1c2533;
+    --color-li: #243042;
+    --color-li-hover: #2d3b52;   
+}
+
+/* RESETE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* FIM RESETE */
+
+/* BASE */
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
+    background: var(--color-white);    
+}
+/* FIM BASE */
+
+/* LAYOUT */
+.layout {
+    display: flex;
+    height: calc(100vh - 0px);
+}
+/*FIM LAYOUT */
+
+/*SIDEBAR */
+.sidebar {  
+    width: 270px;
+    min-width: 270px;
+    background: var(--color-secondary);    
+    display: flex;
+    height: calc(100vh - 0px);
+    transition: width 0.25s ease;
+}
+
+.sidebar.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.sidebar-inner {   
+    background: var(--color-sidebar);    
+    margin: 0px 0px 3px 3px;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height:0; 
+    overflow: hidden;    
+    transition: opacity 0.15s ease;    
+}
+
+.sidebar.collapsed .sidebar-inner {
+    opacity: 0;
+}
+
+.bar-1 {
+    flex-shrink: 0;
+}
+
+.bar-2 {
+    flex: 1;
+    overflow-y: auto;   
+    min-height:0;    
+}
+
+.bar-2::-webkit-scrollbar {
+    width: 8px;
+}
+
+.bar-2::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bar-2::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+}
+
+.bar-2::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+/*FIM  SIDEBAR */
+
+/*CONTENT */
+.content {
+    flex: 1;
+    background: var(--color-secondary);
+    display: flex;   
+    overflow: hidden;  
+}
+
+.content-inner {
+    background: var(--color-sidebar);
+    color: var(--color-white);
+    padding: 5px;
+    margin: 0px 5px 0px 5px;
+    flex: 1;    
+    display: flex;
+    flex-direction: column;
+    min-height:0; 
+    overflow: hidden;    
+}
+/*FIM CONTENT */
+
+/* TITTLE CONT */
+.tittle-cont {
+    flex-shrink: 0;
+    height: 35px;
+    padding: 5px 0px 5px 10px;
+    background-color: var(--color-tittle-footer);
+    color: var(--color-font-tittle-footer);
+    font-weight: bold;
+    margin: -5px -4px 0px -4px;    
+}
+/* FIM TITTLE CONT */
+
+/* CONTENT CONT */
+.content-cont {
+    flex: 1; 
+    min-height: 0;     
+    overflow-y: auto; 
+    padding-right: 4px; 
+    
+}
+
+.content-cont::-webkit-scrollbar {
+        width: 8px;   
+}
+
+.content-cont::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.content-cont::-webkit-scrollbar-thumb {
+    background-color: var(--color-tittle-footer);
+}
+
+.content-cont::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-tittle-footer);
+}
+/* FIM CONTENT CONT */
+
+/* FOOTER CONT */
+.footer-cont {    
+    padding: 6px 8px;
+    flex-shrink: 0;
+    font-size: 12px;
+    background-color: var(--color-tittle-footer);
+    color: var(--color-font-tittle-footer);
+    height: 30px;    
+    margin: 0 -4px -5px -4px;
+    
+}
+/* FIM FOOTER CONT */
+
+/* MENU */
+.menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;        
+}
+
+.menu li a {
+    display: block;
+    padding: 5px;
+    text-decoration: none;
+    color: var(--color-white);    
+    align-items: center;
+    background: var(--color-li);
+    margin-bottom: 3px;
+}
+
+.menu li a:hover {
+    background: var(--color-li-hover);
+    font-weight: 500;
+}
+/* FIM MENU */
+
+/* LOGOUT */
+.logout {
+    flex-shrink: 0;
+}
+
+.logout a {
+    display: block;
+    padding: 6px;
+    text-decoration: none;
+    color: var(--color-tittle-footer);    
+    align-items: center;
+    background: var(--color-li);
+    margin-bottom: 3px;    
+}
+
+.logout a:hover {
+    background: var(--color-li-hover);
+    font-weight: 500;
+}
+/* FIM LOGOUT */
+
+/* MENU-TOGGLE */
+.menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.menu-toggle img {
+    width: 22px;
+    height: 22px;
+}
+/* FIM MENU-TOGGLE */
+
+.aula {
+    display: flex;
+    gap: 8px;
+}
+
+/* INPUT BUSCA DO MENU LATERAL */
+.lesson-search {
+    width: 100%;
+    padding: 6px 8px;
+    background: var(--color-li);
+    color: var(--color-white);
+    border: 1px solid var(--color-li-hover);
+    border-radius: 0;
+    font-size: 13px;
+    outline: none;
+    margin-bottom: 3px;    
+}
+
+/* placeholder */
+.lesson-search::placeholder {
+    color: var(--color-secondary);
+}
+
+/* foco */
+.lesson-search:focus {
+    border-color: var(--color-warning);
+    background: var(--color-li-hover);
+}
+/*FIM INPUT BUSCA DO MENU LATERAL */
+
+/* TEMA DIA E NOITE */
+.theme-toggle {
+    margin-left: auto;
+    background: var(--color-sidebar);    
+    border-radius: 50%;
+    padding: 2px;
+    cursor: pointer;
+    font-size: 10px;
+    color: var(--color-white);
+}
+
+/* FIM TEMA DIA E NOITE */
+
+/* MEDIDA DA TELA MENOR QUE 900 */
+@media (max-width: 900px) {
+    .sidebar {
+        display: none;
+    }
+
+    .sidebar-inner {
+        display: none;
+    }
+}
+/* MEDIDA DA TELA MENOR QUE 900 */
+
+/* INFOR */
+.infor {
+  color: var(--color-tittle-footer);
+  padding: 3px 5px;
+}
+/* FIM INFOR */
+
+/* SELECT DOS IDIOMAS NO DICIONARIO */
+.select-lang{
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--color-li);
+  color: var(--color-white);
+  border: 1px solid var(--color-li-hover);
+  font-size: 13px;
+  outline: none;
+  margin-bottom: 6px;  
+}
+
+.select-lang:focus{
+  border-color: var(--color-warning);
+  background: var(--color-li-hover);
+}
+
+.select-lang option[value=""]{
+  color: var(--color-secondary);
+}
+
+/* FIM SELECT DOS IDIOMAS NO DICIONARIO */
+
+
+.content-cont ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.content-cont ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 2px 2px;
+  margin-bottom: 4px;
+
+  background: var(--color-li);
+  border: 1px solid var(--color-li-hover);
+  font-size: 14px;
+}
+
+.content-cont ul li:hover {
+  background: var(--color-li-hover);
+}
+
+.content-cont ul li form button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+/* LINHA ÚNICA: label + input + botão */
+#dict-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+/* INPUT INSERIMENTO DICIONARIO */
+#dict-form #term {
+  flex: 1; /* 🔑 ocupa todo o espaço disponível */
+  padding: 6px 8px;
+  background: var(--color-li);
+  color: var(--color-white);
+  border: 1px solid var(--color-li-hover);
+  font-size: 13px;
+  outline: none;
+}
+
+/* PLACEHOLDER do input do dicionário */
+#dict-form #term::placeholder {
+  color: var(--color-secondary);
+}
+
+/* INPUT FOCUS */
+#dict-form #term:focus {
+  border-color: var(--color-warning);
+  background: var(--color-li-hover);
+}
+/* FIM INPUT INSERIMENTO DICIONARIO */ 
