@@ -8,5 +8,4 @@ urlpatterns = [
     path("dictionary/add/", dictionary_add, name="dictionary_add"),
     path("dictionary/delete/", dictionary_delete, name="dictionary_delete"),    
     path("tts/", tts, name="tts"),
-
 ]
