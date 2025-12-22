@@ -109,36 +109,42 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   const msgs = document.querySelectorAll(".chat-message");
-  const btn  = document.getElementById("btn-next");
+  const btn = document.getElementById("btn-next");
   const player = document.getElementById("player");
 
   let index = 0;
 
   if (!btn || !player || msgs.length === 0) {
-    console.error("Erro: elementos não encontrados");
+    console.error("Elementos não encontrados");
     return;
   }
 
-  // começa tudo oculto
+  // esconde todas no início
   msgs.forEach(m => m.style.display = "none");
 
   btn.addEventListener("click", () => {
 
-    // acabou a tabela
+    // acabou
     if (index >= msgs.length) {
       btn.textContent = "✔️ Fim";
       btn.disabled = true;
       return;
     }
 
-    // FRASE ATUAL DA TABELA
+    // 🔑 pega a frase atual E JÁ AVANÇA
     const msg = msgs[index];
     const lineId = msg.dataset.id;
+    index++; // <<< ISSO GARANTE PRÓXIMA FRASE
 
-    // mostra a frase
+    // mostra a frase correta
     msg.style.display = "block";
 
-    // pede o áudio dessa frase
+    // força reset do player (evita repetir o mesmo áudio)
+    player.pause();
+    player.src = "";
+    player.load();
+
+    // gera áudio dessa frase
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -147,17 +153,13 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(r => r.json())
     .then(data => {
       if (data.file) {
-        player.pause();
-        player.src = "";
-        player.load();
-        player.src = "/media/cache/" + data.file;
+        // cache-buster pra nunca reaproveitar áudio
+        player.src = "/media/cache/" + data.file + "?t=" + Date.now();
         player.play().catch(() => {});
       }
     })
-    .catch(() => {});
+    .catch(err => console.error(err));
 
-    // 🔑 AVANÇA SEM DEPENDER DO ÁUDIO
-    index++;
   });
 
 });
