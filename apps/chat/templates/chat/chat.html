@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("btn-next");
   const player = document.getElementById("player");
 
-  let index = -1;   // ainda não mostrou nenhuma
+  let index = 0;
   let busy = false;
 
   if (!btn || !player || msgs.length === 0) {
@@ -115,61 +115,64 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  function playAudioFor(msg) {
+  // garante que nada aparece no início
+  msgs.forEach(m => m.style.display = "none");
+
+  btn.addEventListener("click", () => {
+    if (busy) return;
+
+    // acabou
+    if (index >= msgs.length) {
+      btn.disabled = true;
+      btn.textContent = "✔️ Fim";
+      return;
+    }
+
+    const msg = msgs[index];
     const lineId = msg.dataset.id;
 
-    return fetch("/tts/line/", {
+    // mostra a frase CORRETA da tabela
+    msg.style.display = "block";
+
+    // trava botão
+    busy = true;
+    btn.disabled = true;
+    btn.textContent = "🔊 Gerando...";
+
+    // gera áudio DA FRASE ATUAL
+    fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ line_id: lineId })
     })
     .then(r => r.json())
     .then(data => {
-      if (!data.file) throw new Error("TTS não retornou arquivo");
+      if (!data.file) {
+        throw new Error("TTS não retornou arquivo");
+      }
+
       player.src = "/media/cache/" + data.file;
-      return player.play();
-    });
-  }
+      player.play();
 
-  btn.addEventListener("click", () => {
-    if (busy) return;
-
-    const nextIndex = index + 1;
-    if (nextIndex >= msgs.length) {
-      btn.disabled = true;
-      btn.textContent = "✔️ Fim da lição";
-      return;
-    }
-
-    // mostra a próxima frase (LISTA)
-    index = nextIndex;
-    const msg = msgs[index];
-    msg.style.display = "block";
-
-    // trava botão e gera áudio
-    busy = true;
-    btn.disabled = true;
-    btn.textContent = "🔊 Tocando...";
-
-    playAudioFor(msg)
-      .then(() => {
-        player.onended = () => {
-          busy = false;
-          btn.disabled = false;
-          btn.textContent = "🔊 Repeti / Próxima";
-          player.onended = null;
-        };
-      })
-      .catch(err => {
-        console.error(err);
+      player.onended = () => {
+        index++;                 // AVANÇA PARA A PRÓXIMA FRASE
         busy = false;
         btn.disabled = false;
-        btn.textContent = "🔊 Repeti / Próxima";
-      });
+        btn.textContent = "🔊 Próxima";
+        player.onended = null;
+      };
+    })
+    .catch(err => {
+      console.error(err);
+      busy = false;
+      btn.disabled = false;
+      btn.textContent = "🔊 Próxima";
+    });
   });
 
 });
 </script>
+
 
 
 
