@@ -113,34 +113,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const player = document.getElementById("player");
 
   let index = 0;
-  let busy = false;
 
   if (!btn || !player || msgs.length === 0) return;
 
-  // tudo começa escondido
+  // começa tudo oculto
   msgs.forEach(m => m.style.display = "none");
 
   btn.addEventListener("click", () => {
-    if (busy) return;
 
+    // acabou
     if (index >= msgs.length) {
-      btn.disabled = true;
       btn.textContent = "✔️ Fim";
+      btn.disabled = true;
       return;
     }
 
-    // 🔑 PEGA A FRASE ATUAL E JÁ AVANÇA
+    // pega a frase CORRETA da tabela
     const msg = msgs[index];
     const lineId = msg.dataset.id;
-    index++; // <<< AQUI ESTÁ A CORREÇÃO
 
-    // mostra a frase correta
+    // mostra a frase
     msg.style.display = "block";
 
-    busy = true;
-    btn.disabled = true;
-    btn.textContent = "🔊 Gerando...";
-
+    // pede áudio (NÃO trava fluxo)
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -148,29 +143,15 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(r => r.json())
     .then(data => {
-      if (!data.file) throw new Error("TTS sem arquivo");
-
-      // força reload do áudio (evita cache silencioso)
-      player.pause();
-      player.src = "";
-      player.load();
-
-      player.src = "/media/cache/" + data.file;
-      player.play().catch(() => {});
-
-      player.onended = () => {
-        busy = false;
-        btn.disabled = false;
-        btn.textContent = "🔊 Próxima";
-        player.onended = null;
-      };
+      if (data.file) {
+        player.src = "/media/cache/" + data.file;
+        player.play().catch(() => {});
+      }
     })
-    .catch(err => {
-      console.error(err);
-      busy = false;
-      btn.disabled = false;
-      btn.textContent = "🔊 Próxima";
-    });
+    .catch(() => {});
+
+    // AVANÇA IMEDIATAMENTE
+    index++;
   });
 
 });
