@@ -108,20 +108,23 @@
     <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  const msgs = Array.from(document.querySelectorAll(".chat-message"));
+  const msgs = document.querySelectorAll(".chat-message");
   const btn = document.getElementById("btn-next");
   const player = document.getElementById("player");
 
   let index = 0;
 
-  if (!btn || !player || msgs.length === 0) return;
+  if (!btn || !player || msgs.length === 0) {
+    console.error("ERRO: botão, player ou mensagens não encontrados");
+    return;
+  }
 
-  // começa tudo oculto
+  // começa tudo escondido
   msgs.forEach(m => m.style.display = "none");
 
   btn.addEventListener("click", () => {
 
-    // acabou
+    // se acabou, para
     if (index >= msgs.length) {
       btn.textContent = "✔️ Fim";
       btn.disabled = true;
@@ -135,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // mostra a frase
     msg.style.display = "block";
 
-    // pede áudio (NÃO trava fluxo)
+    // gera e toca o áudio DA MESMA FRASE
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -144,13 +147,16 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(r => r.json())
     .then(data => {
       if (data.file) {
+        player.pause();
+        player.src = "";
+        player.load();
         player.src = "/media/cache/" + data.file;
         player.play().catch(() => {});
       }
     })
     .catch(() => {});
 
-    // AVANÇA IMEDIATAMENTE
+    // AVANÇA SEM DEPENDER DE ÁUDIO
     index++;
   });
 
