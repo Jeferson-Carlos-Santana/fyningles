@@ -101,68 +101,40 @@
         </div>
     <script src="{% static 'chat/js/script.js' %}"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+btnNext.addEventListener("click", () => {
 
-  const msgs = document.querySelectorAll(".chat-message");
-  const btnNext = document.getElementById("btn-next");
-  const player = document.getElementById("player");
+  // trava o botão imediatamente
+  btnNext.disabled = true;
+  btnNext.textContent = "🔊 Tocando...";
 
-  let index = 0;
+  const msg = msgs[index];
+  const lineId = msg.dataset.id;
 
-  // mostra a primeira frase
-  if (msgs.length > 0) {
-    msgs[0].style.display = "block";
-  }
+  fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ line_id: lineId })
+  })
+  .then(r => r.json())
+  .then(data => {
+    player.src = "/media/cache/" + data.file;
+    player.play();
 
-  btnNext.addEventListener("click", () => {
+    player.onended = () => {
+      index++;
 
-    // segurança
-    if (index >= msgs.length) {
-      btnNext.style.display = "none";
-      return;
-    }
-
-    const msg = msgs[index];
-    const lineId = msg.dataset.id;
-
-    // desabilita botão enquanto gera/toca
-    btnNext.disabled = true;
-    btnNext.textContent = "🔊 Gerando áudio...";
-
-    // pede áudio ao TTS externo
-    fetch("/tts/line/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ line_id: lineId })
-    })
-    .then(r => r.json())
-    .then(data => {
-      player.src = "/media/cache/" + data.file;
-      player.play();
-
-      player.onended = () => {
-        // quando termina o áudio → libera próxima frase
-        index++;
-
-        if (index < msgs.length) {
-          msgs[index].style.display = "block";
-          btnNext.disabled = false;
-          btnNext.textContent = "🔊 Repeti / Próxima";
-        } else {
-          btnNext.textContent = "✔️ Fim da lição";
-          btnNext.disabled = true;
-        }
-      };
-    })
-    .catch(err => {
-      console.error("Erro TTS:", err);
-      btnNext.disabled = false;
-      btnNext.textContent = "🔊 Repeti / Próxima";
-    });
-
+      if (index < msgs.length) {
+        msgs[index].style.display = "block";
+        btnNext.disabled = false;
+        btnNext.textContent = "🔊 Repeti / Próxima";
+      } else {
+        btnNext.textContent = "✔️ Fim da lição";
+        btnNext.disabled = true;
+      }
+    };
   });
-
 });
+
 </script>
 
 
