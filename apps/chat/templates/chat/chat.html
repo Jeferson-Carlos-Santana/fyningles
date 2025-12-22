@@ -109,36 +109,36 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   const msgs = document.querySelectorAll(".chat-message");
-  const btn = document.getElementById("btn-next");
+  const btn  = document.getElementById("btn-next");
   const player = document.getElementById("player");
 
   let index = 0;
 
   if (!btn || !player || msgs.length === 0) {
-    console.error("ERRO: botão, player ou mensagens não encontrados");
+    console.error("Erro: elementos não encontrados");
     return;
   }
 
-  // começa tudo escondido
+  // começa tudo oculto
   msgs.forEach(m => m.style.display = "none");
 
   btn.addEventListener("click", () => {
 
-    // se acabou, para
+    // acabou a tabela
     if (index >= msgs.length) {
       btn.textContent = "✔️ Fim";
       btn.disabled = true;
       return;
     }
 
-    // pega a frase CORRETA da tabela
+    // FRASE ATUAL DA TABELA
     const msg = msgs[index];
     const lineId = msg.dataset.id;
 
     // mostra a frase
     msg.style.display = "block";
 
-    // gera e toca o áudio DA MESMA FRASE
+    // pede o áudio dessa frase
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(() => {});
 
-    // AVANÇA SEM DEPENDER DE ÁUDIO
+    // 🔑 AVANÇA SEM DEPENDER DO ÁUDIO
     index++;
   });
 
