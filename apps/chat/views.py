@@ -27,6 +27,9 @@ def index(request):
 def chat(request):
     return render(request, "chat/chat.html")
 
+def lessons(request):
+    return render(request, "chat/lessons.html")
+
 # LISTAR DADOS DO JSON
 def dictionary(request):
     lang = request.GET.get("lang", "pt")  # padrão pt

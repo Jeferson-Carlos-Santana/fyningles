@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import index, chat, dictionary, dictionary_add, dictionary_delete, tts
+from .views import index, chat, lessons, dictionary, dictionary_add, dictionary_delete, tts
 
 urlpatterns = [
     path("", index, name="dashboard"),
     path("chat/", chat, name="chat"),
+    path("lessons/", lessons, name="lessons"),
     path("dictionary/", dictionary, name="dictionary"),
     path("dictionary/add/", dictionary_add, name="dictionary_add"),
     path("dictionary/delete/", dictionary_delete, name="dictionary_delete"),    
