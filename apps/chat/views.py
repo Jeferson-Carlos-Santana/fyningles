@@ -5,9 +5,7 @@ from deep_translator import GoogleTranslator
 from django.shortcuts import redirect
 from django.contrib import messages
 from langdetect import detect, LangDetectException
-
 import requests, json
-
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt

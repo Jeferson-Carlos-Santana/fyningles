@@ -4,7 +4,7 @@
 <head>
     <link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
     <meta charset="utf-8">
-    <title>Dashboard</title>
+    <title>Lessons</title>
 </head>
 <body>
 
@@ -47,7 +47,9 @@
                         </div>                        
                     </div>
 
-<p>conteudo</p>
+<textarea id="tts-text" placeholder="Digite o texto"></textarea>
+<button onclick="gerarAudio()">🔊 Gerar áudio</button>
+<audio id="player" controls style="display:none;"></audio>
 
 
                     
@@ -60,6 +62,26 @@
             </main>
         </div>
     <script src="{% static 'chat/js/script.js' %}"></script>
+<script>
+function gerarAudio() {
+    const text = document.getElementById("tts-text").value;
+
+    fetch("/tts/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: text })
+    })
+    .then(r => r.json())
+    .then(data => {
+        const player = document.getElementById("player");
+        player.src = "/media/cache/" + data.file;
+        player.style.display = "block";
+        player.play();
+    });
+}
+</script>
 
 </body>
 </html>
