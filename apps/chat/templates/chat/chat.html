@@ -101,40 +101,74 @@
         </div>
     <script src="{% static 'chat/js/script.js' %}"></script>
 <script>
-btnNext.addEventListener("click", () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-  // trava o botão imediatamente
-  btnNext.disabled = true;
-  btnNext.textContent = "🔊 Tocando...";
+  const msgs = Array.from(document.querySelectorAll(".chat-message"));
+  const btn = document.getElementById("btn-next");
+  const player = document.getElementById("player");
 
-  const msg = msgs[index];
-  const lineId = msg.dataset.id;
+  let index = -1;   // ainda não mostrou nenhuma
+  let busy = false;
 
-  fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ line_id: lineId })
-  })
-  .then(r => r.json())
-  .then(data => {
-    player.src = "/media/cache/" + data.file;
-    player.play();
+  if (!btn || !player || msgs.length === 0) {
+    console.error("Elementos não encontrados");
+    return;
+  }
 
-    player.onended = () => {
-      index++;
+  function playAudioFor(msg) {
+    const lineId = msg.dataset.id;
 
-      if (index < msgs.length) {
-        msgs[index].style.display = "block";
-        btnNext.disabled = false;
-        btnNext.textContent = "🔊 Repeti / Próxima";
-      } else {
-        btnNext.textContent = "✔️ Fim da lição";
-        btnNext.disabled = true;
-      }
-    };
+    return fetch("/tts/line/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ line_id: lineId })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.file) throw new Error("TTS não retornou arquivo");
+      player.src = "/media/cache/" + data.file;
+      return player.play();
+    });
+  }
+
+  btn.addEventListener("click", () => {
+    if (busy) return;
+
+    const nextIndex = index + 1;
+    if (nextIndex >= msgs.length) {
+      btn.disabled = true;
+      btn.textContent = "✔️ Fim da lição";
+      return;
+    }
+
+    // mostra a próxima frase (LISTA)
+    index = nextIndex;
+    const msg = msgs[index];
+    msg.style.display = "block";
+
+    // trava botão e gera áudio
+    busy = true;
+    btn.disabled = true;
+    btn.textContent = "🔊 Tocando...";
+
+    playAudioFor(msg)
+      .then(() => {
+        player.onended = () => {
+          busy = false;
+          btn.disabled = false;
+          btn.textContent = "🔊 Repeti / Próxima";
+          player.onended = null;
+        };
+      })
+      .catch(err => {
+        console.error(err);
+        busy = false;
+        btn.disabled = false;
+        btn.textContent = "🔊 Repeti / Próxima";
+      });
   });
-});
 
+});
 </script>
 
 
