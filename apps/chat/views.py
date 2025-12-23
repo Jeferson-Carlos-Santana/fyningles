@@ -9,21 +9,21 @@ import requests, json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Chat
 
-# @csrf_exempt
-# def tts(request):
-#     data = json.loads(request.body)
-#     text = data.get("text")
+@csrf_exempt
+def tts(request):
+    data = json.loads(request.body)
+    text = data.get("text")
 
-#     r = requests.post(
-#         "http://127.0.0.1:9000",
-#         json={"text": text},
-#         timeout=20
-#     )
-#     return JsonResponse(r.json())
+    r = requests.post(
+        "http://127.0.0.1:9000",
+        json={"text": text},
+        timeout=20
+    )
+    return JsonResponse(r.json())
 
 
-# def index(request):
-#     return render(request, "chat/index.html")
+def index(request):
+    return render(request, "chat/index.html")
 
 
 
