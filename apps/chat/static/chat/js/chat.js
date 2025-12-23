@@ -1,21 +1,3 @@
-function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
-  // const url = "/media/cache/" + file + "?t=" + Date.now();
-  const url = CHAT_CONFIG.mediaUrl + "cache/" + file + "?t=" + Date.now();
-
-  fetch(url, { method: "HEAD" })
-    .then(r => {
-      if (!r.ok) throw new Error("not ready");
-      const a = new Audio(url);
-      a.play().catch(() => {
-        if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-      });
-    })
-    .catch(() => {
-      if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-    });
-}
-
-
 document.addEventListener("DOMContentLoaded", function () {
   // ===== SPEECH =====
   const SpeechRecognition =
@@ -59,9 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(d => {
       if (d.file) {
         playWhenReady(d.file);
-        // new Audio("/media/cache/" + d.file + "?t=" + Date.now()).play();
-        new Audio(CHAT_CONFIG.mediaUrl + "cache/" + d.file + "?t=" + Date.now()).play();
-
+        new Audio("/media/cache/" + d.file + "?t=" + Date.now()).play();
       }
     });
 

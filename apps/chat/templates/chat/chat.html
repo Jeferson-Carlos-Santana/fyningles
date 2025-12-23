@@ -78,10 +78,20 @@
         </div>
         <script src="{% static 'chat/js/script.js' %}"></script>
         <script>
-          window.CHAT_CONFIG = {
-            mediaUrl: "{{ MEDIA_URL }}",
-            ttsUrl: "{% url 'tts_line' %}"
-          };
+          function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
+  const url = "/media/cache/" + file + "?t=" + Date.now();
+  fetch(url, { method: "HEAD" })
+    .then(r => {
+      if (!r.ok) throw new Error("not ready");
+      const a = new Audio(url);
+      a.play().catch(() => {
+        if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+      });
+    })
+    .catch(() => {
+      if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+    });
+}
         </script>
         <script src="{% static 'chat/js/chat.js' %}"></script>
  
