@@ -79,7 +79,7 @@
   🔊 Repeti / Próxima
 </button>
 
-
+{% comment %} <audio id="player"></audio> {% endcomment %}
 
 
 
@@ -99,58 +99,71 @@
                 </div>
             </main>
         </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-  var msgs = document.querySelectorAll(".chat-message");
-  var btn  = document.getElementById("btn-next");
-
-  var index = 0;
-
-  for (var i = 0; i < msgs.length; i++) {
-    msgs[i].style.display = "none";
-  }
-
-  btn.onclick = function () {
-
-    if (index >= msgs.length) {
-      btn.innerText = "✔️ Fim";
-      btn.disabled = true;
-      return;
-    }
-
-    var msg = msgs[index];
-    var lineId = msg.getAttribute("data-id");
-
-    msg.style.display = "block";
-
-    fetch("/tts/line/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ line_id: lineId })
-    })
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
-      if (d.file) {
-        var audio = new Audio("/media/cache/" + d.file + "?t=" + Date.now());
-        audio.play();
-      }
-    });
-
-    index++;
-  };
-
-});
-</script>
-    <script src="{% static 'chat/js/script.js' %}"></script>
+    {% comment %} <script src="{% static 'chat/js/script.js' %}"></script> {% endcomment %}
 
     
 
 
 
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
 
+  const msgs = document.querySelectorAll(".chat-message");
+  const btn = document.getElementById("btn-next");
+  const player = document.getElementById("player");
 
+  let index = 0;
+
+  if (!btn || !player || msgs.length === 0) {
+    console.error("Elementos não encontrados");
+    return;
+  }
+
+  // esconde todas no início
+  msgs.forEach(m => m.style.display = "none");
+
+  btn.addEventListener("click", () => {
+
+    // acabou
+    if (index >= msgs.length) {
+      btn.textContent = "✔️ Fim";
+      btn.disabled = true;
+      return;
+    }
+
+    // 🔑 pega a frase atual E JÁ AVANÇA
+    const msg = msgs[index];
+    const lineId = msg.dataset.id;
+    index++; // <<< ISSO GARANTE PRÓXIMA FRASE
+
+    // mostra a frase correta
+    msg.style.display = "block";
+
+    // força reset do player (evita repetir o mesmo áudio)
+    player.pause();
+    player.src = "";
+    player.load();
+
+    // gera áudio dessa frase
+    fetch("/tts/line/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ line_id: lineId })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.file) {
+        // cache-buster pra nunca reaproveitar áudio
+        player.src = "/media/cache/" + data.file + "?t=" + Date.now();
+        player.play().catch(() => {});
+      }
+    })
+    .catch(err => console.error(err));
+
+  });
+
+});
+</script>
 
 
 
