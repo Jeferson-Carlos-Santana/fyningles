@@ -26,10 +26,6 @@ def index(request):
     return render(request, "chat/index.html")
 
 
-
-
-
-
 def chat(request, lesson_id):
     lines = (
         Chat.objects
@@ -64,10 +60,6 @@ def tts_line(request):
 
     # o TTS retorna: {"file": "uuid.mp3"}
     return JsonResponse(r.json())
-
-
-
-
 
 def lessons(request):
     return render(request, "chat/lessons.html")
@@ -167,25 +159,6 @@ def dictionary_add(request):
 
         messages.success(request, "Salvo com sucesso em todos os idiomas!")
         return redirect(f"/dictionary/?lang={lang}")
-
-
-    # # 1) salva o termo no idioma escolhido
-    # add_term(lang, term)
-
-    # # 2) se for PT ou EN, traduz e salva nos outros idiomas
-    # if lang in ("pt", "en"):
-    #     targets = ["pt", "en", "es", "fr", "it"]
-    #     targets.remove(lang)
-
-    #     for target in targets:
-    #         translated = GoogleTranslator(source=lang, target=target).translate(term)
-
-    #         # evita duplicado no idioma de destino
-    #         if translated and not term_exists(target, translated):
-    #             add_term(target, translated)
-
-    #     messages.success(request, "Salvo e traduzido para os outros idiomas!")
-    #     return redirect(f"/dictionary/?lang={lang}")
 
     # 3) ES/FR/IT: só salva, não traduz
     messages.success(request, "Salvo!")
