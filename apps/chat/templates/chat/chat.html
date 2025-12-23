@@ -114,13 +114,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let index = 0;
 
-  // ESCONDE TODAS
   msgs.forEach(m => m.style.display = "none");
 
-  function tocarAtual() {
-    const msg = msgs[index];
-    if (!msg) return;
+  btn.addEventListener("click", () => {
 
+    if (index >= msgs.length) {
+      btn.textContent = "✔️ Fim";
+      btn.disabled = true;
+      return;
+    }
+
+    const msg = msgs[index];
     const lineId = msg.dataset.id;
 
     msg.style.display = "block";
@@ -136,25 +140,13 @@ document.addEventListener("DOMContentLoaded", () => {
         new Audio("/media/cache/" + data.file + "?t=" + Date.now()).play();
       }
     });
-  }
 
-  // 👉 PRIMEIRA FRASE AUTOMÁTICA
-  tocarAtual();
-
-  btn.addEventListener("click", () => {
-    index++;
-
-    if (index >= msgs.length) {
-      btn.textContent = "✔️ Fim";
-      btn.disabled = true;
-      return;
-    }
-
-    tocarAtual();
+    index++; // 🔑 AVANÇA SOMENTE APÓS TOCAR
   });
 
 });
 </script>
+
 
 
 
