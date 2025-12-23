@@ -76,11 +76,9 @@
                 </div>
             </main>
         </div>
-        <script src="{% static 'chat/js/script.js' %}"></script>
-        <script src="{% static 'chat/js/chat.js' %}"></script>
- 
+        <script src="{% static 'chat/js/script.js' %}"></script> 
 
-        {% comment %} <script>
+        <script>
           function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
             const url = "/media/cache/" + file + "?t=" + Date.now();
             fetch(url, { method: "HEAD" })
@@ -173,8 +171,7 @@
             };
 
           });
-
-        </script> {% endcomment %}
+        </script>
  
 </body>
 </html> 
