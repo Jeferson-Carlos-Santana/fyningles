@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     msg.style.display = "block";
 
-    // 🔊 TTS (GERA AUDIO NO SERVER)
+    // TTS (GERA AUDIO NO SERVER)
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
