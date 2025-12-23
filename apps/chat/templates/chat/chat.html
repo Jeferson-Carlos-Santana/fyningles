@@ -53,15 +53,14 @@
 
 
 
-<div class="chat-area">
-{% for line in lines %}
-  <div class="chat-message"
-       data-id="{{ line.id }}"
-       style="display:none;">
-    {{ line.expected_en }}
-  </div>
-{% endfor %}
-
+                    <div class="chat-area">
+  {% for line in lines %}
+    <div class="chat-message {{ line.role }}"
+         data-id="{{ line.id }}"
+         style="display:none;">
+      {{ line.expected_en }}
+    </div>
+  {% endfor %}
 </div>
 
 <button id="btn-next"
@@ -79,6 +78,14 @@
         ">
   🔊 Repeti / Próxima
 </button>
+
+<audio id="player"></audio>
+
+
+
+
+
+
 
 
 
@@ -101,19 +108,43 @@
     <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  const msgs = Array.from(document.querySelectorAll(".chat-message"));
+  const msgs = document.querySelectorAll(".chat-message");
   const btn = document.getElementById("btn-next");
+  const player = document.getElementById("player");
 
   let index = 0;
 
-  function tocarLinha(i) {
-    const msg = msgs[i];
-    if (!msg) return;
+  if (!btn || !player || msgs.length === 0) {
+    console.error("Elementos não encontrados");
+    return;
+  }
 
+  // esconde todas no início
+  msgs.forEach(m => m.style.display = "none");
+
+  btn.addEventListener("click", () => {
+
+    // acabou
+    if (index >= msgs.length) {
+      btn.textContent = "✔️ Fim";
+      btn.disabled = true;
+      return;
+    }
+
+    // 🔑 pega a frase atual E JÁ AVANÇA
+    const msg = msgs[index];
     const lineId = msg.dataset.id;
+    index++; // <<< ISSO GARANTE PRÓXIMA FRASE
 
+    // mostra a frase correta
     msg.style.display = "block";
 
+    // força reset do player (evita repetir o mesmo áudio)
+    player.pause();
+    player.src = "";
+    player.load();
+
+    // gera áudio dessa frase
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -122,29 +153,16 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(r => r.json())
     .then(data => {
       if (data.file) {
-        new Audio("/media/cache/" + data.file + "?t=" + Date.now()).play();
+        // cache-buster pra nunca reaproveitar áudio
+        player.src = "/media/cache/" + data.file + "?t=" + Date.now();
+        player.play().catch(() => {});
       }
-    });
-  }
+    })
+    .catch(err => console.error(err));
 
-  // 👉 PRIMEIRA FRASE AUTOMÁTICA
-  tocarLinha(index);
-
-  btn.addEventListener("click", () => {
-    index++;
-
-    if (index >= msgs.length) {
-      btn.textContent = "✔️ Fim";
-      btn.disabled = true;
-      return;
-    }
-
-    tocarLinha(index);
   });
 
 });
-
-
 </script>
 
 
