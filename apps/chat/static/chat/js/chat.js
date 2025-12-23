@@ -16,12 +16,25 @@ function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO P
 
 // document.addEventListener("DOMContentLoaded", function () {
   // ===== SPEECH =====
+  // const SpeechRecognition =
+  //   window.SpeechRecognition || window.webkitSpeechRecognition;
+  // const recognition = new SpeechRecognition();
+  // recognition.lang = "en-US";
+  // recognition.continuous = false;
+  // recognition.interimResults = false;
   const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    console.warn("SpeechRecognition indisponível");
+    return;
+  }
+
   const recognition = new SpeechRecognition();
   recognition.lang = "en-US";
   recognition.continuous = false;
   recognition.interimResults = false;
+
 
   // ===== ELEMENTOS =====
   const msgs = document.querySelectorAll(".chat-message");
