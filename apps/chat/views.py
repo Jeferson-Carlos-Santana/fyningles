@@ -26,6 +26,10 @@ def index(request):
     return render(request, "chat/index.html")
 
 
+
+
+
+
 def chat(request, lesson_id):
     lines = (
         Chat.objects
@@ -38,28 +42,28 @@ def chat(request, lesson_id):
         "lines": lines,
     })
     
-# from django.http import JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
-# from .models import Chat
-# import json, requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Chat
+import json, requests
 
-# @csrf_exempt
-# def tts_line(request):
-#     data = json.loads(request.body)
-#     line_id = data.get("line_id")
+@csrf_exempt
+def tts_line(request):
+    data = json.loads(request.body)
+    line_id = data.get("line_id")
 
-#     line = Chat.objects.get(id=line_id)
-#     text = line.expected_en  # texto limpo enviado ao TTS externo
+    line = Chat.objects.get(id=line_id)
+    text = line.expected_en  # texto limpo enviado ao TTS externo
 
-#     # CHAMADA AO SERVIÇO TTS EXTERNO
-#     r = requests.post(
-#         "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
-#         json={"text": text},
-#         timeout=20
-#     )
+    # CHAMADA AO SERVIÇO TTS EXTERNO
+    r = requests.post(
+        "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
+        json={"text": text},
+        timeout=20
+    )
 
-#     # o TTS retorna: {"file": "uuid.mp3"}
-#     return JsonResponse(r.json())
+    # o TTS retorna: {"file": "uuid.mp3"}
+    return JsonResponse(r.json())
 
 
 
