@@ -6,6 +6,63 @@ document.addEventListener("DOMContentLoaded", () => {
     toggle.addEventListener("click", () => {
         sidebar.classList.toggle("collapsed");
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      const msgs = Array.from(document.querySelectorAll(".chat-message"));
+  const btn = document.getElementById("btn-next");
+
+  let index = 0;
+
+  msgs.forEach(m => m.style.display = "none");
+
+  btn.addEventListener("click", () => {
+
+    if (index >= msgs.length) {
+      btn.textContent = "✔️ Fim";
+      btn.disabled = true;
+      return;
+    }
+
+    const msg = msgs[index];
+    const lineId = msg.dataset.id;
+
+    msg.style.display = "block";
+
+    fetch("/tts/line/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ line_id: lineId })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.file) {
+        new Audio("/media/cache/" + data.file + "?t=" + Date.now()).play();
+      }
+    });
+
+    index++; // 🔑 AVANÇA SOMENTE APÓS TOCAR
+  });
+
+
+
+
+
+
+
+  
 });
 // FIM ABRE E FECHA O MENU LATERAL
 
@@ -55,44 +112,5 @@ searchInput.addEventListener("input", () => {
 
 
 
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  const msgs = Array.from(document.querySelectorAll(".chat-message"));
-  const btn = document.getElementById("btn-next");
-
-  let index = 0;
-
-  msgs.forEach(m => m.style.display = "none");
-
-  btn.addEventListener("click", () => {
-
-    if (index >= msgs.length) {
-      btn.textContent = "✔️ Fim";
-      btn.disabled = true;
-      return;
-    }
-
-    const msg = msgs[index];
-    const lineId = msg.dataset.id;
-
-    msg.style.display = "block";
-
-    fetch("/tts/line/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ line_id: lineId })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.file) {
-        new Audio("/media/cache/" + data.file + "?t=" + Date.now()).play();
-      }
-    });
-
-    index++; // 🔑 AVANÇA SOMENTE APÓS TOCAR
-  });
-
-});
 
 
