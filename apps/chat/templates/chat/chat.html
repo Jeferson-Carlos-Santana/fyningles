@@ -156,39 +156,66 @@ document.addEventListener("DOMContentLoaded", function () {
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-  // 1️⃣ API de reconhecimento de voz
+  // === SPEECH RECOGNITION ===
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (!SpeechRecognition) {
-    alert("Seu navegador não suporta reconhecimento de voz.");
+    alert("Reconhecimento de voz não suportado.");
     return;
   }
 
   const recognition = new SpeechRecognition();
-  recognition.lang = "en-US";      // inglês
-  recognition.continuous = false;  // uma frase por vez
+  recognition.lang = "en-US";
+  recognition.continuous = false;
   recognition.interimResults = false;
 
-  // 2️⃣ Quando o usuário falar
+  // === CHAT ===
+  const msgs = document.querySelectorAll(".chat-message");
+  let index = 0;
+
+  // esconde todas as frases do sistema
+  msgs.forEach(m => m.style.display = "none");
+
+  function mostrarFraseSistema() {
+    if (index >= msgs.length) {
+      alert("Fim da lição");
+      return;
+    }
+
+    const msg = msgs[index];
+    msg.style.display = "block";
+
+    // depois que o sistema fala, começa a escutar
+    setTimeout(() => {
+      recognition.start();
+      console.log("🎤 Ouvindo resposta do usuário...");
+    }, 500);
+  }
+
+  // quando o usuário falar
   recognition.onresult = function (event) {
     const textoFalado = event.results[0][0].transcript;
-    console.log("🎤 Usuário falou:", textoFalado);
 
-    // MOSTRA NA TELA (provisório)
-    alert("Você disse: " + textoFalado);
+    // cria bolha do usuário
+    const userDiv = document.createElement("div");
+    userDiv.className = "chat-message user";
+    userDiv.textContent = textoFalado;
+
+    // insere logo abaixo da frase atual
+    msgs[index].after(userDiv);
+
+    // avança para próxima frase
+    index++;
+    mostrarFraseSistema();
   };
 
-  // 3️⃣ Erro
   recognition.onerror = function (event) {
     console.error("Erro no microfone:", event.error);
   };
 
-  // 4️⃣ Começa a ouvir (teste manual)
-  document.addEventListener("click", function () {
-    recognition.start();
-    console.log("🎧 Ouvindo...");
-  });
+  // === INÍCIO DA LIÇÃO ===
+  mostrarFraseSistema();
 
 });
 </script>
