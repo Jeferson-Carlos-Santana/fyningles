@@ -63,21 +63,9 @@
   {% endfor %}
 </div>
 
-<button id="btn-next"
-        style="
-          position: fixed;
-          bottom: 20px;
-          right: 20px;
-          z-index: 9999;
-          background: #00c853;
-          color: #000;
-          padding: 12px 18px;
-          border-radius: 8px;
-          border: none;
-          cursor: pointer;
-        ">
-  🔊 Repeti / Próxima
-</button>
+<button id="btn-start">▶️ Iniciar lição</button>
+<button id="btn-mic" disabled>🎤 Falar</button>
+
 
 {% comment %} <audio id="player"></audio> {% endcomment %}
 
@@ -156,66 +144,57 @@ document.addEventListener("DOMContentLoaded", function () {
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-  // === SPEECH RECOGNITION ===
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    alert("Reconhecimento de voz não suportado.");
-    return;
-  }
-
   const recognition = new SpeechRecognition();
   recognition.lang = "en-US";
   recognition.continuous = false;
   recognition.interimResults = false;
 
-  // === CHAT ===
   const msgs = document.querySelectorAll(".chat-message");
+  const btnStart = document.getElementById("btn-start");
+  const btnMic = document.getElementById("btn-mic");
+
   let index = 0;
 
   // esconde todas as frases do sistema
   msgs.forEach(m => m.style.display = "none");
 
-  function mostrarFraseSistema() {
+  function mostrarSistema() {
     if (index >= msgs.length) {
-      alert("Fim da lição");
+      btnMic.disabled = true;
+      btnStart.disabled = true;
       return;
     }
-
-    const msg = msgs[index];
-    msg.style.display = "block";
-
-    // depois que o sistema fala, começa a escutar
-    setTimeout(() => {
-      recognition.start();
-      console.log("🎤 Ouvindo resposta do usuário...");
-    }, 500);
+    msgs[index].style.display = "block";
+    btnMic.disabled = false; // agora pode falar
   }
 
-  // quando o usuário falar
-  recognition.onresult = function (event) {
-    const textoFalado = event.results[0][0].transcript;
-
-    // cria bolha do usuário
-    const userDiv = document.createElement("div");
-    userDiv.className = "chat-message user";
-    userDiv.textContent = textoFalado;
-
-    // insere logo abaixo da frase atual
-    msgs[index].after(userDiv);
-
-    // avança para próxima frase
-    index++;
-    mostrarFraseSistema();
+  // BOTÃO 1: INICIAR
+  btnStart.onclick = function () {
+    btnStart.disabled = true;
+    mostrarSistema();
   };
 
-  recognition.onerror = function (event) {
-    console.error("Erro no microfone:", event.error);
+  // BOTÃO 2: MICROFONE
+  btnMic.onclick = function () {
+    btnMic.disabled = true;
+    recognition.start();
   };
 
-  // === INÍCIO DA LIÇÃO ===
-  mostrarFraseSistema();
+  // QUANDO O USUÁRIO FALA
+  recognition.onresult = function (e) {
+    const texto = e.results[0][0].transcript;
+
+    const user = document.createElement("div");
+    user.className = "chat-message user";
+    user.textContent = texto;
+
+    msgs[index].after(user);
+
+    index++;          // avança a lição
+    mostrarSistema(); // mostra próxima frase
+  };
 
 });
 </script>
@@ -226,5 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
 </body>
-</html>
+</html> 
+{% comment %} J56#sr78iu#G95 {% endcomment %}
