@@ -1,3 +1,6 @@
+if (!document.getElementById("btn-start")) return;
+if (!document.querySelector(".chat-area")) return;
+
 function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
   const url = "/media/cache/" + file + "?t=" + Date.now();
   fetch(url, { method: "HEAD" })
@@ -14,27 +17,14 @@ function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO P
 }
 
 
-// document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
   // ===== SPEECH =====
-  // const SpeechRecognition =
-  //   window.SpeechRecognition || window.webkitSpeechRecognition;
-  // const recognition = new SpeechRecognition();
-  // recognition.lang = "en-US";
-  // recognition.continuous = false;
-  // recognition.interimResults = false;
   const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    console.warn("SpeechRecognition indisponível");
-    return;
-  }
-
+    window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition();
   recognition.lang = "en-US";
   recognition.continuous = false;
   recognition.interimResults = false;
-
 
   // ===== ELEMENTOS =====
   const msgs = document.querySelectorAll(".chat-message");
@@ -103,5 +93,5 @@ function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO P
     mostrarSistema();
   };
 
-// });
+});
 
