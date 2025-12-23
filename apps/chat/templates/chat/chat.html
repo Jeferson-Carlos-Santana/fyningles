@@ -107,28 +107,32 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
+  var btn = document.getElementById("btn-next");
   var msgs = document.querySelectorAll(".chat-message");
-  var btn  = document.getElementById("btn-next");
-
   var index = 0;
 
+  // esconde todas
   for (var i = 0; i < msgs.length; i++) {
     msgs[i].style.display = "none";
   }
 
   btn.onclick = function () {
 
+    // acabou
     if (index >= msgs.length) {
       btn.innerText = "✔️ Fim";
       btn.disabled = true;
       return;
     }
 
+    // pega a frase atual
     var msg = msgs[index];
     var lineId = msg.getAttribute("data-id");
 
+    // mostra a frase
     msg.style.display = "block";
 
+    // chama o TTS
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -142,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
+    // AVANÇA UMA VEZ
     index++;
   };
 
