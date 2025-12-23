@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(d => {
       if (d.file) {
         playWhenReady(d.file);
-        // new Audio("/media/cache/" + d.file + "?t=" + Date.now()).play();
+        new Audio("/media/cache/" + d.file + "?t=" + Date.now()).play();
       }
     });
 
