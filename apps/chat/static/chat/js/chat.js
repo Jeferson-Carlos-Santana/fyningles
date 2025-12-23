@@ -1,6 +1,8 @@
 // document.addEventListener("DOMContentLoaded", function () {
 
-
+  const msgs = document.querySelectorAll(".chat-message");
+  const btnStart = document.getElementById("btn-start");
+  const btnMic = document.getElementById("btn-mic");
 
 
   // ===== BOTÃO INICIAR =====
