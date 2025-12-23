@@ -153,6 +153,47 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  // 1️⃣ API de reconhecimento de voz
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Seu navegador não suporta reconhecimento de voz.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";      // inglês
+  recognition.continuous = false;  // uma frase por vez
+  recognition.interimResults = false;
+
+  // 2️⃣ Quando o usuário falar
+  recognition.onresult = function (event) {
+    const textoFalado = event.results[0][0].transcript;
+    console.log("🎤 Usuário falou:", textoFalado);
+
+    // MOSTRA NA TELA (provisório)
+    alert("Você disse: " + textoFalado);
+  };
+
+  // 3️⃣ Erro
+  recognition.onerror = function (event) {
+    console.error("Erro no microfone:", event.error);
+  };
+
+  // 4️⃣ Começa a ouvir (teste manual)
+  document.addEventListener("click", function () {
+    recognition.start();
+    console.log("🎧 Ouvindo...");
+  });
+
+});
+</script>
+
+
 
 
 
