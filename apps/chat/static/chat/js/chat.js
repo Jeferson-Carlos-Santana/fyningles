@@ -15,7 +15,7 @@ function playWhenReady(file, tries = 30) {
 }
 
 
-document.addEventListener("DOMContentLoaded", function () {
+// document.addEventListener("DOMContentLoaded", function () {
   // ===== SPEECH =====
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -91,5 +91,5 @@ document.addEventListener("DOMContentLoaded", function () {
     mostrarSistema();
   };
 
-});
+// });
 
