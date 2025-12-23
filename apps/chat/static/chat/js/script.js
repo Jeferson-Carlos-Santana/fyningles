@@ -1,13 +1,13 @@
 // ABRE E FECHA O MENU LATERAL
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
 
-    const toggle = document.querySelector(".menu-toggle");
-    const sidebar = document.querySelector(".sidebar");
+//     const toggle = document.querySelector(".menu-toggle");
+//     const sidebar = document.querySelector(".sidebar");
 
-    toggle.addEventListener("click", () => {
-        sidebar.classList.toggle("collapsed");
-    });
-});
+//     toggle.addEventListener("click", () => {
+//         sidebar.classList.toggle("collapsed");
+//     });
+// });
 // FIM ABRE E FECHA O MENU LATERAL
 
 // BUSCA LICOES NO MENU LATERAL
