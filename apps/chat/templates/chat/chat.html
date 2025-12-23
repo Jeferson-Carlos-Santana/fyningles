@@ -79,7 +79,7 @@
   🔊 Repeti / Próxima
 </button>
 
-<audio id="player"></audio>
+
 
 
 
@@ -105,46 +105,26 @@
 
 
 
-    <script>
+
+<script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  const msgs = document.querySelectorAll(".chat-message");
+  const msgs = Array.from(document.querySelectorAll(".chat-message"));
   const btn = document.getElementById("btn-next");
-  const player = document.getElementById("player");
 
   let index = 0;
 
-  if (!btn || !player || msgs.length === 0) {
-    console.error("Elementos não encontrados");
-    return;
-  }
-
-  // esconde todas no início
+  // ESCONDE TODAS
   msgs.forEach(m => m.style.display = "none");
 
-  btn.addEventListener("click", () => {
-
-    // acabou
-    if (index >= msgs.length) {
-      btn.textContent = "✔️ Fim";
-      btn.disabled = true;
-      return;
-    }
-
-    // 🔑 pega a frase atual E JÁ AVANÇA
+  function tocarAtual() {
     const msg = msgs[index];
-    const lineId = msg.dataset.id;
-    index++; // <<< ISSO GARANTE PRÓXIMA FRASE
+    if (!msg) return;
 
-    // mostra a frase correta
+    const lineId = msg.dataset.id;
+
     msg.style.display = "block";
 
-    // força reset do player (evita repetir o mesmo áudio)
-    player.pause();
-    player.src = "";
-    player.load();
-
-    // gera áudio dessa frase
     fetch("/tts/line/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -153,17 +133,30 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(r => r.json())
     .then(data => {
       if (data.file) {
-        // cache-buster pra nunca reaproveitar áudio
-        player.src = "/media/cache/" + data.file + "?t=" + Date.now();
-        player.play().catch(() => {});
+        new Audio("/media/cache/" + data.file + "?t=" + Date.now()).play();
       }
-    })
-    .catch(err => console.error(err));
+    });
+  }
 
+  // 👉 PRIMEIRA FRASE AUTOMÁTICA
+  tocarAtual();
+
+  btn.addEventListener("click", () => {
+    index++;
+
+    if (index >= msgs.length) {
+      btn.textContent = "✔️ Fim";
+      btn.disabled = true;
+      return;
+    }
+
+    tocarAtual();
   });
 
 });
 </script>
+
+
 
 
 
