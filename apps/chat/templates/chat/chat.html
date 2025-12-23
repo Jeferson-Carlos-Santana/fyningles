@@ -53,7 +53,7 @@
 
 
 
-                    <div class="chat-area">
+<div class="chat-area">
   {% for line in lines %}
     <div class="chat-message {{ line.role }}"
          data-id="{{ line.id }}"
@@ -67,18 +67,7 @@
 <button id="btn-mic" disabled>🎤 Falar</button>
 
 
-{% comment %} <audio id="player"></audio> {% endcomment %}
-
-
-
-
-
-
-
-
-
-
-                    
+                  
                     <div class="footer-cont">
                         {% comment %} <button class="theme-toggle" aria-label="Trocar tema">🌙 </button> {% endcomment %}
                          <i><strong>© 2026 - JPM-development - All rights reserved - Engineering & Technology</strong><i>                        
@@ -88,165 +77,7 @@
             </main>
         </div>
     <script src="{% static 'chat/js/script.js' %}"></script>
-
-    
-
-
-{% comment %} <script>
-document.addEventListener("DOMContentLoaded", function () {
-
-  var btn = document.getElementById("btn-next");
-  var msgs = document.querySelectorAll(".chat-message");
-  var index = 0;
-
-  // esconde todas
-  for (var i = 0; i < msgs.length; i++) {
-    msgs[i].style.display = "none";
-  }
-
-  btn.onclick = function () {
-
-    // acabou
-    if (index >= msgs.length) {
-      btn.innerText = "✔️ Fim";
-      btn.disabled = true;
-      return;
-    }
-
-    // pega a frase atual
-    var msg = msgs[index];
-    var lineId = msg.getAttribute("data-id");
-
-    // mostra a frase
-    msg.style.display = "block";
-
-    // chama o TTS
-    fetch("/tts/line/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ line_id: lineId })
-    })
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
-      if (d.file) {
-        var audio = new Audio("/media/cache/" + d.file + "?t=" + Date.now());
-        audio.play();
-      }
-    });
-
-    // AVANÇA UMA VEZ
-    index++;
-  };
-
-});
-</script> {% endcomment %}
-
-<script>
-function playWhenReady(file, tries = 30) {
-  const url = "/media/cache/" + file + "?t=" + Date.now();
-
-  fetch(url, { method: "HEAD" })
-    .then(r => {
-      if (!r.ok) throw new Error("not ready");
-      const a = new Audio(url);
-      a.play().catch(() => {
-        if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-      });
-    })
-    .catch(() => {
-      if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-    });
-}
-</script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-  // ===== SPEECH =====
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  // ===== ELEMENTOS =====
-  const msgs = document.querySelectorAll(".chat-message");
-  const btnStart = document.getElementById("btn-start");
-  const btnMic = document.getElementById("btn-mic");
-
-  let index = 0;
-
-  // esconde todas
-  msgs.forEach(m => m.style.display = "none");
-  btnMic.disabled = true;
-
-  // ===== MOSTRA FRASE + GERA AUDIO =====
-  function mostrarSistema() {
-    if (index >= msgs.length) {
-      btnMic.disabled = true;
-      btnStart.disabled = true;
-      return;
-    }
-
-    const msg = msgs[index];
-    const lineId = msg.dataset.id;
-
-    msg.style.display = "block";
-
-    // 🔊 TTS (GERA AUDIO NO SERVER)
-    fetch("/tts/line/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ line_id: lineId })
-    })
-    .then(r => r.json())
-    .then(d => {
-      if (d.file) {
-        playWhenReady(d.file);
-        new Audio("/media/cache/" + d.file + "?t=" + Date.now()).play();
-      }
-    });
-
-    btnMic.disabled = false;
-  }
-
-  // ===== BOTÃO INICIAR =====
-  btnStart.onclick = function () {
-    btnStart.disabled = true;
-    mostrarSistema();
-  };
-
-  // ===== BOTÃO MICROFONE =====
-  btnMic.onclick = function () {
-    btnMic.disabled = true;
-    recognition.start();
-  };
-
-  // ===== RESPOSTA DO USUÁRIO =====
-  recognition.onresult = function (e) {
-    const texto = e.results[0][0].transcript;
-
-    const user = document.createElement("div");
-    user.className = "chat-message user";
-    user.textContent = texto;
-
-    msgs[index].after(user);
-
-    index++;
-    mostrarSistema();
-  };
-
-});
-</script>
-
-
-
-
-
-
-
+    <script src="{% static 'chat/js/chat.js' %}"></script>
 
 </body>
 </html> 
