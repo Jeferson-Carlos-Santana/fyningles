@@ -14,5 +14,8 @@ urlpatterns = [
     path("dictionary/delete/", dictionary_delete, name="dictionary_delete"),    
     path("tts/", tts, name="tts"),
     path("tts/line/", tts_line, name="tts_line"),
+    
+
+   
 
 ]
