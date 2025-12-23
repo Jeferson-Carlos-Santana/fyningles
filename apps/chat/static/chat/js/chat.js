@@ -1,96 +1,102 @@
-function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
-  // const url = "/media/cache/" + file + "?t=" + Date.now();
-  const url = MEDIA_URL + "cache/" + file + "?t=" + Date.now();
-  fetch(url, { method: "HEAD" })
-    .then(r => {
-      if (!r.ok) throw new Error("not ready");
-      const a = new Audio(url);
-      a.play().catch(() => {
-        if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-      });
-    })
-    .catch(() => {
-      if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-    });
-}
-
-
 document.addEventListener("DOMContentLoaded", function () {
-  // ===== SPEECH =====
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  // ===== ELEMENTOS =====
-  const msgs = document.querySelectorAll(".chat-message");
-  const btnStart = document.getElementById("btn-start");
-  const btnMic = document.getElementById("btn-mic");
-
-  let index = 0;
-
-  // esconde todas
-  msgs.forEach(m => m.style.display = "none");
-  btnMic.disabled = true;
-
-  // ===== MOSTRA FRASE + GERA AUDIO =====
-  function mostrarSistema() {
-    if (index >= msgs.length) {
-      btnMic.disabled = true;
-      btnStart.disabled = true;
-      return;
+    // ===== SPEECH RECOGNITION =====
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert("Seu navegador não suporta reconhecimento de voz.");
+        return;
     }
 
-    const msg = msgs[index];
-    const lineId = msg.dataset.id;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
 
-    msg.style.display = "block";
+    // ===== ELEMENTOS DO DOM =====
+    const chatMessages = document.querySelectorAll(".chat-message");
+    const btnStart = document.getElementById("btn-start");
+    const btnMic = document.getElementById("btn-mic");
 
-    // TTS (GERA AUDIO NO SERVER)
-    fetch("/tts/line/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ line_id: lineId })
-    })
-    .then(r => r.json())
-    .then(d => {
-      if (d.file) {
-        playWhenReady(d.file);
-        // new Audio("/media/cache/" + d.file + "?t=" + Date.now()).play();
-        new Audio(MEDIA_URL + "cache/" + d.file + "?t=" + Date.now()).play();
-      }
-    });
+    let currentIndex = 0;
 
-    btnMic.disabled = false;
-  }
-
-  // ===== BOTÃO INICIAR =====
-  btnStart.onclick = function () {
-    btnStart.disabled = true;
-    mostrarSistema();
-  };
-
-  // ===== BOTÃO MICROFONE =====
-  btnMic.onclick = function () {
+    // Esconde todas as mensagens no início
+    chatMessages.forEach(msg => msg.style.display = "none");
     btnMic.disabled = true;
-    recognition.start();
-  };
 
-  // ===== RESPOSTA DO USUÁRIO =====
-  recognition.onresult = function (e) {
-    const texto = e.results[0][0].transcript;
+    // Função que mostra a próxima frase e gera áudio
+    function showNextSystemMessage() {
+        if (currentIndex >= chatMessages.length) {
+            btnMic.disabled = true;
+            btnStart.disabled = true;
+            alert("Lição concluída!");
+            return;
+        }
 
-    const user = document.createElement("div");
-    user.className = "chat-message user";
-    user.textContent = texto;
+        const currentMsg = chatMessages[currentIndex];
+        const lineId = currentMsg.dataset.id;
 
-    msgs[index].after(user);
+        currentMsg.style.display = "block";
 
-    index++;
-    mostrarSistema();
-  };
+        // Gera TTS no servidor
+        fetch("/tts/line/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ line_id: lineId })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.file) {
+                playWhenReady(data.file);
+            } else {
+                console.error("Erro ao gerar áudio:", data);
+            }
+        })
+        .catch(err => console.error("Erro no fetch TTS:", err));
 
+        btnMic.disabled = false;
+    }
+
+    // Função para tentar tocar áudio quando estiver pronto
+    function playWhenReady(file, tries = 30) {
+        const url = "/media/cache/" + file + "?t=" + Date.now();
+        fetch(url, { method: "HEAD" })
+            .then(r => {
+                if (!r.ok) throw new Error("Arquivo ainda não pronto");
+                const audio = new Audio(url);
+                audio.play().catch(() => {
+                    if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+                });
+            })
+            .catch(() => {
+                if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+            });
+    }
+
+    // ===== EVENTOS =====
+    btnStart.onclick = function () {
+        btnStart.disabled = true;
+        showNextSystemMessage();
+    };
+
+    btnMic.onclick = function () {
+        btnMic.disabled = true;
+        recognition.start();
+    };
+
+    recognition.onresult = function (event) {
+        const spokenText = event.results[0][0].transcript;
+        
+        // Mostra o que o usuário falou
+        const userMessage = document.createElement("div");
+        userMessage.className = "chat-message user";
+        userMessage.textContent = spokenText;
+        chatMessages[currentIndex].after(userMessage);
+
+        currentIndex++;
+        showNextSystemMessage();
+    };
+
+    recognition.onerror = function (event) {
+        console.error("Erro no reconhecimento de voz:", event.error);
+        btnMic.disabled = false;
+    };
 });
-
