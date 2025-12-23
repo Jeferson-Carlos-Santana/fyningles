@@ -62,8 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  
-});
+
+
 // FIM ABRE E FECHA O MENU LATERAL
 
 // BUSCA LICOES NO MENU LATERAL
@@ -114,3 +114,4 @@ searchInput.addEventListener("input", () => {
 
 
 
+});
