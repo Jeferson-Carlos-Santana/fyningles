@@ -1,5 +1,4 @@
-// GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
-function playWhenReady(file, tries = 30) {
+function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
   const url = "/media/cache/" + file + "?t=" + Date.now();
   fetch(url, { method: "HEAD" })
     .then(r => {
