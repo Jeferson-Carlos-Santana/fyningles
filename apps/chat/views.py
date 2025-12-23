@@ -9,25 +9,52 @@ import requests, json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Chat
 
+import hashlib
+import os
+import json
+import requests
+from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 @csrf_exempt
 def tts(request):
     data = json.loads(request.body)
-    text = data.get("text")
+    text = data.get("text", "").strip()
 
+    if not text:
+        return JsonResponse({"error": "no text"}, status=400)
+
+    # 🔑 nome fixo baseado no TEXTO (cache)
+    filename = hashlib.md5(text.encode("utf-8")).hexdigest() + ".mp3"
+    cache_dir = os.path.join(settings.MEDIA_ROOT, "cache")
+    cache_path = os.path.join(cache_dir, filename)
+
+    # garante que a pasta existe
+    os.makedirs(cache_dir, exist_ok=True)
+
+    # ✅ SE JÁ EXISTE → NÃO GERA DE NOVO
+    if os.path.exists(cache_path):
+        return JsonResponse({
+            "file": filename,
+            "cached": True
+        })
+
+    # ❌ SE NÃO EXISTE → CHAMA O TTS (Python 3.10)
     r = requests.post(
         "http://127.0.0.1:9000",
-        json={"text": text},
+        json={"text": text, "filename": filename},
         timeout=20
     )
-    return JsonResponse(r.json())
+
+    return JsonResponse({
+        "file": filename,
+        "cached": False
+    })
 
 
 def index(request):
     return render(request, "chat/index.html")
-
-
-
-
 
 
 def chat(request, lesson_id):
