@@ -9,48 +9,17 @@ import requests, json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Chat
 
-import hashlib
-import os
-import json
-import requests
-from django.conf import settings
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
 @csrf_exempt
 def tts(request):
     data = json.loads(request.body)
-    text = data.get("text", "").strip()
+    text = data.get("text")
 
-    if not text:
-        return JsonResponse({"error": "no text"}, status=400)
-
-    # 🔑 nome fixo baseado no TEXTO (cache)
-    filename = hashlib.md5(text.encode("utf-8")).hexdigest() + ".mp3"
-    cache_dir = os.path.join(settings.MEDIA_ROOT, "cache")
-    cache_path = os.path.join(cache_dir, filename)
-
-    # garante que a pasta existe
-    os.makedirs(cache_dir, exist_ok=True)
-
-    # ✅ SE JÁ EXISTE → NÃO GERA DE NOVO
-    if os.path.exists(cache_path):
-        return JsonResponse({
-            "file": filename,
-            "cached": True
-        })
-
-    # ❌ SE NÃO EXISTE → CHAMA O TTS (Python 3.10)
     r = requests.post(
         "http://127.0.0.1:9000",
-        json={"text": text, "filename": filename},
+        json={"text": text},
         timeout=20
     )
-
-    return JsonResponse({
-        "file": filename,
-        "cached": False
-    })
+    return JsonResponse(r.json())
 
 
 def index(request):
@@ -69,28 +38,28 @@ def chat(request, lesson_id):
         "lines": lines,
     })
     
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import Chat
-import json, requests
+# from django.http import JsonResponse
+# from django.views.decorators.csrf import csrf_exempt
+# from .models import Chat
+# import json, requests
 
-@csrf_exempt
-def tts_line(request):
-    data = json.loads(request.body)
-    line_id = data.get("line_id")
+# @csrf_exempt
+# def tts_line(request):
+#     data = json.loads(request.body)
+#     line_id = data.get("line_id")
 
-    line = Chat.objects.get(id=line_id)
-    text = line.expected_en  # texto limpo enviado ao TTS externo
+#     line = Chat.objects.get(id=line_id)
+#     text = line.expected_en  # texto limpo enviado ao TTS externo
 
-    # CHAMADA AO SERVIÇO TTS EXTERNO
-    r = requests.post(
-        "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
-        json={"text": text},
-        timeout=20
-    )
+#     # CHAMADA AO SERVIÇO TTS EXTERNO
+#     r = requests.post(
+#         "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
+#         json={"text": text},
+#         timeout=20
+#     )
 
-    # o TTS retorna: {"file": "uuid.mp3"}
-    return JsonResponse(r.json())
+#     # o TTS retorna: {"file": "uuid.mp3"}
+#     return JsonResponse(r.json())
 
 
 
