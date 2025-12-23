@@ -99,11 +99,54 @@
                 </div>
             </main>
         </div>
-    <script src="{% static 'chat/js/script.js' %}"></script>
+    {% comment %} <script src="{% static 'chat/js/script.js' %}"></script> {% endcomment %}
 
     
 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  var msgs = document.querySelectorAll(".chat-message");
+  var btn  = document.getElementById("btn-next");
+
+  var index = 0;
+
+  for (var i = 0; i < msgs.length; i++) {
+    msgs[i].style.display = "none";
+  }
+
+  btn.onclick = function () {
+
+    if (index >= msgs.length) {
+      btn.innerText = "✔️ Fim";
+      btn.disabled = true;
+      return;
+    }
+
+    var msg = msgs[index];
+    var lineId = msg.getAttribute("data-id");
+
+    msg.style.display = "block";
+
+    fetch("/tts/line/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ line_id: lineId })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d.file) {
+        var audio = new Audio("/media/cache/" + d.file + "?t=" + Date.now());
+        audio.play();
+      }
+    });
+
+    index++;
+  };
+
+});
+</script>
 
 
 
