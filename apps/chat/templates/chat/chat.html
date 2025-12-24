@@ -124,13 +124,13 @@
   // TOCA OS AUDIOS UM POR VEZ
   // (SEM FILA, SEM LISTA)
   // =========================
-function falarComoAntigo(files) {
-  filaVoz = filaVoz.then(async () => {
-    for (const file of files) {
-      await tocarUm(file);
-    }
-  }).catch(() => {});
-}
+  function falarComoAntigo(files) {
+    filaVoz = filaVoz.then(async () => {
+      for (const file of files) {
+        await tocarUm(file);
+      }
+    }).catch(() => {});
+  }
 
 
   document.addEventListener("DOMContentLoaded", function () {
