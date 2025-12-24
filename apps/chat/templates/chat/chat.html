@@ -79,54 +79,95 @@
         <script src="{% static 'chat/js/script.js' %}"></script> 
 
         <script>
-  // ⚠️ MANTIDO, mas NÃO USADO para áudio (cache-buster quebra MP3)
-  function playWhenReady(file, tries = 30) { 
-    const url = "/media/cache/" + file;
-    fetch(url, { method: "HEAD" })
-      .then(r => {
-        if (!r.ok) throw new Error("not ready");
-        const a = new Audio(url);
-        a.play().catch(() => {
-          if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-        });
-      })
-      .catch(() => {
-        if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-      });
-  }
+          // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
+          function playWhenReady(file, tries = 30) { 
+            const url = "/media/cache/" + file + "?t=" + Date.now();
+            fetch(url, { method: "HEAD" })
+              .then(r => {
+                if (!r.ok) throw new Error("not ready");
+                const a = new Audio(url);
+                a.play().catch(() => {
+                  if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+                });
+              })
+              .catch(() => {
+                if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+              });
+          }
+
+          function limparHTML(html) {
+            return html.replace(/<[^>]+>/g, "");
+          }
+          
+         
+
+          async function falarLista(files) {
+            console.log("FILES:", files);
+            for (const file of files) {
+              console.log("TOCANDO:", file);
+              await new Promise(resolve => {
+                const a = new Audio("/media/cache/" + file);
+                a.onended = () => {
+                  console.log("TERMINOU:", file);
+                  resolve();
+                };
+                a.play().catch(e => console.log("PLAY FALHOU:", e));
+              });
+            }
+          }
+
+        </script>
+
+
+         <script>
+  // =========================
+  // AUDIO – PLAYER ÚNICO
+  // =========================
+  const audioPlayer = new Audio();
+  let filaAudios = [];
+  let tocando = false;
 
   function limparHTML(html) {
     return html.replace(/<[^>]+>/g, "");
   }
 
-  // ✅ SEQUÊNCIA CORRETA, SEM ?t=
-  async function falarLista(files) {
+  function falarLista(files) {
     console.log("FILES:", files);
-
-    for (const file of files) {
-      console.log("TOCANDO:", file);
-
-      await new Promise(resolve => {
-        const a = new Audio("/media/cache/" + file);
-
-        a.onended = () => {
-          console.log("TERMINOU:", file);
-          resolve();
-        };
-
-        a.onerror = (e) => {
-          console.log("ERRO AUDIO:", file, e);
-          resolve(); // não trava a sequência
-        };
-
-        a.play().catch(e => {
-          console.log("PLAY FALHOU:", e);
-          resolve();
-        });
-      });
-    }
+    filaAudios.push(...files);
+    if (!tocando) tocarProximo();
   }
 
+  function tocarProximo() {
+    if (!filaAudios.length) {
+      tocando = false;
+      return;
+    }
+
+    tocando = true;
+    const file = filaAudios.shift();
+
+    console.log("TOCANDO:", file);
+
+    audioPlayer.src = "/media/cache/" + file;
+
+    audioPlayer.onended = () => {
+      tocarProximo();
+    };
+
+    audioPlayer.onerror = (e) => {
+      console.log("ERRO AUDIO:", file, e);
+      tocarProximo(); // não trava a sequência
+    };
+
+    audioPlayer.play().catch(e => {
+      console.log("PLAY FALHOU:", e);
+      tocarProximo();
+    });
+  }
+
+  // =========================
+  // APP
+  // =========================
   document.addEventListener("DOMContentLoaded", function () {
     // ===== SPEECH =====
     const SpeechRecognition =
@@ -147,7 +188,9 @@
     msgs.forEach(m => m.style.display = "none");
     btnMic.disabled = true;
 
-    // ===== MOSTRA FRASE + GERA AUDIO =====
+    // =========================
+    // MOSTRA FRASE + AUDIO
+    // =========================
     function mostrarSistema() {
       if (index >= msgs.length) {
         btnMic.disabled = true;
@@ -161,7 +204,7 @@
       msg.innerHTML = limparHTML(msg.innerHTML);
       msg.style.display = "block";
 
-      // TTS (GERA OU REUSA AUDIO NO SERVER)
+      // TTS (gera ou reutiliza)
       fetch("/tts/line/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -170,26 +213,32 @@
       .then(r => r.json())
       .then(d => {
         if (d.files && d.files.length) {
-          falarLista(d.files); // ✅ sequência correta
+          falarLista(d.files); // ✅ fila única
         }
       });
 
       btnMic.disabled = false;
     }
 
-    // ===== BOTÃO INICIAR =====
+    // =========================
+    // BOTÃO INICIAR
+    // =========================
     btnStart.onclick = function () {
       btnStart.disabled = true;
       mostrarSistema();
     };
 
-    // ===== BOTÃO MICROFONE =====
+    // =========================
+    // BOTÃO MICROFONE
+    // =========================
     btnMic.onclick = function () {
       btnMic.disabled = true;
       recognition.start();
     };
 
-    // ===== RESPOSTA DO USUÁRIO =====
+    // =========================
+    // RESPOSTA DO USUÁRIO
+    // =========================
     recognition.onresult = function (e) {
       const texto = e.results[0][0].transcript;
 
