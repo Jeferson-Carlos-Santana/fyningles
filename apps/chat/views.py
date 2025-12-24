@@ -11,17 +11,7 @@ from .models import Chat
 import re
 
 
-@csrf_exempt
-def tts(request):
-    data = json.loads(request.body)
-    text = data.get("text")
 
-    r = requests.post(
-        "http://127.0.0.1:9000",
-        json={"text": text},
-        timeout=20
-    )
-    return JsonResponse(r.json())
 
 
 def index(request):
@@ -43,6 +33,34 @@ def chat(request, lesson_id):
 def limpar_html(text):
     return re.sub(r"<[^>]+>", "", text)
 
+# @csrf_exempt
+# def tts_line(request):
+#     data = json.loads(request.body)
+#     line_id = data.get("line_id")
+
+#     line = Chat.objects.get(id=line_id)
+#     text = line.content_pt
+#     text = limpar_html(text)
+
+#     print("DEBUG content_pt:", text)  # 👈 SEMPRE imprime
+
+#     try:
+#         r = requests.post(
+#             "http://127.0.0.1:9000",
+#             json={"text": text},
+#             timeout=5
+#         )
+#         return JsonResponse(r.json())
+
+#     except requests.exceptions.ConnectionError as e:
+#         print("DEBUG TTS OFFLINE")  # 👈 você verá isso
+#         return JsonResponse({
+#             "debug": "TTS offline (ambiente local)",
+#             "text": text
+#         }, status=200)
+
+
+
 @csrf_exempt
 def tts_line(request):
     data = json.loads(request.body)
@@ -52,42 +70,28 @@ def tts_line(request):
     text = line.content_pt
     text = limpar_html(text)
 
-    print("DEBUG content_pt:", text)  # 👈 SEMPRE imprime
+    # CHAMADA AO SERVIÇO TTS EXTERNO
+    r = requests.post(
+        "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
+        json={"text": text},
+        timeout=20
+    )
 
-    try:
-        r = requests.post(
-            "http://127.0.0.1:9000",
-            json={"text": text},
-            timeout=5
-        )
-        return JsonResponse(r.json())
-
-    except requests.exceptions.ConnectionError as e:
-        print("DEBUG TTS OFFLINE")  # 👈 você verá isso
-        return JsonResponse({
-            "debug": "TTS offline (ambiente local)",
-            "text": text
-        }, status=200)
+    # o TTS retorna: {"file": "uuid.mp3"}
+    return JsonResponse(r.json())
 
 
+@csrf_exempt
+def tts(request):
+    data = json.loads(request.body)
+    text = data.get("text")
 
-# @csrf_exempt
-# def tts_line(request):
-#     data = json.loads(request.body)
-#     line_id = data.get("line_id")
-
-#     line = Chat.objects.get(id=line_id)
-#     text = line.expected_en  # texto limpo enviado ao TTS externo
-
-#     # CHAMADA AO SERVIÇO TTS EXTERNO
-#     r = requests.post(
-#         "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
-#         json={"text": text},
-#         timeout=20
-#     )
-
-#     # o TTS retorna: {"file": "uuid.mp3"}
-#     return JsonResponse(r.json())
+    r = requests.post(
+        "http://127.0.0.1:9000",
+        json={"text": text},
+        timeout=20
+    )
+    return JsonResponse(r.json())
 
 def lessons(request):
     return render(request, "chat/lessons.html")
