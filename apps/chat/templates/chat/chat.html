@@ -99,6 +99,15 @@
             return html.replace(/<[^>]+>/g, "");
           }
 
+          function tocarSequencia(files, i = 0) {
+            if (i >= files.length) return;
+
+            const url = "/media/cache/" + files[i] + "?t=" + Date.now();
+            const audio = new Audio(url);
+
+            audio.onended = () => tocarSequencia(files, i + 1);
+            audio.play();
+          }
 
           document.addEventListener("DOMContentLoaded", function () {
             // ===== SPEECH =====
@@ -143,11 +152,11 @@
               })
               .then(r => r.json())
               .then(d => {
-                if (d.file) {
-                  playWhenReady(d.file);
-                  new Audio("/media/cache/" + d.file + "?t=" + Date.now()).play();
+                if (d.files && d.files.length) {
+                  tocarSequencia(d.files);
                 }
               });
+
 
               btnMic.disabled = false;
             }
