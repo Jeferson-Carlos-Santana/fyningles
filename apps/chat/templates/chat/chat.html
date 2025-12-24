@@ -99,12 +99,18 @@
             return html.replace(/<[^>]+>/g, "");
           }
           
-          function tocarSequencia(files, i = 0) {
-            if (i >= files.length) return;
-            const a = new Audio("/media/cache/" + files[i] + "?t=" + Date.now());
-            a.onended = () => tocarSequencia(files, i + 1);
-            a.play();
+         
+
+          async function falarLista(files) {
+            for (const file of files) {
+              await new Promise(resolve => {
+                const a = new Audio("/media/cache/" + file + "?t=" + Date.now());
+                a.onended = resolve;
+                a.play();
+              });
+            }
           }
+
 
 
           document.addEventListener("DOMContentLoaded", function () {
@@ -151,9 +157,10 @@
               .then(r => r.json())
               .then(d => {
                 if (d.files && d.files.length) {
-                  tocarSequencia(d.files);
+                  falarLista(d.files); // ✅
                 }
               });
+
               btnMic.disabled = false;
             }
 
