@@ -198,6 +198,11 @@
         return;
       }
 
+      // 🔥 garante que a nova frase pode falar
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0;
+
+
       const msg = msgs[index];
       const lineId = msg.dataset.id;
 
