@@ -79,6 +79,8 @@
         <script src="{% static 'chat/js/script.js' %}"></script> 
 
         <script>
+          let audioPlayer = new Audio();
+
           // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
           function playWhenReady(file, tries = 30) { 
             const url = "/media/cache/" + file + "?t=" + Date.now();
@@ -102,12 +104,11 @@
           function tocarSequencia(files, i = 0) {
             if (i >= files.length) return;
 
-            const url = "/media/cache/" + files[i] + "?t=" + Date.now();
-            const audio = new Audio(url);
-
-            audio.onended = () => tocarSequencia(files, i + 1);
-            audio.play();
+            audioPlayer.src = "/media/cache/" + files[i] + "?t=" + Date.now();
+            audioPlayer.onended = () => tocarSequencia(files, i + 1);
+            audioPlayer.play();
           }
+
 
           document.addEventListener("DOMContentLoaded", function () {
             // ===== SPEECH =====
@@ -163,9 +164,29 @@
 
             // ===== BOTÃO INICIAR =====
             btnStart.onclick = function () {
-              btnStart.disabled = true;
-              mostrarSistema();
-            };
+            btnStart.disabled = true;
+
+            const msg = msgs[index];
+            const lineId = msg.dataset.id;
+
+            msg.innerHTML = limparHTML(msg.innerHTML);
+            msg.style.display = "block";
+
+            fetch("/tts/line/", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ line_id: lineId })
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (d.files && d.files.length) {
+                tocarSequencia(d.files); // ✅ agora toca
+              }
+            });
+
+            btnMic.disabled = false;
+          };
+
 
             // ===== BOTÃO MICROFONE =====
             btnMic.onclick = function () {
