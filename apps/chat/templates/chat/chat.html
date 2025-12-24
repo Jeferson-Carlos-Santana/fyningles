@@ -144,21 +144,7 @@
               msg.innerHTML = limparHTML(msg.innerHTML);
 
               msg.style.display = "block";
-
-              // TTS (GERA AUDIO NO SERVER)
-              fetch("/tts/line/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ line_id: lineId })
-              })
-              .then(r => r.json())
-              .then(d => {
-                if (d.files && d.files.length) {
-                  tocarSequencia(d.files);
-                }
-              });
-
-
+              
               btnMic.disabled = false;
             }
 
