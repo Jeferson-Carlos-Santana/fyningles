@@ -43,20 +43,18 @@ def tts_line(request):
     line_id = data.get("line_id")
 
     line = Chat.objects.get(id=line_id)
-    text2 = line.content_pt
-    text1 = limpar_html(text2)
-    text = quebrar_frases(text1)
+    frases = quebrar_frases(limpar_html(line.content_pt))
 
-    # CHAMADA AO SERVIÇO TTS EXTERNO
-    r = requests.post(
-        "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
-        json={"text": text},
-        timeout=20
-    )
+    files = []
+    for frase in frases:
+        r = requests.post(
+            "http://127.0.0.1:9000",
+            json={"text": frase},
+            timeout=20
+        )
+        files.append(r.json()["file"])
 
-    # o TTS retorna: {"file": "uuid.mp3"}
-    return JsonResponse(r.json())
-
+    return JsonResponse({"files": files})
 
 @csrf_exempt
 def tts(request):
