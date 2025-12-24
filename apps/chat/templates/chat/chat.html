@@ -58,7 +58,7 @@
     <div class="chat-message {{ line.role }}"
          data-id="{{ line.id }}"
          style="display:none;">
-      {{ line.expected_en }}
+      {{ line.content_pt|striptags }}
     </div>
   {% endfor %}
 </div>
@@ -79,7 +79,8 @@
         <script src="{% static 'chat/js/script.js' %}"></script> 
 
         <script>
-          function playWhenReady(file, tries = 30) { // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
+          // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
+          function playWhenReady(file, tries = 30) { 
             const url = "/media/cache/" + file + "?t=" + Date.now();
             fetch(url, { method: "HEAD" })
               .then(r => {
@@ -93,6 +94,11 @@
                 if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
               });
           }
+
+          function limparHTML(html) {
+            return html.replace(/<[^>]+>/g, "");
+          }
+
 
           document.addEventListener("DOMContentLoaded", function () {
             // ===== SPEECH =====
@@ -124,6 +130,8 @@
 
               const msg = msgs[index];
               const lineId = msg.dataset.id;
+
+              msg.innerHTML = limparHTML(msg.innerHTML);
 
               msg.style.display = "block";
 

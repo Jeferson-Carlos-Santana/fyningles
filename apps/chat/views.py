@@ -8,6 +8,8 @@ from langdetect import detect, LangDetectException
 import requests, json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Chat
+import re
+
 
 @csrf_exempt
 def tts(request):
@@ -36,12 +38,10 @@ def chat(request, lesson_id):
     return render(request, "chat/chat.html", {
         "lesson_id": lesson_id,
         "lines": lines,
-    })
-    
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import Chat
-import json, requests
+    })    
+
+def limpar_html(text):
+    return re.sub(r"<[^>]+>", "", text)
 
 @csrf_exempt
 def tts_line(request):
@@ -49,17 +49,45 @@ def tts_line(request):
     line_id = data.get("line_id")
 
     line = Chat.objects.get(id=line_id)
-    text = line.expected_en  # texto limpo enviado ao TTS externo
+    text = line.content_pt
+    text = limpar_html(text)
 
-    # CHAMADA AO SERVIÇO TTS EXTERNO
-    r = requests.post(
-        "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
-        json={"text": text},
-        timeout=20
-    )
+    print("DEBUG content_pt:", text)  # 👈 SEMPRE imprime
 
-    # o TTS retorna: {"file": "uuid.mp3"}
-    return JsonResponse(r.json())
+    try:
+        r = requests.post(
+            "http://127.0.0.1:9000",
+            json={"text": text},
+            timeout=5
+        )
+        return JsonResponse(r.json())
+
+    except requests.exceptions.ConnectionError as e:
+        print("DEBUG TTS OFFLINE")  # 👈 você verá isso
+        return JsonResponse({
+            "debug": "TTS offline (ambiente local)",
+            "text": text
+        }, status=200)
+
+
+
+# @csrf_exempt
+# def tts_line(request):
+#     data = json.loads(request.body)
+#     line_id = data.get("line_id")
+
+#     line = Chat.objects.get(id=line_id)
+#     text = line.expected_en  # texto limpo enviado ao TTS externo
+
+#     # CHAMADA AO SERVIÇO TTS EXTERNO
+#     r = requests.post(
+#         "http://127.0.0.1:9000",   # endpoint do TTS (outro projeto)
+#         json={"text": text},
+#         timeout=20
+#     )
+
+#     # o TTS retorna: {"file": "uuid.mp3"}
+#     return JsonResponse(r.json())
 
 def lessons(request):
     return render(request, "chat/lessons.html")
@@ -159,6 +187,7 @@ def dictionary_add(request):
 
         messages.success(request, "Salvo com sucesso em todos os idiomas!")
         return redirect(f"/dictionary/?lang={lang}")
+
 
     # 3) ES/FR/IT: só salva, não traduz
     messages.success(request, "Salvo!")
