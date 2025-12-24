@@ -198,9 +198,17 @@
         return;
       }
 
-      // 🔥 garante que a nova frase pode falar
-      audioPlayer.pause();
-      audioPlayer.currentTime = 0;
+      if (index >= msgs.length) {
+    // RESET CORRETO (igual ao sistema antigo)
+    filaAudios = [];
+    tocando = false;
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0;
+
+    btnMic.disabled = true;
+    btnStart.disabled = true;
+    return;
+  }
 
 
       const msg = msgs[index];
@@ -228,22 +236,11 @@
     // =========================
     // BOTÃO INICIAR
     // =========================
-    btnStart.onclick = function () {
+btnStart.onclick = function () {
   btnStart.disabled = true;
-
-  // 🔥 RESET TOTAL DA LIÇÃO (isso faltava)
-  index = 0;                               // <- CRÍTICO
-  msgs.forEach(m => m.style.display = "none");
-  btnMic.disabled = true;
-
-  // reset do áudio (mantém)
-  filaAudios = [];
-  tocando = false;
-  audioPlayer.pause();
-  audioPlayer.currentTime = 0;
-
-  mostrarSistema();
+  mostrarSistema(); // só isso
 };
+
 
 
     // =========================
