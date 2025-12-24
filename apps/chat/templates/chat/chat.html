@@ -101,20 +101,21 @@
           
          
 
-          async function falarLista(files) {
-            console.log("FILES:", files);
-            for (const file of files) {
-              console.log("TOCANDO:", file);
-              await new Promise(resolve => {
-                const a = new Audio("/media/cache/" + file);
-                a.onended = () => {
-                  console.log("TERMINOU:", file);
-                  resolve();
-                };
-                a.play().catch(e => console.log("PLAY FALHOU:", e));
-              });
-            }
-          }
+         async function falarLista(files) {
+  console.log("FILES:", files);
+  for (const file of files) {
+    console.log("TOCANDO:", file);
+    await new Promise(resolve => {
+      const a = new Audio("/media/cache/" + file);
+      a.onended = () => {
+        console.log("TERMINOU:", file);
+        resolve();
+      };
+      a.play().catch(e => console.log("PLAY FALHOU:", e));
+    });
+  }
+}
+
 
 
 
