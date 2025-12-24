@@ -225,6 +225,11 @@
     // =========================
     btnStart.onclick = function () {
       btnStart.disabled = true;
+       // 🔥 RESET DE ÁUDIO (FALTAVA ISSO)
+  filaAudios = [];
+  tocando = false;
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
       mostrarSistema();
     };
 
