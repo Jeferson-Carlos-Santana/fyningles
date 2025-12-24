@@ -177,7 +177,7 @@
       .then(r => r.json())
       .then(d => {
         if (d.files && d.files.length) {
-          falarComoAntigo(d.files); // ✅ IGUAL AO ANTIGO
+          await falarComoAntigo(d.files); // 🔥 espera terminar
         }
       });
 
