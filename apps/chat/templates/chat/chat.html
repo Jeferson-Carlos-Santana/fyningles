@@ -124,13 +124,15 @@
   // TOCA OS AUDIOS UM POR VEZ
   // (SEM FILA, SEM LISTA)
   // =========================
-  function falarComoAntigo(files) {
-    filaVoz = filaVoz.then(async () => {
-      for (const file of files) {
-        await tocarUm(file);
-      }
-    }).catch(() => {});
-  }
+ let filaVoz = Promise.resolve();
+
+function falarComoAntigo(files) {
+  filaVoz = filaVoz.then(async () => {
+    for (const file of files) {
+      await tocarUm(file);
+    }
+  }).catch(() => {});
+}
 
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -156,10 +158,7 @@
     // =========================
     // MOSTRA FRASE + FALA
     // =========================
-async function mostrarSistema() {
-  // impede sobreposição (igual ao antigo)
-  if (tocando) return;
-
+    function mostrarSistema() {
   if (index >= msgs.length) {
     btnMic.disabled = true;
     btnStart.disabled = true;
@@ -172,30 +171,19 @@ async function mostrarSistema() {
   msg.innerHTML = limparHTML(msg.innerHTML);
   msg.style.display = "block";
 
-  btnMic.disabled = true; // 🔒 mic só depois da voz
-  tocando = true;
-
-  try {
-    // pede o TTS
-    const r = await fetch("/tts/line/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ line_id: lineId })
-    });
-
-    const d = await r.json();
-
-    // 🔊 VOZ PRIMEIRO (UM POR VEZ)
+  fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ line_id: lineId })
+  })
+  .then(r => r.json())
+  .then(d => {
     if (d.files && d.files.length) {
-      await falarComoAntigo(d.files); // ⏳ espera terminar
+      falarComoAntigo(d.files); // 🔊 voz serializada internamente
     }
+  });
 
-    // 🔓 AGORA libera o fluxo (igual ao antigo)
-    btnMic.disabled = false;
-
-  } finally {
-    tocando = false;
-  }
+  btnMic.disabled = false;
 }
 
 
