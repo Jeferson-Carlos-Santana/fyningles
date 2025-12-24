@@ -224,14 +224,22 @@
     // BOTÃO INICIAR
     // =========================
     btnStart.onclick = function () {
-      btnStart.disabled = true;
-       // 🔥 RESET DE ÁUDIO (FALTAVA ISSO)
+  btnStart.disabled = true;
+
+  // 🔥 RESET TOTAL DA LIÇÃO (isso faltava)
+  index = 0;                               // <- CRÍTICO
+  msgs.forEach(m => m.style.display = "none");
+  btnMic.disabled = true;
+
+  // reset do áudio (mantém)
   filaAudios = [];
   tocando = false;
   audioPlayer.pause();
   audioPlayer.currentTime = 0;
-      mostrarSistema();
-    };
+
+  mostrarSistema();
+};
+
 
     // =========================
     // BOTÃO MICROFONE
