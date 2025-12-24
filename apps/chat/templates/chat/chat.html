@@ -94,80 +94,44 @@
                 if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
               });
           }
-
-          function limparHTML(html) {
-            return html.replace(/<[^>]+>/g, "");
-          }
-          
-         
-
-          async function falarLista(files) {
-            console.log("FILES:", files);
-            for (const file of files) {
-              console.log("TOCANDO:", file);
-              await new Promise(resolve => {
-                const a = new Audio("/media/cache/" + file);
-                a.onended = () => {
-                  console.log("TERMINOU:", file);
-                  resolve();
-                };
-                a.play().catch(e => console.log("PLAY FALHOU:", e));
-              });
-            }
-          }
-
         </script>
-
-
-         <script>
+          <script>
   // =========================
   // AUDIO – PLAYER ÚNICO
   // =========================
   const audioPlayer = new Audio();
-  let filaAudios = [];
-  let tocando = false;
 
   function limparHTML(html) {
     return html.replace(/<[^>]+>/g, "");
   }
 
-  function falarLista(files) {
-    console.log("FILES:", files);
-    filaAudios.push(...files);
-    if (!tocando) tocarProximo();
-  }
+  // =========================
+  // TOCA UM ÚNICO AUDIO E ESPERA
+  // (IGUAL AO TTS ANTIGO)
+  // =========================
+  function tocarUm(file) {
+    return new Promise(resolve => {
+      audioPlayer.src = "/media/cache/" + file;
 
-  function tocarProximo() {
-    if (!filaAudios.length) {
-      tocando = false;
-      return;
-    }
+      audioPlayer.onended = () => resolve();
+      audioPlayer.onerror = () => resolve(); // não trava
 
-    tocando = true;
-    const file = filaAudios.shift();
-
-    console.log("TOCANDO:", file);
-
-    audioPlayer.src = "/media/cache/" + file;
-
-    audioPlayer.onended = () => {
-      tocarProximo();
-    };
-
-    audioPlayer.onerror = (e) => {
-      console.log("ERRO AUDIO:", file, e);
-      tocarProximo(); // não trava a sequência
-    };
-
-    audioPlayer.play().catch(e => {
-      console.log("PLAY FALHOU:", e);
-      tocarProximo();
+      audioPlayer.play().catch(() => resolve());
     });
   }
 
   // =========================
-  // APP
+  // TOCA OS AUDIOS UM POR VEZ
+  // (SEM FILA, SEM LISTA)
   // =========================
+  async function falarComoAntigo(files) {
+    console.log("FILES:", files);
+    for (const file of files) {
+      console.log("TOCANDO:", file);
+      await tocarUm(file); // 🔥 UM POR VEZ
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     // ===== SPEECH =====
     const SpeechRecognition =
@@ -189,7 +153,7 @@
     btnMic.disabled = true;
 
     // =========================
-    // MOSTRA FRASE + AUDIO
+    // MOSTRA FRASE + FALA
     // =========================
     function mostrarSistema() {
       if (index >= msgs.length) {
@@ -198,26 +162,13 @@
         return;
       }
 
-      if (index >= msgs.length) {
-    // RESET CORRETO (igual ao sistema antigo)
-    filaAudios = [];
-    tocando = false;
-    audioPlayer.pause();
-    audioPlayer.currentTime = 0;
-
-    btnMic.disabled = true;
-    btnStart.disabled = true;
-    return;
-  }
-
-
       const msg = msgs[index];
       const lineId = msg.dataset.id;
 
       msg.innerHTML = limparHTML(msg.innerHTML);
       msg.style.display = "block";
 
-      // TTS (gera ou reutiliza)
+      // TTS (gera ou reutiliza áudio)
       fetch("/tts/line/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -226,7 +177,7 @@
       .then(r => r.json())
       .then(d => {
         if (d.files && d.files.length) {
-          falarLista(d.files); // ✅ fila única
+          falarComoAntigo(d.files); // ✅ IGUAL AO ANTIGO
         }
       });
 
@@ -236,12 +187,12 @@
     // =========================
     // BOTÃO INICIAR
     // =========================
-btnStart.onclick = function () {
-  btnStart.disabled = true;
-  mostrarSistema(); // só isso
-};
-
-
+    btnStart.onclick = function () {
+      btnStart.disabled = true;
+      index = 0;
+      msgs.forEach(m => m.style.display = "none");
+      mostrarSistema();
+    };
 
     // =========================
     // BOTÃO MICROFONE
