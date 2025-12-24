@@ -124,19 +124,11 @@
   // TOCA OS AUDIOS UM POR VEZ
   // (SEM FILA, SEM LISTA)
   // =========================
-async function falarComoAntigo(files) {
-  falando = true;
-
-  try {
+  async function falarComoAntigo(files) {
     for (const file of files) {
-      await tocarUm(file); // 1 por vez
+      await tocarUm(file);
     }
-  } finally {
-    falando = false; // 🔥 SEMPRE libera
   }
-}
-
-
 
   document.addEventListener("DOMContentLoaded", function () {
     // ===== SPEECH =====
