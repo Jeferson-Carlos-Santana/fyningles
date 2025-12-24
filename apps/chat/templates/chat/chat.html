@@ -125,12 +125,16 @@
   // (SEM FILA, SEM LISTA)
   // =========================
   async function falarComoAntigo(files) {
-    console.log("FILES:", files);
+    if (falando) return;   // 🔒 evita sobreposição
+    falando = true;
+
     for (const file of files) {
-      console.log("TOCANDO:", file);
-      await tocarUm(file); // 🔥 UM POR VEZ
+      await tocarUm(file);
     }
+
+    falando = false;       // 🔓 libera próxima fala
   }
+
 
   document.addEventListener("DOMContentLoaded", function () {
     // ===== SPEECH =====
@@ -177,7 +181,7 @@
       .then(r => r.json())
       .then(d => {
         if (d.files && d.files.length) {
-          await falarComoAntigo(d.files); // 🔥 espera terminar
+          falarComoAntigo(d.files); // ✅ IGUAL AO ANTIGO
         }
       });
 
