@@ -124,16 +124,18 @@
   // TOCA OS AUDIOS UM POR VEZ
   // (SEM FILA, SEM LISTA)
   // =========================
-  async function falarComoAntigo(files) {
-    if (falando) return;   // 🔒 evita sobreposição
-    falando = true;
+async function falarComoAntigo(files) {
+  falando = true;
 
+  try {
     for (const file of files) {
-      await tocarUm(file);
+      await tocarUm(file); // 1 por vez
     }
-
-    falando = false;       // 🔓 libera próxima fala
+  } finally {
+    falando = false; // 🔥 SEMPRE libera
   }
+}
+
 
 
   document.addEventListener("DOMContentLoaded", function () {
