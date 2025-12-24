@@ -33,32 +33,8 @@ def chat(request, lesson_id):
 def limpar_html(text):
     return re.sub(r"<[^>]+>", "", text)
 
-# @csrf_exempt
-# def tts_line(request):
-#     data = json.loads(request.body)
-#     line_id = data.get("line_id")
-
-#     line = Chat.objects.get(id=line_id)
-#     text = line.content_pt
-#     text = limpar_html(text)
-
-#     print("DEBUG content_pt:", text)  # 👈 SEMPRE imprime
-
-#     try:
-#         r = requests.post(
-#             "http://127.0.0.1:9000",
-#             json={"text": text},
-#             timeout=5
-#         )
-#         return JsonResponse(r.json())
-
-#     except requests.exceptions.ConnectionError as e:
-#         print("DEBUG TTS OFFLINE")  # 👈 você verá isso
-#         return JsonResponse({
-#             "debug": "TTS offline (ambiente local)",
-#             "text": text
-#         }, status=200)
-
+def quebrar_frases(text):
+    return [f.strip() for f in re.split(r'[.:!?]', text) if f.strip()]
 
 
 @csrf_exempt
@@ -67,8 +43,9 @@ def tts_line(request):
     line_id = data.get("line_id")
 
     line = Chat.objects.get(id=line_id)
-    text = line.content_pt
-    text = limpar_html(text)
+    text2 = line.content_pt
+    text1 = limpar_html(text2)
+    text = quebrar_frases(text1)
 
     # CHAMADA AO SERVIÇO TTS EXTERNO
     r = requests.post(
