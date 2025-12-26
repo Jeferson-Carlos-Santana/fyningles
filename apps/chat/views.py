@@ -5,18 +5,15 @@ from deep_translator import GoogleTranslator
 from django.shortcuts import redirect
 from django.contrib import messages
 from langdetect import detect, LangDetectException
+from apps.chat.services.language_detector import detectar_idioma
 import requests, json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Chat
 import re
 
 
-
-
-
 def index(request):
     return render(request, "chat/index.html")
-
 
 def chat(request, lesson_id):
     lines = (
@@ -55,15 +52,14 @@ def tts_line(request):
         if not frase:
             continue
 
-        frase_n = norm(frase)  # ✅ normaliza AQUI
-
-        # 🔑 PRIORIDADE: DICIONÁRIO
+        frase_n = norm(frase)  # ✅ normaliza AQUI 
+            
         if term_exists("pt", frase_n):
             lang = "pt"
         elif term_exists("en", frase_n):
             lang = "en"
         else:
-            lang = "pt"  # fallback previsível
+            lang = detectar_idioma(frase)
 
         r = requests.post(
             "http://127.0.0.1:9000",
