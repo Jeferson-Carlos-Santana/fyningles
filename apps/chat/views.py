@@ -47,23 +47,23 @@ def tts_line(request):
 
     texto = limpar_html(line.content_pt)
     frases = quebrar_frases(texto)
-    frases_n = norm(frase)
 
     files = []
 
-    for frase in frases_n:
+    for frase in frases:
         frase = frase.strip()
         if not frase:
             continue
 
+        frase_n = norm(frase)  # ✅ normaliza AQUI
+
         # 🔑 PRIORIDADE: DICIONÁRIO
-        if term_exists("pt", frase):
+        if term_exists("pt", frase_n):
             lang = "pt"
-        elif term_exists("en", frase):
+        elif term_exists("en", frase_n):
             lang = "en"
         else:
-            # fallback simples e previsível
-            lang = "pt"
+            lang = "pt"  # fallback previsível
 
         r = requests.post(
             "http://127.0.0.1:9000",
@@ -74,6 +74,7 @@ def tts_line(request):
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
 
 
 # @csrf_exempt
