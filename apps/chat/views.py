@@ -43,25 +43,37 @@ def tts_line(request):
     line = Chat.objects.get(id=data.get("line_id"))
 
     texto = limpar_html(line.content_pt)
-    frases = [f.strip().lower() for f in quebrar_frases(texto)]
+    frases = quebrar_frases(texto)
 
     files = []
+
     for frase in frases:
+        frase = frase.strip()
+
+        # 🔑 DECISÃO REAL DE IDIOMA (DICIONÁRIO)
         if term_exists("pt", frase):
             lang = "pt"
         elif term_exists("en", frase):
             lang = "en"
         else:
-            lang = "pt" if detect(frase) == "pt" else "en"
+            try:
+                lang = "pt" if detect(frase) == "pt" else "en"
+            except:
+                lang = "en"
 
         r = requests.post(
             "http://127.0.0.1:9000",
-            json={"text": frase, "lang": lang},
+            json={
+                "text": frase,
+                "lang": lang   # 🔥 ISSO É O QUE FALTAVA
+            },
             timeout=20
         )
+
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
 
 
 
