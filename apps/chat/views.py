@@ -37,69 +37,69 @@ def quebrar_frases(text):
     return [f.strip() for f in re.split(r'[.:!?]', text) if f.strip()]
 
 
-# @csrf_exempt
-# def tts_line(request):
-#     data = json.loads(request.body)
-#     line = Chat.objects.get(id=data.get("line_id"))
-
-#     texto = limpar_html(line.content_pt)
-#     frases = quebrar_frases(texto)
-
-#     files = []
-
-#     for frase in frases:
-#         frase = frase.strip()
-
-#         # 🔑 DECISÃO REAL DE IDIOMA (DICIONÁRIO)
-#         if term_exists("pt", frase):
-#             lang = "pt"
-#         elif term_exists("en", frase):
-#             lang = "en"
-#         else:
-#             try:
-#                 lang = "pt" if detect(frase) == "pt" else "en"
-#             except:
-#                 lang = "en"
-        
-#         print("TTS_SEND -> text:", repr(frase), "| lang:", lang)
-#         r = requests.post(
-#             "http://127.0.0.1:9000",
-#             json={
-#                 "text": frase,
-#                 "lang": lang   # 🔥 ISSO É O QUE FALTAVA
-#             },
-#             timeout=20
-#         )
-
-#         files.append(r.json()["file"])
-
-#     return JsonResponse({"files": files})
-
-
 @csrf_exempt
 def tts_line(request):
-    # TESTE ESTÁTICO — SEM BD, SEM LOOP DINÂMICO
-    tests = [
-        {"text": "Eu estou aqui", "lang": "pt"},
-        {"text": "I am here", "lang": "en"},
-    ]
+    data = json.loads(request.body)
+    line = Chat.objects.get(id=data.get("line_id"))
+
+    texto = limpar_html(line.content_pt)
+    frases = quebrar_frases(texto)
 
     files = []
 
-    for t in tests:
-        print("TEST_TTS_SEND ->", t)
+    for frase in frases:
+        frase = frase.strip()
 
+        # 🔑 DECISÃO REAL DE IDIOMA (DICIONÁRIO)
+        if term_exists("pt", frase):
+            lang = "pt"
+        elif term_exists("en", frase):
+            lang = "en"
+        else:
+            try:
+                lang = "pt" if detect(frase) == "pt" else "en"
+            except:
+                lang = "en"
+        
+        print("TTS_SEND -> text:", repr(frase), "| lang:", lang)
         r = requests.post(
             "http://127.0.0.1:9000",
-            json=t,
+            json={
+                "text": frase,
+                "lang": lang   # 🔥 ISSO É O QUE FALTAVA
+            },
             timeout=20
         )
-
-        print("TEST_TTS_RESP ->", r.status_code, r.text)
 
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
+
+# @csrf_exempt
+# def tts_line(request):
+#     # TESTE ESTÁTICO — SEM BD, SEM LOOP DINÂMICO
+#     tests = [
+#         {"text": "Eu estou aqui", "lang": "pt"},
+#         {"text": "I am here", "lang": "en"},
+#     ]
+
+#     files = []
+
+#     for t in tests:
+#         print("TEST_TTS_SEND ->", t)
+
+#         r = requests.post(
+#             "http://127.0.0.1:9000",
+#             json=t,
+#             timeout=20
+#         )
+
+#         print("TEST_TTS_RESP ->", r.status_code, r.text)
+
+#         files.append(r.json()["file"])
+
+#     return JsonResponse({"files": files})
 
 
 
