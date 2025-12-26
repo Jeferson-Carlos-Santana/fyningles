@@ -2,7 +2,7 @@ import json
 import uuid
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent / "services" / "dicionary"
+BASE_DIR = Path(__file__).resolve().parent.parent / "services" / "dictionary"
 BASE_DIR.mkdir(parents=True, exist_ok=True) 
 MAX_ITEMS = 2000
 
