@@ -36,7 +36,6 @@ def limpar_html(text):
 def quebrar_frases(text):
     return [f.strip() for f in re.split(r'[.:!?]', text) if f.strip()]
 
-
 @csrf_exempt
 def tts_line(request):
     data = json.loads(request.body)
@@ -49,24 +48,21 @@ def tts_line(request):
 
     for frase in frases:
         frase = frase.strip()
+        if not frase:
+            continue
 
-        # 🔑 DECISÃO REAL DE IDIOMA (DICIONÁRIO)
+        # 🔑 PRIORIDADE: DICIONÁRIO
         if term_exists("pt", frase):
             lang = "pt"
         elif term_exists("en", frase):
             lang = "en"
         else:
-            try:
-                lang = "pt" if detect(frase) == "pt" else "en"
-            except:
-                lang = "en"        
-  
+            # fallback simples e previsível
+            lang = "pt"
+
         r = requests.post(
             "http://127.0.0.1:9000",
-            json={
-                "text": frase,
-                "lang": lang   # 🔥 ISSO É O QUE FALTAVA
-            },
+            json={"text": frase, "lang": lang},
             timeout=20
         )
 
@@ -77,24 +73,36 @@ def tts_line(request):
 
 # @csrf_exempt
 # def tts_line(request):
-#     # TESTE ESTÁTICO — SEM BD, SEM LOOP DINÂMICO
-#     tests = [
-#         {"text": "Eu estou aqui", "lang": "pt"},
-#         {"text": "I am here", "lang": "en"},
-#     ]
+#     data = json.loads(request.body)
+#     line = Chat.objects.get(id=data.get("line_id"))
+
+#     texto = limpar_html(line.content_pt)
+#     frases = quebrar_frases(texto)
 
 #     files = []
 
-#     for t in tests:
-#         print("TEST_TTS_SEND ->", t)
+#     for frase in frases:
+#         frase = frase.strip()
 
+#         # 🔑 DECISÃO REAL DE IDIOMA (DICIONÁRIO)
+#         if term_exists("pt", frase):
+#             lang = "pt"
+#         elif term_exists("en", frase):
+#             lang = "en"
+#         else:
+#             try:
+#                 lang = "pt" if detect(frase) == "pt" else "en"
+#             except:
+#                 lang = "en"        
+  
 #         r = requests.post(
 #             "http://127.0.0.1:9000",
-#             json=t,
+#             json={
+#                 "text": frase,
+#                 "lang": lang   # 🔥 ISSO É O QUE FALTAVA
+#             },
 #             timeout=20
 #         )
-
-#         print("TEST_TTS_RESP ->", r.status_code, r.text)
 
 #         files.append(r.json()["file"])
 
