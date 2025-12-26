@@ -41,24 +41,16 @@ def quebrar_frases(text):
 def tts_line(request):
     data = json.loads(request.body)
     line = Chat.objects.get(id=data.get("line_id"))
-    
-    print("=== DEBUG ===")
-    print("campos Chat:", {k: repr(v) for k, v in line.__dict__.items() if isinstance(v, str)})
-    print("texto usado:", repr(limpar_html(line.content_pt)))
-    print("frases:", [repr(f) for f in quebrar_frases(limpar_html(line.content_pt))])
-    print("=============")
 
-
-    # usa o texto REAL exibido na tela
-    texto = limpar_html(line.content_pt or line.content_en)
-    frases = quebrar_frases(texto)
+    texto = limpar_html(line.content_pt)
+    frases = [f.strip().lower() for f in quebrar_frases(texto)]
 
     files = []
     for frase in frases:
-        if term_exists("en", frase):
-            lang = "en"
-        elif term_exists("pt", frase):
+        if term_exists("pt", frase):
             lang = "pt"
+        elif term_exists("en", frase):
+            lang = "en"
         else:
             lang = "pt" if detect(frase) == "pt" else "en"
 
@@ -70,6 +62,7 @@ def tts_line(request):
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
 
 
 
