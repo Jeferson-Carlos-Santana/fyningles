@@ -59,9 +59,8 @@ def tts_line(request):
             try:
                 lang = "pt" if detect(frase) == "pt" else "en"
             except:
-                lang = "en"
-        
-        print("TTS_SEND -> text:", repr(frase), "| lang:", lang)
+                lang = "en"        
+  
         r = requests.post(
             "http://127.0.0.1:9000",
             json={
