@@ -46,15 +46,59 @@ def tts_line(request):
     frases = quebrar_frases(limpar_html(line.content_pt))
 
     files = []
+
     for frase in frases:
+        frase_limpa = frase.strip()
+
+        # =========================
+        # DECISÃO DO IDIOMA
+        # =========================
+        if term_exists("pt", frase_limpa):
+            lang = "pt"
+        elif term_exists("en", frase_limpa):
+            lang = "en"
+        else:
+            # fallback seguro
+            try:
+                detected = detect(frase_limpa)
+                lang = "pt" if detected == "pt" else "en"
+            except LangDetectException:
+                lang = "en"
+
+        # =========================
+        # CHAMADA DO TTS
+        # =========================
         r = requests.post(
             "http://127.0.0.1:9000",
-            json={"text": frase},
+            json={
+                "text": frase_limpa,
+                "lang": lang
+            },
             timeout=20
         )
+
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
+# @csrf_exempt
+# def tts_line(request):
+#     data = json.loads(request.body)
+#     line_id = data.get("line_id")
+
+#     line = Chat.objects.get(id=line_id)
+#     frases = quebrar_frases(limpar_html(line.content_pt))
+
+#     files = []
+#     for frase in frases:
+#         r = requests.post(
+#             "http://127.0.0.1:9000",
+#             json={"text": frase},
+#             timeout=20
+#         )
+#         files.append(r.json()["file"])
+
+#     return JsonResponse({"files": files})
 
 @csrf_exempt
 def tts(request):
