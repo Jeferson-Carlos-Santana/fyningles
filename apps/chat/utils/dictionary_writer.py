@@ -18,16 +18,29 @@ def list_terms(lang):
 
     return terms
 
+# def term_exists(lang, term):
+#     # files = BASE_DIR.glob(f"{lang}_*.json")
+#     files = sorted(BASE_DIR.glob(f"{lang}_*.json"))
+
+#     for file_path in files:
+#         with open(file_path, "r", encoding="utf-8") as f:
+#             data = json.load(f)
+#             if term in data.get(lang, []):
+#                 return True
+#     return False
+
 def term_exists(lang, term):
-    # files = BASE_DIR.glob(f"{lang}_*.json")
+    term = term.strip().lower()
     files = sorted(BASE_DIR.glob(f"{lang}_*.json"))
 
     for file_path in files:
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            if term in data.get(lang, []):
+            terms = [t.strip().lower() for t in data.get(lang, [])]
+            if term in terms:
                 return True
     return False
+
 
 def add_term(lang, term):
     # 1) lista arquivos do idioma

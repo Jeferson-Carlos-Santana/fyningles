@@ -33,6 +33,10 @@ def chat(request, lesson_id):
 def limpar_html(text):
     return re.sub(r"<[^>]+>", "", text)
 
+def norm(s):
+    return s.strip().lower()
+
+
 def quebrar_frases(text):
     return [f.strip() for f in re.split(r'[.:!?]', text) if f.strip()]
 
@@ -43,10 +47,11 @@ def tts_line(request):
 
     texto = limpar_html(line.content_pt)
     frases = quebrar_frases(texto)
+    frases_n = norm(frase)
 
     files = []
 
-    for frase in frases:
+    for frase in frases_n:
         frase = frase.strip()
         if not frase:
             continue
