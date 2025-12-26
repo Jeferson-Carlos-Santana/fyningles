@@ -49,23 +49,25 @@ def tts_line(request):
 
     for frase in frases:
         frase = frase.strip()
+        if not frase:
+            continue
 
-        # 🔑 DECISÃO REAL DE IDIOMA (DICIONÁRIO)
-        if term_exists("pt", frase):
+        # 🎯 DECISÃO SIMPLES E FUNCIONAL
+        try:
+            idioma = detect(frase)
+        except:
+            idioma = "en"
+
+        if idioma == "pt":
             lang = "pt"
-        elif term_exists("en", frase):
-            lang = "en"
         else:
-            try:
-                lang = "pt" if detect(frase) == "pt" else "en"
-            except:
-                lang = "en"
+            lang = "en"
 
         r = requests.post(
             "http://127.0.0.1:9000",
             json={
                 "text": frase,
-                "lang": lang   # 🔥 ISSO É O QUE FALTAVA
+                "lang": lang
             },
             timeout=20
         )
@@ -73,6 +75,7 @@ def tts_line(request):
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
 
 
 
