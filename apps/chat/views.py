@@ -41,6 +41,13 @@ def quebrar_frases(text):
 def tts_line(request):
     data = json.loads(request.body)
     line = Chat.objects.get(id=data.get("line_id"))
+    
+    print("=== DEBUG ===")
+    print("campos Chat:", {k: repr(v) for k, v in line.__dict__.items() if isinstance(v, str)})
+    print("texto usado:", repr(limpar_html(line.content_pt)))
+    print("frases:", [repr(f) for f in quebrar_frases(limpar_html(line.content_pt))])
+    print("=============")
+
 
     # usa o texto REAL exibido na tela
     texto = limpar_html(line.content_pt or line.content_en)
