@@ -40,38 +40,30 @@ def quebrar_frases(text):
 @csrf_exempt
 def tts_line(request):
     data = json.loads(request.body)
-    line_id = data.get("line_id")
+    line = Chat.objects.get(id=data.get("line_id"))
 
-    line = Chat.objects.get(id=line_id)
-
-    texto = limpar_html(f"{line.content_en} {line.content_pt}")
+    # usa o texto REAL exibido na tela
+    texto = limpar_html(line.content_pt or line.content_en)
     frases = quebrar_frases(texto)
 
     files = []
-
     for frase in frases:
-        frase = frase.strip()
-
         if term_exists("en", frase):
             lang = "en"
         elif term_exists("pt", frase):
             lang = "pt"
         else:
-            try:
-                detected = detect(frase)
-                lang = "pt" if detected == "pt" else "en"
-            except:
-                lang = "en"
+            lang = "pt" if detect(frase) == "pt" else "en"
 
         r = requests.post(
             "http://127.0.0.1:9000",
             json={"text": frase, "lang": lang},
             timeout=20
         )
-
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
 
 
 # @csrf_exempt
