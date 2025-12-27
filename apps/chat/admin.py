@@ -137,7 +137,7 @@ class ChatAdmin(admin.ModelAdmin):
       pt = es = fr = it = None
  
     # AQUI GRAVA NO JSON A AS VARIAVEIS
-    from apps.chat.utils.dictionary_writer import add_term, term_exists
+ 
     
     # 4) cadastra traduções NORMALIZADAS também (pra ficar tudo consistente)
     entries = {"pt": pt, "es": es, "fr": fr, "it": it}
