@@ -5,7 +5,8 @@ from deep_translator import GoogleTranslator
 from django.db import models
 from django import forms
 from .admin_forms import ChatAdminForm
-from apps.chat.utils.dictionary_writer import add_term, term_exists
+import apps.chat.utils.dictionary_writer as dw
+
 
 
 
@@ -127,8 +128,8 @@ class ChatAdmin(admin.ModelAdmin):
         
     for txt in (en_full, en_abbrev, en_informal):
         termo = norm_dict(txt)
-        if termo and not term_exists("en", termo):
-            add_term("en", termo)    
+        if termo and not dw.term_exists("en", termo):
+            dw.add_term("en", termo)    
 
     # traduções base
     try:
@@ -146,8 +147,8 @@ class ChatAdmin(admin.ModelAdmin):
     entries = {"pt": pt, "es": es, "fr": fr, "it": it}
     for lang, text in entries.items():
         termo = norm_dict(text)
-        if termo and not term_exists(lang, termo):
-            add_term(lang, termo)
+        if termo and not dw.term_exists(lang, termo):
+            dw.add_term(lang, termo)
 
     # entries = {
     #     "en": en_full,
