@@ -56,7 +56,7 @@ def detectar_idioma(frase: str) -> str:
     # =========================
 
     # acentos → PT
-    if re.search(r"[áàâãäéèêëíìîïóòôõöúùûüç]", raw, re.I):
+    if re.search(r"[áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ]", raw, re.I):
         return "pt"
 
     # morfologia PT

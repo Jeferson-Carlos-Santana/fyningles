@@ -34,8 +34,19 @@ def norm(s):
     return s.strip().lower()
 
 
+# def quebrar_frases(text):
+#     return [f.strip() for f in re.split(r'[.:!?]', text) if f.strip()]
+
 def quebrar_frases(text):
-    return [f.strip() for f in re.split(r'[.:!?]', text) if f.strip()]
+    if not text:
+        return []
+
+    # quebra por . : ! ? OU (stp), (stp1), (stp2) etc
+    partes = re.split(r'(?:[.:!?]|\(stp\d*\))', text)
+
+    # limpa espaços e descarta vazios
+    return [p.strip() for p in partes if p.strip()]
+
 
 @csrf_exempt
 def tts_line(request):

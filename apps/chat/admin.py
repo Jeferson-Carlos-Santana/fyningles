@@ -215,66 +215,26 @@ class ChatAdmin(admin.ModelAdmin):
     super().save_model(request, obj, form, change)
 
   # FRASES COM ABREVIACOES E SEM ABREVIACOES
-  TEMPLATES_CONTENT_1_PT = [
-    "Você pode abreviar assim: <span style='color:red;'>{en_abbrev}</span> "
-    "Ou usar a forma não abreviada: <span style='color:red;'>{en_full}</span> "
-    "Isso quer dizer: <span style='color:blue;'>{pt}</span>",  
-
-    "Quando você abrevia fica assim: <span style='color:red;'>{en_abbrev}</span> "
-    "E quando você não abrevia fica assim: <span style='color:red;'>{en_full}</span> "
-    "O significado é: <span style='color:blue;'>{pt}</span>",
-
-    "Podemos falar de modo abreviado: <span style='color:red;'>{en_abbrev}</span> "
-    "Ou se quiser sem abreviação: <span style='color:red;'>{en_full}</span> "
-    "Traduzindo: <span style='color:blue;'>{pt}</span>",
+  TEMPLATES_CONTENT_1_PT = [       
+    "Em português: <span style='color:blue;'>{pt}</span> "
+    "Em inglês: <span style='color:red;'>{en_abbrev}</span> "
+    "ou (stp) <span style='color:red;'>{en_full}</span> "
+    "Agora, repita em inglês."
     
-    "Dá pra dizer abreviado: <span style='color:red;'>{en_abbrev}</span> "
-    "Ou sem abreviação: <span style='color:red;'>{en_full}</span> "
-    "Significa: <span style='color:blue;'>{pt}</span>",
+    # "Veja agora em português: <span style='color:blue;'>{pt}</span> "
+    # "Traduzida para o inglês: "
+    # "Abreviando: <span style='color:red;'>{en_abbrev}</span> "
+    # "Sem abreviar: <span style='color:red;'>{en_full}</span> ",
     
-    "Abreviado fica: <span style='color:red;'>{en_abbrev}</span> "
-    "Sem abreviar fica: <span style='color:red;'>{en_full}</span> "
-    "Tradução: <span style='color:blue;'>{pt}</span>",
+    # "Veja a frase: <span style='color:blue;'>{pt}</span> "
+    # "Em inglês fica: "
+    # "Com abreviação: <span style='color:red;'>{en_abbrev}</span> "
+    # "Sem abreviação: <span style='color:red;'>{en_full}</span> ", 
     
-    "Abreviando fica assim: <span style='color:red;'>{en_abbrev}</span> "
-    "Ou sem abreviação: <span style='color:red;'>{en_full}</span> "
-    "A tradução é: <span style='color:blue;'>{pt}</span>",
-    
-    "Essa frase pode ser dita de forma abreviada: <span style='color:red;'>{en_abbrev}</span> "
-    "Ou se quiser sem abreviação: <span style='color:red;'>{en_full}</span> "
-    "Isso significa: <span style='color:blue;'>{pt}</span>",
-    
-    "Você pode falar de maneira abreviada: <span style='color:red;'>{en_abbrev}</span> "
-    "Ou falar sem abreviação: <span style='color:red;'>{en_full}</span> "
-    "Que significa: <span style='color:blue;'>{pt}</span>",
-    
-    "Podemos usar a versão abreviada: <span style='color:red;'>{en_abbrev}</span> "
-    "Ou a versão não abreviada: <span style='color:red;'>{en_full}</span> "
-    "Ela quer dizer: <span style='color:blue;'>{pt}</span>",
-    
-    "Há um jeito abreviado de dizer: <span style='color:red;'>{en_abbrev}</span> "
-    "Ou se quiser sem abreviação: <span style='color:red;'>{en_full}</span> "
-    "O significado é: <span style='color:blue;'>{pt}</span>",
-    
-    "Abreviado: <span style='color:red;'>{en_abbrev}</span> "
-    "Sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "O significado é: <span style='color:blue;'>{pt}</span>",
-    
-    "Com abreviação: <span style='color:red;'>{en_abbrev}</span> "
-    "Sem abreviação: <span style='color:red;'>{en_full}</span> "
-    "Isso significa: <span style='color:blue;'>{pt}</span>",
-    
-    "Frase com abreviação: <span style='color:red;'>{en_abbrev}</span> "
-    "Frase sem abreviação: <span style='color:red;'>{en_full}</span> "
-    "Isso significa: <span style='color:blue;'>{pt}</span>", 
-    
-    "Frase abreviada: <span style='color:red;'>{en_abbrev}</span> "
-    "Frase sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "Ela quer dizer: <span style='color:blue;'>{pt}</span>",
-    
-    "Vamos ver agora abreviada: <span style='color:red;'>{en_abbrev}</span> "
-    "E sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "O significado é: <span style='color:blue;'>{pt}</span>"         
+    # "Próxima frase: <span style='color:blue;'>{pt}</span> "
+    # "Em inglês fica assim: "
+    # "Forma abreviada: <span style='color:red;'>{en_abbrev}</span> "
+    # "Ou sem abreviar: <span style='color:red;'>{en_full}</span> "          
   ]
   TEMPLATES_CONTENT_1_IT = [
     "Puoi abbreviare così: <span style='color:red;'>{en_abbrev}</span> "
@@ -665,8 +625,6 @@ class ChatAdmin(admin.ModelAdmin):
     "Tente dizer em inglês a frase: (stp1) <span style='color:blue;'>{pt}</span>",
     "Consegue traduzir para o inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
     "Como ficaria em inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
-    "Vamos ver se você acerta. Como se diz em inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
-    "Imagine que precisa dizer isso em inglês. Como seria? (stp1) <span style='color:blue;'>{pt}</span>",
     "Pense rápido. Como se fala em inglês? (stp1) <span style='color:blue;'>{pt}</span>",
     "Você consegue falar em inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
     "Diga em inglês a seguinte frase: (stp1) <span style='color:blue;'>{pt}</span>",
@@ -686,7 +644,6 @@ class ChatAdmin(admin.ModelAdmin):
     "Qual é a versão em inglês desta frase? (stp1) <span style='color:blue;'>{pt}</span>",
     "Tente falar em inglês a frase: (stp1) <span style='color:blue;'>{pt}</span>",
     "Em inglês, como fica isso aqui? (stp1) <span style='color:blue;'>{pt}</span>",
-    "Você consegue pensar em como dizer isso em inglês? (stp1) <span style='color:blue;'>{pt}</span>",
     "Tente converter essa frase para o inglês: (stp1) <span style='color:blue;'>{pt}</span>",
     "Como seria dito em inglês? (stp1) <span style='color:blue;'>{pt}</span>",
     "Mostre como ficaria essa frase em inglês: (stp1) <span style='color:blue;'>{pt}</span>"    
