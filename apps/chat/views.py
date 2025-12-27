@@ -27,7 +27,7 @@ def normalizar_marcadores(text):
 
     trocas = {
         "(stp0)": ",",
-        "(stp1)": ".", # atencao usar esse quebra a frase
+        "(stp1)": ".", # atencao usar esse quebra a frase com uma pausa
         "(stp2)": "—",
         "(stp3)": "— —",
     }
@@ -42,7 +42,7 @@ def limpar_visual(text):
     if not text:
         return text
 
-    esconder = ["(q)", "(stp0)", "(stp1)", "(stp2)", "(stp3)"]
+    esconder = ["(stp0)", "(stp1)", "(stp2)", "(stp3)"]
 
     for k in esconder:
         text = text.replace(k, "")
@@ -54,7 +54,7 @@ def quebrar_frases(text):
     if not text:
         return []
     
-    partes = re.split(r'(?:[.:!?]|\(q\))', text)
+    partes = re.split(r'[.:!?]', text)
 
     # limpa espaços e descarta vazios
     return [p.strip() for p in partes if p.strip()]  
