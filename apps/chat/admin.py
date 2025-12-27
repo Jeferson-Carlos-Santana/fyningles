@@ -216,17 +216,15 @@ class ChatAdmin(admin.ModelAdmin):
 
   # FRASES COM ABREVIACOES E SEM ABREVIACOES
   TEMPLATES_CONTENT_1_PT = [     
-    "Veja agora em português: <span style='color:blue;'>{pt}</span> "
-    "Traduzida para o inglês: "
-    "Abreviando: <span style='color:red;'>{en_abbrev}</span> "
-    "Sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "Pode repetir em inglês:",
+    "Frase em português: <span style='color:blue;'>{pt}</span> "
+    "Agora em inglês abreviado: <span style='color:red;'>{en_abbrev}</span> "
+    "E sem abreviar: <span style='color:red;'>{en_full}</span> "
+    "Pode repetir em inglês?",
     
-    "Veja agora em português: <span style='color:blue;'>{pt}</span> "
-    "Traduzida para o inglês: "
-    "Abreviando: <span style='color:red;'>{en_abbrev}</span> "
-    "Sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "Pode repetir em inglês:"        
+    "Frase em português: <span style='color:blue;'>{pt}</span> "
+    "Agora em inglês abreviado: <span style='color:red;'>{en_abbrev}</span> "
+    "E sem abreviar: <span style='color:red;'>{en_full}</span> "
+    "Pode repetir em inglês?",        
   ]
   TEMPLATES_CONTENT_1_IT = [
     "Puoi abbreviare così: <span style='color:red;'>{en_abbrev}</span> "
