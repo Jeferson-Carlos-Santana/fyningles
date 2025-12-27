@@ -109,8 +109,8 @@ class ChatAdmin(admin.ModelAdmin):
   def mover_pontuacao(self, texto: str) -> str:    
     return re.sub(r'([.!?:])</span>', r'</span>\1', texto)
   
-  def norm_dict(s):
-    return re.sub(r"[.:!?]", "", s).lower().strip()
+  # def norm_dict(s):
+  #   return re.sub(r"[.:!?]", "", s).lower().strip()
     
   # TRADUZ, DEFINE FRASES ABREVIADAS E INFORMAIS, E ESCOLHE O TEMPLATE.
   def save_model(self, request, obj, form, change):    
