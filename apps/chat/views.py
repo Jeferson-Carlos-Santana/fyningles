@@ -15,17 +15,7 @@ import re
 def index(request):
     return render(request, "chat/index.html")
 
-def chat(request, lesson_id):
-    lines = (
-        Chat.objects
-        .filter(lesson_id=lesson_id, status=True)
-        .order_by("seq")
-    )
 
-    return render(request, "chat/chat.html", {
-        "lesson_id": lesson_id,
-        "lines": lines,
-    })    
 
 def limpar_html(text):
     return re.sub(r"<[^>]+>", "", text)
@@ -33,9 +23,35 @@ def limpar_html(text):
 def norm(s):
     return s.strip().lower()
 
+# TROCAR MARCADORES
+def normalizar_marcadores(text):
+    if not text:
+        return text
 
-# def quebrar_frases(text):
-#     return [f.strip() for f in re.split(r'[.:!?]', text) if f.strip()]
+    trocas = {
+        "(stp0)": ",",
+        "(stp1)": ".",
+        "(stp2)": "...",
+        "(stp3)": "—",
+    }
+
+    for k, v in trocas.items():
+        text = text.replace(k, v)
+
+    return text
+
+# LIMPAR VISUALMENTE
+def limpar_visual(text):
+    if not text:
+        return text
+
+    esconder = ["(q)", "(stp0)", "(stp1)", "(stp2)", "(stp3)"]
+
+    for k in esconder:
+        text = text.replace(k, "")
+
+    return text
+
 
 def quebrar_frases(text):
     if not text:
@@ -47,6 +63,33 @@ def quebrar_frases(text):
     # limpa espaços e descarta vazios
     return [p.strip() for p in partes if p.strip()]
 
+# def chat(request, lesson_id):
+#     lines = (
+#         Chat.objects
+#         .filter(lesson_id=lesson_id, status=True)
+#         .order_by("seq")
+#     )
+
+#     return render(request, "chat/chat.html", {
+#         "lesson_id": lesson_id,
+#         "lines": lines,
+#     })   
+
+def chat(request, lesson_id):
+    lines = (
+        Chat.objects
+        .filter(lesson_id=lesson_id, status=True)
+        .order_by("seq")
+    )
+
+    for l in lines:
+        l.content_pt = limpar_visual(l.content_pt)
+
+    return render(request, "chat/chat.html", {
+        "lesson_id": lesson_id,
+        "lines": lines,
+    })
+ 
 
 @csrf_exempt
 def tts_line(request):
@@ -54,6 +97,7 @@ def tts_line(request):
     line = Chat.objects.get(id=data.get("line_id"))
 
     texto = limpar_html(line.content_pt)
+    texto = normalizar_marcadores(texto)
     frases = quebrar_frases(texto)
 
     files = []
@@ -62,8 +106,9 @@ def tts_line(request):
         frase = frase.strip()
         if not frase:
             continue
-
-        frase_n = norm(frase)  # ✅ normaliza AQUI 
+        
+        
+        frase_n = norm(frase)
             
         if term_exists("pt", frase_n):
             lang = "pt"
@@ -71,7 +116,6 @@ def tts_line(request):
             lang = "en"
         else:
             lang = detectar_idioma(frase)
-            #lang = "en"
 
         r = requests.post(
             "http://127.0.0.1:9000",

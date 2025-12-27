@@ -144,7 +144,8 @@ class ChatAdmin(admin.ModelAdmin):
             term = re.sub(r"[.:!?]", "", text).lower().strip()
             if not term_exists(lang, term):
                 add_term(lang, term)
-    # FIM
+                
+    # AQUI GRAVA NO JSON AS VARIAVEIS
 
 
     template_choice = form.cleaned_data.get("template_choice")
