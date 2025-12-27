@@ -11,11 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Chat
 import re
 
-
 def index(request):
     return render(request, "chat/index.html")
-
-
 
 def limpar_html(text):
     return re.sub(r"<[^>]+>", "", text)
@@ -30,9 +27,9 @@ def normalizar_marcadores(text):
 
     trocas = {
         "(stp0)": ",",
-        "(stp1)": ".",
-        "(stp2)": "...",
-        "(stp3)": "—",
+        "(stp1)": ".", # atencao usar esse quebra a frase
+        "(stp2)": "—",
+        "(stp3)": "— —",
     }
 
     for k, v in trocas.items():
@@ -52,29 +49,17 @@ def limpar_visual(text):
 
     return text
 
-
+# QUEBRAR AS FRASES POR . : ! ? OU (q)
 def quebrar_frases(text):
     if not text:
         return []
-
-    # quebra por . : ! ? OU (q)
+    
     partes = re.split(r'(?:[.:!?]|\(q\))', text)
 
     # limpa espaços e descarta vazios
-    return [p.strip() for p in partes if p.strip()]
+    return [p.strip() for p in partes if p.strip()]  
 
-# def chat(request, lesson_id):
-#     lines = (
-#         Chat.objects
-#         .filter(lesson_id=lesson_id, status=True)
-#         .order_by("seq")
-#     )
-
-#     return render(request, "chat/chat.html", {
-#         "lesson_id": lesson_id,
-#         "lines": lines,
-#     })   
-
+# CHAMAR O CHAT NO HTML
 def chat(request, lesson_id):
     lines = (
         Chat.objects
@@ -90,7 +75,7 @@ def chat(request, lesson_id):
         "lines": lines,
     })
  
-
+# ENVIAR PARA CRIACAO DE AUDIOS
 @csrf_exempt
 def tts_line(request):
     data = json.loads(request.body)
