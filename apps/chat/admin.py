@@ -215,16 +215,11 @@ class ChatAdmin(admin.ModelAdmin):
     super().save_model(request, obj, form, change)
 
   # FRASES COM ABREVIACOES E SEM ABREVIACOES
-  TEMPLATES_CONTENT_1_PT = [       
-    "Em português: <span style='color:blue;'>{pt}</span> "
-    "Em inglês: <span style='color:red;'>{en_abbrev}</span> "
-    "ou (stp) <span style='color:red;'>{en_full}</span> "
-    "Agora, repita em inglês."
-    
-    # "Veja agora em português: <span style='color:blue;'>{pt}</span> "
-    # "Traduzida para o inglês: "
-    # "Abreviando: <span style='color:red;'>{en_abbrev}</span> "
-    # "Sem abreviar: <span style='color:red;'>{en_full}</span> ",
+  TEMPLATES_CONTENT_1_PT = [     
+    "Veja agora em português: <span style='color:blue;'>{pt}</span> "
+    "Traduzida para o inglês: "
+    "Abreviando: <span style='color:red;'>{en_abbrev}</span> "
+    "Sem abreviar: <span style='color:red;'>{en_full}</span> "
     
     # "Veja a frase: <span style='color:blue;'>{pt}</span> "
     # "Em inglês fica: "
