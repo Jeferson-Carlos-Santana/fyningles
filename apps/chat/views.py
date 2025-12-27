@@ -59,8 +59,8 @@ def tts_line(request):
         elif term_exists("en", frase_n):
             lang = "en"
         else:
-            lang = detectar_idioma(frase)
-            #lang = "en"
+            #lang = detectar_idioma(frase)
+            lang = "en"
 
         r = requests.post(
             "http://127.0.0.1:9000",
