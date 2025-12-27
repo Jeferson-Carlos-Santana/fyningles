@@ -5,6 +5,8 @@ from deep_translator import GoogleTranslator
 from django.db import models
 from django import forms
 from .admin_forms import ChatAdminForm
+from apps.chat.utils.dictionary_writer import add_term, term_exists
+
 
 
 
@@ -113,7 +115,6 @@ class ChatAdmin(admin.ModelAdmin):
   # TRADUZ, DEFINE FRASES ABREVIADAS E INFORMAIS, E ESCOLHE O TEMPLATE.
   def save_model(self, request, obj, form, change):    
     
-    from apps.chat.utils.dictionary_writer import add_term, term_exists
     
     def norm_dict(s):
         s = s or ""
