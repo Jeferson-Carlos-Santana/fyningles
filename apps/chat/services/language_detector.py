@@ -1,5 +1,7 @@
 import re
 import unicodedata
+import langid
+
 from apps.chat.utils.dictionary_writer import term_exists
 
 # =========================
@@ -20,50 +22,72 @@ def _norm_en(text: str) -> str:
 
 
 # =========================
-# DETECTOR (SEM LANGID)
+# DETECTOR (COM LANGID)
 # =========================
 def detectar_idioma(frase: str) -> str:
     """
-    ORDEM FIXA:
+    ORDEM (igual ao projeto antigo):
     1) Dicionário
     2) Heurísticas
-    3) Fallback previsível ("en")
+    3) langid (fallback estatístico)
+    4) 'en'
     """
 
-    # 1️⃣ DICIONÁRIO (PRIORIDADE TOTAL)
-    frase_n = _norm(frase)
+    # 🔹 limpeza base (igual ao antigo)
+    raw = frase or ""
+    raw = re.sub(r"</span>\.", "</span>", raw)
+    raw = re.sub(r"<[^>]+>", "", raw)
+    raw = re.sub(r"[.!?:]{1,2}$", "", raw).strip()
+    raw = re.sub(r"\s+", " ", raw).strip()
 
-    if term_exists("pt", frase_n):
+    # =========================
+    # 1️⃣ DICIONÁRIO (PRIORIDADE TOTAL)
+    # =========================
+    fr_pt = _norm(raw)
+    fr_en = _norm_en(raw)
+
+    if term_exists("pt", fr_pt):
         return "pt"
-    if term_exists("en", frase_n):
+    if term_exists("en", fr_en):
         return "en"
 
-    # 2️⃣ HEURÍSTICAS
-    raw = re.sub(r"<[^>]+>", "", frase or "")
-    text_norm_pt = _norm(raw)
-    text_norm_en = _norm_en(raw)
+    # =========================
+    # 2️⃣ HEURÍSTICAS (IGUAIS AO ANTIGO)
+    # =========================
 
     # acentos → PT
     if re.search(r"[áàâãäéèêëíìîïóòôõöúùûüç]", raw, re.I):
         return "pt"
 
-    # contrações EN (don't, I'm, it's)
-    if re.search(r"\b[a-z]+'[a-z]+\b", text_norm_en):
-        return "en"
-
     # morfologia PT
     if re.search(
         r"\b[a-z]{3,}(mos|ram|rei|rão|ava|avam|aria|ariam|esse|asse|emos|indo|ando|endo)\b",
-        text_norm_pt
+        fr_pt
     ):
         return "pt"
 
     # stopwords PT
     if re.search(
         r"\b(e|ele|eles|de|da|das|dos|na|nas|um|uma|uns|umas|sim|não|que|pra|pro|tá|né|pois|então|mas|porque|como|quando|onde|já|também|ainda|agora)\b",
-        text_norm_pt
+        fr_pt
     ):
         return "pt"
 
-    # 3️⃣ FALLBACK FINAL (controlado)
+    # contrações EN
+    if re.search(r"\b[a-z]+'[a-z]+\b", fr_en):
+        return "en"
+
+    # =========================
+    # 3️⃣ LANGID (FALLBACK REAL — IGUAL AO PROJETO ANTIGO)
+    # =========================
+    try:
+        idioma, confianca = langid.classify(raw)
+        if idioma in ("pt", "en") and confianca > 0.7:
+            return idioma
+    except Exception:
+        pass
+
+    # =========================
+    # 4️⃣ FALLBACK FINAL
+    # =========================
     return "en"
