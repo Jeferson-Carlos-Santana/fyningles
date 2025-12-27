@@ -6,7 +6,7 @@ from django.db import models
 from django import forms
 from .admin_forms import ChatAdminForm
 
-from apps.chat.utils.dictionary_writer import add_term, term_exists
+
 
 
 @admin.register(Chat)
@@ -113,6 +113,8 @@ class ChatAdmin(admin.ModelAdmin):
   # TRADUZ, DEFINE FRASES ABREVIADAS E INFORMAIS, E ESCOLHE O TEMPLATE.
   def save_model(self, request, obj, form, change):    
     
+    from apps.chat.utils.dictionary_writer import add_term, term_exists
+    
     def norm_dict(s):
         s = s or ""
         s = re.sub(r"[.:!?]", "", s)
@@ -137,7 +139,7 @@ class ChatAdmin(admin.ModelAdmin):
       pt = es = fr = it = None
  
     # AQUI GRAVA NO JSON A AS VARIAVEIS
- 
+    
     
     # 4) cadastra traduções NORMALIZADAS também (pra ficar tudo consistente)
     entries = {"pt": pt, "es": es, "fr": fr, "it": it}
