@@ -1,6 +1,5 @@
 import re
 import unicodedata
-
 from apps.chat.utils.dictionary_writer import term_exists
 
 # =========================
