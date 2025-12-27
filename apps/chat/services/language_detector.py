@@ -1,6 +1,5 @@
 import re
 import unicodedata
-import langid
 
 from apps.chat.utils.dictionary_writer import term_exists
 
@@ -22,17 +21,17 @@ def _norm_en(text: str) -> str:
 
 
 # =========================
-# DETECTOR (ORDEM SUA)
+# DETECTOR (SEM LANGID)
 # =========================
 def detectar_idioma(frase: str) -> str:
     """
-    ORDEM FIXA (como você definiu):
-    1) Dicionário simples
+    ORDEM FIXA:
+    1) Dicionário
     2) Heurísticas
-    3) langid (fallback FINAL)
+    3) Fallback previsível ("en")
     """
 
-    # 1️⃣ DICIONÁRIO SIMPLES (PRIORIDADE TOTAL)
+    # 1️⃣ DICIONÁRIO (PRIORIDADE TOTAL)
     frase_n = _norm(frase)
 
     if term_exists("pt", frase_n):
@@ -49,7 +48,7 @@ def detectar_idioma(frase: str) -> str:
     if re.search(r"[áàâãäéèêëíìîïóòôõöúùûüç]", raw, re.I):
         return "pt"
 
-    # contrações EN
+    # contrações EN (don't, I'm, it's)
     if re.search(r"\b[a-z]+'[a-z]+\b", text_norm_en):
         return "en"
 
@@ -67,12 +66,5 @@ def detectar_idioma(frase: str) -> str:
     ):
         return "pt"
 
-    # 3️⃣ FALLBACK FINAL — LANGID (COMO NO ORIGINAL)
-    try:
-        idioma, confianca = langid.classify(raw)
-        if idioma in ("pt", "en") and confianca > 0.7:
-            return idioma
-    except Exception:
-        pass
-
+    # 3️⃣ FALLBACK FINAL (controlado)
     return "en"
