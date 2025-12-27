@@ -111,24 +111,21 @@ class ChatAdmin(admin.ModelAdmin):
     return re.sub(r"[.:!?]", "", s).lower().strip()
     
   # TRADUZ, DEFINE FRASES ABREVIADAS E INFORMAIS, E ESCOLHE O TEMPLATE.
-  def save_model(self, request, obj, form, change):
-    
-    en_full = obj.expected_en
-    en_abbrev = self.contract_en(en_full)
-    en_informal = self.gerar_informal(en_full)
+  def save_model(self, request, obj, form, change):    
     
     def norm_dict(s):
-      return re.sub(r"[.:!?]", "", s).lower().strip()
+        s = s or ""
+        s = re.sub(r"[.:!?]", "", s)
+        return s.lower().strip()
+      
+    en_full = obj.expected_en or ""
+    en_abbrev = self.contract_en(en_full)
+    en_informal = self.gerar_informal(en_full)
         
-    ingleses = [en_full, en_abbrev, en_informal]
-
-    for txt in ingleses:
-        if txt:
-            termo = norm_dict(txt)
-            if not term_exists("en", termo):
-                add_term("en", termo)
-    
-    
+    for txt in (en_full, en_abbrev, en_informal):
+        termo = norm_dict(txt)
+        if termo and not term_exists("en", termo):
+            add_term("en", termo)    
 
     # traduções base
     try:
@@ -141,18 +138,25 @@ class ChatAdmin(admin.ModelAdmin):
  
     # AQUI GRAVA NO JSON A AS VARIAVEIS
     from apps.chat.utils.dictionary_writer import add_term, term_exists
-
-    entries = {
-        "en": en_full,
-        "pt": pt,
-        "es": es,
-        "fr": fr,
-        "it": it,
-    }
-
+    
+    # 4) cadastra traduções NORMALIZADAS também (pra ficar tudo consistente)
+    entries = {"pt": pt, "es": es, "fr": fr, "it": it}
     for lang, text in entries.items():
-        if text and not term_exists(lang, text):
-            add_term(lang, text)              
+        termo = norm_dict(text)
+        if termo and not term_exists(lang, termo):
+            add_term(lang, termo)
+
+    # entries = {
+    #     "en": en_full,
+    #     "pt": pt,
+    #     "es": es,
+    #     "fr": fr,
+    #     "it": it,
+    # }
+
+    # for lang, text in entries.items():
+    #     if text and not term_exists(lang, text):
+    #         add_term(lang, text)              
     # FIM AQUI GRAVA NO JSON A AS VARIAVEIS
 
     template_choice = form.cleaned_data.get("template_choice")
