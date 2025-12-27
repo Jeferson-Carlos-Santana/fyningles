@@ -3,3 +3,4 @@ venv/
 .env
 media/
 apps/chat/services/dictionary/
+stderr.log
