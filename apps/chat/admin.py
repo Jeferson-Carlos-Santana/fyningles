@@ -224,7 +224,7 @@ class ChatAdmin(admin.ModelAdmin):
     "Frase em português: <span style='color:blue;'>{pt}</span> "
     "Agora em inglês abreviado: <span style='color:red;'>{en_abbrev}</span> "
     "E sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "Pode repetir em inglês?",        
+    "Pode repetir em inglês?"       
   ]
   TEMPLATES_CONTENT_1_IT = [
     "Puoi abbreviare così: <span style='color:red;'>{en_abbrev}</span> "
