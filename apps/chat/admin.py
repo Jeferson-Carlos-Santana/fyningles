@@ -220,19 +220,19 @@ class ChatAdmin(admin.ModelAdmin):
     "Traduzida para o inglês: "
     "Abreviando: <span style='color:red;'>{en_abbrev}</span> "
     "Sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "Pode repetir em inglês:"
+    "Pode repetir em inglês:",
     
-    # "Veja a frase: <span style='color:blue;'>{pt}</span> "
-    # "Em inglês fica: "
-    # "Com abreviação: <span style='color:red;'>{en_abbrev}</span> "
-    # "Sem abreviação: <span style='color:red;'>{en_full}</span> ", 
-    
-    # "Próxima frase: <span style='color:blue;'>{pt}</span> "
-    # "Em inglês fica assim: "
-    # "Forma abreviada: <span style='color:red;'>{en_abbrev}</span> "
-    # "Ou sem abreviar: <span style='color:red;'>{en_full}</span> "          
+    "Veja agora em português: <span style='color:blue;'>{pt}</span> "
+    "Traduzida para o inglês: "
+    "Abreviando: <span style='color:red;'>{en_abbrev}</span> "
+    "Sem abreviar: <span style='color:red;'>{en_full}</span> "
+    "Pode repetir em inglês:"        
   ]
   TEMPLATES_CONTENT_1_IT = [
+    "Puoi abbreviare così: <span style='color:red;'>{en_abbrev}</span> "
+    "Oppure usare la forma non abbreviata: <span style='color:red;'>{en_full}</span> "
+    "Questo significa: <span style='color:blue;'>{it}</span>",
+    
     "Puoi abbreviare così: <span style='color:red;'>{en_abbrev}</span> "
     "Oppure usare la forma non abbreviata: <span style='color:red;'>{en_full}</span> "
     "Questo significa: <span style='color:blue;'>{it}</span>"
@@ -240,9 +240,17 @@ class ChatAdmin(admin.ModelAdmin):
   TEMPLATES_CONTENT_1_FR = [
     "Tu peux abréger ainsi : <span style='color:red;'>{en_abbrev}</span> "
     "Ou utiliser la forme non abrégée : <span style='color:red;'>{en_full}</span> "
+    "Cela signifie : <span style='color:blue;'>{fr}</span>",
+    
+    "Tu peux abréger ainsi : <span style='color:red;'>{en_abbrev}</span> "
+    "Ou utiliser la forme non abrégée : <span style='color:red;'>{en_full}</span> "
     "Cela signifie : <span style='color:blue;'>{fr}</span>"
   ]
   TEMPLATES_CONTENT_1_ES = [
+    "Puedes abreviar así: <span style='color:red;'>{en_abbrev}</span> "
+    "O usar la forma no abreviada: <span style='color:red;'>{en_full}</span> "
+    "Esto significa: <span style='color:blue;'>{es}</span>",
+    
     "Puedes abreviar así: <span style='color:red;'>{en_abbrev}</span> "
     "O usar la forma no abreviada: <span style='color:red;'>{en_full}</span> "
     "Esto significa: <span style='color:blue;'>{es}</span>"
