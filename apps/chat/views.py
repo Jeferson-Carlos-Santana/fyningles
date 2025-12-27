@@ -41,8 +41,8 @@ def quebrar_frases(text):
     if not text:
         return []
 
-    # quebra por . : ! ? OU (stp), (stp1), (stp2) etc
-    partes = re.split(r'(?:[.:!?]|\(stp\d*\))', text)
+    # quebra por . : ! ? OU (q)
+    partes = re.split(r'(?:[.:!?]|\(q\))', text)
 
     # limpa espaços e descarta vazios
     return [p.strip() for p in partes if p.strip()]
@@ -84,65 +84,6 @@ def tts_line(request):
     return JsonResponse({"files": files})
 
 
-
-# @csrf_exempt
-# def tts_line(request):
-#     data = json.loads(request.body)
-#     line = Chat.objects.get(id=data.get("line_id"))
-
-#     texto = limpar_html(line.content_pt)
-#     frases = quebrar_frases(texto)
-
-#     files = []
-
-#     for frase in frases:
-#         frase = frase.strip()
-
-#         # 🔑 DECISÃO REAL DE IDIOMA (DICIONÁRIO)
-#         if term_exists("pt", frase):
-#             lang = "pt"
-#         elif term_exists("en", frase):
-#             lang = "en"
-#         else:
-#             try:
-#                 lang = "pt" if detect(frase) == "pt" else "en"
-#             except:
-#                 lang = "en"        
-  
-#         r = requests.post(
-#             "http://127.0.0.1:9000",
-#             json={
-#                 "text": frase,
-#                 "lang": lang   # 🔥 ISSO É O QUE FALTAVA
-#             },
-#             timeout=20
-#         )
-
-#         files.append(r.json()["file"])
-
-#     return JsonResponse({"files": files})
-
-
-
-# @csrf_exempt
-# def tts_line(request):
-#     data = json.loads(request.body)
-#     line_id = data.get("line_id")
-
-#     line = Chat.objects.get(id=line_id)
-#     frases = quebrar_frases(limpar_html(line.content_pt))
-
-#     files = []
-#     for frase in frases:
-#         r = requests.post(
-#             "http://127.0.0.1:9000",
-#             json={"text": frase},
-#             timeout=20
-#         )
-#         files.append(r.json()["file"])
-
-#     return JsonResponse({"files": files})
-
 @csrf_exempt
 def tts(request):
     data = json.loads(request.body)
@@ -176,8 +117,9 @@ def dictionary_add(request):
         return redirect(f"/dictionary/?lang={lang}")
 
     lang = request.POST.get("lang")
-    # term = request.POST.get("term")
-    term = request.POST.get("term").strip()
+    term = request.POST.get("term")
+    term = re.sub(r"[.:!?]", "", term)
+    term = term.lower().strip()
 
     if not lang or not term:
         messages.error(request, "Preencha o idioma e a palavra.")

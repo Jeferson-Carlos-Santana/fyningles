@@ -209,8 +209,7 @@ class ChatAdmin(admin.ModelAdmin):
           en_informal=en_informal,
           it=it
       )
-      obj.content_it = self.mover_pontuacao(texto)
-      
+      obj.content_it = self.mover_pontuacao(texto)      
  
     super().save_model(request, obj, form, change)
 
@@ -276,7 +275,7 @@ class ChatAdmin(admin.ModelAdmin):
 
     "Phrase en français : <span style='color:blue;'>{fr}</span> "
     "En anglais abrégé : <span style='color:red;'>{en_abbrev}</span> "
-    "Sans utiliser d’abréviations : <span style='color:red;'>{en_full}</span>"
+    "Sans utiliser d'abréviations : <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_1_ES = [
     "Mira esta frase: <span style='color:blue;'>{es}</span> "
