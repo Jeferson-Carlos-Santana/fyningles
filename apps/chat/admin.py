@@ -119,8 +119,8 @@ class ChatAdmin(admin.ModelAdmin):
         return s.lower().strip()
       
     en_full = obj.expected_en or ""
-    en_abbrev = self.contract_en(en_full)
-    en_informal = self.gerar_informal(en_full)
+    en_abbrev = self.contract_en(en_full) if en_full else ""
+    en_informal = self.gerar_informal(en_full) if en_full else ""
         
     for txt in (en_full, en_abbrev, en_informal):
         termo = norm_dict(txt)
