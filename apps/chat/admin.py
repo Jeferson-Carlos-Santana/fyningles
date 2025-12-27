@@ -220,6 +220,7 @@ class ChatAdmin(admin.ModelAdmin):
     "Traduzida para o inglês: "
     "Abreviando: <span style='color:red;'>{en_abbrev}</span> "
     "Sem abreviar: <span style='color:red;'>{en_full}</span> "
+    "Pode repetir em inglês:"
     
     # "Veja a frase: <span style='color:blue;'>{pt}</span> "
     # "Em inglês fica: "
