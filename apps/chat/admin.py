@@ -216,42 +216,88 @@ class ChatAdmin(admin.ModelAdmin):
 
   # FRASES COM ABREVIACOES E SEM ABREVIACOES
   TEMPLATES_CONTENT_1_PT = [     
-    "Frase em português: <span style='color:blue;'>{pt}</span> "
+    "Veja essa frase: <span style='color:blue;'>{pt}</span> "
     "Agora em inglês abreviado: <span style='color:red;'>{en_abbrev}</span> "
-    "E sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "Pode repetir em inglês?",
+    "E sem abreviar fica assim: <span style='color:red;'>{en_full}</span>",
+    
+    "Dá pra dizer abreviado: <span style='color:red;'>{en_abbrev}</span> "
+    "Ou sem abreviação: <span style='color:red;'>{en_full}</span> "
+    "Significa: <span style='color:blue;'>{pt}</span>",
+    
+    "Próxima frase é: <span style='color:blue;'>{pt}</span> "
+    "Abrevida em inglês: <span style='color:red;'>{en_abbrev}</span> "
+    "E sem abreviação: <span style='color:red;'>{en_full}</span>",
+    
+    "Abreviado fica: <span style='color:red;'>{en_abbrev}</span> "
+    "Sem abreviar fica: <span style='color:red;'>{en_full}</span> "
+    "Tradução: <span style='color:blue;'>{pt}</span>",
     
     "Frase em português: <span style='color:blue;'>{pt}</span> "
-    "Agora em inglês abreviado: <span style='color:red;'>{en_abbrev}</span> "
-    "E sem abreviar: <span style='color:red;'>{en_full}</span> "
-    "Pode repetir em inglês?"       
+    "Em inglês abreviado: <span style='color:red;'>{en_abbrev}</span> "
+    "Sem usar abreviação: <span style='color:red;'>{en_full}</span>"    
   ]
   TEMPLATES_CONTENT_1_IT = [
-    "Puoi abbreviare così: <span style='color:red;'>{en_abbrev}</span> "
-    "Oppure usare la forma non abbreviata: <span style='color:red;'>{en_full}</span> "
-    "Questo significa: <span style='color:blue;'>{it}</span>",
+    "Guarda questa frase: <span style='color:blue;'>{it}</span> "
+    "Ora in inglese abbreviato: <span style='color:red;'>{en_abbrev}</span> "
+    "E senza abbreviare diventa così: <span style='color:red;'>{en_full}</span>",
     
-    "Puoi abbreviare così: <span style='color:red;'>{en_abbrev}</span> "
-    "Oppure usare la forma non abbreviata: <span style='color:red;'>{en_full}</span> "
-    "Questo significa: <span style='color:blue;'>{it}</span>"
+    "Si può dire in forma abbreviata: <span style='color:red;'>{en_abbrev}</span> "
+    "Oppure senza abbreviazione: <span style='color:red;'>{en_full}</span> "
+    "Significa: <span style='color:blue;'>{it}</span>",
+
+    "La prossima frase è: <span style='color:blue;'>{it}</span> "
+    "Abbreviata in inglese: <span style='color:red;'>{en_abbrev}</span> "
+    "E senza abbreviazione: <span style='color:red;'>{en_full}</span>",
+    
+    "Abbreviato è: <span style='color:red;'>{en_abbrev}</span> "
+    "Senza abbreviare è: <span style='color:red;'>{en_full}</span> "
+    "Traduzione: <span style='color:blue;'>{it}</span>",
+
+    "Frase in italiano: <span style='color:blue;'>{it}</span> "
+    "In inglese abbreviato: <span style='color:red;'>{en_abbrev}</span> "
+    "Senza usare abbreviazioni: <span style='color:red;'>{en_full}</span>"
   ]  
   TEMPLATES_CONTENT_1_FR = [
-    "Tu peux abréger ainsi : <span style='color:red;'>{en_abbrev}</span> "
-    "Ou utiliser la forme non abrégée : <span style='color:red;'>{en_full}</span> "
-    "Cela signifie : <span style='color:blue;'>{fr}</span>",
+    "Regarde cette phrase : <span style='color:blue;'>{fr}</span> "
+    "Maintenant en anglais abrégé : <span style='color:red;'>{en_abbrev}</span> "
+    "Et sans abréviation, cela donne : <span style='color:red;'>{en_full}</span>",
     
-    "Tu peux abréger ainsi : <span style='color:red;'>{en_abbrev}</span> "
-    "Ou utiliser la forme non abrégée : <span style='color:red;'>{en_full}</span> "
-    "Cela signifie : <span style='color:blue;'>{fr}</span>"
+    "On peut dire en abrégé : <span style='color:red;'>{en_abbrev}</span> "
+    "Ou sans abréviation : <span style='color:red;'>{en_full}</span> "
+    "Cela veut dire : <span style='color:blue;'>{fr}</span>",
+
+    "La phrase suivante est : <span style='color:blue;'>{fr}</span> "
+    "Abrégée en anglais : <span style='color:red;'>{en_abbrev}</span> "
+    "Et sans abréviation : <span style='color:red;'>{en_full}</span>",
+    
+    "Abrégé, c'est : <span style='color:red;'>{en_abbrev}</span> "
+    "Sans abréger, c'est : <span style='color:red;'>{en_full}</span> "
+    "Traduction : <span style='color:blue;'>{fr}</span>",
+
+    "Phrase en français : <span style='color:blue;'>{fr}</span> "
+    "En anglais abrégé : <span style='color:red;'>{en_abbrev}</span> "
+    "Sans utiliser d’abréviations : <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_1_ES = [
-    "Puedes abreviar así: <span style='color:red;'>{en_abbrev}</span> "
-    "O usar la forma no abreviada: <span style='color:red;'>{en_full}</span> "
-    "Esto significa: <span style='color:blue;'>{es}</span>",
+    "Mira esta frase: <span style='color:blue;'>{es}</span> "
+    "Ahora en inglés abreviado: <span style='color:red;'>{en_abbrev}</span> "
+    "Y sin abreviar queda así: <span style='color:red;'>{en_full}</span>",
     
-    "Puedes abreviar así: <span style='color:red;'>{en_abbrev}</span> "
-    "O usar la forma no abreviada: <span style='color:red;'>{en_full}</span> "
-    "Esto significa: <span style='color:blue;'>{es}</span>"
+    "Se puede decir abreviado: <span style='color:red;'>{en_abbrev}</span> "
+    "O sin abreviación: <span style='color:red;'>{en_full}</span> "
+    "Significa: <span style='color:blue;'>{es}</span>",
+
+    "La siguiente frase es: <span style='color:blue;'>{es}</span> "
+    "Abreviada en inglés: <span style='color:red;'>{en_abbrev}</span> "
+    "Y sin abreviación: <span style='color:red;'>{en_full}</span>",
+    
+    "Abreviado es: <span style='color:red;'>{en_abbrev}</span> "
+    "Sin abreviar es: <span style='color:red;'>{en_full}</span> "
+    "Traducción: <span style='color:blue;'>{es}</span>",
+
+    "Frase en español: <span style='color:blue;'>{es}</span> "
+    "En inglés abreviado: <span style='color:red;'>{en_abbrev}</span> "
+    "Sin usar abreviaciones: <span style='color:red;'>{en_full}</span>"
   ]
   
   # FRASES SEM ABREVIACOES
