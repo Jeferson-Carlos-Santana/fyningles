@@ -6,6 +6,9 @@ from django.db import models
 from django import forms
 from .admin_forms import ChatAdminForm
 
+from apps.chat.utils.dictionary_writer import add_term, term_exists
+
+
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
   form = ChatAdminForm
@@ -103,12 +106,29 @@ class ChatAdmin(admin.ModelAdmin):
   # Move ., ?, ! ou : de dentro do </span> para fora.
   def mover_pontuacao(self, texto: str) -> str:    
     return re.sub(r'([.!?:])</span>', r'</span>\1', texto)
+  
+  def norm_dict(s):
+    return re.sub(r"[.:!?]", "", s).lower().strip()
     
   # TRADUZ, DEFINE FRASES ABREVIADAS E INFORMAIS, E ESCOLHE O TEMPLATE.
   def save_model(self, request, obj, form, change):
+    
     en_full = obj.expected_en
     en_abbrev = self.contract_en(en_full)
     en_informal = self.gerar_informal(en_full)
+    
+    def norm_dict(s):
+      return re.sub(r"[.:!?]", "", s).lower().strip()
+        
+    ingleses = [en_full, en_abbrev, en_informal]
+
+    for txt in ingleses:
+        if txt:
+            termo = norm_dict(txt)
+            if not term_exists("en", termo):
+                add_term("en", termo)
+    
+    
 
     # traduções base
     try:
