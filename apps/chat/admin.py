@@ -5,12 +5,6 @@ from deep_translator import GoogleTranslator
 from django.db import models
 from django import forms
 from .admin_forms import ChatAdminForm
-import apps.chat.utils.dictionary_writer as dw
-
-
-
-
-
 
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
@@ -109,27 +103,12 @@ class ChatAdmin(admin.ModelAdmin):
   # Move ., ?, ! ou : de dentro do </span> para fora.
   def mover_pontuacao(self, texto: str) -> str:    
     return re.sub(r'([.!?:])</span>', r'</span>\1', texto)
-  
-  # def norm_dict(s):
-  #   return re.sub(r"[.:!?]", "", s).lower().strip()
     
   # TRADUZ, DEFINE FRASES ABREVIADAS E INFORMAIS, E ESCOLHE O TEMPLATE.
-  def save_model(self, request, obj, form, change):    
-    
-    
-    def norm_dict(s):
-        s = s or ""
-        s = re.sub(r"[.:!?]", "", s)
-        return s.lower().strip()
-      
-    en_full = obj.expected_en or ""
-    en_abbrev = self.contract_en(en_full) if en_full else ""
-    en_informal = self.gerar_informal(en_full) if en_full else ""
-        
-    for txt in (en_full, en_abbrev, en_informal):
-        termo = norm_dict(txt)
-        if termo and not dw.term_exists("en", termo):
-            dw.add_term("en", termo)    
+  def save_model(self, request, obj, form, change):
+    en_full = obj.expected_en
+    en_abbrev = self.contract_en(en_full)
+    en_informal = self.gerar_informal(en_full)
 
     # traduções base
     try:
@@ -140,28 +119,33 @@ class ChatAdmin(admin.ModelAdmin):
     except Exception:
       pt = es = fr = it = None
  
-    # AQUI GRAVA NO JSON A AS VARIAVEIS
-    
-    
-    # 4) cadastra traduções NORMALIZADAS também (pra ficar tudo consistente)
-    entries = {"pt": pt, "es": es, "fr": fr, "it": it}
+    # AQUI GRAVA NO JSON AS VARIAVEIS
+    from apps.chat.utils.dictionary_writer import add_term, term_exists
+
+    # EN → todas as formas
+    ingleses = [en_full, en_abbrev, en_informal]
+
+    for txt in ingleses:
+        if txt:
+            term = re.sub(r"[.:!?]", "", txt).lower().strip()
+            if not term_exists("en", term):
+                add_term("en", term)
+
+    # OUTROS IDIOMAS
+    entries = {
+        "pt": pt,
+        "es": es,
+        "fr": fr,
+        "it": it,
+    }
+
     for lang, text in entries.items():
-        termo = norm_dict(text)
-        if termo and not dw.term_exists(lang, termo):
-            dw.add_term(lang, termo)
+        if text:
+            term = re.sub(r"[.:!?]", "", text).lower().strip()
+            if not term_exists(lang, term):
+                add_term(lang, term)
+    # FIM
 
-    # entries = {
-    #     "en": en_full,
-    #     "pt": pt,
-    #     "es": es,
-    #     "fr": fr,
-    #     "it": it,
-    # }
-
-    # for lang, text in entries.items():
-    #     if text and not term_exists(lang, text):
-    #         add_term(lang, text)              
-    # FIM AQUI GRAVA NO JSON A AS VARIAVEIS
 
     template_choice = form.cleaned_data.get("template_choice")
 
@@ -237,7 +221,8 @@ class ChatAdmin(admin.ModelAdmin):
           en_informal=en_informal,
           it=it
       )
-      obj.content_it = self.mover_pontuacao(texto)      
+      obj.content_it = self.mover_pontuacao(texto)
+      
  
     super().save_model(request, obj, form, change)
 
