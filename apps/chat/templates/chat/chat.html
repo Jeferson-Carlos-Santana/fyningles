@@ -173,84 +173,6 @@ function falarComoAntigo(files) {
 
 
 
-// =========================
-// 1) Helpers mínimos
-// =========================
-function normText(s) {
-  return (s || "")
-    .toLowerCase()
-    .replace(/[’]/g, "'")
-    .replace(/[^\w\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function getExpectedList(expectedStr) {
-  // aceita: "a or b" ou "a / b"
-  const raw = (expectedStr || "")
-    .split(/\s*(?:\bor\b|\/)\s*/i)
-    .map(x => x.trim())
-    .filter(Boolean);
-
-  return raw.map(normText);
-}
-
-// =========================
-// 2) Estado da rodada atual
-// =========================
-let tentativas = 0;          // 0,1,2 (máx 3 tentativas)
-const MAX_TENTATIVAS = 3;
-
-// (opcional) pontos locais só pra manter a regra pronta (não salva no banco agora)
-let pontos = 0;
-
-// =========================
-// 3) Função que processa a resposta do aluno
-//    (chame isso dentro do recognition.onresult)
-// =========================
-function processarRespostaDoAluno(textoFalado) {
-  const msgAtual = msgs[index];                // frase atual do professor (ainda é a mesma)
-  const expectedStr = msgAtual?.dataset.expected || ""; // expected_en
-  const esperadoList = getExpectedList(expectedStr);
-  const recebido = normText(textoFalado);
-
-  // se não tiver expected, só avança (ou trate como erro — você decide)
-  if (!esperadoList.length) {
-    // avança sem comparar
-    index++;
-    setTimeout(mostrarSistema, 150);
-    return;
-  }
-
-  const acertou = esperadoList.includes(recebido);
-
-  if (acertou) {
-    // pontuação local (não salva no banco agora)
-    if (tentativas === 0) pontos += 5;
-    else if (tentativas === 1) pontos += 3;
-    else if (tentativas === 2) pontos += 1;
-
-    tentativas = 0; // reseta para a próxima frase
-    index++;        // vai para a próxima frase
-    setTimeout(mostrarSistema, 150);
-    return;
-  }
-
-  // errou
-  tentativas++;
-
-  if (tentativas >= MAX_TENTATIVAS) {
-    // 3 erros → zera e avança sem pontos
-    tentativas = 0;
-    index++;
-    setTimeout(mostrarSistema, 150);
-    return;
-  }
-
-  // ainda tem tentativas: NÃO avança, só libera mic para tentar de novo
-  btnMic.disabled = false;
-}
-
 
 
 
@@ -366,8 +288,22 @@ function processarRespostaDoAluno(textoFalado) {
       user.className = "chat-message user";
       user.textContent = texto;
       msgs[index].after(user);
-      processarRespostaDoAluno(texto);
-      //index++;
+      // ===== COMPARAÇÃO SIMPLES =====
+      const esperado = normText(msgs[index].dataset.expected || "");
+      const recebido = normText(texto);
+
+      // ACERTO → AVANÇA
+      if (recebido === esperado) {
+        index++;
+        mostrarSistema();
+        return;
+      }
+
+      // ERRO → PARA (não faz nada)
+      btnMic.disabled = false;
+
+
+     // index++;
       //setTimeout(() => {
         //mostrarSistema();
       //}, 400);
