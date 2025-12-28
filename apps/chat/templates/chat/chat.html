@@ -247,8 +247,13 @@ function falarComoAntigo(files) {
     }
 
     if (auto === 1) {
+
+
       index++;
-      return mostrarSistema();
+      setTimeout(() => {
+        return mostrarSistema();
+      }, 400); // 300–500ms é o ideal
+
     }
 
     // espera usuário
