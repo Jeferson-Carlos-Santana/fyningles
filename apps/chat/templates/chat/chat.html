@@ -308,7 +308,9 @@ recognition.onresult = function (e) {
   // SE ACERTAR → AVANÇA
   if (recebido === esperado) {
     index++;
-    mostrarSistema();
+    setTimeout(() => {
+        mostrarSistema();
+      }, 400);
     return;
   }
 
