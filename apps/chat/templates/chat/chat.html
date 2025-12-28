@@ -212,9 +212,8 @@ function falarComoAntigo(files) {
       btnStart.disabled = true;
       index = 0;
       msgs.forEach(m => m.style.display = "none");
-      recognition.start();
-      setTimeout(() => recognition.stop(), 50);
-      mostrarSistema();
+      
+      //mostrarSistema();
     };
 
     // =========================
