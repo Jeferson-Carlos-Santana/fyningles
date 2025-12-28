@@ -102,11 +102,23 @@ def tts_line(request):
         else:
             lang = detectar_idioma(frase)
 
+        # r = requests.post(
+        #     "http://127.0.0.1:9000",
+        #     json={"text": frase, "lang": lang},
+        #     timeout=20
+        # )
+        fixed = (line.role == "system")
+
         r = requests.post(
             "http://127.0.0.1:9000",
-            json={"text": frase, "lang": lang},
+            json={
+                "text": frase,
+                "lang": lang,
+                "fixed": fixed
+            },
             timeout=20
         )
+
 
         files.append(r.json()["file"])
 
