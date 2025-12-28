@@ -59,6 +59,7 @@
         data-id="{{ line.id }}"
         data-auto="{{ line.auto|yesno:'1,0' }}"
         data-end="{{ line.end|yesno:'1,0' }}"
+        data-expected="{{ line.expected_en|default:'' }}"
         style="display:none;">
       {{ line.content_pt|striptags }}
     </div>
@@ -157,6 +158,111 @@ function falarComoAntigo(files) {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =========================
+// 1) Helpers mínimos
+// =========================
+function normText(s) {
+  return (s || "")
+    .toLowerCase()
+    .replace(/[’]/g, "'")
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getExpectedList(expectedStr) {
+  // aceita: "a or b" ou "a / b"
+  const raw = (expectedStr || "")
+    .split(/\s*(?:\bor\b|\/)\s*/i)
+    .map(x => x.trim())
+    .filter(Boolean);
+
+  return raw.map(normText);
+}
+
+// =========================
+// 2) Estado da rodada atual
+// =========================
+let tentativas = 0;          // 0,1,2 (máx 3 tentativas)
+const MAX_TENTATIVAS = 3;
+
+// (opcional) pontos locais só pra manter a regra pronta (não salva no banco agora)
+let pontos = 0;
+
+// =========================
+// 3) Função que processa a resposta do aluno
+//    (chame isso dentro do recognition.onresult)
+// =========================
+function processarRespostaDoAluno(textoFalado) {
+  const msgAtual = msgs[index];                // frase atual do professor (ainda é a mesma)
+  const expectedStr = msgAtual?.dataset.expected || ""; // expected_en
+  const esperadoList = getExpectedList(expectedStr);
+  const recebido = normText(textoFalado);
+
+  // se não tiver expected, só avança (ou trate como erro — você decide)
+  if (!esperadoList.length) {
+    // avança sem comparar
+    index++;
+    setTimeout(mostrarSistema, 150);
+    return;
+  }
+
+  const acertou = esperadoList.includes(recebido);
+
+  if (acertou) {
+    // pontuação local (não salva no banco agora)
+    if (tentativas === 0) pontos += 5;
+    else if (tentativas === 1) pontos += 3;
+    else if (tentativas === 2) pontos += 1;
+
+    tentativas = 0; // reseta para a próxima frase
+    index++;        // vai para a próxima frase
+    setTimeout(mostrarSistema, 150);
+    return;
+  }
+
+  // errou
+  tentativas++;
+
+  if (tentativas >= MAX_TENTATIVAS) {
+    // 3 erros → zera e avança sem pontos
+    tentativas = 0;
+    index++;
+    setTimeout(mostrarSistema, 150);
+    return;
+  }
+
+  // ainda tem tentativas: NÃO avança, só libera mic para tentar de novo
+  btnMic.disabled = false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
   document.addEventListener("DOMContentLoaded", function () {
     // ===== SPEECH =====
     const SpeechRecognition =
@@ -180,39 +286,12 @@ function falarComoAntigo(files) {
     // =========================
     // MOSTRA FRASE + FALA
     // =========================
-    //function mostrarSistema() {
-      //if (index >= msgs.length) {
-        //btnMic.disabled = true;
-        //btnStart.disabled = true;
-        //return;
-      //}
-
-      //const msg = msgs[index];
-      //const lineId = msg.dataset.id;
-
-      //msg.innerHTML = limparHTML(msg.innerHTML);
-      //msg.style.display = "block";
-
-      //fetch("/tts/line/", {
-        //method: "POST",
-        //headers: { "Content-Type": "application/json" },
-        //body: JSON.stringify({ line_id: lineId })
-      //})
-      //.then(r => r.json())
-      //.then(d => {
-        //if (d.files && d.files.length) {
-          //falarComoAntigo(d.files);
-       // }
-      //});
-
-      //btnMic.disabled = false;
-    //}
     function mostrarSistema() {
-  if (index >= msgs.length) {
-    btnMic.disabled = true;
-    btnStart.disabled = true;
-    return;
-  }
+      if (index >= msgs.length) {
+        btnMic.disabled = true;
+        btnStart.disabled = true;
+        return;
+      }
 
   const msg = msgs[index];
   const lineId = msg.dataset.id;
@@ -286,13 +365,12 @@ function falarComoAntigo(files) {
       const user = document.createElement("div");
       user.className = "chat-message user";
       user.textContent = texto;
-
       msgs[index].after(user);
-
-      index++;
-      setTimeout(() => {
-        mostrarSistema();
-      }, 400);
+      processarRespostaDoAluno(texto);
+      //index++;
+      //setTimeout(() => {
+        //mostrarSistema();
+      //}, 400);
     };
   });
 </script>
