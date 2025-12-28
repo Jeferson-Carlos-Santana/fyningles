@@ -98,7 +98,7 @@
               });
           }
         </script>
-          <script>
+<script>
   // =========================
   // AUDIO – PLAYER ÚNICO
   // =========================
@@ -281,43 +281,56 @@ function falarComoAntigo(files) {
     // =========================
     // RESPOSTA DO USUÁRIO
     // =========================
-    recognition.onresult = function (e) {
+    /*recognition.onresult = function (e) {
       const texto = e.results[0][0].transcript;
 
       const user = document.createElement("div");
       user.className = "chat-message user";
       user.textContent = texto;
+
       msgs[index].after(user);
 
-  const atual = document.querySelectorAll(".chat-message")[index];
-// DEBUG VISUAL
-alert("EXPECTED_EN: " + (atual.dataset.expected || "NÃO EXISTE"));
-
-      // ===== COMPARAÇÃO SIMPLES =====
-      const esperado = normText(
-        (msgs[index].dataset.expected || "").replace(/[.?!]/g, "")
-      );
-
-      const recebido = normText(texto);
-
-      // ACERTO → AVANÇA
-      if (recebido === esperado) {
-        index++;
+      index++;
+      setTimeout(() => {
         mostrarSistema();
-        return;
-      }
-
-      // ERRO → PARA (não faz nada)
-      btnMic.disabled = false;
-
-    
-     // index++;
-      //setTimeout(() => {
-        //mostrarSistema();
-      //}, 400);
+      }, 400);
     };
-  });
+  });*/
+
+  recognition.onresult = function (e) {
+  const texto = e.results[0][0].transcript;
+
+  // ✅ 1) captura a frase atual ANTES de mexer no DOM
+  const atual = document.querySelectorAll(".chat-message")[index];
+
+  // DEBUG VISUAL (pode remover depois)
+  alert("EXPECTED_EN: " + (atual.dataset.expected || "NÃO EXISTE"));
+
+  // mostra fala do usuário
+  const user = document.createElement("div");
+  user.className = "chat-message user";
+  user.textContent = texto;
+  atual.after(user);
+
+  // ===== COMPARAÇÃO SIMPLES =====
+  const esperado = normText(
+    (atual.dataset.expected || "").replace(/[.?!]/g, "")
+  );
+
+  const recebido = normText(texto);
+
+  // ACERTO → AVANÇA
+  if (recebido === esperado) {
+    index++;
+    mostrarSistema();
+    return;
+  }
+
+  // ERRO → PARA
+  btnMic.disabled = false;
+};
 </script>
+
 
  
 </body>
