@@ -56,8 +56,9 @@
 <div class="chat-area">
   {% for line in lines %}
     <div class="chat-message {{ line.role }}"
-         data-id="{{ line.id }}"
-         style="display:none;">
+        data-id="{{ line.id }}"
+        data-auto="{{ line.auto }}"
+        style="display:none;">
       {{ line.content_pt|striptags }}
     </div>
   {% endfor %}
@@ -176,33 +177,84 @@ function falarComoAntigo(files) {
     // =========================
     // MOSTRA FRASE + FALA
     // =========================
-  function mostrarSistema() {
-    if (index >= msgs.length) {
-      btnMic.disabled = true;
-      btnStart.disabled = true;
-      return;
+    //function mostrarSistema() {
+      //if (index >= msgs.length) {
+        //btnMic.disabled = true;
+        //btnStart.disabled = true;
+        //return;
+      //}
+
+      //const msg = msgs[index];
+      //const lineId = msg.dataset.id;
+
+      //msg.innerHTML = limparHTML(msg.innerHTML);
+      //msg.style.display = "block";
+
+      //fetch("/tts/line/", {
+        //method: "POST",
+        //headers: { "Content-Type": "application/json" },
+        //body: JSON.stringify({ line_id: lineId })
+      //})
+      //.then(r => r.json())
+      //.then(d => {
+        //if (d.files && d.files.length) {
+          //falarComoAntigo(d.files);
+       // }
+      //});
+
+      //btnMic.disabled = false;
+    //}
+    function mostrarSistema() {
+      if (index >= msgs.length) {
+        btnMic.disabled = true;
+        btnStart.disabled = true;
+        return;
+      }
+
+      const msg = msgs[index];
+      const lineId = msg.dataset.id;
+      const auto = parseInt(msg.dataset.auto || "0");
+      const end  = parseInt(msg.dataset.end  || "0");
+
+      msg.innerHTML = limparHTML(msg.innerHTML);
+      msg.style.display = "block";
+
+      fetch("/tts/line/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ line_id: lineId })
+      })
+      .then(r => r.json())
+      .then(async d => {
+        if (d.files && d.files.length) {
+          await falarComoAntigo(d.files);
+        }
+
+        // =========================
+        // eND TEM PRIORIDADE
+        // =========================
+        if (end === 1) {
+          btnMic.disabled = true;
+          btnStart.disabled = true;
+          index++;
+          return;
+        }
+
+        // =========================
+        // AUTO SEGUE SOZINHO
+        // =========================
+        if (auto === 1) {
+          index++;
+          return mostrarSistema();
+        }
+
+        // =========================
+        // ESPERA USUÁRIO
+        // =========================
+        btnMic.disabled = false;
+      });
     }
 
-  const msg = msgs[index];
-  const lineId = msg.dataset.id;
-
-  msg.innerHTML = limparHTML(msg.innerHTML);
-  msg.style.display = "block";
-
-  fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ line_id: lineId })
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.files && d.files.length) {
-      falarComoAntigo(d.files);
-    }
-  });
-
-  btnMic.disabled = false;
-}
 
 
     // =========================
@@ -211,9 +263,8 @@ function falarComoAntigo(files) {
     btnStart.onclick = function () {
       btnStart.disabled = true;
       index = 0;
-      msgs.forEach(m => m.style.display = "none");  
-      btnMic.onclick();    
-      //mostrarSistema();
+      msgs.forEach(m => m.style.display = "none");      
+      mostrarSistema();
     };
 
     // =========================
