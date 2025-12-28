@@ -98,7 +98,7 @@
               });
           }
         </script>
-<script>
+          <script>
   // =========================
   // AUDIO – PLAYER ÚNICO
   // =========================
@@ -281,24 +281,8 @@ function falarComoAntigo(files) {
     // =========================
     // RESPOSTA DO USUÁRIO
     // =========================
-    /*recognition.onresult = function (e) {
-      const texto = e.results[0][0].transcript;
-
-      const user = document.createElement("div");
-      user.className = "chat-message user";
-      user.textContent = texto;
-
-      msgs[index].after(user);
-
-      index++;
-      setTimeout(() => {
-        mostrarSistema();
-      }, 400);
-    };
-  });*/
-
-  recognition.onresult = function (e) {
-  const texto = e.results[0][0].transcript;
+    recognition.onresult = function (e) {
+    const texto = e.results[0][0].transcript;
 
   // ✅ 1) captura a frase atual ANTES de mexer no DOM
   const atual = document.querySelectorAll(".chat-message")[index];
@@ -328,9 +312,10 @@ function falarComoAntigo(files) {
 
   // ERRO → PARA
   btnMic.disabled = false;
-};
-</script>
+    };
+  });
 
+</script>
 
  
 </body>
