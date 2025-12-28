@@ -156,32 +156,6 @@ function falarComoAntigo(files) {
   return filaVoz;
 }
 
-function mostrarAbertura() {
-  const welcome = document.createElement("div");
-  welcome.className = "chat-message teacher";
-  welcome.textContent = "Welcome! Let's start the lesson.";
-  welcome.style.display = "block";
-
-  document.querySelector(".chat-area").appendChild(welcome);
-}
-
-
-async function falarAbertura() {
-  const r = await fetch("/tts/text/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      text: "Welcome! Let's start the lesson."
-    })
-  });
-
-  const d = await r.json();
-
-  // 🔑 ISSO BLOQUEIA ATÉ TERMINAR DE FALAR
-  await falarComoAntigo(d.files);
-}
-
-
 
   document.addEventListener("DOMContentLoaded", function () {
     // ===== SPEECH =====
@@ -285,35 +259,15 @@ async function falarAbertura() {
 
 
 
-
     // =========================
     // BOTÃO INICIAR
     // =========================
-    //btnStart.onclick = function () {
-      //btnStart.disabled = true;
-      //index = 0;
-      //msgs.forEach(m => m.style.display = "none");      
-      //mostrarSistema();
-    //};
-    btnStart.onclick = async function () {
-  btnStart.disabled = true;
-  btnMic.disabled = true;
-  index = 0;
-
-  // limpa histórico visual, se quiser
-  // document.querySelector(".chat-area").innerHTML = "";
-
-  // 1️⃣ MOSTRA FRASE DE ABERTURA
-  mostrarAbertura();
-
-  // 2️⃣ FALA A ABERTURA E ESPERA TERMINAR
-  await falarAbertura();
-
-  // 3️⃣ AGORA COMEÇA O BANCO
-  mostrarSistema();
-};
-
-
+    btnStart.onclick = function () {
+      btnStart.disabled = true;
+      index = 0;
+      msgs.forEach(m => m.style.display = "none");      
+      mostrarSistema();
+    };
 
     // =========================
     // BOTÃO MICROFONE
