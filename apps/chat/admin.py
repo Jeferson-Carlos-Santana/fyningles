@@ -17,6 +17,7 @@ class ChatAdmin(admin.ModelAdmin):
     "lang",
     "auto",
     "end",
+    "status_point"
     "template_choice",
     "expected_en",
     "expected_pt",
@@ -36,6 +37,7 @@ class ChatAdmin(admin.ModelAdmin):
     "role",
     "lang",
     "auto",
+    "status_point"
     "end",
     "expected_pt",
     "expected_en",
