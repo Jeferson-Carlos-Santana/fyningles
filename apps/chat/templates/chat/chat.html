@@ -111,7 +111,7 @@
   // TOCA UM ÚNICO AUDIO E ESPERA
   // (IGUAL AO TTS ANTIGO)
   // =========================
-  {% comment %} function tocarUm(file) {
+  function tocarUm(file) {
     return new Promise(resolve => {
       audioPlayer.src = "/media/cache/" + file;
 
@@ -120,39 +120,25 @@
 
       audioPlayer.play().catch(() => resolve());
     });
-  } {% endcomment %}
-function tocarUm(file) {
-  return new Promise(resolve => {
-    const url = "/media/cache/" + file + "?t=" + Date.now();
+  } 
+   {% comment %} function tocarUm(file) {
+      return new Promise(resolve => {
 
-    function tentar(tries = 30) {
-      fetch(url, { method: "HEAD" })
-        .then(r => {
-          if (!r.ok) throw new Error("not ready");
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        audioPlayer.src = "";        
+        audioPlayer.load();          
 
-          audioPlayer.pause();
-          audioPlayer.currentTime = 0;
-          audioPlayer.src = url;
-          audioPlayer.load();
+        audioPlayer.src = "/media/cache/" + file + "?t=" + Date.now();
 
-          audioPlayer.onended = () => resolve();
-          audioPlayer.onerror = () => resolve();
-
+        audioPlayer.oncanplay = () => {
           audioPlayer.play().catch(() => resolve());
-        })
-        .catch(() => {
-          if (tries > 0) {
-            setTimeout(() => tentar(tries - 1), 150);
-          } else {
-            resolve(); // não trava fluxo
-          }
-        });
-    }
+        };
 
-    tentar();
-  });
-}
-
+        audioPlayer.onended = () => resolve();
+        audioPlayer.onerror = () => resolve();
+      });
+    } {% endcomment %}
 
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
@@ -276,25 +262,12 @@ function falarComoAntigo(files) {
     // =========================
     // BOTÃO INICIAR
     // =========================
-    //btnStart.onclick = function () {
-      //btnStart.disabled = true;
-      //index = 0;
-      //msgs.forEach(m => m.style.display = "none");      
-      //mostrarSistema();
-    //};
     btnStart.onclick = function () {
       btnStart.disabled = true;
-
-      // EXATAMENTE O QUE O CÓDIGO ANTIGO FAZIA
-      audioPlayer.src =
-        "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
-      audioPlayer.play().catch(() => {});
-
-      setTimeout(() => {
-        mostrarSistema();
-      }, 50);
+      index = 0;
+      msgs.forEach(m => m.style.display = "none");      
+      mostrarSistema();
     };
-
 
     // =========================
     // BOTÃO MICROFONE
