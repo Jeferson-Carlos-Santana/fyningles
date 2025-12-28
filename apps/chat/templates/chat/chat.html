@@ -139,6 +139,17 @@
     }
 
 
+   async function unlockAudio() {
+  try {
+    // “primeira reprodução” silenciosa para liberar autoplay
+    audioPlayer.muted = true;
+    audioPlayer.src = "data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAAAA=="; // mp3 minúsculo
+    await audioPlayer.play().catch(() => {});
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0;
+    audioPlayer.muted = false;
+  } catch (e) {}
+}
 
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
@@ -214,6 +225,9 @@ function falarComoAntigo(files) {
       btnStart.disabled = true;
       index = 0;
       msgs.forEach(m => m.style.display = "none");
+      
+      await unlockAudio();
+      await new Promise(r => setTimeout(r, 300));
       mostrarSistema();
     };
 
