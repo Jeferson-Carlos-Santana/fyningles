@@ -138,8 +138,6 @@
       });
     }
 
-
-   
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
   // (SEM FILA, SEM LISTA)
@@ -160,7 +158,7 @@ function falarComoAntigo(files) {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
+    recognition.lang = "en-GB";
     recognition.continuous = false;
     recognition.interimResults = false;
 
@@ -214,6 +212,8 @@ function falarComoAntigo(files) {
       btnStart.disabled = true;
       index = 0;
       msgs.forEach(m => m.style.display = "none");
+      recognition.start();
+      setTimeout(() => recognition.stop(), 50);
       mostrarSistema();
     };
 
