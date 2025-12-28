@@ -262,12 +262,32 @@ function falarComoAntigo(files) {
     // =========================
     // BOTÃO INICIAR
     // =========================
-    btnStart.onclick = function () {
+    //btnStart.onclick = function () {
+      //btnStart.disabled = true;
+      //index = 0;
+      //msgs.forEach(m => m.style.display = "none");      
+      //mostrarSistema();
+    //};
+    btnStart.onclick = async function () {
       btnStart.disabled = true;
       index = 0;
-      msgs.forEach(m => m.style.display = "none");      
+
+      // FRASE DE BOAS-VINDAS (JS)
+      const welcome = document.createElement("div");
+      welcome.className = "chat-message teacher";
+      welcome.textContent = "Welcome! Let's start the lesson.";
+      welcome.style.display = "block";
+
+      document.querySelector(".chat-area").appendChild(welcome);
+
+      // toca áudio direto (uma vez)
+      await falarComoAntigo(["welcome.mp3"]); 
+      // ou gerar via endpoint se preferir
+
+      // agora sim começa a lição real
       mostrarSistema();
     };
+
 
     // =========================
     // BOTÃO MICROFONE
