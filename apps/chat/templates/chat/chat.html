@@ -281,38 +281,36 @@ function falarComoAntigo(files) {
     // =========================
     // RESPOSTA DO USUÁRIO
     // =========================
-    recognition.onresult = function (e) {
-    const texto = e.results[0][0].transcript;
+recognition.onresult = function (e) {
+  const texto = e.results[0][0].transcript;
 
-  // ✅ 1) captura a frase atual ANTES de mexer no DOM
+  // pega a frase atual do professor ANTES de mexer no DOM
   const atual = document.querySelectorAll(".chat-message")[index];
 
-  // DEBUG VISUAL (pode remover depois)
-  alert("EXPECTED_EN: " + (atual.dataset.expected || "NÃO EXISTE"));
-
-  // mostra fala do usuário
+  // mostra o que o usuário falou
   const user = document.createElement("div");
   user.className = "chat-message user";
   user.textContent = texto;
   atual.after(user);
 
-  // ===== COMPARAÇÃO SIMPLES =====
-const esperado = normText(atual.dataset.expected);
-const recebido = normText(texto);
+  // normaliza os dois lados (IGNORA ponto final)
+  const esperado = normText(atual.dataset.expected || "");
+  const recebido = normText(texto);
 
-
-  // ACERTO → AVANÇA
+  // SE ACERTAR → AVANÇA
   if (recebido === esperado) {
     index++;
     mostrarSistema();
     return;
   }
 
-  // ERRO → PARA
+  // SE ERRAR → PARA (fica esperando)
   btnMic.disabled = false;
-    };
+};
+
   });
 
+  
 </script>
 
  
