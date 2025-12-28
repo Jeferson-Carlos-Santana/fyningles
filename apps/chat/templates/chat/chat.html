@@ -231,9 +231,7 @@ function falarComoAntigo(files) {
           await falarComoAntigo(d.files);
         }
 
-        // =========================
-        // eND TEM PRIORIDADE
-        // =========================
+        // SÓ AGORA MOSTRA A PRÓXIMA
         if (end === 1) {
           btnMic.disabled = true;
           btnStart.disabled = true;
@@ -241,19 +239,16 @@ function falarComoAntigo(files) {
           return;
         }
 
-        // =========================
-        // AUTO SEGUE SOZINHO
-        // =========================
         if (auto === 1) {
           index++;
-          return mostrarSistema();
+          // pequeno delay para não colar visualmente
+          setTimeout(() => mostrarSistema(), 150);
+          return;
         }
 
-        // =========================
-        // ESPERA USUÁRIO
-        // =========================
         btnMic.disabled = false;
       });
+
     }
 
 
