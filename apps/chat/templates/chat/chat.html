@@ -208,66 +208,52 @@ function falarComoAntigo(files) {
       //btnMic.disabled = false;
     //}
     function mostrarSistema() {
-      // ESCONDE TODAS AS FRASES (GARANTE 1 POR VEZ)
-      msgs.forEach(m => m.style.display = "none");
-
-      if (index >= msgs.length) {
-        btnMic.disabled = true;
-        btnStart.disabled = true;
-        return;
-      }
-
-      const msg = msgs[index];
-      const lineId = msg.dataset.id;
-      const auto = parseInt(msg.dataset.auto || "0");
-      const end  = parseInt(msg.dataset.end  || "0");
-
-      msg.innerHTML = limparHTML(msg.innerHTML);
-      msg.style.display = "block";
-
-      fetch("/tts/line/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ line_id: lineId })
-      })
-      .then(r => r.json())
-      .then(async d => {
-  if (d.files && d.files.length) {
-    await falarComoAntigo(d.files);
-  }
-
-  // ✅ AGORA SIM MOSTRA A FRASE (uma por vez)
-  msg.innerHTML = limparHTML(msg.innerHTML);
-  msg.style.display = "block";
-
-  // =========================
-  // END TEM PRIORIDADE
-  // =========================
-  if (end === 1) {
+  if (index >= msgs.length) {
     btnMic.disabled = true;
     btnStart.disabled = true;
-    index++;
     return;
   }
 
-  // =========================
-  // AUTO: SÓ AVANÇA, NÃO MOSTRA A PRÓXIMA AINDA
-  // =========================
-  if (auto === 1) {
-    index++;
-    // pequeno delay só para UX
-    setTimeout(() => mostrarSistema(), 100);
-    return;
-  }
+  const msg = msgs[index];
+  const lineId = msg.dataset.id;
+  const auto = parseInt(msg.dataset.auto || "0");
+  const end  = parseInt(msg.dataset.end  || "0");
 
-  // =========================
-  // ESPERA USUÁRIO
-  // =========================
-  btnMic.disabled = false;
-});
-
-
+  fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ line_id: lineId })
+  })
+  .then(r => r.json())
+  .then(async d => {
+    // 🔊 ESPERA A CORRENTE DE ÁUDIO
+    if (d.files && d.files.length) {
+      await falarComoAntigo(d.files);
     }
+
+    // ✅ AGORA MOSTRA A FRASE (NÃO APAGA AS ANTIGAS)
+    msg.innerHTML = limparHTML(msg.innerHTML);
+    msg.style.display = "block";
+
+    // 🔚 END
+    if (end === 1) {
+      btnMic.disabled = true;
+      btnStart.disabled = true;
+      index++;
+      return;
+    }
+
+    // ▶ AUTO
+    if (auto === 1) {
+      index++;
+      return mostrarSistema();
+    }
+
+    // 🎤 ESPERA USUÁRIO
+    btnMic.disabled = false;
+  });
+}
+
 
 
 
