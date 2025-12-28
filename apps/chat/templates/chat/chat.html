@@ -176,12 +176,12 @@ function falarComoAntigo(files) {
     // =========================
     // MOSTRA FRASE + FALA
     // =========================
-    function mostrarSistema() {
-  if (index >= msgs.length) {
-    btnMic.disabled = true;
-    btnStart.disabled = true;
-    return;
-  }
+  function mostrarSistema() {
+    if (index >= msgs.length) {
+      btnMic.disabled = true;
+      btnStart.disabled = true;
+      return;
+    }
 
   const msg = msgs[index];
   const lineId = msg.dataset.id;
@@ -211,9 +211,9 @@ function falarComoAntigo(files) {
     btnStart.onclick = function () {
       btnStart.disabled = true;
       index = 0;
-      msgs.forEach(m => m.style.display = "none");
-      
-      //mostrarSistema();
+      msgs.forEach(m => m.style.display = "none");  
+      btnMic.onclick();    
+      mostrarSistema();
     };
 
     // =========================
