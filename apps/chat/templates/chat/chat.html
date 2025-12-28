@@ -95,7 +95,7 @@
               });
           }
         </script>
-          <script>
+  <script>
   // =========================
   // AUDIO – PLAYER ÚNICO
   // =========================
@@ -138,22 +138,28 @@
       });
     }
 
-
     
-
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
   // (SEM FILA, SEM LISTA)
   // =========================
  let filaVoz = Promise.resolve();
 
-  function falarComoAntigo(files) {
-    filaVoz = filaVoz.then(async () => {
-      for (const file of files) {
-        await tocarUm(file);
-      }
-    }).catch(() => {});
-  }
+{% comment %} function falarComoAntigo(files) {
+  filaVoz = filaVoz.then(async () => {
+    for (const file of files) {
+      await tocarUm(file);
+    }
+  }).catch(() => {});
+} {% endcomment %}
+
+function falarComoAntigo(files) {
+  return filaVoz = filaVoz.then(async () => {
+    for (const f of files) {
+      await tocarUm(f);
+    }
+  }).catch(() => {});
+}
 
 
 
@@ -180,12 +186,12 @@
     // =========================
     // MOSTRA FRASE + FALA
     // =========================
-  function mostrarSistema() {
-    if (index >= msgs.length) {      
-      btnMic.disabled = true;
-      btnStart.disabled = true;
-      return;
-    }
+    function mostrarSistema() {
+  if (index >= msgs.length) {
+    btnMic.disabled = true;
+    btnStart.disabled = true;
+    return;
+  }
 
   const msg = msgs[index];
   const lineId = msg.dataset.id;
@@ -216,7 +222,8 @@
       btnStart.disabled = true;
       index = 0;
       msgs.forEach(m => m.style.display = "none");
-      mostrarSistema();
+      //mostrarSistema();
+      btnMic.disabled = false;
     };
 
     // =========================
