@@ -297,11 +297,9 @@ function falarComoAntigo(files) {
   atual.after(user);
 
   // ===== COMPARAÇÃO SIMPLES =====
-  const esperado = normText(
-    (atual.dataset.expected || "").replace(/[.?!]/g, "")
-  );
+const esperado = normText(atual.dataset.expected);
+const recebido = normText(texto);
 
-  const recebido = normText(texto);
 
   // ACERTO → AVANÇA
   if (recebido === esperado) {
