@@ -156,6 +156,32 @@ function falarComoAntigo(files) {
   return filaVoz;
 }
 
+function mostrarAbertura() {
+  const welcome = document.createElement("div");
+  welcome.className = "chat-message teacher";
+  welcome.textContent = "Welcome! Let's start the lesson.";
+  welcome.style.display = "block";
+
+  document.querySelector(".chat-area").appendChild(welcome);
+}
+
+
+async function falarAbertura() {
+  const r = await fetch("/tts/text/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      text: "Welcome! Let's start the lesson."
+    })
+  });
+
+  const d = await r.json();
+
+  // 🔑 ISSO BLOQUEIA ATÉ TERMINAR DE FALAR
+  await falarComoAntigo(d.files);
+}
+
+
 
   document.addEventListener("DOMContentLoaded", function () {
     // ===== SPEECH =====
@@ -259,6 +285,7 @@ function falarComoAntigo(files) {
 
 
 
+
     // =========================
     // BOTÃO INICIAR
     // =========================
@@ -269,24 +296,23 @@ function falarComoAntigo(files) {
       //mostrarSistema();
     //};
     btnStart.onclick = async function () {
-      btnStart.disabled = true;
-      index = 0;
+  btnStart.disabled = true;
+  btnMic.disabled = true;
+  index = 0;
 
-      // FRASE DE BOAS-VINDAS (JS)
-      const welcome = document.createElement("div");
-      welcome.className = "chat-message teacher";
-      welcome.textContent = "Welcome! Let's start the lesson.";
-      welcome.style.display = "block";
+  // limpa histórico visual, se quiser
+  // document.querySelector(".chat-area").innerHTML = "";
 
-      document.querySelector(".chat-area").appendChild(welcome);
+  // 1️⃣ MOSTRA FRASE DE ABERTURA
+  mostrarAbertura();
 
-      // toca áudio direto (uma vez)
-      await falarComoAntigo(["welcome.mp3"]); 
-      // ou gerar via endpoint se preferir
+  // 2️⃣ FALA A ABERTURA E ESPERA TERMINAR
+  await falarAbertura();
 
-      // agora sim começa a lição real
-      mostrarSistema();
-    };
+  // 3️⃣ AGORA COMEÇA O BANCO
+  mostrarSistema();
+};
+
 
 
     // =========================
