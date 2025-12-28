@@ -57,7 +57,8 @@
   {% for line in lines %}
     <div class="chat-message {{ line.role }}"
         data-id="{{ line.id }}"
-        data-auto="{{ line.auto }}"
+        data-auto="{{ line.auto|yesno:'1,0' }}"
+        data-end="{{ line.end|yesno:'1,0' }}"
         style="display:none;">
       {{ line.content_pt|striptags }}
     </div>
