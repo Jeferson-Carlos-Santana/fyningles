@@ -121,24 +121,38 @@
       audioPlayer.play().catch(() => resolve());
     });
   } {% endcomment %}
-   function tocarUm(file) {
-      return new Promise(resolve => {
+function tocarUm(file) {
+  return new Promise(resolve => {
+    const url = "/media/cache/" + file + "?t=" + Date.now();
 
-        audioPlayer.pause();
-        audioPlayer.currentTime = 0;
-        audioPlayer.src = "";        
-        audioPlayer.load();          
+    function tentar(tries = 30) {
+      fetch(url, { method: "HEAD" })
+        .then(r => {
+          if (!r.ok) throw new Error("not ready");
 
-        audioPlayer.src = "/media/cache/" + file + "?t=" + Date.now();
+          audioPlayer.pause();
+          audioPlayer.currentTime = 0;
+          audioPlayer.src = url;
+          audioPlayer.load();
 
-        audioPlayer.oncanplay = () => {
+          audioPlayer.onended = () => resolve();
+          audioPlayer.onerror = () => resolve();
+
           audioPlayer.play().catch(() => resolve());
-        };
-
-        audioPlayer.onended = () => resolve();
-        audioPlayer.onerror = () => resolve();
-      });
+        })
+        .catch(() => {
+          if (tries > 0) {
+            setTimeout(() => tentar(tries - 1), 150);
+          } else {
+            resolve(); // não trava fluxo
+          }
+        });
     }
+
+    tentar();
+  });
+}
+
 
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
