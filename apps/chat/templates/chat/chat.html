@@ -289,10 +289,9 @@ function falarComoAntigo(files) {
       user.textContent = texto;
       msgs[index].after(user);
 
-      console.log("INDEX:", index);
-console.log("DATA-EXPECTED (cru):", msg.dataset.expected);
-console.log("DATA-EXPECTED (norm):", normText(msg.dataset.expected || ""));
-console.log("TEXTO VISÍVEL:", msg.textContent);
+  const atual = document.querySelectorAll(".chat-message")[index];
+// DEBUG VISUAL
+alert("EXPECTED_EN: " + (atual.dataset.expected || "NÃO EXISTE"));
 
       // ===== COMPARAÇÃO SIMPLES =====
       const esperado = normText(
