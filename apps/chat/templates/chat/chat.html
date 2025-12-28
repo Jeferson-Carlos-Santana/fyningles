@@ -221,14 +221,21 @@ function falarComoAntigo(files) {
     // =========================
     // BOTÃO INICIAR
     // =========================
-    btnStart.onclick = function () {
+    //btnStart.onclick = function () {
+      //btnStart.disabled = true;
+      //index = 0;
+      //msgs.forEach(m => m.style.display = "none");
+
+      //mostrarSistema();
+    //};
+    btnStart.onclick = async function () {
       btnStart.disabled = true;
       index = 0;
       msgs.forEach(m => m.style.display = "none");
-      
-      await unlockAudio();
-      await new Promise(r => setTimeout(r, 300));
-      mostrarSistema();
+
+      await unlockAudio();            
+      await new Promise(r => setTimeout(r, 300)); 
+      mostrarSistema();         
     };
 
     // =========================
