@@ -121,16 +121,23 @@
   } {% endcomment %}
    function tocarUm(file) {
       return new Promise(resolve => {
-        const audio = new Audio("/media/cache/" + file + "?t=" + Date.now());
 
-        audio.oncanplaythrough = () => {
-          audio.play().catch(() => resolve());
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        audioPlayer.src = "";        
+        audioPlayer.load();          
+
+        audioPlayer.src = "/media/cache/" + file + "?t=" + Date.now();
+
+        audioPlayer.oncanplay = () => {
+          audioPlayer.play().catch(() => resolve());
         };
 
-        audio.onended = () => resolve();
-        audio.onerror = () => resolve();
+        audioPlayer.onended = () => resolve();
+        audioPlayer.onerror = () => resolve();
       });
     }
+
 
 
   // =========================
