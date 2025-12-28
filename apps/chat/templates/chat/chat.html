@@ -139,17 +139,7 @@
     }
 
 
-   async function unlockAudio() {
-  try {
-    // “primeira reprodução” silenciosa para liberar autoplay
-    audioPlayer.muted = true;
-    audioPlayer.src = "data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAAAA=="; // mp3 minúsculo
-    await audioPlayer.play().catch(() => {});
-    audioPlayer.pause();
-    audioPlayer.currentTime = 0;
-    audioPlayer.muted = false;
-  } catch (e) {}
-}
+    
 
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
@@ -157,13 +147,14 @@
   // =========================
  let filaVoz = Promise.resolve();
 
-function falarComoAntigo(files) {
-  filaVoz = filaVoz.then(async () => {
-    for (const file of files) {
-      await tocarUm(file);
-    }
-  }).catch(() => {});
-}
+  function falarComoAntigo(files) {
+    filaVoz = filaVoz.then(async () => {
+      for (const file of files) {
+        await tocarUm(file);
+      }
+    }).catch(() => {});
+  }
+
 
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -189,12 +180,12 @@ function falarComoAntigo(files) {
     // =========================
     // MOSTRA FRASE + FALA
     // =========================
-    function mostrarSistema() {
-  if (index >= msgs.length) {
-    btnMic.disabled = true;
-    btnStart.disabled = true;
-    return;
-  }
+  function mostrarSistema() {
+    if (index >= msgs.length) {      
+      btnMic.disabled = true;
+      btnStart.disabled = true;
+      return;
+    }
 
   const msg = msgs[index];
   const lineId = msg.dataset.id;
@@ -210,7 +201,7 @@ function falarComoAntigo(files) {
   .then(r => r.json())
   .then(d => {
     if (d.files && d.files.length) {
-      falarComoAntigo(d.files); // 🔊 voz serializada internamente
+      await falarComoAntigo(d.files);
     }
   });
 
@@ -221,21 +212,11 @@ function falarComoAntigo(files) {
     // =========================
     // BOTÃO INICIAR
     // =========================
-    //btnStart.onclick = function () {
-      //btnStart.disabled = true;
-      //index = 0;
-      //msgs.forEach(m => m.style.display = "none");
-
-      //mostrarSistema();
-    //};
-    btnStart.onclick = async function () {
+    btnStart.onclick = function () {
       btnStart.disabled = true;
       index = 0;
       msgs.forEach(m => m.style.display = "none");
-
-      await unlockAudio();            
-      await new Promise(r => setTimeout(r, 300)); 
-      mostrarSistema();         
+      mostrarSistema();
     };
 
     // =========================
