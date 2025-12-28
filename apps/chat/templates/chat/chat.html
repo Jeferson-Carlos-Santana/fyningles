@@ -95,7 +95,7 @@
               });
           }
         </script>
-  <script>
+          <script>
   // =========================
   // AUDIO – PLAYER ÚNICO
   // =========================
@@ -138,29 +138,21 @@
       });
     }
 
-    
+
+   
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
   // (SEM FILA, SEM LISTA)
   // =========================
  let filaVoz = Promise.resolve();
 
-{% comment %} function falarComoAntigo(files) {
+function falarComoAntigo(files) {
   filaVoz = filaVoz.then(async () => {
     for (const file of files) {
       await tocarUm(file);
     }
   }).catch(() => {});
-} {% endcomment %}
-
-function falarComoAntigo(files) {
-  return filaVoz = filaVoz.then(async () => {
-    for (const f of files) {
-      await tocarUm(f);
-    }
-  }).catch(() => {});
 }
-
 
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -207,7 +199,7 @@ function falarComoAntigo(files) {
   .then(r => r.json())
   .then(d => {
     if (d.files && d.files.length) {
-      await falarComoAntigo(d.files);
+      falarComoAntigo(d.files);
     }
   });
 
@@ -222,8 +214,7 @@ function falarComoAntigo(files) {
       btnStart.disabled = true;
       index = 0;
       msgs.forEach(m => m.style.display = "none");
-      //mostrarSistema();
-      btnMic.disabled = false;
+      mostrarSistema();
     };
 
     // =========================
