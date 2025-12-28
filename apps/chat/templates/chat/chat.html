@@ -290,25 +290,17 @@ function normText(s) {
     // =========================
     recognition.onresult = function (e) {
       const texto = e.results[0][0].transcript;
-      const atual = document.querySelectorAll(".chat-message")[index];
-      
+
       const user = document.createElement("div");
       user.className = "chat-message user";
       user.textContent = texto;
-      atual.after(user);
-      //msgs[index].after(user);
 
-      // normaliza os dois lados (IGNORA ponto final)
-      const esperado = normText(atual.dataset.expected || "");
-      const recebido = normText(texto);
-      if (recebido === esperado) {
-        index++;
-        setTimeout(() => {
-            mostrarSistema();
-          }, 600);
-          return;
-      }
-      btnMic.disabled = false;
+      msgs[index].after(user);
+
+      index++;
+      setTimeout(() => {
+        mostrarSistema();
+      }, 400);
     };
   });
 
