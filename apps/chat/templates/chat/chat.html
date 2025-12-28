@@ -109,7 +109,7 @@
   // TOCA UM ÚNICO AUDIO E ESPERA
   // (IGUAL AO TTS ANTIGO)
   // =========================
-  function tocarUm(file) {
+  {% comment %} function tocarUm(file) {
     return new Promise(resolve => {
       audioPlayer.src = "/media/cache/" + file;
 
@@ -118,7 +118,20 @@
 
       audioPlayer.play().catch(() => resolve());
     });
-  }
+  } {% endcomment %}
+   function tocarUm(file) {
+      return new Promise(resolve => {
+        const audio = new Audio("/media/cache/" + file + "?t=" + Date.now());
+
+        audio.oncanplaythrough = () => {
+          audio.play().catch(() => resolve());
+        };
+
+        audio.onended = () => resolve();
+        audio.onerror = () => resolve();
+      });
+    }
+
 
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
