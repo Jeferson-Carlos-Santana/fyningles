@@ -182,14 +182,6 @@ function falarComoAntigo(files) {
 
 
 
-function normText(s) {
-  return (s || "")
-    .toLowerCase()
-    .replace(/[’]/g, "'")
-    .replace(/[^\w\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
 
 
@@ -289,36 +281,20 @@ function normText(s) {
     // =========================
     // RESPOSTA DO USUÁRIO
     // =========================
-recognition.onresult = function (e) {
-  const texto = e.results[0][0].transcript;
+    recognition.onresult = function (e) {
+      const texto = e.results[0][0].transcript;
 
-  // pega a frase atual do professor ANTES de mexer no DOM
-  const atual = document.querySelectorAll(".chat-message")[index];
+      const user = document.createElement("div");
+      user.className = "chat-message user";
+      user.textContent = texto;
 
-  // mostra o que o usuário falou
-  const user = document.createElement("div");
-  user.className = "chat-message user";
-  user.textContent = texto;
-  atual.after(user);
+      msgs[index].after(user);
 
-  // normaliza os dois lados (IGNORA ponto final)
-  const esperado = normText(atual.dataset.expected || "");
-  const recebido = normText(texto);
-
-  // SE ACERTAR → AVANÇA
-  if (recebido === esperado) {
-    index++;
-    btnMic.disabled = true;
-    setTimeout(() => {
+      index++;
+      setTimeout(() => {
         mostrarSistema();
       }, 400);
-    return;
-  }
-
-  // SE ERRAR → PARA (fica esperando)
-  btnMic.disabled = false;
-};
-
+    };
   });
 
   
