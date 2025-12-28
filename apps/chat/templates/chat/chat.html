@@ -303,12 +303,12 @@ function normText(s) {
       const recebido = normText(texto);
       if (recebido === esperado) {
         index++;
-        btnMic.disabled = false;
-        return;
-        //setTimeout(() => {
-          //  mostrarSistema();
-         // }, 600);
+        setTimeout(() => {
+            mostrarSistema();
+          }, 600);
+          return;
       }
+      btnMic.disabled = false;
     };
   });
 
