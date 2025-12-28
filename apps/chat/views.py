@@ -107,7 +107,8 @@ def tts_line(request):
         #     json={"text": frase, "lang": lang},
         #     timeout=20
         # )
-        fixed = (line.role == "system")
+        #fixed = (line.role == "system")
+        fixed = bool(line.status_point)
 
         r = requests.post(
             "http://127.0.0.1:9000",
