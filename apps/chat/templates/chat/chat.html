@@ -182,6 +182,14 @@ function falarComoAntigo(files) {
 
 
 
+function normText(s) {
+  return (s || "")
+    .toLowerCase()
+    .replace(/[’]/g, "'")
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 
 
