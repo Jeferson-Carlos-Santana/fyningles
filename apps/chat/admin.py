@@ -36,8 +36,9 @@ class ChatAdmin(admin.ModelAdmin):
     "seq",
     "role",
     "lang",
-    "auto",    
+    "auto",
     "end",
+    "status_point",
     "expected_pt",
     "expected_en",
     "expected_it",
@@ -46,7 +47,7 @@ class ChatAdmin(admin.ModelAdmin):
     "status",
     "created_at",
   )
-  list_editable = ("auto", "end")
+  list_editable = ("auto", "end", "status_point")
   # DEFINE CAMPOS COM 100%
   formfield_overrides = {
     models.CharField: {
