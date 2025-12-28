@@ -276,12 +276,25 @@ function falarComoAntigo(files) {
     // =========================
     // BOTÃO INICIAR
     // =========================
+    //btnStart.onclick = function () {
+      //btnStart.disabled = true;
+      //index = 0;
+      //msgs.forEach(m => m.style.display = "none");      
+      //mostrarSistema();
+    //};
     btnStart.onclick = function () {
       btnStart.disabled = true;
-      index = 0;
-      msgs.forEach(m => m.style.display = "none");      
-      mostrarSistema();
+
+      // EXATAMENTE O QUE O CÓDIGO ANTIGO FAZIA
+      audioPlayer.src =
+        "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
+      audioPlayer.play().catch(() => {});
+
+      setTimeout(() => {
+        mostrarSistema();
+      }, 50);
     };
+
 
     // =========================
     // BOTÃO MICROFONE
