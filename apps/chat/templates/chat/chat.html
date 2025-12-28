@@ -288,6 +288,12 @@ function falarComoAntigo(files) {
       user.className = "chat-message user";
       user.textContent = texto;
       msgs[index].after(user);
+
+      console.log("INDEX:", index);
+console.log("DATA-EXPECTED (cru):", msg.dataset.expected);
+console.log("DATA-EXPECTED (norm):", normText(msg.dataset.expected || ""));
+console.log("TEXTO VISÍVEL:", msg.textContent);
+
       // ===== COMPARAÇÃO SIMPLES =====
       const esperado = normText(
         (msgs[index].dataset.expected || "").replace(/[.?!]/g, "")
@@ -305,7 +311,7 @@ function falarComoAntigo(files) {
       // ERRO → PARA (não faz nada)
       btnMic.disabled = false;
 
-
+    
      // index++;
       //setTimeout(() => {
         //mostrarSistema();
