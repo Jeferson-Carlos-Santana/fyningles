@@ -197,6 +197,29 @@ const FEEDBACK_ERR = [
   "Let's try again."
 ];
 
+function tocarQuandoPronto(file) {
+  return new Promise(resolve => {
+    const url = "/media/cache/" + file + "?t=" + Date.now();
+
+    function tentar(tries = 30) {
+      fetch(url, { method: "HEAD" })
+        .then(r => {
+          if (!r.ok) throw new Error("not ready");
+
+          audioPlayer.src = url;
+          audioPlayer.onended = resolve;
+          audioPlayer.onerror = resolve;
+          audioPlayer.play().catch(resolve);
+        })
+        .catch(() => {
+          if (tries > 0) setTimeout(() => tentar(tries - 1), 150);
+          else resolve();
+        });
+    }
+
+    tentar();
+  });
+}
 
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -218,7 +241,7 @@ const FEEDBACK_ERR = [
     let esperandoResposta = false;
     let expectedAtual = "";
     const MAX_TENTATIVAS = 3;
-
+  
 
     // esconde todas
     msgs.forEach(m => m.style.display = "none");
@@ -373,7 +396,7 @@ recognition.onresult = async function (e) {
     //await falarComoAntigo(d.files);
     for (const file of d.files) {
       playWhenReady(file);
-      await filaVoz; // mantém ordem
+      await tocarQuandoPronto(file);
     }
 
   }
