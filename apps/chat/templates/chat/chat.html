@@ -367,12 +367,13 @@ recognition.onresult = async function (e) {
   lastMsgEl = prof;
 
   // para o microfone antes do feedback
-  recognition.stop();
+  //recognition.stop();
 
-  await filaVoz;
+  
 
   // ===== fala AVALIAÇÃO (bloqueante) =====
-   
+   await filaVoz;
+   filaVoz = Promise.resolve();
 
   const r = await fetch("/tts/line/", {
     method: "POST",
