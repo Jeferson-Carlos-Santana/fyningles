@@ -227,6 +227,7 @@ const FEEDBACK_ERR = [
     // MOSTRA FRASE + FALA
     // =========================
     function mostrarSistema() {
+      if (tocando) return;
       if (index >= msgs.length) {
         btnMic.disabled = true;
         btnStart.disabled = true;
@@ -247,7 +248,7 @@ const FEEDBACK_ERR = [
   // enquanto fala, não deixa mic
   btnMic.disabled = true;
 
-tocando = true;   
+   
 
   fetch("/tts/line/", {
     method: "POST",
@@ -261,9 +262,11 @@ tocando = true;
 
 
       if (d.files && d.files.length) { 
+          tocando = true;
           await falarComoAntigo(d.files);
+          tocando = false;
       }
-      tocando = false;
+      
   
 
     // 3) SÓ AGORA DECIDE O PRÓXIMO PASSO
@@ -369,7 +372,7 @@ recognition.onresult = async function (e) {
   await filaVoz;
 
   // ===== fala AVALIAÇÃO (bloqueante) =====
-  tocando = true; 
+   
 
   const r = await fetch("/tts/line/", {
     method: "POST",
@@ -388,11 +391,11 @@ recognition.onresult = async function (e) {
   //}
 
   if (d.files && d.files.length) {
-    for (const file of d.files) {
+      tocando = true;
        await falarComoAntigo(d.files);
-    }
+      tocando = false;
   }
-  tocando = false;  
+    
   
 
   // ===== decisão de fluxo =====
