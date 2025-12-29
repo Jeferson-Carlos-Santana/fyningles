@@ -347,7 +347,9 @@ recognition.onresult = function (e) {
   const user = document.createElement("div");
   user.className = "chat-message user";
   user.textContent = texto;
-  msgs[index].after(user);
+  //msgs[index].after(user);
+  msgs[index].parentNode.appendChild(user);
+
 
   if (!esperandoResposta) return;
 
