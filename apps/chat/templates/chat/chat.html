@@ -123,6 +123,12 @@ function tocarUm(file, tries = 300, delay = 300) {
         .then(r => {
           if (!r.ok) throw new Error("not ready");
 
+           //  LIMPA QUALQUER AUDIO EM ANDAMENTO
+          audioPlayer.pause();
+          audioPlayer.currentTime = 0;
+          audioPlayer.onended = null;
+          audioPlayer.onerror = null;
+
           audioPlayer.src = audioUrl;
           audioPlayer.onended = resolve;
           audioPlayer.onerror = resolve;
