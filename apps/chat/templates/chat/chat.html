@@ -215,6 +215,8 @@ const FEEDBACK_ERR = [
     let esperandoResposta = false;
     let expectedAtual = "";
     const MAX_TENTATIVAS = 3;
+
+    let fluxoBloqueado = false;
   
 
     // esconde todas
@@ -225,6 +227,7 @@ const FEEDBACK_ERR = [
     // MOSTRA FRASE + FALA
     // =========================
     function mostrarSistema() {
+      if (fluxoBloqueado) return;
       if (index >= msgs.length) {
         btnMic.disabled = true;
         btnStart.disabled = true;
@@ -358,6 +361,7 @@ recognition.onresult = async function (e) {
   await filaVoz;
 
   // ===== fala AVALIAÇÃO (bloqueante) =====
+  fluxoBloqueado = true;
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -367,10 +371,10 @@ recognition.onresult = async function (e) {
   
   const d = await r.json();
   if (d.files && d.files.length) {     
-    //for (const file of d.files) {
+    for (const file of d.files) {
       playWhenReady(file);
       //await falarComoAntigo(d.files);
-    //}
+    }
   }
 
   // ===== decisão de fluxo =====
@@ -379,6 +383,7 @@ recognition.onresult = async function (e) {
     expectedAtual = "";
     tentativas = 0;
     setTimeout(() => {
+      fluxoBloqueado = false;
       index++;
       lastMsgEl = null;
       mostrarSistema();
@@ -392,6 +397,7 @@ recognition.onresult = async function (e) {
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
+    fluxoBloqueado = false;
     index++;
     lastMsgEl = null;
     return mostrarSistema();
