@@ -184,18 +184,30 @@ function normText(s) {
 
 const FEEDBACK_OK = [
   "Very good!",
+  "Muito bem!",
   "Excellent!",
+  "Excelente!",
   "Perfect!",
+  "Perfeito!",
   "Well done!",
-  "Great job!"
+  "Muito bem feito!",
+  "Great job!",
+  "Ótimo trabalho!"
 ];
 
 const FEEDBACK_ERR = [
   "Try again.",
+  "Tente novamente.",
   "Almost, try again.",
+  "Quase lá, tente novamente.",
   "Not quite right.",
-  "Let's try again."
+  "Não está bem certo.",
+  "Let's try again.",
+  "Vamos tentar novamente.",
+  "You made a mistake, try again.",
+  "Você cometeu um erro, tente novamente."
 ];
+
 
 function pick(list) {
   return list[Math.floor(Math.random() * list.length)];
