@@ -250,7 +250,7 @@ const FEEDBACK_ERR = [
     // MOSTRA FRASE + FALA
     // =========================
     function mostrarSistema() {
-      if (tocando) return;
+      //if (tocando) return;
       if (index >= msgs.length) {
         btnMic.disabled = true;
         btnStart.disabled = true;
@@ -415,10 +415,10 @@ recognition.onresult = async function (e) {
   //}
 
   if (d.files && d.files.length) {
-      //tocando = true;
+      tocando = true;
        //await playWhenReady(d.files[0]);
       await falarComoAntigo(d.files);
-      //tocando = false;
+      tocando = false;
   }
     
   
