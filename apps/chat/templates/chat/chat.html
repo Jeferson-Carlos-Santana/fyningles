@@ -157,18 +157,29 @@ function falarComoAntigo(files) {
   return filaVoz;
 }
 
-function normText(s) {
-  return (s || "")
-    .toLowerCase()
-    .replace(/[’]/g, "'")
-    .replace(/[^\w\s]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+
+
+function expandContractionsEn(t) {
+  return (t || "")
+    .replace(/\bi['’]?m\b/gi, "i am")
+    .replace(/\byou['’]?re\b/gi, "you are")
+    .replace(/\bhe['’]?s\b/gi, "he is")
+    .replace(/\bshe['’]?s\b/gi, "she is")
+    .replace(/\bit['’]?s\b/gi, "it is")
+    .replace(/\bwe['’]?re\b/gi, "we are")
+    .replace(/\bthey['’]?re\b/gi, "they are")
+    .replace(/\bcan['’]?t\b/gi, "cannot")
+    .replace(/\bdon['’]?t\b/gi, "do not");
 }
 
 
-
-
+function normText(s) {
+  let t = (s || "").toLowerCase().replace(/[’]/g, "'");
+  t = expandContractionsEn(t);      // 🔑 AQUI
+  t = t.replace(/[^\w\s]/g, " ");
+  t = t.replace(/\s+/g, " ").trim();
+  return t;
+}
 
 
 
@@ -308,7 +319,14 @@ recognition.onresult = function (e) {
 
   if (!esperandoResposta) return;
 
-  const ok = normText(texto) === normText(expectedAtual);
+  //const ok = normText(texto) === normText(expectedAtual);
+  const expected = expectedAtual || "";
+  const expectedNorms = new Set([
+    normText(expected),
+    normText(expandContractionsEn(expected))
+  ]);
+  const ok = expectedNorms.has(normText(texto));
+
 
   if (ok) {
     // ✔️ acertou
@@ -318,7 +336,7 @@ recognition.onresult = function (e) {
     index++;
     setTimeout(() => mostrarSistema(), 200);
   } else {
-    // ❌ errou
+    //  errou
     tentativas++;
 
     if (tentativas >= MAX_TENTATIVAS) {
