@@ -255,6 +255,8 @@ if (!fluxoBloqueado){
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ line_id: lineId })
   })
+
+  }
     .then(r => r.json())
     .then(async d => {
 
@@ -278,14 +280,14 @@ if (!fluxoBloqueado){
     }
 
 
-esperandoResposta = true;
-expectedAtual = msg.dataset.expected || "";
-tentativas = 0;
-btnMic.disabled = false;
+  esperandoResposta = true;
+  expectedAtual = msg.dataset.expected || "";
+  tentativas = 0;
+  btnMic.disabled = false;
 
   });
 
-}
+
 
 
 }
