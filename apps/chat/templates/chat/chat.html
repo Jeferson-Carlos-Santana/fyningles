@@ -113,7 +113,7 @@
   // (IGUAL AO TTS ANTIGO)
   // =========================
 
-function tocarUm(file, tries = 120, delay = 500) {
+function tocarUm(file, tries = 300, delay = 300) {
   return new Promise(resolve => {
     const baseUrl = "/media/cache/" + file; 
     const audioUrl = baseUrl + "?t=" + Date.now(); 
