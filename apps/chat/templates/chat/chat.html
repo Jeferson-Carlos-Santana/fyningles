@@ -182,9 +182,44 @@ function normText(s) {
 }
 
 
+const FEEDBACK_OK = [
+  "Very good!",
+  "Excellent!",
+  "Perfect!",
+  "Well done!",
+  "Great job!"
+];
 
+const FEEDBACK_ERR = [
+  "Try again.",
+  "Almost, try again.",
+  "Not quite right.",
+  "Let's try again."
+];
 
+function pick(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
 
+function feedbackProfessor(text) {
+  const div = document.createElement("div");
+  div.className = "chat-message system";
+  div.textContent = text;
+  msgs[index].after(div);
+
+  // fala o feedback
+  fetch("/tts/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.file) {
+      falarComoAntigo([d.file]);
+    }
+  });
+}
 
 
 
@@ -329,7 +364,10 @@ recognition.onresult = function (e) {
 
 
   if (ok) {
-    // ✔️ acertou
+    // acertou
+    const msg = pick(FEEDBACK_OK);
+    feedbackProfessor(msg);
+
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
@@ -339,8 +377,11 @@ recognition.onresult = function (e) {
     //  errou
     tentativas++;
 
+    const msg = pick(FEEDBACK_ERR);
+    feedbackProfessor(msg);
+
     if (tentativas >= MAX_TENTATIVAS) {
-      // 🔁 erro máximo → pula para a próxima
+      // erro máximo → pula para a próxima
       esperandoResposta = false;
       expectedAtual = "";
       tentativas = 0;
