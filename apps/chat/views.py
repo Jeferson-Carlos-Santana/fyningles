@@ -80,22 +80,52 @@ def chat(request, lesson_id):
 def tts_line(request):
     data = json.loads(request.body)
 
-    # 🔹 CASO 1: TEXTO VINDO DO JS (FEEDBACK)
-    if "text" in data and data["text"]:
-        texto = limpar_html(data["text"])
-        texto = normalizar_marcadores(texto)
-        frases = quebrar_frases(texto)
-        fixed = True  # feedback sempre fixo
-
-    # 🔹 CASO 2: LINHA DO BANCO (AULA)
-    else:
-        line = Chat.objects.get(id=data.get("line_id"))
-        texto = limpar_html(line.content_pt)
-        texto = normalizar_marcadores(texto)
-        frases = quebrar_frases(texto)
-        fixed = bool(line.status_point)
-
     files = []
+
+    # =========================
+    # 1) MODO FEEDBACK (JS)
+    # =========================
+    if data.get("text"):
+        texto = limpar_html(data.get("text"))
+        texto = normalizar_marcadores(texto)
+        frases = quebrar_frases(texto)
+
+        for frase in frases:
+            frase = frase.strip()
+            if not frase:
+                continue
+
+            frase_n = norm(frase)
+
+            if term_exists("pt", frase_n):
+                lang = "pt"
+            elif term_exists("en", frase_n):
+                lang = "en"
+            else:
+                lang = detectar_idioma(frase)
+
+            r = requests.post(
+                "http://127.0.0.1:9000",
+                json={
+                    "text": frase,
+                    "lang": lang,
+                    "fixed": False  # feedback NÃO é do banco
+                },
+                timeout=20
+            )
+
+            files.append(r.json()["file"])
+
+        return JsonResponse({"files": files})
+
+    # =========================
+    # 2) MODO NORMAL (BANCO)
+    # =========================
+    line = Chat.objects.get(id=data.get("line_id"))
+
+    texto = limpar_html(line.content_pt)
+    texto = normalizar_marcadores(texto)
+    frases = quebrar_frases(texto)
 
     for frase in frases:
         frase = frase.strip()
@@ -110,6 +140,8 @@ def tts_line(request):
             lang = "en"
         else:
             lang = detectar_idioma(frase)
+
+        fixed = bool(line.status_point)
 
         r = requests.post(
             "http://127.0.0.1:9000",

@@ -197,19 +197,6 @@ const FEEDBACK_ERR = [
   "Let's try again."
 ];
 
-function feedbackProfessor(text) {
-  fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text })
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.files && d.files.length) {
-      falarComoAntigo(d.files);
-    }
-  });
-}
 
 
 
@@ -357,8 +344,30 @@ recognition.onresult = function (e) {
 
 
   if (ok) {
+
+
+
+
+
+    const msg = FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)];
+
+fetch("/tts/line/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ text: msg })
+})
+.then(r => r.json())
+.then(d => {
+  if (d.files) falarComoAntigo(d.files);
+});
+
+
+
+
+
+
     // acertou
-feedbackProfessor(pick(FEEDBACK_OK));
+
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
@@ -367,7 +376,37 @@ feedbackProfessor(pick(FEEDBACK_OK));
   } else {
     //  errou
     tentativas++;
-feedbackProfessor(pick(FEEDBACK_ERR));
+
+
+
+
+
+
+
+
+
+
+const msg = FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
+
+fetch("/tts/line/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ text: msg })
+})
+.then(r => r.json())
+.then(d => {
+  if (d.files) falarComoAntigo(d.files);
+});
+
+
+
+
+
+
+
+
+
+
     if (tentativas >= MAX_TENTATIVAS) {
       // erro máximo → pula para a próxima
       esperandoResposta = false;
