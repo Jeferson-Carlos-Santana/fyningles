@@ -358,6 +358,8 @@ recognition.onresult = async function (e) {
   // para o microfone antes do feedback
   recognition.stop();
 
+  await filaVoz;
+
   // ===== fala AVALIAÇÃO (bloqueante) =====
   const r = await fetch("/tts/line/", {
     method: "POST",
