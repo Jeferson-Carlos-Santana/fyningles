@@ -202,13 +202,7 @@ function pick(list) {
 }
 
 function feedbackProfessor(text) {
-  const div = document.createElement("div");
-  div.className = "chat-message system";
-  div.textContent = text;
-  msgs[index].after(div);
-
-  // fala SEM bloquear
-  fetch("/tts/", {
+  fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text })
@@ -216,10 +210,9 @@ function feedbackProfessor(text) {
   .then(r => r.json())
   .then(d => {
     if (d.files && d.files.length) {
-      falarComoAntigo(d.files); // entra na fila de áudio
+      falarComoAntigo(d.files);
     }
-  })
-  .catch(() => {});
+  });
 }
 
 
@@ -295,12 +288,12 @@ function feedbackProfessor(text) {
   })
   .then(r => r.json())
   .then(async d => {
-    // ✅ 2) FALA E ESPERA TERMINAR A CORRENTE
+    // 2) FALA E ESPERA TERMINAR A CORRENTE
     if (d.files && d.files.length) {
       await falarComoAntigo(d.files);
     }
 
-    // ✅ 3) SÓ AGORA DECIDE O PRÓXIMO PASSO
+    // 3) SÓ AGORA DECIDE O PRÓXIMO PASSO
     if (end === 1) {
       btnMic.disabled = true;
       btnStart.disabled = true;
@@ -370,7 +363,6 @@ recognition.onresult = function (e) {
   if (ok) {
     // acertou
     feedbackProfessor(pick(FEEDBACK_OK));
-
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
@@ -380,8 +372,7 @@ recognition.onresult = function (e) {
     //  errou
     tentativas++;
 
-    feedbackProfessor(pick(FEEDBACK_OK));
-
+    feedbackProfessor(pick(FEEDBACK_ERR));
     if (tentativas >= MAX_TENTATIVAS) {
       // erro máximo → pula para a próxima
       esperandoResposta = false;
