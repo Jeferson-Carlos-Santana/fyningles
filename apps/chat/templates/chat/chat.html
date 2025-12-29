@@ -361,38 +361,22 @@ recognition.onresult = async function (e) {
   await filaVoz;
 
   // ===== fala AVALIAÇÃO (bloqueante) =====
-  // ===== fala AVALIAÇÃO (bloqueante) =====
-let d;
-try {
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: msg })
   });
 
-  if (!r.ok) throw new Error("HTTP " + r.status);
-
-  d = await r.json();
-  console.log("FEEDBACK TTS OK:", d);
-
+  
+  const d = await r.json();
   if (d.files && d.files.length) {
-    await falarComoAntigo(d.files);
-  } else {
-    throw new Error("Sem files no retorno");
+    //await falarComoAntigo(d.files);
+    for (const file of d.files) {
+      playWhenReady(file);
+      await filaVoz; // mantém ordem
+    }
+
   }
-} catch (err) {
-  console.error("FEEDBACK TTS FALHOU:", err);
-  // não deixa travar: libera pra tentar de novo
-  btnMic.disabled = false;
-  return;
-}
-
-
-
- // const d = await r.json();
- // if (d.files && d.files.length) {
-   // await falarComoAntigo(d.files);
- // }
 
   // ===== decisão de fluxo =====
   if (ok) {
