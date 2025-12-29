@@ -207,6 +207,9 @@ function normText(s) {
     const btnMic = document.getElementById("btn-mic");
 
     let index = 0;
+    let esperandoResposta = false;
+    let expectedAtual = "";
+
 
     // esconde todas
     msgs.forEach(m => m.style.display = "none");
@@ -260,7 +263,12 @@ function normText(s) {
     }
 
     // espera usuário
-    btnMic.disabled = false;
+    //btnMic.disabled = false;
+    // espera usuário (só quando auto=0)
+esperandoResposta = true;
+expectedAtual = msg.dataset.expected || "";
+btnMic.disabled = false;
+
   });
 }
 
@@ -288,20 +296,48 @@ function normText(s) {
     // =========================
     // RESPOSTA DO USUÁRIO
     // =========================
+    //recognition.onresult = function (e) {
+      //const texto = e.results[0][0].transcript;
+
+      //const user = document.createElement("div");
+      //user.className = "chat-message user";
+      //user.textContent = texto;
+
+      //msgs[index].after(user);
+
+      //index++;
+      //setTimeout(() => {
+        //mostrarSistema();
+      //}, 400);
+    //};
+
     recognition.onresult = function (e) {
-      const texto = e.results[0][0].transcript;
+  const texto = e.results[0][0].transcript;
 
-      const user = document.createElement("div");
-      user.className = "chat-message user";
-      user.textContent = texto;
+  const user = document.createElement("div");
+  user.className = "chat-message user";
+  user.textContent = texto;
+  msgs[index].after(user);
 
-      msgs[index].after(user);
+  //só compara quando estamos esperando resposta (auto=0)
+  if (!esperandoResposta) {
+    return; // (caso raro)
+  }
 
-      index++;
-      setTimeout(() => {
-        mostrarSistema();
-      }, 400);
-    };
+  const ok = normText(texto) === normText(expectedAtual);
+
+  if (ok) {
+    // acertou → avança
+    esperandoResposta = false;
+    expectedAtual = "";
+    index++;
+    setTimeout(() => mostrarSistema(), 200);
+  } else {
+    // errou → NÃO avança, só libera pra tentar de novo
+    btnMic.disabled = false;
+  }
+};
+
   });
 
   
