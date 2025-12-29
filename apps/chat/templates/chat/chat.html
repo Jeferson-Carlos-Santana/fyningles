@@ -112,7 +112,7 @@
   // TOCA UM ÚNICO AUDIO E ESPERA
   // (IGUAL AO TTS ANTIGO)
   // =========================
-  function tocarUm(file) {
+  {% comment %} function tocarUm(file) {
     return new Promise(resolve => {
       audioPlayer.src = "/media/cache/" + file;
 
@@ -121,25 +121,31 @@
 
       audioPlayer.play().catch(() => resolve());
     });
-  } 
-   {% comment %} function tocarUm(file) {
-      return new Promise(resolve => {
+  }  {% endcomment %}
+function tocarUm(file, tries = 30) {
+  return new Promise(resolve => {
+    const url = "/media/cache/" + file + "?t=" + Date.now();
 
-        audioPlayer.pause();
-        audioPlayer.currentTime = 0;
-        audioPlayer.src = "";        
-        audioPlayer.load();          
+    function tentar(n) {
+      fetch(url, { method: "HEAD" })
+        .then(r => {
+          if (!r.ok) throw new Error("not ready");
 
-        audioPlayer.src = "/media/cache/" + file + "?t=" + Date.now();
-
-        audioPlayer.oncanplay = () => {
+          audioPlayer.src = url;
+          audioPlayer.onended = () => resolve();
+          audioPlayer.onerror = () => resolve();
           audioPlayer.play().catch(() => resolve());
-        };
+        })
+        .catch(() => {
+          if (n > 0) return setTimeout(() => tentar(n - 1), 120);
+          resolve();
+        });
+    }
 
-        audioPlayer.onended = () => resolve();
-        audioPlayer.onerror = () => resolve();
-      });
-    } {% endcomment %}
+    tentar(tries);
+  });
+}
+
 
   // =========================
   // TOCA OS AUDIOS UM POR VEZ
@@ -197,29 +203,6 @@ const FEEDBACK_ERR = [
   "Let's try again."
 ];
 
-function tocarQuandoPronto(file) {
-  return new Promise(resolve => {
-    const url = "/media/cache/" + file + "?t=" + Date.now();
-
-    function tentar(tries = 30) {
-      fetch(url, { method: "HEAD" })
-        .then(r => {
-          if (!r.ok) throw new Error("not ready");
-
-          audioPlayer.src = url;
-          audioPlayer.onended = resolve;
-          audioPlayer.onerror = resolve;
-          audioPlayer.play().catch(resolve);
-        })
-        .catch(() => {
-          if (tries > 0) setTimeout(() => tentar(tries - 1), 150);
-          else resolve();
-        });
-    }
-
-    tentar();
-  });
-}
 
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -393,10 +376,10 @@ recognition.onresult = async function (e) {
   
   const d = await r.json();
   if (d.files && d.files.length) {
-    //await falarComoAntigo(d.files);
+     await falarComoAntigo(d.files);
     for (const file of d.files) {
       playWhenReady(file);
-      await tocarQuandoPronto(file);
+      await falarComoAntigo(d.files);
     }
 
   }
