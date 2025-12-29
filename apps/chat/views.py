@@ -141,7 +141,7 @@ def tts(request):
 
     data_tts = r.json()
 
-    # 🔑 PADRÃO ESPERADO PELO JS
+    # PADRÃO ESPERADO PELO JS
     return JsonResponse({
         "files": [data_tts["file"]]
     })

@@ -202,26 +202,25 @@ function pick(list) {
 }
 
 function feedbackProfessor(text) {
-  // mostra feedback no chat
   const div = document.createElement("div");
   div.className = "chat-message system";
   div.textContent = text;
+
+  // coloca após a mensagem atual (professor)
   msgs[index].after(div);
 
-  // 🔊 fala feedback (TEXTO PURO)
-  fetch("/tts/", {
+  return fetch("/tts/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text })
   })
   .then(r => r.json())
-  .then(async d => {
+  .then(d => {
     if (d.files && d.files.length) {
-      // espera o feedback terminar de falar
-      await falarComoAntigo(d.files);
+      return falarComoAntigo(d.files); // <-- ESPERA falar
     }
   })
-  .catch(() => {});
+  .catch(() => Promise.resolve());
 }
 
 
@@ -370,7 +369,7 @@ recognition.onresult = function (e) {
 
   if (ok) {
     // acertou
-    feedbackProfessor(pick(FEEDBACK_OK));
+    await feedbackProfessor(pick(FEEDBACK_OK));
 
     esperandoResposta = false;
     expectedAtual = "";
@@ -381,7 +380,7 @@ recognition.onresult = function (e) {
     //  errou
     tentativas++;
 
-    feedbackProfessor(pick(FEEDBACK_ERR));
+    await feedbackProfessor(pick(FEEDBACK_ERR));
 
     if (tentativas >= MAX_TENTATIVAS) {
       // erro máximo → pula para a próxima
