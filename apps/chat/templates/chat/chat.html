@@ -344,7 +344,8 @@ recognition.onresult = async function (e) {
 
   // escreve AVALIAÇÃO (PROFESSOR)
   const prof = escreverProfessor(msg, user);
-
+  
+  recognition.stop();
   // fala AVALIAÇÃO (bloqueante)
   const r = await fetch("/tts/line/", {
     method: "POST",
