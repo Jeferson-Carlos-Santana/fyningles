@@ -376,13 +376,13 @@ recognition.onresult = async function (e) {
   lastMsgEl = prof;
 
   // para o microfone antes do feedback
-  recognition.stop();
+  //recognition.stop();
 
   
 
   // ===== fala AVALIAÇÃO (bloqueante) =====
-   await filaVoz;
-   filaVoz = Promise.resolve();
+   //await filaVoz;
+   //filaVoz = Promise.resolve();
 
   const r = await fetch("/tts/line/", {
     method: "POST",
@@ -400,11 +400,14 @@ recognition.onresult = async function (e) {
     //}    
   //}
 
-  if (d.files && d.files.length) {
-      tocando = true;
-       await falarComoAntigo(d.files);
-      tocando = false;
-  }
+if (d.files && d.files.length) {
+  tocando = true;
+
+  // 🔥 FEEDBACK TOCA DIRETO (SEM FILA)
+  await tocarUm(d.files[0]);
+
+  tocando = false;
+}
     
   
 
