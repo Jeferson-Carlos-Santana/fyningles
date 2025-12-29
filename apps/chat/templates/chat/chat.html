@@ -200,6 +200,7 @@ const FEEDBACK_ERR = [
 
 
   document.addEventListener("DOMContentLoaded", function () {
+
     // ===== SPEECH =====
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -305,9 +306,20 @@ btnMic.disabled = false;
     // =========================
     // RESPOSTA DO USUÁRIO
     // =========================
+// ===== escreve avaliação do professor =====
+function escreverProfessor(text, afterEl) {
+  const div = document.createElement("div");
+  div.className = "chat-message system";
+  div.textContent = text;
+  afterEl.after(div); // mantém ordem: aluno → avaliação
+  return div;
+}
+
+// ===== RESPOSTA DO USUÁRIO =====
 recognition.onresult = async function (e) {
   const texto = e.results[0][0].transcript;
 
+  // escreve ALUNO
   const user = document.createElement("div");
   user.className = "chat-message user";
   user.textContent = texto;
@@ -320,17 +332,20 @@ recognition.onresult = async function (e) {
     normText(expected),
     normText(expandContractionsEn(expected))
   ]);
-
   const ok = expectedNorms.has(normText(texto));
 
-  // 🔒 BLOQUEIA QUALQUER CONTINUAÇÃO
+  // bloqueia mic enquanto avalia
   btnMic.disabled = true;
 
-  // ===== FEEDBACK (BLOQUEANTE) =====
+  // escolhe feedback
   const msg = ok
     ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
     : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
+  // escreve AVALIAÇÃO (PROFESSOR)
+  const prof = escreverProfessor(msg, user);
+
+  // fala AVALIAÇÃO (bloqueante)
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -338,10 +353,10 @@ recognition.onresult = async function (e) {
   });
   const d = await r.json();
   if (d.files && d.files.length) {
-    await falarComoAntigo(d.files); // 🔴 PARA O FLUXO AQUI
+    await falarComoAntigo(d.files);
   }
 
-  // ===== DECISÃO DE FLUXO =====
+  // decisão de fluxo
   if (ok) {
     esperandoResposta = false;
     expectedAtual = "";
@@ -364,6 +379,7 @@ recognition.onresult = async function (e) {
   esperandoResposta = true;
   btnMic.disabled = false;
 };
+
 
 
 
