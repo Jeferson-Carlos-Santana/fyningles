@@ -246,8 +246,7 @@ const FEEDBACK_ERR = [
 
   // enquanto fala, não deixa mic
   btnMic.disabled = true;
-if (!fluxoBloqueado){
-    fluxoBloqueado = true;
+
 
 
   fetch("/tts/line/", {
@@ -256,15 +255,17 @@ if (!fluxoBloqueado){
     body: JSON.stringify({ line_id: lineId })
   })
 
-  }
+  
     .then(r => r.json())
     .then(async d => {
-
+    if (!fluxoBloqueado){
+    fluxoBloqueado = true;
     if (d.files && d.files.length) {
       //for (const file of d.files) {
         await falarComoAntigo(d.files);
       //}
     }
+  }
 
     // 3) SÓ AGORA DECIDE O PRÓXIMO PASSO
     if (end === 1) {
