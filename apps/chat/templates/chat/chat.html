@@ -365,7 +365,9 @@ if (d.files) {
     await falarComoAntigo(d.files); // 🔴 BLOQUEIA AQUI
   }
 
-
+// LIBERA ESTADO
+esperandoResposta = false;
+btnMic.disabled = true;
 
 
     // acertou
@@ -404,7 +406,9 @@ if (d.files) {
     await falarComoAntigo(d.files); // 🔴 BLOQUEIA AQUI
   }
 
-
+// LIBERA PARA NOVA TENTATIVA
+esperandoResposta = true;
+btnMic.disabled = false;
 
 
 
