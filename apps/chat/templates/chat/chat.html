@@ -83,7 +83,7 @@
 
         <script>
           // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
-          function playWhenReady(file, tries = 30) { 
+          {% comment %} function playWhenReady(file, tries = 30) { 
             const url = "/media/cache/" + file + "?t=" + Date.now();
             fetch(url, { method: "HEAD" })
               .then(r => {
@@ -96,7 +96,30 @@
               .catch(() => {
                 if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
               });
-          }
+          } {% endcomment %}
+           function playWhenReady(file, tries = 40) {
+  return new Promise(resolve => {
+    const url = "/media/cache/" + file + "?t=" + Date.now();
+
+    function tentar(n) {
+      fetch(url, { method: "HEAD" })
+        .then(r => {
+          if (!r.ok) throw new Error("not ready");
+          const a = new Audio(url);
+          a.onended = resolve;
+          a.onerror = resolve;
+          a.play().catch(resolve);
+        })
+        .catch(() => {
+          if (n > 0) return setTimeout(() => tentar(n - 1), 150);
+          resolve();
+        });
+    }
+
+    tentar(tries);
+  });
+}
+
         </script>
           <script>
   // =========================
@@ -393,9 +416,8 @@ recognition.onresult = async function (e) {
 
   if (d.files && d.files.length) {
       tocando = true;
-      await tocarUm(d.files[0]);
-
-       //await falarComoAntigo(d.files);
+       await playWhenReady(d.files[0]);
+      // await falarComoAntigo(d.files);
       tocando = false;
   }
     
