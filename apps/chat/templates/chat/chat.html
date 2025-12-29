@@ -200,7 +200,7 @@ const FEEDBACK_ERR = [
 
 
   document.addEventListener("DOMContentLoaded", function () {
-
+    let lastMsgEl = null;
     // ===== SPEECH =====
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -242,6 +242,8 @@ const FEEDBACK_ERR = [
   // ✅ 1) APARECE AGORA
   msg.innerHTML = limparHTML(msg.innerHTML);
   msg.style.display = "block";
+  lastMsgEl = msg;
+
 
   // enquanto fala, não deixa mic
   btnMic.disabled = true;
@@ -316,16 +318,19 @@ function escreverProfessor(text, afterEl) {
 }
 
 // ===== RESPOSTA DO USUÁRIO =====
+// ===== RESPOSTA DO USUÁRIO =====
 recognition.onresult = async function (e) {
   const texto = e.results[0][0].transcript;
 
-  // escreve ALUNO
+  if (!esperandoResposta) return;
+
+  // ===== escreve ALUNO (sempre após a última mensagem) =====
   const user = document.createElement("div");
   user.className = "chat-message user";
   user.textContent = texto;
-  msgs[index].after(user);
 
-  if (!esperandoResposta) return;
+  (lastMsgEl || msgs[index]).after(user);
+  lastMsgEl = user;
 
   const expected = expectedAtual || "";
   const expectedNorms = new Set([
@@ -337,16 +342,23 @@ recognition.onresult = async function (e) {
   // bloqueia mic enquanto avalia
   btnMic.disabled = true;
 
-  // escolhe feedback
+  // ===== escolhe feedback =====
   const msg = ok
     ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
     : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
-  // escreve AVALIAÇÃO (PROFESSOR)
-  const prof = escreverProfessor(msg, user);
-  
+  // ===== escreve AVALIAÇÃO (PROFESSOR) =====
+  const prof = document.createElement("div");
+  prof.className = "chat-message system";
+  prof.textContent = msg;
+
+  lastMsgEl.after(prof);
+  lastMsgEl = prof;
+
+  // para o microfone antes do feedback
   recognition.stop();
-  // fala AVALIAÇÃO (bloqueante)
+
+  // ===== fala AVALIAÇÃO (bloqueante) =====
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -357,12 +369,13 @@ recognition.onresult = async function (e) {
     await falarComoAntigo(d.files);
   }
 
-  // decisão de fluxo
+  // ===== decisão de fluxo =====
   if (ok) {
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
     index++;
+    lastMsgEl = null; // próxima frase do banco redefine a âncora
     return mostrarSistema();
   }
 
@@ -373,6 +386,7 @@ recognition.onresult = async function (e) {
     expectedAtual = "";
     tentativas = 0;
     index++;
+    lastMsgEl = null;
     return mostrarSistema();
   }
 
@@ -380,6 +394,7 @@ recognition.onresult = async function (e) {
   esperandoResposta = true;
   btnMic.disabled = false;
 };
+
 
 
 
