@@ -205,11 +205,10 @@ function feedbackProfessor(text) {
   const div = document.createElement("div");
   div.className = "chat-message system";
   div.textContent = text;
-
-  // coloca após a mensagem atual (professor)
   msgs[index].after(div);
 
-  return fetch("/tts/", {
+  // fala SEM bloquear
+  fetch("/tts/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text })
@@ -217,11 +216,12 @@ function feedbackProfessor(text) {
   .then(r => r.json())
   .then(d => {
     if (d.files && d.files.length) {
-      return falarComoAntigo(d.files); // <-- ESPERA falar
+      falarComoAntigo(d.files); // entra na fila de áudio
     }
   })
-  .catch(() => Promise.resolve());
+  .catch(() => {});
 }
+
 
 
 
@@ -369,7 +369,7 @@ recognition.onresult = function (e) {
 
   if (ok) {
     // acertou
-    await feedbackProfessor(pick(FEEDBACK_OK));
+    feedbackProfessor(pick(FEEDBACK_OK));
 
     esperandoResposta = false;
     expectedAtual = "";
@@ -380,7 +380,7 @@ recognition.onresult = function (e) {
     //  errou
     tentativas++;
 
-    await feedbackProfessor(pick(FEEDBACK_ERR));
+    feedbackProfessor(pick(FEEDBACK_OK));
 
     if (tentativas >= MAX_TENTATIVAS) {
       // erro máximo → pula para a próxima
