@@ -366,7 +366,7 @@ recognition.onresult = async function (e) {
   const d = await r.json();
   if (d.files && d.files.length) {     
     for (const file of d.files) {
-      playWhenReady(file);
+      //playWhenReady(file);
       await falarComoAntigo(d.files);
     }
 
