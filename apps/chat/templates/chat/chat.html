@@ -197,23 +197,6 @@ const FEEDBACK_ERR = [
   "Let's try again."
 ];
 
-function pick(list) {
-  return list[Math.floor(Math.random() * list.length)];
-}
-
-function feedbackProfessor(text) {
-  fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text })
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.files && d.files.length) {
-      falarComoAntigo(d.files);
-    }
-  });
-}
 
 
 
@@ -347,9 +330,7 @@ recognition.onresult = function (e) {
   const user = document.createElement("div");
   user.className = "chat-message user";
   user.textContent = texto;
-  //msgs[index].after(user);
-  msgs[index].parentNode.appendChild(user);
-
+  msgs[index].after(user);
 
   if (!esperandoResposta) return;
 
@@ -364,7 +345,7 @@ recognition.onresult = function (e) {
 
   if (ok) {
     // acertou
-    feedbackProfessor(pick(FEEDBACK_OK));
+
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
@@ -374,7 +355,6 @@ recognition.onresult = function (e) {
     //  errou
     tentativas++;
 
-    feedbackProfessor(pick(FEEDBACK_ERR));
     if (tentativas >= MAX_TENTATIVAS) {
       // erro máximo → pula para a próxima
       esperandoResposta = false;
