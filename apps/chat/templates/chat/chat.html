@@ -365,10 +365,10 @@ recognition.onresult = async function (e) {
   
   const d = await r.json();
   if (d.files && d.files.length) {     
-    for (const file of d.files) {
-      playWhenReady(file);
+    //for (const file of d.files) {
+      //playWhenReady(file);
       await falarComoAntigo(d.files);
-    }
+    //}
 
   }
 
@@ -380,11 +380,10 @@ recognition.onresult = async function (e) {
     setTimeout(() => {
       index++;
       lastMsgEl = null;
-      return mostrarSistema();
+      mostrarSistema();
     }, 600);
-    //index++;
-    //lastMsgEl = null; 
-    //return mostrarSistema();
+
+    return;
   }
 
   // errou
