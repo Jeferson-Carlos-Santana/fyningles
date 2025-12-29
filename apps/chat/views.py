@@ -79,11 +79,21 @@ def chat(request, lesson_id):
 @csrf_exempt
 def tts_line(request):
     data = json.loads(request.body)
-    line = Chat.objects.get(id=data.get("line_id"))
 
-    texto = limpar_html(line.content_pt)
-    texto = normalizar_marcadores(texto)
-    frases = quebrar_frases(texto)
+    # 🔹 CASO 1: TEXTO VINDO DO JS (FEEDBACK)
+    if "text" in data and data["text"]:
+        texto = limpar_html(data["text"])
+        texto = normalizar_marcadores(texto)
+        frases = quebrar_frases(texto)
+        fixed = True  # feedback sempre fixo
+
+    # 🔹 CASO 2: LINHA DO BANCO (AULA)
+    else:
+        line = Chat.objects.get(id=data.get("line_id"))
+        texto = limpar_html(line.content_pt)
+        texto = normalizar_marcadores(texto)
+        frases = quebrar_frases(texto)
+        fixed = bool(line.status_point)
 
     files = []
 
@@ -91,18 +101,15 @@ def tts_line(request):
         frase = frase.strip()
         if not frase:
             continue
-        
-        
+
         frase_n = norm(frase)
-            
+
         if term_exists("pt", frase_n):
             lang = "pt"
         elif term_exists("en", frase_n):
             lang = "en"
         else:
             lang = detectar_idioma(frase)
-
-        fixed = bool(line.status_point)
 
         r = requests.post(
             "http://127.0.0.1:9000",
@@ -114,10 +121,10 @@ def tts_line(request):
             timeout=20
         )
 
-
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
 
 
 @csrf_exempt

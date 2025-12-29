@@ -197,6 +197,19 @@ const FEEDBACK_ERR = [
   "Let's try again."
 ];
 
+function feedbackProfessor(text) {
+  fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.files && d.files.length) {
+      falarComoAntigo(d.files);
+    }
+  });
+}
 
 
 
@@ -345,7 +358,7 @@ recognition.onresult = function (e) {
 
   if (ok) {
     // acertou
-
+feedbackProfessor(pick(FEEDBACK_OK));
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
@@ -354,7 +367,7 @@ recognition.onresult = function (e) {
   } else {
     //  errou
     tentativas++;
-
+feedbackProfessor(pick(FEEDBACK_ERR));
     if (tentativas >= MAX_TENTATIVAS) {
       // erro máximo → pula para a próxima
       esperandoResposta = false;
