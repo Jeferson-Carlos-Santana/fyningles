@@ -199,25 +199,6 @@ const FEEDBACK_ERR = [
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   document.addEventListener("DOMContentLoaded", function () {
     // ===== SPEECH =====
     const SpeechRecognition =
@@ -324,7 +305,7 @@ btnMic.disabled = false;
     // =========================
     // RESPOSTA DO USUÁRIO
     // =========================
-recognition.onresult = function (e) {
+recognition.onresult = async function (e) {
   const texto = e.results[0][0].transcript;
 
   const user = document.createElement("div");
@@ -334,100 +315,56 @@ recognition.onresult = function (e) {
 
   if (!esperandoResposta) return;
 
-  //const ok = normText(texto) === normText(expectedAtual);
   const expected = expectedAtual || "";
   const expectedNorms = new Set([
     normText(expected),
     normText(expandContractionsEn(expected))
   ]);
+
   const ok = expectedNorms.has(normText(texto));
 
+  // 🔒 BLOQUEIA QUALQUER CONTINUAÇÃO
+  btnMic.disabled = true;
 
-  if (ok) {
+  // ===== FEEDBACK (BLOQUEANTE) =====
+  const msg = ok
+    ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
+    : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
-
-
-
-
-    const msg = FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)];
-
-fetch("/tts/line/", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ text: msg })
-})
-.then(r => r.json())
-.then(d => {
-  if (d.files) falarComoAntigo(d.files);
-});
-
-if (d.files) {
-    await falarComoAntigo(d.files); // 🔴 BLOQUEIA AQUI
+  const r = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: msg })
+  });
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    await falarComoAntigo(d.files); // 🔴 PARA O FLUXO AQUI
   }
 
-// LIBERA ESTADO
-esperandoResposta = false;
-btnMic.disabled = true;
-
-
-    // acertou
-
+  // ===== DECISÃO DE FLUXO =====
+  if (ok) {
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
     index++;
-    setTimeout(() => mostrarSistema(), 200);
-  } else {
-    //  errou
-    tentativas++;
-
-
-
-
-
-
-
-
-
-
-const msg = FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
-
-fetch("/tts/line/", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ text: msg })
-})
-.then(r => r.json())
-.then(d => {
-  if (d.files) falarComoAntigo(d.files);
-});
-
-if (d.files) {
-    await falarComoAntigo(d.files); // 🔴 BLOQUEIA AQUI
+    return mostrarSistema();
   }
 
-// LIBERA PARA NOVA TENTATIVA
-esperandoResposta = true;
-btnMic.disabled = false;
-
-
-
-
-
-
-    if (tentativas >= MAX_TENTATIVAS) {
-      // erro máximo → pula para a próxima
-      esperandoResposta = false;
-      expectedAtual = "";
-      tentativas = 0;
-      index++;
-      setTimeout(() => mostrarSistema(), 200);
-    } else {
-      // ainda pode tentar
-      btnMic.disabled = false;
-    }
+  // errou
+  tentativas++;
+  if (tentativas >= MAX_TENTATIVAS) {
+    esperandoResposta = false;
+    expectedAtual = "";
+    tentativas = 0;
+    index++;
+    return mostrarSistema();
   }
+
+  // pode tentar de novo
+  esperandoResposta = true;
+  btnMic.disabled = false;
 };
+
 
 
   });
