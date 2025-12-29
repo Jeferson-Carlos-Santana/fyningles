@@ -396,10 +396,8 @@ recognition.onresult = async function (e) {
 
   if (d.files && d.files.length) {
       tocando = true;
-      for (const file of d.files) {
        await falarComoAntigo(d.files);
-      }
-      tocando = false;
+      
   }
     
   
@@ -410,6 +408,7 @@ recognition.onresult = async function (e) {
     expectedAtual = "";
     tentativas = 0;
     setTimeout(() => {
+      tocando = false;
       index++;
       lastMsgEl = null;
       mostrarSistema();
@@ -420,6 +419,7 @@ recognition.onresult = async function (e) {
   // errou
   tentativas++;
   if (tentativas >= MAX_TENTATIVAS) {
+    tocando = false;
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
