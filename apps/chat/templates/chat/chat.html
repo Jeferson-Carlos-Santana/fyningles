@@ -272,7 +272,7 @@ const FEEDBACK_ERR = [
 
       if (d.files && d.files.length) { 
           tocando = true;
-          await new Promise(r => setTimeout(r, 600));
+          await new Promise(r => setTimeout(r, 500));
           await falarComoAntigo(d.files);
           tocando = false;
       }
@@ -404,7 +404,7 @@ recognition.onresult = async function (e) {
 if (d.files && d.files.length) {
   tocando = true;
 
-  await new Promise(r => setTimeout(r, 800));
+  await new Promise(r => setTimeout(r, 900));
   await tocarUm(d.files[0]);
 
   tocando = false;
