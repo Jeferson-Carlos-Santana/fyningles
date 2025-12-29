@@ -390,7 +390,8 @@ recognition.onresult = async function (e) {
     body: JSON.stringify({ text: msg })
   });
 
-  
+  .then(r => r.json())
+    .then(async d => {
 
   const d = await r.json();
   //if (d.files && d.files.length) {     
@@ -405,7 +406,7 @@ recognition.onresult = async function (e) {
        await falarComoAntigo(d.files);
       tocando = false;
   }
-    
+}
   
 
   // ===== decisão de fluxo =====
