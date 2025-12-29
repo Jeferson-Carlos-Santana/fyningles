@@ -246,6 +246,9 @@ const FEEDBACK_ERR = [
 
   // enquanto fala, não deixa mic
   btnMic.disabled = true;
+if (!fluxoBloqueado){
+    fluxoBloqueado = true;
+
 
   fetch("/tts/line/", {
     method: "POST",
@@ -281,6 +284,10 @@ tentativas = 0;
 btnMic.disabled = false;
 
   });
+fluxoBloqueado = false;
+}
+
+
 }
 
 
@@ -360,8 +367,7 @@ recognition.onresult = async function (e) {
   await filaVoz;
 
   // ===== fala AVALIAÇÃO (bloqueante) =====
-    if (!fluxoBloqueado){
-    fluxoBloqueado = true;
+    
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -376,10 +382,10 @@ recognition.onresult = async function (e) {
       playWhenReady(file);
       //await falarComoAntigo(d.files);
     }
-    fluxoBloqueado = false;
+    
   }
   
-}
+
   // ===== decisão de fluxo =====
   if (ok) {
     esperandoResposta = false;
