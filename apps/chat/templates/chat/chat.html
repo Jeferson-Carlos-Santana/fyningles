@@ -376,7 +376,7 @@ recognition.onresult = async function (e) {
   lastMsgEl = prof;
 
   // para o microfone antes do feedback
-  //recognition.stop();
+  recognition.stop();
 
   
 
@@ -393,18 +393,18 @@ recognition.onresult = async function (e) {
   
 
   const d = await r.json();
-  if (d.files && d.files.length) {     
-    for (const file of d.files) {
+  //if (d.files && d.files.length) {     
+    //for (const file of d.files) {
       //playWhenReady(file);
-      await falarComoAntigo(d.files);
-    }    
-  }
-
-  //if (d.files && d.files.length) {
-      //tocando = true;
-       //await falarComoAntigo(d.files);
-      //tocando = false;
+      //await falarComoAntigo(d.files);
+    //}    
   //}
+
+  if (d.files && d.files.length) {
+      tocando = true;
+       await falarComoAntigo(d.files);
+      tocando = false;
+  }
     
   
 
