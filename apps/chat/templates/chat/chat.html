@@ -216,8 +216,8 @@ const FEEDBACK_ERR = [
     let expectedAtual = "";
     const MAX_TENTATIVAS = 3;
 
-    let fluxoBloqueado = false;
   
+  let tocando = false;  
 
     // esconde todas
     msgs.forEach(m => m.style.display = "none");
@@ -247,7 +247,7 @@ const FEEDBACK_ERR = [
   // enquanto fala, não deixa mic
   btnMic.disabled = true;
 
-
+tocando = true;   
 
   fetch("/tts/line/", {
     method: "POST",
@@ -259,12 +259,12 @@ const FEEDBACK_ERR = [
     .then(r => r.json())
     .then(async d => {
 
-    if (!fluxoBloqueado){
-      fluxoBloqueado = true;
+
       if (d.files && d.files.length) { 
           await falarComoAntigo(d.files);
       }
-    }
+      tocando = false;
+  
 
     // 3) SÓ AGORA DECIDE O PRÓXIMO PASSO
     if (end === 1) {
@@ -369,7 +369,8 @@ recognition.onresult = async function (e) {
   await filaVoz;
 
   // ===== fala AVALIAÇÃO (bloqueante) =====
-  fluxoBloqueado = true;
+  tocando = true; 
+
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -379,13 +380,17 @@ recognition.onresult = async function (e) {
   
 
   const d = await r.json();
-  if (d.files && d.files.length) {     
-    for (const file of d.files) {
-      playWhenReady(file);
+  //if (d.files && d.files.length) {     
+    //for (const file of d.files) {
+      //playWhenReady(file);
       //await falarComoAntigo(d.files);
-    }
-    
+    //}    
+  //}
+
+  if (d.files && d.files.length) {
+    await falarComoAntigo(d.files);
   }
+  tocando = false;  
   
 
   // ===== decisão de fluxo =====
@@ -394,7 +399,6 @@ recognition.onresult = async function (e) {
     expectedAtual = "";
     tentativas = 0;
     setTimeout(() => {
-      fluxoBloqueado = false;
       index++;
       lastMsgEl = null;
       mostrarSistema();
@@ -405,7 +409,6 @@ recognition.onresult = async function (e) {
   // errou
   tentativas++;
   if (tentativas >= MAX_TENTATIVAS) {
-    fluxoBloqueado = false;
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
