@@ -250,12 +250,13 @@ const FEEDBACK_ERR = [
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ line_id: lineId })
   })
-  .then(r => r.json())
-  .then(async d => {
+    .then(r => r.json())
+    .then(async d => {
+
     if (d.files && d.files.length) {
-      for (const file of d.files) {
+      //for (const file of d.files) {
         await falarComoAntigo(d.files);
-      }
+      //}
     }
 
     // 3) SÓ AGORA DECIDE O PRÓXIMO PASSO
@@ -366,10 +367,10 @@ recognition.onresult = async function (e) {
   
   const d = await r.json();
   if (d.files && d.files.length) {     
-    for (const file of d.files) {
+    //for (const file of d.files) {
       playWhenReady(file);
       //await falarComoAntigo(d.files);
-    }
+    //}
   }
 
   // ===== decisão de fluxo =====
