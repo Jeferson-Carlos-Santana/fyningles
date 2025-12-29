@@ -284,7 +284,7 @@ tentativas = 0;
 btnMic.disabled = false;
 
   });
-fluxoBloqueado = false;
+
 }
 
 
@@ -392,6 +392,7 @@ recognition.onresult = async function (e) {
     expectedAtual = "";
     tentativas = 0;
     setTimeout(() => {
+      fluxoBloqueado = false;
       index++;
       lastMsgEl = null;
       mostrarSistema();
@@ -402,6 +403,7 @@ recognition.onresult = async function (e) {
   // errou
   tentativas++;
   if (tentativas >= MAX_TENTATIVAS) {
+    fluxoBloqueado = false;
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
