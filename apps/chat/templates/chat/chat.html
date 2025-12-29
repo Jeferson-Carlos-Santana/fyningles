@@ -384,7 +384,8 @@ recognition.onresult = async function (e) {
    await filaVoz;
    filaVoz = Promise.resolve();
 
-  const r = await fetch("/tts/line/", {
+  //const r = await fetch("/tts/line/", {
+    fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: msg })
