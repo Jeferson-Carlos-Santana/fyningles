@@ -79,6 +79,26 @@ def chat(request, lesson_id):
 @csrf_exempt
 def tts_line(request):
     data = json.loads(request.body)
+    
+    # 🔑 NOVO: texto direto (feedback)
+    if "text" in data:
+        frase = limpar_html(data["text"])
+        lang = "en"
+        fixed = True
+
+        r = requests.post(
+            "http://127.0.0.1:9000",
+            json={
+                "text": frase,
+                "lang": lang,
+                "fixed": fixed
+            },
+            timeout=20
+        )
+
+        return JsonResponse({"files": [r.json()["file"]]})
+
+    # ===== fluxo antigo (aula) =====
     line = Chat.objects.get(id=data.get("line_id"))
 
     texto = limpar_html(line.content_pt)
@@ -91,10 +111,9 @@ def tts_line(request):
         frase = frase.strip()
         if not frase:
             continue
-        
-        
+
         frase_n = norm(frase)
-            
+
         if term_exists("pt", frase_n):
             lang = "pt"
         elif term_exists("en", frase_n):
@@ -102,12 +121,6 @@ def tts_line(request):
         else:
             lang = detectar_idioma(frase)
 
-        # r = requests.post(
-        #     "http://127.0.0.1:9000",
-        #     json={"text": frase, "lang": lang},
-        #     timeout=20
-        # )
-        #fixed = (line.role == "system")
         fixed = bool(line.status_point)
 
         r = requests.post(
@@ -120,10 +133,10 @@ def tts_line(request):
             timeout=20
         )
 
-
         files.append(r.json()["file"])
 
     return JsonResponse({"files": files})
+
 
 
 @csrf_exempt

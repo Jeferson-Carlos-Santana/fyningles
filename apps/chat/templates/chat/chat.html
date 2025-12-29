@@ -219,19 +219,19 @@ function feedbackProfessor(text) {
   div.textContent = text;
   msgs[index].after(div);
 
-  // fala o feedback
-  fetch("/tts/", {
+  fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text })
   })
   .then(r => r.json())
   .then(d => {
-    if (d.file) {
-      falarComoAntigo([d.file]);
+    if (d.files && d.files.length) {
+      falarComoAntigo(d.files);
     }
   });
 }
+
 
 
 
