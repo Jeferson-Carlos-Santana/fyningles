@@ -388,7 +388,9 @@ recognition.onresult = async function (e) {
   //}
 
   if (d.files && d.files.length) {
-    await falarComoAntigo(d.files);
+    for (const file of d.files) {
+       await falarComoAntigo(d.files);
+    }
   }
   tocando = false;  
   
