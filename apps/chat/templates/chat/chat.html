@@ -113,10 +113,10 @@
   // (IGUAL AO TTS ANTIGO)
   // =========================
 
-function tocarUm(file, tries = 120, delay = 250) {
+function tocarUm(file, tries = 120, delay = 500) {
   return new Promise(resolve => {
-    const baseUrl = "/media/cache/" + file; // ✅ sem ?t=...
-    const audioUrl = baseUrl + "?t=" + Date.now(); // só pro PLAY, 1 vez
+    const baseUrl = "/media/cache/" + file; 
+    const audioUrl = baseUrl + "?t=" + Date.now(); 
 
     function tentar(n) {
       fetch(baseUrl, { method: "HEAD", cache: "no-store" })
@@ -397,7 +397,7 @@ recognition.onresult = async function (e) {
   if (d.files && d.files.length) {
       tocando = true;
        await falarComoAntigo(d.files);
-      
+      tocando = false;
   }
     
   
@@ -408,7 +408,6 @@ recognition.onresult = async function (e) {
     expectedAtual = "";
     tentativas = 0;
     setTimeout(() => {
-      tocando = false;
       index++;
       lastMsgEl = null;
       mostrarSistema();
@@ -419,7 +418,6 @@ recognition.onresult = async function (e) {
   // errou
   tentativas++;
   if (tentativas >= MAX_TENTATIVAS) {
-    tocando = false;
     esperandoResposta = false;
     expectedAtual = "";
     tentativas = 0;
