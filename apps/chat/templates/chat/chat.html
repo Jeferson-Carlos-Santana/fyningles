@@ -361,7 +361,9 @@ fetch("/tts/line/", {
   if (d.files) falarComoAntigo(d.files);
 });
 
-
+if (d.files) {
+    await falarComoAntigo(d.files); // 🔴 BLOQUEIA AQUI
+  }
 
 
 
@@ -398,7 +400,9 @@ fetch("/tts/line/", {
   if (d.files) falarComoAntigo(d.files);
 });
 
-
+if (d.files) {
+    await falarComoAntigo(d.files); // 🔴 BLOQUEIA AQUI
+  }
 
 
 
