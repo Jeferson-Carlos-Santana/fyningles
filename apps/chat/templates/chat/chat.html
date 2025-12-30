@@ -381,6 +381,7 @@ if (tentativas < MAX_TENTATIVAS) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: feedbackText })
         });
+        
 
 
         const d = await r.json();
@@ -390,6 +391,11 @@ if (tentativas < MAX_TENTATIVAS) {
           await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
           tocando = false;
         }
+
+        esperandoResposta = true;
+btnMic.disabled = false;
+return;
+
       }
         // ===== decisão de fluxo =====
         if (ok) {
