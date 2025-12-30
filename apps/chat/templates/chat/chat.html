@@ -394,51 +394,52 @@
         tentativas++;
         prof.classList.add("errado");
         
-        // ERRO COM DICA (ANTES do MAX)
-        if (tentativas < MAX_TENTATIVAS) {
+   // ERRO COM DICA (ANTES do MAX)
+if (tentativas < MAX_TENTATIVAS) {
 
-          const expectedRaw = expectedAtual || "";
-          const dicaHTML = `Please say, <span class="hint">${expectedRaw}</span>`;
-          const dicaTTS  = `Please say, ${expectedRaw}`;
+  const expectedRaw = expectedAtual || "";
 
-          const dica = document.createElement("div");
-          dica.className = "chat-message system";
-          dica.innerHTML = dicaHTML;
+  // junta ERRO + DICA na MESMA mensagem
+  const textoHTML =
+    `${prof.textContent} <strong>Please say:</strong> <span class="hint">${expectedRaw}</span>`;
 
-          lastMsgEl.after(dica);
-          lastMsgEl = dica;
-          scrollChatToBottom();
+  const textoTTS =
+    `${prof.textContent} Please say: ${expectedRaw}`;
 
-          // fala a dica
-          const r = await fetch("/tts/line/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: dicaTTS })
-          });
+  // atualiza o MESMO balão (não cria outro)
+  prof.innerHTML = textoHTML;
+  scrollChatToBottom();
 
-          const d = await r.json();
-          if (d.files && d.files.length) {
-            tocando = true;
-            await new Promise(r => setTimeout(r, 1000));
-            await tocarUm(d.files[0]);
-            tocando = false;
-          }
+  // fala UMA VEZ
+  const r = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: textoTTS })
+  });
 
-          esperandoResposta = true;
-          btnMic.disabled = false;
-          return;
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await tocarUm(d.files[0]);
+    tocando = false;
+  }
+
+  esperandoResposta = true;
+  btnMic.disabled = false;
+  return;
+}
+
+
+
+
+        if (tentativas >= MAX_TENTATIVAS) {          
+         esperandoResposta = false;
+         expectedAtual = "";
+          tentativas = 0;
+          index++;
+          lastMsgEl = null;
+          return mostrarSistema();
         }
-
-
-
-        //if (tentativas >= MAX_TENTATIVAS) {          
-         // esperandoResposta = false;
-         // expectedAtual = "";
-          //tentativas = 0;
-          //index++;
-          //lastMsgEl = null;
-          //return mostrarSistema();
-        //}
 
         // pode tentar de novo
         esperandoResposta = true;
