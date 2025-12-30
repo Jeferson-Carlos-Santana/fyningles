@@ -56,7 +56,7 @@
             data-end="{{ line.end|yesno:'1,0' }}"
             data-expected="{{ line.expected_en|default:'' }}"
             style="display:none;">
-            {{ line.content_pt|striptags }}
+            {{ line.content_pt|safe }}
           </div>
           {% endfor %}
         </div>
