@@ -100,15 +100,7 @@
       const MAX_TENTATIVAS = 3;  
       let tocando = false; 
       let lastMsgEl = null; 
-      let tentativas = 0;
-
-    function marcarFeedback(el, tipo) {
-      el.classList.add(tipo);
-
-      setTimeout(() => {
-        el.classList.remove(tipo);
-      }, 4000);
-    }
+      let tentativas = 0;    
 
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
@@ -363,7 +355,6 @@
 
         // ===== decisão de fluxo =====
         if (ok) {
-          //marcarFeedback(prof, "correto");
           prof.classList.add("correto");
           esperandoResposta = false;
           expectedAtual = "";
@@ -390,12 +381,12 @@
 
         // pode tentar de novo
         esperandoResposta = true;
-        btnMic.disabled = false;
+        btnMic.disabled = false;        
+      };
 
         setTimeout(() => {
           prof.classList.remove("correto", "errado");
-        }, 5000);
-      };
+        }, 6000);
       
     });
     
