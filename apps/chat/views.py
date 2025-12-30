@@ -157,8 +157,6 @@ def tts_line(request):
 
     return JsonResponse({"files": files})
 
-
-
 @csrf_exempt
 def tts(request):
     data = json.loads(request.body)
@@ -173,8 +171,6 @@ def tts(request):
 
 def lessons(request):
     return render(request, "chat/lessons.html")
-
-
 
 # LISTAR DADOS DO JSON
 def dictionary(request):

@@ -232,7 +232,9 @@
         const end  = parseInt(msg.dataset.end  || "0");
 
         // APARECE AGORA
-        msg.innerHTML = limparHTML(msg.innerHTML);
+        const textoVisual = limparHTML(msg.innerHTML);
+        msg.textContent = textoVisual;
+        
         msg.style.display = "block";
         lastMsgEl = msg;
 
