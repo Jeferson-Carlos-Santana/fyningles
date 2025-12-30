@@ -379,7 +379,12 @@ if (ok || tentativaAgora < MAX_TENTATIVAS) {
   lastMsgEl = prof;
   scrollChatToBottom();
 }
-      const r = await fetch("/tts/line/", {
+      
+
+        // ===== decisão de fluxo =====
+        if (ok) {
+          if (prof) prof.classList.add("correto");
+          const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: msg })
@@ -388,17 +393,10 @@ if (ok || tentativaAgora < MAX_TENTATIVAS) {
         const d = await r.json(); 
         if (d.files && d.files.length) {
           tocando = true;
-
           await new Promise(r => setTimeout(r, 1000));
           await tocarUm(d.files[0]);
-
           tocando = false;
         }  
-
-        // ===== decisão de fluxo =====
-        if (ok) {
-          if (prof) prof.classList.add("correto");
-
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
