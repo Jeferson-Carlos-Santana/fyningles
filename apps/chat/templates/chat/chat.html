@@ -107,7 +107,7 @@
 
       setTimeout(() => {
         el.classList.remove(tipo);
-      }, 3000);
+      }, 4000);
     }
 
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
@@ -363,7 +363,7 @@
 
         // ===== decisão de fluxo =====
         if (ok) {
-          marcarFeedback(user, "correto");
+          marcarFeedback(prof, "correto");
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
@@ -377,7 +377,7 @@
 
         // errou
         tentativas++;
-        marcarFeedback(user, "errado");
+        marcarFeedback(prof, "errado");
         if (tentativas >= MAX_TENTATIVAS) {          
           esperandoResposta = false;
           expectedAtual = "";
