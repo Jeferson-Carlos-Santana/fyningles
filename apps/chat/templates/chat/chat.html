@@ -381,44 +381,35 @@
         }
 
         // errou
-// errou
-tentativas++;
-prof.classList.add("errado");
+        tentativas++;
+        prof.classList.add("errado");
+        
 
-// 🔴 ERRO COM DICA
+
+// ERRO COM DICA (ADICIONA, NÃO SUBSTITUI)
 if (tentativas < MAX_TENTATIVAS) {
 
-  const expectedRaw = msg.dataset.expected || expectedAtual || "";
-
-  const dicaHTML = `Please say: <span class="hint">${expectedRaw}</span>`;
-  const dicaTTS  = `Please say: ${expectedRaw}`;
+  const dicaTexto = `Please say: ${expectedAtual}`;
 
   const dica = document.createElement("div");
   dica.className = "chat-message system errado";
-  dica.innerHTML = dicaHTML;
+  dica.textContent = dicaTexto;
 
+  // 👇 ADICIONA ABAIXO DO FEEDBACK
   lastMsgEl.after(dica);
   lastMsgEl = dica;
 
-  // fala a dica (SEM HTML)
-  const r = await fetch("/tts/line/", {
+  // fala a dica
+  await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: dicaTTS })
+    body: JSON.stringify({ text: dicaTexto })
   });
-
-  const d = await r.json();
-  if (d.files && d.files.length) {
-    tocando = true;
-    await tocarUm(d.files[0]);
-    tocando = false;
-  }
 
   esperandoResposta = true;
   btnMic.disabled = false;
   return;
 }
-
 
         if (tentativas >= MAX_TENTATIVAS) {          
           esperandoResposta = false;
