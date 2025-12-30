@@ -382,15 +382,13 @@ const r = await fetch("/tts/line/", {
 });
 
 
-        const d = await r.json(); 
-        if (d.files && d.files.length) {
-          tocando = true;
-
-          await new Promise(r => setTimeout(r, 2000));
-          await tocarUm(d.files[0]);
-
-          tocando = false;
-        }  
+const d = await r.json();
+if (d.files && d.files.length) {
+  tocando = true;
+  await new Promise(r => setTimeout(r, 1000));
+  await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
+  tocando = false;
+}
 
         // ===== decisão de fluxo =====
         if (ok) {
