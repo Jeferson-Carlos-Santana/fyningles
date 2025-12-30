@@ -101,6 +101,8 @@
       let tocando = false; 
       let lastMsgEl = null; 
       let tentativas = 0;    
+      const chatArea = document.querySelector(".chat-area");
+
 
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
@@ -122,6 +124,12 @@
     function limparHTML(html) {
       return html.replace(/<[^>]+>/g, "");
     }
+    
+    // MANTEM O CHAT EM TELA
+    function scrollChatToBottom() {
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
 
     // TOCA UM ÚNICO AUDIO E ESPERA
     function tocarUm(file, tries = 300, delay = 300) {
@@ -348,6 +356,7 @@
 
         lastMsgEl.after(prof);
         lastMsgEl = prof;
+        scrollChatToBottom();
 
         // ===== fala AVALIAÇÃO (bloqueante) =====
         const r = await fetch("/tts/line/", {
@@ -397,6 +406,7 @@
 
           lastMsgEl.after(dica);
           lastMsgEl = dica;
+          scrollChatToBottom();
 
           // fala a dica
           const r = await fetch("/tts/line/", {
@@ -428,7 +438,8 @@ if (tentativas >= MAX_TENTATIVAS) {
 
   lastMsgEl.after(avanco);
   lastMsgEl = avanco;
-
+  scrollChatToBottom();
+  
   // fala a mensagem de avanço
   const r = await fetch("/tts/line/", {
     method: "POST",
