@@ -60,11 +60,11 @@ searchInput.addEventListener("input", () => {
       const audioPlayer = new Audio();
       let filaVoz = Promise.resolve();
 
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        console.warn("SpeechRecognition não suportado neste browser");
-        return; // sai do DOMContentLoaded com segurança
-      }
+      // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      // if (!SpeechRecognition) {
+      //   console.warn("SpeechRecognition não suportado neste browser");
+      //   return; // sai do DOMContentLoaded com segurança
+      // }
       // const recognition = new SpeechRecognition();
       // recognition.lang = "en-GB";
       // recognition.continuous = false;
