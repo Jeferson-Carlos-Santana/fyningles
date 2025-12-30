@@ -399,18 +399,18 @@ if (tentativas < MAX_TENTATIVAS) {
 
   const expectedRaw = expectedAtual || "";
 
-  // junta ERRO + DICA na MESMA mensagem
+  // completa a MENSAGEM EXISTENTE (prof)
   const textoHTML =
-    `${prof.textContent} <strong>Please say:</strong> <span class="hint">${expectedRaw}</span>`;
+    `${prof.textContent} <strong>Please say,</strong> <span class="hint">${expectedRaw}</span>`;
 
   const textoTTS =
-    `${prof.textContent} Please say: ${expectedRaw}`;
+    `${prof.textContent} Please say, ${expectedRaw}`;
 
-  // atualiza o MESMO balão (não cria outro)
+  // atualiza o MESMO balão (elimina a primeira mensagem separada)
   prof.innerHTML = textoHTML;
   scrollChatToBottom();
 
-  // fala UMA VEZ
+  // fala UMA ÚNICA VEZ (mensagem completa)
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -420,6 +420,7 @@ if (tentativas < MAX_TENTATIVAS) {
   const d = await r.json();
   if (d.files && d.files.length) {
     tocando = true;
+    await new Promise(r => setTimeout(r, 1000));
     await tocarUm(d.files[0]);
     tocando = false;
   }
