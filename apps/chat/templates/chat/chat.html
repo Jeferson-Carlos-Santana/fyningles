@@ -408,16 +408,51 @@ if (d.files && d.files.length) {
         tentativas++;
         prof.classList.add("errado");
         
+if (tentativas >= MAX_TENTATIVAS) {
 
+  // mensagem de avanço (SUBSTITUI o último "Let's try again")
+  const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
 
-        if (tentativas >= MAX_TENTATIVAS) {          
-         esperandoResposta = false;
-         expectedAtual = "";
-          tentativas = 0;
-          index++;
-          lastMsgEl = null;
-          return mostrarSistema();
-        }
+  const avanco = document.createElement("div");
+  avanco.className = "chat-message system errado";
+  avanco.textContent = msgAvanco;
+
+  lastMsgEl.after(avanco);
+  lastMsgEl = avanco;
+  scrollChatToBottom();
+  
+  // fala a mensagem de avanço
+  const r = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: msgAvanco })
+  });
+
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await new Promise(r => setTimeout(r, 1000));
+    await tocarUm(d.files[0]);
+    tocando = false;
+  }
+
+  // reseta e avança
+  esperandoResposta = false;
+  expectedAtual = "";
+  tentativas = 0;
+  index++;
+  lastMsgEl = null;
+  return mostrarSistema();
+}
+
+        //if (tentativas >= MAX_TENTATIVAS) {          
+        // esperandoResposta = false;
+         //expectedAtual = "";
+         // tentativas = 0;
+         // index++;
+          //lastMsgEl = null;
+          //return mostrarSistema();
+        //}
 
         // pode tentar de novo
         esperandoResposta = true;
