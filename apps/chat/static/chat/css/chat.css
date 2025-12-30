@@ -45,12 +45,12 @@
 }
 
 /* FEEDBACK */
-.chat-message.correto {
+.chat-message.user.correto {
   background: var(--color-success-light);
   border-left: 4px solid var(--color-success);
 }
 
-.chat-message.errado {
+.chat-message.user.errado {
   background: var(--color-danger-light);
   border-left: 4px solid var(--color-danger);
 }
