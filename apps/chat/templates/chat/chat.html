@@ -384,25 +384,56 @@
         tentativas++;
         prof.classList.add("errado");
         
-// ERRO COM DICA (ANTES do MAX)
-if (tentativas < MAX_TENTATIVAS) {
+        // ERRO COM DICA (ANTES do MAX)
+        if (tentativas < MAX_TENTATIVAS) {
 
-  const expectedRaw = expectedAtual || "";
-  const dicaHTML = `Please say, <span class="hint">${expectedRaw}</span>`;
-  const dicaTTS  = `Please say, ${expectedRaw}`;
+          const expectedRaw = expectedAtual || "";
+          const dicaHTML = `Please say, <span class="hint">${expectedRaw}</span>`;
+          const dicaTTS  = `Please say, ${expectedRaw}`;
 
-  const dica = document.createElement("div");
-  dica.className = "chat-message system errado";
-  dica.innerHTML = dicaHTML;
+          const dica = document.createElement("div");
+          dica.className = "chat-message system";
+          dica.innerHTML = dicaHTML;
 
-  lastMsgEl.after(dica);
-  lastMsgEl = dica;
+          lastMsgEl.after(dica);
+          lastMsgEl = dica;
 
-  // fala a dica
+          // fala a dica
+          const r = await fetch("/tts/line/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: dicaTTS })
+          });
+
+          const d = await r.json();
+          if (d.files && d.files.length) {
+            tocando = true;
+            await new Promise(r => setTimeout(r, 1000));
+            await tocarUm(d.files[0]);
+            tocando = false;
+          }
+
+          esperandoResposta = true;
+          btnMic.disabled = false;
+          return;
+        }
+if (tentativas >= MAX_TENTATIVAS) {
+
+  // 👉 mensagem de avanço (SUBSTITUI o último "Let's try again")
+  const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
+
+  const avanco = document.createElement("div");
+  avanco.className = "chat-message system errado";
+  avanco.textContent = msgAvanco;
+
+  lastMsgEl.after(avanco);
+  lastMsgEl = avanco;
+
+  // fala a mensagem de avanço
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: dicaTTS })
+    body: JSON.stringify({ text: msgAvanco })
   });
 
   const d = await r.json();
@@ -413,19 +444,23 @@ if (tentativas < MAX_TENTATIVAS) {
     tocando = false;
   }
 
-  esperandoResposta = true;
-  btnMic.disabled = false;
-  return;
+  // reseta e avança
+  esperandoResposta = false;
+  expectedAtual = "";
+  tentativas = 0;
+  index++;
+  lastMsgEl = null;
+  return mostrarSistema();
 }
 
-        if (tentativas >= MAX_TENTATIVAS) {          
-          esperandoResposta = false;
-          expectedAtual = "";
-          tentativas = 0;
-          index++;
-          lastMsgEl = null;
-          return mostrarSistema();
-        }
+        //if (tentativas >= MAX_TENTATIVAS) {          
+         // esperandoResposta = false;
+         // expectedAtual = "";
+          //tentativas = 0;
+          //index++;
+          //lastMsgEl = null;
+          //return mostrarSistema();
+        //}
 
         // pode tentar de novo
         esperandoResposta = true;
