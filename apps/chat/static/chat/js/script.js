@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => { // ABRE E FECHA O MENU LATERAL
-console.log("btnMic:", document.getElementById("btn-mic"));
-     console.log("msgs:", document.querySelectorAll(".chat-message").length);
+
     const toggle = document.querySelector(".menu-toggle");
     const sidebar = document.querySelector(".sidebar");
 
@@ -66,10 +65,10 @@ searchInput.addEventListener("input", () => {
         console.warn("SpeechRecognition não suportado neste browser");
         return; // sai do DOMContentLoaded com segurança
       }
-      const recognition = new SpeechRecognition();
-      recognition.lang = "en-GB";
-      recognition.continuous = false;
-      recognition.interimResults = false;
+      // const recognition = new SpeechRecognition();
+      // recognition.lang = "en-GB";
+      // recognition.continuous = false;
+      // recognition.interimResults = false;
 
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");

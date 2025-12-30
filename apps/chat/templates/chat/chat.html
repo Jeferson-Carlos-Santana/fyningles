@@ -71,8 +71,14 @@
       </div>
     </main>
   </div>
+   <script>
+    const recognition = new SpeechRecognition();
+      recognition.lang = "en-GB";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+  </script>
   <script src="{% static 'chat/js/script.js' %}"></script> 
-
+ 
  
 </body>
 </html> 
