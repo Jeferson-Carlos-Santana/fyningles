@@ -20,13 +20,13 @@
   word-wrap: break-word;
   color: var(--color-black);
   font-size: 18px;
-  background-color: var(--color-primary-light);
+  background-color: var(--color-white);
 }
 
 /* PROFESSOR (ESQUERDA) */
 .chat-message.system {
   align-self: flex-start;
-  background: var(--color-primary-light);
+  background-color: var(--color-white);
   color: var(--color-black);
   border-top-left-radius: 2px;
 }
@@ -34,7 +34,7 @@
 /* ALUNO (DIREITA) */
 .chat-message.user {
   align-self: flex-end;
-  background: var(--color-success-light);
+  background: var(--color-secondary-light);
   color: var(--color-black);
   border-top-right-radius: 2px;
 }

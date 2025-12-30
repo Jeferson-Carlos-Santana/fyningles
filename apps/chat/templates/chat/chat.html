@@ -102,6 +102,13 @@
       let lastMsgEl = null; 
       let tentativas = 0;
 
+    function marcarFeedback(el, tipo) {
+      el.classList.add(tipo); // "correto" ou "errado"
+
+      setTimeout(() => {
+        el.classList.remove(tipo);
+      }, 1500);
+    }
 
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
@@ -359,6 +366,7 @@
 
         // ===== decisão de fluxo =====
         if (ok) {
+          marcarFeedback(user, "correto");
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
@@ -373,6 +381,7 @@
         // errou
         tentativas++;
         if (tentativas >= MAX_TENTATIVAS) {
+          marcarFeedback(user, "errado");
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
