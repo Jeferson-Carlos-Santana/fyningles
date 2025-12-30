@@ -388,8 +388,8 @@
 if (tentativas < MAX_TENTATIVAS) {
 
   const expectedRaw = expectedAtual || "";
-  const dicaHTML = `Please say: <span class="hint">${expectedRaw}</span>`;
-  const dicaTTS  = `Please say: ${expectedRaw}`;
+  const dicaHTML = `Please say, <span class="hint">${expectedRaw}</span>`;
+  const dicaTTS  = `Please say, ${expectedRaw}`;
 
   const dica = document.createElement("div");
   dica.className = "chat-message system errado";
