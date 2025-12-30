@@ -410,20 +410,19 @@
         tentativas++;
         prof.classList.add("errado");
         
-if (tentativas < MAX_TENTATIVAS) {
-
+if (tentativas < MAX_TENTATIVAS - 1) {
   // ===== fala AVALIAÇÃO (bloqueante) =====
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: feedbackText }) // JÁ TEM: erro + please say
+    body: JSON.stringify({ text: feedbackText }) // já vem completo
   });
 
   const d = await r.json();
   if (d.files && d.files.length) {
     tocando = true;
     await new Promise(r => setTimeout(r, 1000));
-    await tocarUm(d.files[0]);   // 🔥 NÃO SEPARA
+    await tocarUm(d.files[0]); // 🔥 UMA FRASE SÓ
     tocando = false;
   }
 
