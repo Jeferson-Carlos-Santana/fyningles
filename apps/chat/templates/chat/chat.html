@@ -6,450 +6,384 @@
     <meta charset="utf-8">
     <title>chat</title>
 </head>
-<body>
-
-        <div class="layout">
-            <nav class="sidebar">
-                <div class="sidebar-inner">
-                    <div class="bar-1">
-                        <ul class="menu">
-                            <div class="infor">👤 Jeferson carlos Santana</div>
-                            <div class="infor">⭐Pontos acumulados: <span class="text-success">1.075.352</span></div>
-                            <div class="infor">⭐Pontos em andamento: <span class="text-info">253</span></div>
-                            <div class="infor">⭐Pontos que faltam: <span class="text-info">768</span></div>
-                            <div class="infor">⭐Pontos feitos: <span class="text-info">422</span></div>
-                            <li><a href="/">Dashboard</a></li>                          
-                            <li><a href="/dictionary/">Dicionário</a></li>                   
-                        </ul>
-                    </div>
-                    <input type="text" class="lesson-search" placeholder="🔍 Buscar lição">
-                    <div class="bar-2">                        
-                        <ul class="menu lessons">                            
-                            <li><a href="#">📋 Lesson 1</a></li>
-                            <li><a href="#">📋 Lesson 2</a></li>
-                            <li><a href="#">📋 Lesson 3</a></li>                 
-                        </ul>
-                    </div>
-                    <div class="logout">
-                        <li><a href="/">Sair</a></li>
-                    </div>
-                </div>
-            </nav>
-
-            <main class="content">
-                <div class="content-inner">
-                    <div class="tittle-cont">
-                        <div class="aula">                    
-                            <button class="menu-toggle" aria-label="Abrir menu">
-                                <img src="{% static 'chat/img/menu.png' %}" alt="Menu">
-                            </button> 
-                            chat
-                        </div>                        
-                    </div>
-
-                    
-
-
-
-
-
-<div class="chat-area">
-  {% for line in lines %}
-    <div class="chat-message {{ line.role }}"
-        data-id="{{ line.id }}"
-        data-auto="{{ line.auto|yesno:'1,0' }}"
-        data-end="{{ line.end|yesno:'1,0' }}"
-        data-expected="{{ line.expected_en|default:'' }}"
-        style="display:none;">
-      {{ line.content_pt|striptags }}
-    </div>
-  {% endfor %}
-</div>
-
-<button id="btn-start">▶️ Iniciar lição</button>
-<button id="btn-mic" disabled>🎤 Falar</button>
-
-
-                  
-                    <div class="footer-cont">
-                        {% comment %} <button class="theme-toggle" aria-label="Trocar tema">🌙 </button> {% endcomment %}
-                         <i><strong>© 2026 - JPM-development - All rights reserved - Engineering & Technology</strong><i>                        
-                    </div>
-                    
-                </div>
-            </main>
+<body> 
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-inner">
+        <div class="bar-1">
+          <div class="infor">👤 Jeferson carlos Santana</div>
+          <div class="infor">⭐Pontos acumulados: <span class="text-success">1.075.352</span></div>
+          <div class="infor">⭐Pontos em andamento: <span class="text-info">253</span></div>
+          <div class="infor">⭐Pontos que faltam: <span class="text-info">768</span></div>
+          <div class="infor">⭐Pontos feitos: <span class="text-info">422</span></div>
+          <ul class="menu">            
+            <li><a href="/">Dashboard</a></li>                          
+            <li><a href="/dictionary/">Dicionário</a></li>                   
+          </ul>
         </div>
-        <script src="{% static 'chat/js/script.js' %}"></script> 
+        <input type="text" class="lesson-search" placeholder="🔍 Buscar lição">
+        <div class="bar-2">                        
+          <ul class="menu lessons">                            
+            <li><a href="#">📋 Lesson 1</a></li>
+            <li><a href="#">📋 Lesson 2</a></li>
+            <li><a href="#">📋 Lesson 3</a></li>                 
+          </ul>
+        </div>
+        <div class="logout">
+          <ul class="menu"> 
+            <li><a href="/">Sair</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-        <script>
-          // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
-          function playWhenReady(file, tries = 30) { 
-            const url = "/media/cache/" + file + "?t=" + Date.now();
-            fetch(url, { method: "HEAD" })
-              .then(r => {
-                if (!r.ok) throw new Error("not ready");
-                const a = new Audio(url);
-                a.play().catch(() => {
-                  if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-                });
-              })
-              .catch(() => {
-                if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
-              });
-          }
-        </script>
-          <script>
-  // =========================
-  // AUDIO – PLAYER ÚNICO
-  // =========================
-  const audioPlayer = new Audio();
+    <main class="content">
+      <div class="content-inner">
+        <div class="tittle-cont">
+          <div class="aula">                    
+            <button class="menu-toggle" aria-label="Abrir menu">
+              <img src="{% static 'chat/img/menu.png' %}" alt="Menu">
+            </button> 
+            chat
+          </div>                        
+        </div>
 
-  function limparHTML(html) {
-    return html.replace(/<[^>]+>/g, "");
-  }
+        <div class="chat-area">
+          {% for line in lines %}
+          <div class="chat-message {{ line.role }}"
+            data-id="{{ line.id }}"
+            data-auto="{{ line.auto|yesno:'1,0' }}"
+            data-end="{{ line.end|yesno:'1,0' }}"
+            data-expected="{{ line.expected_en|default:'' }}"
+            style="display:none;">
+            {{ line.content_pt|striptags }}
+          </div>
+          {% endfor %}
+        </div>
 
-  // =========================
-  // TOCA UM ÚNICO AUDIO E ESPERA
-  // (IGUAL AO TTS ANTIGO)
-  // =========================
+        <button id="btn-start">▶️ Iniciar lição</button>
+        <button id="btn-mic" disabled>🎤 Falar</button>
 
-function tocarUm(file, tries = 300, delay = 300) {
-  return new Promise(resolve => {
-    const baseUrl = "/media/cache/" + file; 
-    const audioUrl = baseUrl + "?t=" + Date.now(); 
+        <div class="footer-cont">
+          {% comment %} <button class="theme-toggle" aria-label="Trocar tema">🌙 </button> {% endcomment %}
+          <i><strong>© 2026 - JPM-development - All rights reserved - Engineering e Technology</strong></i>                        
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="{% static 'chat/js/script.js' %}"></script> 
 
-    function tentar(n) {
-      fetch(baseUrl, { method: "HEAD", cache: "no-store" })
+  <script>
+    // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
+    function playWhenReady(file, tries = 30) { 
+      const url = "/media/cache/" + file + "?t=" + Date.now();
+      fetch(url, { method: "HEAD" })
         .then(r => {
           if (!r.ok) throw new Error("not ready");
-
-           // LIMPA QUALQUER AUDIO EM ANDAMENTO
-          audioPlayer.pause();
-          audioPlayer.currentTime = 0;
-          audioPlayer.onended = null;
-          audioPlayer.onerror = null;
-
-          audioPlayer.src = audioUrl;
-          audioPlayer.onended = resolve;
-          audioPlayer.onerror = resolve;
-
-          audioPlayer.play().catch(resolve);
+          const a = new Audio(url);
+          a.play().catch(() => {
+            if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+          });
         })
         .catch(() => {
-          if (n > 0) return setTimeout(() => tentar(n - 1), delay);
-          resolve();
+          if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
         });
+    } 
+
+    // AUDIO – PLAYER ÚNICO  
+    const audioPlayer = new Audio();
+    function limparHTML(html) {
+      return html.replace(/<[^>]+>/g, "");
     }
 
-    tentar(tries);
-  });
-}
+    // TOCA UM ÚNICO AUDIO E ESPERA
+    function tocarUm(file, tries = 300, delay = 300) {
+      return new Promise(resolve => {
+        const baseUrl = "/media/cache/" + file; 
+        const audioUrl = baseUrl + "?t=" + Date.now(); 
 
+        function tentar(n) {
+          fetch(baseUrl, { method: "HEAD", cache: "no-store" })
+          .then(r => {
+            if (!r.ok) throw new Error("not ready");
 
+            // LIMPA QUALQUER AUDIO EM ANDAMENTO
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            audioPlayer.onended = null;
+            audioPlayer.onerror = null;
 
-  // =========================
-  // TOCA OS AUDIOS UM POR VEZ
-  // (SEM FILA, SEM LISTA)
-  // =========================
- let filaVoz = Promise.resolve();
+            audioPlayer.src = audioUrl;
+            audioPlayer.onended = resolve;
+            audioPlayer.onerror = resolve;
 
-function falarComoAntigo(files) {
-  filaVoz = filaVoz.then(async () => {
-    for (const file of files) {
-      await tocarUm(file);
+            audioPlayer.play().catch(resolve);
+          })
+          .catch(() => {
+            if (n > 0) return setTimeout(() => tentar(n - 1), delay);
+            resolve();
+          });
+        }
+
+        tentar(tries);
+      });
     }
-  }).catch(() => {});
 
-  return filaVoz;
-}
+    // TOCA OS AUDIOS UM POR VEZ
+    let filaVoz = Promise.resolve();
 
+    function falarComoAntigo(files) {
+      filaVoz = filaVoz.then(async () => {
+        for (const file of files) {
+          await tocarUm(file);
+        }
+      }).catch(() => {});
 
+      return filaVoz;
+    }
 
-function expandContractionsEn(t) {
-  return (t || "")
-    .replace(/\bi['’]?m\b/gi, "i am")
-    .replace(/\byou['’]?re\b/gi, "you are")
-    .replace(/\bhe['’]?s\b/gi, "he is")
-    .replace(/\bshe['’]?s\b/gi, "she is")
-    .replace(/\bit['’]?s\b/gi, "it is")
-    .replace(/\bwe['’]?re\b/gi, "we are")
-    .replace(/\bthey['’]?re\b/gi, "they are")
-    .replace(/\bcan['’]?t\b/gi, "cannot")
-    .replace(/\bdon['’]?t\b/gi, "do not");
-}
+    function expandContractionsEn(t) {
+      return (t || "")
+        .replace(/\bi['’]?m\b/gi, "i am")
+        .replace(/\byou['’]?re\b/gi, "you are")
+        .replace(/\bhe['’]?s\b/gi, "he is")
+        .replace(/\bshe['’]?s\b/gi, "she is")
+        .replace(/\bit['’]?s\b/gi, "it is")
+        .replace(/\bwe['’]?re\b/gi, "we are")
+        .replace(/\bthey['’]?re\b/gi, "they are")
+        .replace(/\bcan['’]?t\b/gi, "cannot")
+        .replace(/\bdon['’]?t\b/gi, "do not");
+    }
 
+    function normText(s) {
+      let t = (s || "").toLowerCase().replace(/[’]/g, "'");
+      t = expandContractionsEn(t);     
+      t = t.replace(/[^\w\s]/g, " ");
+      t = t.replace(/\s+/g, " ").trim();
+      return t;
+    }
 
-function normText(s) {
-  let t = (s || "").toLowerCase().replace(/[’]/g, "'");
-  t = expandContractionsEn(t);     
-  t = t.replace(/[^\w\s]/g, " ");
-  t = t.replace(/\s+/g, " ").trim();
-  return t;
-}
+    const FEEDBACK_OK = [
+      "Very good!",
+      "Muito bem!",
+      "Excelente!", 
+      "Excellent!",
+      "Perfect!",
+      "Perfeito!",    
+      "Well done!",
+      "Muito bem feito!",  
+      "Great job!",
+      "Ótimo trabalho!"
+    ];
 
-
-const FEEDBACK_OK = [
-  "Very good!",
-  "Excellent!",
-  "Perfect!",
-  "Well done!",
-  "Great job!"
-];
-
-const FEEDBACK_ERR = [
-  "Try again.",
-  "Almost, try again.",
-  "Not quite right.",
-  "Let's try again."
-];
-
-
-
-  document.addEventListener("DOMContentLoaded", function () {
-    let lastMsgEl = null;
-    // ===== SPEECH =====
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-GB";
-    recognition.continuous = false;
-    recognition.interimResults = false;
-
-    // ===== ELEMENTOS =====
-    const msgs = document.querySelectorAll(".chat-message");
-    const btnStart = document.getElementById("btn-start");
-    const btnMic = document.getElementById("btn-mic");
-
-    let index = 0;
-    let esperandoResposta = false;
-    let expectedAtual = "";
-    const MAX_TENTATIVAS = 3;
-
-  
-  let tocando = false;  
-
-    // esconde todas
-    msgs.forEach(m => m.style.display = "none");
-    btnMic.disabled = true;
-
-    // =========================
-    // MOSTRA FRASE + FALA
-    // =========================
-    function mostrarSistema() {
-      if (tocando) return;
-      if (index >= msgs.length) {
-        btnMic.disabled = true;
-        btnStart.disabled = true;
-        return;
-      }
-
-  const msg = msgs[index];
-  const lineId = msg.dataset.id;
-  const auto = parseInt(msg.dataset.auto || "0");
-  const end  = parseInt(msg.dataset.end  || "0");
-
-  // ✅ 1) APARECE AGORA
-  msg.innerHTML = limparHTML(msg.innerHTML);
-  msg.style.display = "block";
-  lastMsgEl = msg;
+    const FEEDBACK_ERR = [
+      "Try again.",
+      "Tente novamente.",
+      "Almost, try again.",
+      "Quase lá, tente novamente.",
+      "Not quite right.",
+      "Não está bem certo.",
+      "Let's try again.",
+      "Vamos tentar novamente.",
+      "You made a mistake, try again.",
+      "Você cometeu um erro, tente novamente."
+    ];
 
 
-  // enquanto fala, não deixa mic
-  btnMic.disabled = true;
 
-   
+    document.addEventListener("DOMContentLoaded", function () {    
+      // ===== SPEECH =====
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-GB";
+      recognition.continuous = false;
+      recognition.interimResults = false;
 
-  fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ line_id: lineId })
-  })
+      // ===== ELEMENTOS =====
+      const msgs = document.querySelectorAll(".chat-message");
+      const btnStart = document.getElementById("btn-start");
+      const btnMic = document.getElementById("btn-mic");
 
-  
-    .then(r => r.json())
-    .then(async d => {
+      let index = 0;
+      let esperandoResposta = false;
+      let expectedAtual = "";
+      const MAX_TENTATIVAS = 3;  
+      let tocando = false; 
+      let lastMsgEl = null; 
+      let tentativas = 0;
 
-
-      if (d.files && d.files.length) { 
-          tocando = true;
-          await new Promise(r => setTimeout(r, 500));
-          await falarComoAntigo(d.files);
-          tocando = false;
-      }
-      
-  
-
-    // 3) SÓ AGORA DECIDE O PRÓXIMO PASSO
-    if (end === 1) {
+      // ESCONDE TODAS
+      msgs.forEach(m => m.style.display = "none");
       btnMic.disabled = true;
-      btnStart.disabled = true;
-      index++;
-      return;
-    }
-
-    if (auto === 1) {
-      index++;
-      return mostrarSistema();
-    }
-
-
-  esperandoResposta = true;
-  expectedAtual = msg.dataset.expected || "";
-  tentativas = 0;
-  btnMic.disabled = false;
-
-  });
-
-
-
-
-}
-
-
-
-
-    // =========================
-    // BOTÃO INICIAR
-    // =========================
-    btnStart.onclick = function () {
-      btnStart.disabled = true;
-      index = 0;
-      msgs.forEach(m => m.style.display = "none");      
-      mostrarSistema();
-    };
-
-    // =========================
-    // BOTÃO MICROFONE
-    // =========================
-    btnMic.onclick = function () {
-      btnMic.disabled = true;
-      recognition.start();
-    };
-
-    // =========================
-    // RESPOSTA DO USUÁRIO
-    // =========================
-// ===== escreve avaliação do professor =====
-function escreverProfessor(text, afterEl) {
-  const div = document.createElement("div");
-  div.className = "chat-message system";
-  div.textContent = text;
-  afterEl.after(div); // mantém ordem: aluno → avaliação
-  return div;
-}
-
-// ===== RESPOSTA DO USUÁRIO =====
-// ===== RESPOSTA DO USUÁRIO =====
-recognition.onresult = async function (e) {
-  const texto = e.results[0][0].transcript;
-
-  if (!esperandoResposta) return;
-
-  // ===== escreve ALUNO (sempre após a última mensagem) =====
-  const user = document.createElement("div");
-  user.className = "chat-message user";
-  user.textContent = texto;
-
-  (lastMsgEl || msgs[index]).after(user);
-  lastMsgEl = user;
-
-  const expected = expectedAtual || "";
-  const expectedNorms = new Set([
-    normText(expected),
-    normText(expandContractionsEn(expected))
-  ]);
-  const ok = expectedNorms.has(normText(texto));
-
-  // bloqueia mic enquanto avalia
-  btnMic.disabled = true;
-
-  // ===== escolhe feedback =====
-  const msg = ok
-    ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
-    : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
-
-  // ===== escreve AVALIAÇÃO (PROFESSOR) =====
-  const prof = document.createElement("div");
-  prof.className = "chat-message system";
-  prof.textContent = msg;
-
-  lastMsgEl.after(prof);
-  lastMsgEl = prof;
-
-  // para o microfone antes do feedback
-  //recognition.stop();
-
-  
-
-  // ===== fala AVALIAÇÃO (bloqueante) =====
-   //await filaVoz;
-   //filaVoz = Promise.resolve();
-
-  const r = await fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: msg })
-  });
-
-  
-
-  const d = await r.json();
-  //if (d.files && d.files.length) {     
-    //for (const file of d.files) {
-      //playWhenReady(file);
-      //await falarComoAntigo(d.files);
-    //}    
-  //}
-
-if (d.files && d.files.length) {
-  tocando = true;
-
-  await new Promise(r => setTimeout(r, 1000));
-  await tocarUm(d.files[0]);
-
-  tocando = false;
-}
     
-  
+      // MOSTRA FRASE + FALA   
+      function mostrarSistema() {
+        if (tocando) return;
+        if (index >= msgs.length) {
+          btnMic.disabled = true;
+          btnStart.disabled = true;
+          return;
+        }
 
-  // ===== decisão de fluxo =====
-  if (ok) {
-    esperandoResposta = false;
-    expectedAtual = "";
-    tentativas = 0;
-    setTimeout(() => {
-      index++;
-      lastMsgEl = null;
-      mostrarSistema();
-    }, 600);
-    return;
-  }
+        const msg = msgs[index];
+        const lineId = msg.dataset.id;
+        const auto = parseInt(msg.dataset.auto || "0");
+        const end  = parseInt(msg.dataset.end  || "0");
 
-  // errou
-  tentativas++;
-  if (tentativas >= MAX_TENTATIVAS) {
-    esperandoResposta = false;
-    expectedAtual = "";
-    tentativas = 0;
-    index++;
-    lastMsgEl = null;
-    return mostrarSistema();
-  }
+        // APARECE AGORA
+        msg.innerHTML = limparHTML(msg.innerHTML);
+        msg.style.display = "block";
+        lastMsgEl = msg;
 
-  // pode tentar de novo
-  esperandoResposta = true;
-  btnMic.disabled = false;
-};
+        // ENQUANTO FALA NAO DEIXA MIC
+        btnMic.disabled = true;   
 
+        fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ line_id: lineId })
+        })
 
+        .then(r => r.json())
+        .then(async d => {
 
+          if (d.files && d.files.length) { 
+            tocando = true;
+            await new Promise(r => setTimeout(r, 500));
+            await falarComoAntigo(d.files);
+            tocando = false;
+          }  
 
+          // SÓ AGORA DECIDE O PRÓXIMO PASSO
+          if (end === 1) {
+            btnMic.disabled = true;
+            btnStart.disabled = true;
+            index++;
+            return;
+          }
 
-  });
+          if (auto === 1) {
+            index++;
+            return mostrarSistema();
+          }
 
-  
-</script>
+          esperandoResposta = true;
+          expectedAtual = msg.dataset.expected || "";
+          tentativas = 0;
+          btnMic.disabled = false;
 
- 
+        });
+      }
+
+      // BOTÃO INICIAR
+      btnStart.onclick = function () {
+        btnStart.disabled = true;
+        index = 0;
+        msgs.forEach(m => m.style.display = "none");      
+        mostrarSistema();
+      };
+
+      // BOTÃO MICROFONE
+      btnMic.onclick = function () {
+        btnMic.disabled = true;
+        recognition.start();
+      };
+
+      // RESPOSTA DO USUÁRIO
+      // ===== escreve avaliação do professor =====
+      function escreverProfessor(text, afterEl) {
+        const div = document.createElement("div");
+        div.className = "chat-message system";
+        div.textContent = text;
+        afterEl.after(div); // mantém ordem: aluno → avaliação
+        return div;
+      }
+
+      // ===== RESPOSTA DO USUÁRIO =====
+      recognition.onresult = async function (e) {
+        const texto = e.results[0][0].transcript;
+
+        if (!esperandoResposta) return;
+
+        // ===== escreve ALUNO (sempre após a última mensagem) =====
+        const user = document.createElement("div");
+        user.className = "chat-message user";
+        user.textContent = texto;
+
+        (lastMsgEl || msgs[index]).after(user);
+        lastMsgEl = user;
+
+        const expected = expectedAtual || "";
+        const expectedNorms = new Set([
+        normText(expected),
+        normText(expandContractionsEn(expected))
+        ]);
+        const ok = expectedNorms.has(normText(texto));
+
+        // bloqueia mic enquanto avalia
+        btnMic.disabled = true;
+
+        // ===== escolhe feedback =====
+        const msg = ok
+        ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
+        : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
+
+        // ===== escreve AVALIAÇÃO (PROFESSOR) =====
+        const prof = document.createElement("div");
+        prof.className = "chat-message system";
+        prof.textContent = msg;
+
+        lastMsgEl.after(prof);
+        lastMsgEl = prof;
+
+        // ===== fala AVALIAÇÃO (bloqueante) =====
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: msg })
+        });  
+
+        const d = await r.json(); 
+        if (d.files && d.files.length) {
+          tocando = true;
+
+          await new Promise(r => setTimeout(r, 1000));
+          await tocarUm(d.files[0]);
+
+          tocando = false;
+        }  
+
+        // ===== decisão de fluxo =====
+        if (ok) {
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;
+          setTimeout(() => {
+            index++;
+            lastMsgEl = null;
+            mostrarSistema();
+          }, 600);
+          return;
+        }
+
+        // errou
+        tentativas++;
+        if (tentativas >= MAX_TENTATIVAS) {
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;
+          index++;
+          lastMsgEl = null;
+          return mostrarSistema();
+        }
+
+        // pode tentar de novo
+        esperandoResposta = true;
+        btnMic.disabled = false;
+      };
+      
+    });
+    
+  </script>
 </body>
 </html> 
