@@ -383,7 +383,8 @@ if (ok || tentativaAgora < MAX_TENTATIVAS) {
 
         // ===== decisão de fluxo =====
         if (ok) {
-          prof.classList.add("correto");
+          if (prof) prof.classList.add("correto");
+
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
@@ -397,7 +398,7 @@ if (ok || tentativaAgora < MAX_TENTATIVAS) {
 
         // errou
         tentativas++;
-        prof.classList.add("errado");
+        if (prof) prof.classList.add("errado");
 
       if (tentativas < MAX_TENTATIVAS) {
       // ===== fala AVALIAÇÃO (bloqueante) =====
