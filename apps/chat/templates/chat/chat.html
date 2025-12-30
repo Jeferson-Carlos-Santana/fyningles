@@ -351,12 +351,15 @@
         : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
         // ===== escreve AVALIAÇÃO (PROFESSOR) =====
-        const prof = document.createElement("div");
-        prof.className = "chat-message system";
-        prof.textContent = msg;
+        //const prof = document.createElement("div");
+        //prof.className = "chat-message system";
+        //prof.textContent = msg;
 
-        lastMsgEl.after(prof);
-        lastMsgEl = prof;
+        //lastMsgEl.after(prof);
+        //lastMsgEl = prof;
+        // prepara mensagem do professor (NÃO imprime ainda)
+let prof = document.createElement("div");
+prof.className = "chat-message system";
         scrollChatToBottom();
 
         // ===== fala AVALIAÇÃO (bloqueante) =====
@@ -394,20 +397,18 @@
         tentativas++;
         prof.classList.add("errado");
         
-        // ERRO COM DICA (ANTES do MAX)
 if (tentativas < MAX_TENTATIVAS) {
 
   const expectedRaw = expectedAtual || "";
 
-  // ===== JUNTA ERRO + DICA =====
   const feedbackText = `${msg} Please say, ${expectedRaw}`;
   const feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
 
-  // reutiliza o MESMO balão do professor
   prof.innerHTML = feedbackHTML;
+  lastMsgEl.after(prof);
+  lastMsgEl = prof;
   scrollChatToBottom();
 
-  // fala UMA ÚNICA FRASE
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
