@@ -54,11 +54,7 @@ searchInput.addEventListener("input", () => {
 
 
       const chataqui = document.querySelectorAll(".chat-message");
-      if (!chataqui.length) {
-        console.warn("Sem mensagens de chat, pulando lógica de chat");
-      } else {
-        
-      
+     
 
 
       const audioPlayer = new Audio();
@@ -368,6 +364,6 @@ searchInput.addEventListener("input", () => {
         btnMic.disabled = false;
       };
       
-    }
+    
 
 });
