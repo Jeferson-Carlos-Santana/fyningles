@@ -364,7 +364,7 @@
             feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
           }
         }
-if (tentativas < MAX_TENTATIVAS) {
+
 
         // ===== agora sim: imprime UMA vez =====
         const prof = document.createElement("div");
@@ -392,11 +392,6 @@ if (tentativas < MAX_TENTATIVAS) {
           tocando = false;
         }
 
-        esperandoResposta = true;
-btnMic.disabled = false;
-return;
-
-      }
         // ===== decisão de fluxo =====
         if (ok) {
           prof.classList.add("correto");
@@ -415,7 +410,12 @@ return;
         tentativas++;
         prof.classList.add("errado");
 
-  
+  if (tentativas < MAX_TENTATIVAS) {
+  // fala feedback/dica
+  esperandoResposta = true;
+  btnMic.disabled = false;
+  return;
+}
       if (tentativas >= MAX_TENTATIVAS) {
 
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
