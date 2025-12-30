@@ -74,6 +74,31 @@
   <script src="{% static 'chat/js/script.js' %}"></script> 
 
   <script>
+  document.addEventListener("DOMContentLoaded", function () { 
+
+      const audioPlayer = new Audio();
+      // TOCA OS AUDIOS UM POR VEZ
+      let filaVoz = Promise.resolve();
+       // ===== SPEECH =====
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-GB";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      const msgs = document.querySelectorAll(".chat-message");
+      const btnStart = document.getElementById("btn-start");
+      const btnMic = document.getElementById("btn-mic");
+
+      let index = 0;
+      let esperandoResposta = false;
+      let expectedAtual = "";
+      const MAX_TENTATIVAS = 3;  
+      let tocando = false; 
+      let lastMsgEl = null; 
+      let tentativas = 0;
+
+
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
       const url = "/media/cache/" + file + "?t=" + Date.now();
@@ -90,8 +115,7 @@
         });
     } 
 
-    // AUDIO – PLAYER ÚNICO  
-    const audioPlayer = new Audio();
+    // AUDIO – PLAYER ÚNICO     
     function limparHTML(html) {
       return html.replace(/<[^>]+>/g, "");
     }
@@ -129,8 +153,7 @@
       });
     }
 
-    // TOCA OS AUDIOS UM POR VEZ
-    let filaVoz = Promise.resolve();
+    
 
     function falarComoAntigo(files) {
       filaVoz = filaVoz.then(async () => {
@@ -188,29 +211,8 @@
       "You made a mistake, try again.",
       "Você cometeu um erro, tente novamente."
     ];
-
-
-
-    document.addEventListener("DOMContentLoaded", function () {    
-      // ===== SPEECH =====
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.lang = "en-GB";
-      recognition.continuous = false;
-      recognition.interimResults = false;
-
-      // ===== ELEMENTOS =====
-      const msgs = document.querySelectorAll(".chat-message");
-      const btnStart = document.getElementById("btn-start");
-      const btnMic = document.getElementById("btn-mic");
-
-      let index = 0;
-      let esperandoResposta = false;
-      let expectedAtual = "";
-      const MAX_TENTATIVAS = 3;  
-      let tocando = false; 
-      let lastMsgEl = null; 
-      let tentativas = 0;
+       
+   
 
       // ESCONDE TODAS
       msgs.forEach(m => m.style.display = "none");
