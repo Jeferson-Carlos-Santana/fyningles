@@ -410,33 +410,20 @@
         tentativas++;
         prof.classList.add("errado");
         
-// ERRO COM DICA (SÓ ANTES DO MAX)
-if (tentativas < MAX_TENTATIVAS - 1) {
+if (tentativas < MAX_TENTATIVAS) {
 
-  const expectedRaw = expectedAtual || "";
-  const dicaHTML = `Please say, <span class="hint">${expectedRaw}</span>`;
-  const dicaTTS  = `Please say, ${expectedRaw}`;
-
-  const dica = document.createElement("div");
-  dica.className = "chat-message system";
-  dica.innerHTML = dicaHTML;
-
-  lastMsgEl.after(dica);
-  lastMsgEl = dica;
-  scrollChatToBottom();
-
-  // fala a dica
+  // ===== fala AVALIAÇÃO (bloqueante) =====
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: dicaTTS })
+    body: JSON.stringify({ text: feedbackText }) // JÁ TEM: erro + please say
   });
 
   const d = await r.json();
   if (d.files && d.files.length) {
     tocando = true;
     await new Promise(r => setTimeout(r, 1000));
-    await tocarUm(d.files[0]);
+    await tocarUm(d.files[0]);   // 🔥 NÃO SEPARA
     tocando = false;
   }
 
