@@ -103,11 +103,11 @@
       let tentativas = 0;
 
     function marcarFeedback(el, tipo) {
-      el.classList.add(tipo); // "correto" ou "errado"
+      el.classList.add(tipo);
 
       setTimeout(() => {
         el.classList.remove(tipo);
-      }, 1500);
+      }, 3000);
     }
 
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
@@ -238,9 +238,6 @@
         const lineId = msg.dataset.id;
         const auto = parseInt(msg.dataset.auto || "0");
         const end  = parseInt(msg.dataset.end  || "0");
-
-        // APARECE AGORA
-       // msg.innerHTML = limparHTML(msg.innerHTML);
       
         
         msg.style.display = "block";
@@ -380,8 +377,8 @@
 
         // errou
         tentativas++;
-        if (tentativas >= MAX_TENTATIVAS) {
-          marcarFeedback(user, "errado");
+        marcarFeedback(user, "errado");
+        if (tentativas >= MAX_TENTATIVAS) {          
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
