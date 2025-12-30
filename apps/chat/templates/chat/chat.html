@@ -363,7 +363,8 @@
 
         // ===== decisão de fluxo =====
         if (ok) {
-          marcarFeedback(prof, "correto");
+          //marcarFeedback(prof, "correto");
+          prof.classList.add("correto");
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
@@ -377,7 +378,7 @@
 
         // errou
         tentativas++;
-        marcarFeedback(prof, "errado");
+        prof.classList.add("errado");
         if (tentativas >= MAX_TENTATIVAS) {          
           esperandoResposta = false;
           expectedAtual = "";
@@ -390,6 +391,10 @@
         // pode tentar de novo
         esperandoResposta = true;
         btnMic.disabled = false;
+
+        setTimeout(() => {
+          prof.classList.remove("correto", "errado");
+        }, 5000);
       };
       
     });
