@@ -395,42 +395,46 @@
         prof.classList.add("errado");
         
         // ERRO COM DICA (ANTES do MAX)
-        if (tentativas < MAX_TENTATIVAS) {
+        // errou
+tentativas++;
+prof.classList.add("errado");
 
-          const expectedRaw = expectedAtual || "";
-          const dicaHTML = `Please say, <span class="hint">${expectedRaw}</span>`;
-          const dicaTTS  = `Please say, ${expectedRaw}`;
+// ERRO COM DICA (MESMA FRASE)
+if (tentativas < MAX_TENTATIVAS) {
 
-          const dica = document.createElement("div");
-          dica.className = "chat-message system";
-          dica.innerHTML = dicaHTML;
+  const expectedRaw = expectedAtual || "";
 
-          lastMsgEl.after(dica);
-          lastMsgEl = dica;
-          scrollChatToBottom();
+  const textoHTML =
+    `${msg} <strong>Please say,</strong> <span class="hint">${expectedRaw}</span>`;
 
-          // fala a dica
-          const r = await fetch("/tts/line/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: dicaTTS })
-          });
+  const textoTTS =
+    `${msg} Please say, ${expectedRaw}`;
 
-          const d = await r.json();
-          if (d.files && d.files.length) {
-            tocando = true;
-            await new Promise(r => setTimeout(r, 1000));
-            await tocarUm(d.files[0]);
-            tocando = false;
-          }
+  // atualiza o MESMO balão do professor
+  prof.innerHTML = textoHTML;
 
-          esperandoResposta = true;
-          btnMic.disabled = false;
-          return;
-        }
+  // fala tudo junto
+  const r = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: textoTTS })
+  });
+
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await tocarUm(d.files[0]);
+    tocando = false;
+  }
+
+  esperandoResposta = true;
+  btnMic.disabled = false;
+  return;
+}
+
 if (tentativas >= MAX_TENTATIVAS) {
 
-  // 👉 mensagem de avanço (SUBSTITUI o último "Let's try again")
+  // mensagem de avanço (SUBSTITUI o último "Let's try again")
   const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
 
   const avanco = document.createElement("div");
