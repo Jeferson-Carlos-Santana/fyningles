@@ -365,6 +365,35 @@ if (!ok) {
   }
 }
 
+// ===== só imprime/fala se NÃO é a última tentativa =====
+if (tentativas + 1 < MAX_TENTATIVAS) {
+
+  // ===== agora sim: imprime UMA vez =====
+  const prof = document.createElement("div");
+  prof.className = "chat-message system";
+  prof.innerHTML = feedbackHTML;
+
+  lastMsgEl.after(prof);
+  lastMsgEl = prof;
+  scrollChatToBottom();
+
+  // ===== fala AVALIAÇÃO (bloqueante) =====
+  const r = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: feedbackText })
+  });
+
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await new Promise(r => setTimeout(r, 1000));
+    await falarComoAntigo(d.files);
+    tocando = false;
+  }
+}
+
+
 // ===== agora sim: imprime UMA vez =====
 const prof = document.createElement("div");
 prof.className = "chat-message system";
