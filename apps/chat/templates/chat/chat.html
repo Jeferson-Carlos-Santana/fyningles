@@ -308,7 +308,7 @@
         const div = document.createElement("div");
         div.className = "chat-message system";
         div.textContent = text;
-        afterEl.after(div); // mantém ordem: aluno → avaliação
+        afterEl.after(div);
         return div;
       }
 
@@ -384,27 +384,34 @@
         tentativas++;
         prof.classList.add("errado");
         
-
-
-// ERRO COM DICA (ADICIONA, NÃO SUBSTITUI)
+// ERRO COM DICA (ANTES do MAX)
 if (tentativas < MAX_TENTATIVAS) {
 
-  const dicaTexto = `Please say: ${expectedAtual}`;
+  const expectedRaw = expectedAtual || "";
+  const dicaHTML = `Please say: <span class="hint">${expectedRaw}</span>`;
+  const dicaTTS  = `Please say: ${expectedRaw}`;
 
   const dica = document.createElement("div");
   dica.className = "chat-message system errado";
-  dica.textContent = dicaTexto;
+  dica.innerHTML = dicaHTML;
 
-  // 👇 ADICIONA ABAIXO DO FEEDBACK
   lastMsgEl.after(dica);
   lastMsgEl = dica;
 
   // fala a dica
-  await fetch("/tts/line/", {
+  const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: dicaTexto })
+    body: JSON.stringify({ text: dicaTTS })
   });
+
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await new Promise(r => setTimeout(r, 1000));
+    await tocarUm(d.files[0]);
+    tocando = false;
+  }
 
   esperandoResposta = true;
   btnMic.disabled = false;
