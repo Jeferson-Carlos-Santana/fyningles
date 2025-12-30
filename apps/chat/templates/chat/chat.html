@@ -213,6 +213,19 @@
       "Você cometeu um erro, tente novamente."
     ];   
 
+    const MSG_AVANCO = [
+      "You didn't get it right, but that's okay, let's keep going.",
+      "você não acertou, mas tudo bem, vamos continuar.",
+      "It's alright if you missed it, let's move on.",
+      "Não tem problema se errou, vamos seguir em frente.",
+      "No worries, even mistakes help us learn, let's go ahead.",
+      "Sem preocupações, até os erros ajudam a aprender, vamos em frente.",
+      "That wasn't quite right, but it's fine, let's continue.",
+      "Não foi bem certo, mas está tudo bem, vamos continuar.",
+      "Don't worry about that one, let's try the next.",
+      "Não se preocupe com essa, vamos tentar a próxima."
+    ];
+
       // ESCONDE TODAS
       msgs.forEach(m => m.style.display = "none");
       btnMic.disabled = true;
@@ -370,6 +383,40 @@
         // errou
         tentativas++;
         prof.classList.add("errado");
+        
+// 🔴 ERRO COM DICA (ANTES do MAX)
+if (tentativas < MAX_TENTATIVAS) {
+
+  const expectedRaw = expectedAtual || "";
+  const dicaHTML = `Please say: <span class="hint">${expectedRaw}</span>`;
+  const dicaTTS  = `Please say: ${expectedRaw}`;
+
+  const dica = document.createElement("div");
+  dica.className = "chat-message system errado";
+  dica.innerHTML = dicaHTML;
+
+  lastMsgEl.after(dica);
+  lastMsgEl = dica;
+
+  // fala a dica
+  const r = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: dicaTTS })
+  });
+
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await tocarUm(d.files[0]);
+    tocando = false;
+  }
+
+  esperandoResposta = true;
+  btnMic.disabled = false;
+  return;
+}
+
         if (tentativas >= MAX_TENTATIVAS) {          
           esperandoResposta = false;
           expectedAtual = "";
@@ -382,11 +429,7 @@
         // pode tentar de novo
         esperandoResposta = true;
         btnMic.disabled = false;        
-      };
-
-        setTimeout(() => {
-          prof.classList.remove("correto", "errado");
-        }, 6000);
+      };        
       
     });
     
