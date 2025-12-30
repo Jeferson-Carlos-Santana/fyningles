@@ -53,8 +53,9 @@ searchInput.addEventListener("input", () => {
 // FIM TEMPO DA MENSAGEM DE SUCESSO SUMIR
 
 
-      const chataqui = document.querySelectorAll(".chat-message");
-     
+      
+     console.log("btnMic:", document.getElementById("btn-mic"));
+     console.log("msgs:", document.querySelectorAll(".chat-message").length);
 
 
       const audioPlayer = new Audio();
