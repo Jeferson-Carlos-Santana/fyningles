@@ -101,8 +101,6 @@
       let tocando = false; 
       let lastMsgEl = null; 
       let tentativas = 0;    
-      const chatArea = document.querySelector(".chat-area");
-
 
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
@@ -124,12 +122,6 @@
     function limparHTML(html) {
       return html.replace(/<[^>]+>/g, "");
     }
-    
-    // MANTEM O CHAT EM TELA
-    function scrollChatToBottom() {
-      chatArea.scrollTop = chatArea.scrollHeight;
-    }
-
 
     // TOCA UM ÚNICO AUDIO E ESPERA
     function tocarUm(file, tries = 300, delay = 300) {
@@ -255,7 +247,6 @@
         
         msg.style.display = "block";
         lastMsgEl = msg;
-        scrollChatToBottom();
 
         // ENQUANTO FALA NAO DEIXA MIC
         btnMic.disabled = true;   
@@ -317,7 +308,7 @@
         const div = document.createElement("div");
         div.className = "chat-message system";
         div.textContent = text;
-        afterEl.after(div);
+        afterEl.after(div); // mantém ordem: aluno → avaliação
         return div;
       }
 
@@ -351,36 +342,14 @@
         : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
         // ===== escreve AVALIAÇÃO (PROFESSOR) =====
-// ===== escreve AVALIAÇÃO (PROFESSOR) =====
-        // ===== monta feedback FINAL (antes de imprimir) =====
-        let feedbackText = msg;
-        let feedbackHTML = msg;
-
-        // se errou, calcula tentativa que vai contar AGORA
-        if (!ok) {
-          const tentativaAgora = tentativas + 1; // porque você ainda não incrementou
-          if (tentativaAgora < MAX_TENTATIVAS) {
-            const expectedRaw = expectedAtual || "";
-            feedbackText = `${msg} Please say, ${expectedRaw}`;
-            feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
-          }
-        }
-
-
-        // ===== agora sim: imprime UMA vez =====
         const prof = document.createElement("div");
         prof.className = "chat-message system";
-        prof.innerHTML = feedbackHTML;
+        prof.textContent = msg;
 
         lastMsgEl.after(prof);
         lastMsgEl = prof;
-        scrollChatToBottom();        
 
-       
-    
-
-        // ===== decisão de fluxo =====
-        if (ok) {
+        // ===== fala AVALIAÇÃO (bloqueante) =====
         const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -390,10 +359,16 @@
         const d = await r.json(); 
         if (d.files && d.files.length) {
           tocando = true;
+
           await new Promise(r => setTimeout(r, 1000));
           await tocarUm(d.files[0]);
+
           tocando = false;
         }  
+
+        // ===== decisão de fluxo =====
+               // ===== decisão de fluxo =====
+        if (ok) {
           prof.classList.add("correto");
           esperandoResposta = false;
           expectedAtual = "";
@@ -410,62 +385,89 @@
         tentativas++;
         prof.classList.add("errado");
         
-if (tentativas <= 2) {
-  // ===== fala AVALIAÇÃO (bloqueante) =====
-        const r = await fetch("/tts/line/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: feedbackText })
-        });
+        // ERRO COM DICA (ANTES do MAX)
+        if (tentativas < MAX_TENTATIVAS) {
 
-        const d = await r.json();
-        if (d.files && d.files.length) {
-          tocando = true;
-          await new Promise(r => setTimeout(r, 1000));
-          await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
-          tocando = false;
+          const expectedRaw = expectedAtual || "";
+          const dicaHTML = `Please say, <span class="hint">${expectedRaw}</span>`;
+          const dicaTTS  = `Please say, ${expectedRaw}`;
+
+          const dica = document.createElement("div");
+          dica.className = "chat-message system";
+          dica.innerHTML = dicaHTML;
+
+          lastMsgEl.after(dica);
+          lastMsgEl = dica;
+          scrollChatToBottom();
+
+          // fala a dica
+          const r = await fetch("/tts/line/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: dicaTTS })
+          });
+
+          const d = await r.json();
+          if (d.files && d.files.length) {
+            tocando = true;
+            await new Promise(r => setTimeout(r, 1000));
+            await tocarUm(d.files[0]);
+            tocando = false;
+          }
+
+          esperandoResposta = true;
+          btnMic.disabled = false;
+          return;
         }
+if (tentativas >= MAX_TENTATIVAS) {
+
+  // mensagem de avanço (SUBSTITUI o último "Let's try again")
+  const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
+
+  const avanco = document.createElement("div");
+  avanco.className = "chat-message system errado";
+  avanco.textContent = msgAvanco;
+
+  lastMsgEl.after(avanco);
+  lastMsgEl = avanco;
+  scrollChatToBottom();
   
+  // fala a mensagem de avanço
+  const r = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: msgAvanco })
+  });
+
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await new Promise(r => setTimeout(r, 1000));
+    await tocarUm(d.files[0]);
+    tocando = false;
+  }
+
+  // reseta e avança
+  esperandoResposta = false;
+  expectedAtual = "";
+  tentativas = 0;
+  index++;
+  lastMsgEl = null;
+  return mostrarSistema();
 }
-      if (tentativas >= MAX_TENTATIVAS) {
 
-        // mensagem de avanço (SUBSTITUI o último "Let's try again")
-        const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
+        //if (tentativas >= MAX_TENTATIVAS) {          
+         // esperandoResposta = false;
+         // expectedAtual = "";
+          //tentativas = 0;
+          //index++;
+          //lastMsgEl = null;
+          //return mostrarSistema();
+        //}
 
-        const avanco = document.createElement("div");
-        avanco.className = "chat-message system errado";
-        avanco.textContent = msgAvanco;
-
-        lastMsgEl.after(avanco);
-        lastMsgEl = avanco;
-        scrollChatToBottom();
-        
-        // fala a mensagem de avanço
-        const r = await fetch("/tts/line/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: msgAvanco })
-        });
-
-        const d = await r.json();
-        if (d.files && d.files.length) {
-          tocando = true;
-          await new Promise(r => setTimeout(r, 1000));
-          await tocarUm(d.files[0]);
-          tocando = false;
-        }
-
-        // reseta e avança
-        esperandoResposta = false;
-        expectedAtual = "";
-        tentativas = 0;
-        index++;
-        lastMsgEl = null;
-        return mostrarSistema();
-      }
         // pode tentar de novo
         esperandoResposta = true;
-        btnMic.disabled = false;        
+        btnMic.disabled = false; 
       };        
       
     });
