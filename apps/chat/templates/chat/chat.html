@@ -368,7 +368,14 @@
 
 
         // ===== agora sim: imprime UMA vez =====
-     
+        const prof = document.createElement("div");
+        prof.className = "chat-message system";
+        prof.innerHTML = feedbackHTML;
+
+        lastMsgEl.after(prof);
+        lastMsgEl = prof;
+        scrollChatToBottom();        
+
        
     
 
@@ -402,41 +409,26 @@
         // errou
         tentativas++;
         prof.classList.add("errado");
+        
 if (tentativas < MAX_TENTATIVAS) {
-  // cria e mostra feedback (1ª e 2ª tentativa)
-  const prof = document.createElement("div");
-  prof.className = "chat-message system errado";
-  prof.innerHTML = feedbackHTML;
+  // ===== fala AVALIAÇÃO (bloqueante) =====
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: feedbackText })
+        });
 
-  lastMsgEl.after(prof);
-  lastMsgEl = prof;
-  scrollChatToBottom();
-
-  // fala feedback
-  const r = await fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: feedbackText })
-  });
-
-  const d = await r.json();
-  if (d.files && d.files.length) {
-    tocando = true;
-    await falarComoAntigo(d.files);
-    tocando = false;
-  }
-
+        const d = await r.json();
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1000));
+          await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
+          tocando = false;
+        }
   esperandoResposta = true;
   btnMic.disabled = false;
   return;
 }
-
-
-
-
-    
-        
-
       if (tentativas >= MAX_TENTATIVAS) {
 
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
