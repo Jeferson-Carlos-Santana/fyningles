@@ -381,13 +381,15 @@
         }
 
         // errou
-        tentativas++;
-        prof.classList.add("errado");
-        
-// 🔴 ERRO COM DICA (ANTES do MAX)
+// errou
+tentativas++;
+prof.classList.add("errado");
+
+// 🔴 ERRO COM DICA
 if (tentativas < MAX_TENTATIVAS) {
 
-  const expectedRaw = expectedAtual || "";
+  const expectedRaw = msg.dataset.expected || expectedAtual || "";
+
   const dicaHTML = `Please say: <span class="hint">${expectedRaw}</span>`;
   const dicaTTS  = `Please say: ${expectedRaw}`;
 
@@ -398,7 +400,7 @@ if (tentativas < MAX_TENTATIVAS) {
   lastMsgEl.after(dica);
   lastMsgEl = dica;
 
-  // fala a dica
+  // fala a dica (SEM HTML)
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -416,6 +418,7 @@ if (tentativas < MAX_TENTATIVAS) {
   btnMic.disabled = false;
   return;
 }
+
 
         if (tentativas >= MAX_TENTATIVAS) {          
           esperandoResposta = false;
