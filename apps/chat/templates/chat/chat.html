@@ -394,27 +394,24 @@
         tentativas++;
         prof.classList.add("errado");
         
-   // ERRO COM DICA (ANTES do MAX)
+        // ERRO COM DICA (ANTES do MAX)
 if (tentativas < MAX_TENTATIVAS) {
 
   const expectedRaw = expectedAtual || "";
 
-  // completa a MENSAGEM EXISTENTE (prof)
-  const textoHTML =
-    `${prof.textContent} <strong>Please say,</strong> <span class="hint">${expectedRaw}</span>`;
+  // ===== JUNTA ERRO + DICA =====
+  const feedbackText = `${msg} Please say, ${expectedRaw}`;
+  const feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
 
-  const textoTTS =
-    `${prof.textContent} Please say, ${expectedRaw}`;
-
-  // atualiza o MESMO balão (elimina a primeira mensagem separada)
-  prof.innerHTML = textoHTML;
+  // reutiliza o MESMO balão do professor
+  prof.innerHTML = feedbackHTML;
   scrollChatToBottom();
 
-  // fala UMA ÚNICA VEZ (mensagem completa)
+  // fala UMA ÚNICA FRASE
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: textoTTS })
+    body: JSON.stringify({ text: feedbackText })
   });
 
   const d = await r.json();
@@ -429,7 +426,6 @@ if (tentativas < MAX_TENTATIVAS) {
   btnMic.disabled = false;
   return;
 }
-
 
 
 
