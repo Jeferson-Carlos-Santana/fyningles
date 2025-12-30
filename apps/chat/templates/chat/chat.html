@@ -330,6 +330,9 @@
         normText(expandContractionsEn(expected))
         ]);
         const ok = expectedNorms.has(normText(texto));
+        (lastMsgEl || msgs[index]).after(user);
+        lastMsgEl = user;
+
 
         // bloqueia mic enquanto avalia
         btnMic.disabled = true;
