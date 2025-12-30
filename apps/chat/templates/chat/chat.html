@@ -351,23 +351,36 @@
         : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
         // ===== escreve AVALIAÇÃO (PROFESSOR) =====
-        //const prof = document.createElement("div");
-        //prof.className = "chat-message system";
-        //prof.textContent = msg;
+// ===== monta feedback FINAL (antes de imprimir) =====
+let feedbackText = msg;
+let feedbackHTML = msg;
 
-        //lastMsgEl.after(prof);
-        //lastMsgEl = prof;
-        // prepara mensagem do professor (NÃO imprime ainda)
-let prof = document.createElement("div");
+// se errou, calcula tentativa que vai contar AGORA
+if (!ok) {
+  const tentativaAgora = tentativas + 1; // porque você ainda não incrementou
+  if (tentativaAgora < MAX_TENTATIVAS) {
+    const expectedRaw = expectedAtual || "";
+    feedbackText = `${msg} Please say, ${expectedRaw}`;
+    feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
+  }
+}
+
+// ===== agora sim: imprime UMA vez =====
+const prof = document.createElement("div");
 prof.className = "chat-message system";
-        scrollChatToBottom();
+prof.innerHTML = feedbackHTML;
+
+lastMsgEl.after(prof);
+lastMsgEl = prof;
+scrollChatToBottom();
 
         // ===== fala AVALIAÇÃO (bloqueante) =====
-        const r = await fetch("/tts/line/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: msg })
-        });  
+const r = await fetch("/tts/line/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ text: feedbackText })
+});
+
 
         const d = await r.json(); 
         if (d.files && d.files.length) {
@@ -397,37 +410,6 @@ prof.className = "chat-message system";
         tentativas++;
         prof.classList.add("errado");
         
-if (tentativas < MAX_TENTATIVAS) {
-
-  const expectedRaw = expectedAtual || "";
-
-  const feedbackText = `${msg} Please say, ${expectedRaw}`;
-  const feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
-
-  prof.innerHTML = feedbackHTML;
-  lastMsgEl.after(prof);
-  lastMsgEl = prof;
-  scrollChatToBottom();
-
-  const r = await fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: feedbackText })
-  });
-
-  const d = await r.json();
-  if (d.files && d.files.length) {
-    tocando = true;
-    await new Promise(r => setTimeout(r, 1000));
-    await tocarUm(d.files[0]);
-    tocando = false;
-  }
-
-  esperandoResposta = true;
-  btnMic.disabled = false;
-  return;
-}
-
 
 
         if (tentativas >= MAX_TENTATIVAS) {          
