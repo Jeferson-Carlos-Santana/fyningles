@@ -351,6 +351,7 @@
         : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
         // ===== escreve AVALIAÇÃO (PROFESSOR) =====
+// ===== escreve AVALIAÇÃO (PROFESSOR) =====
         // ===== monta feedback FINAL (antes de imprimir) =====
         let feedbackText = msg;
         let feedbackHTML = msg;
@@ -373,12 +374,26 @@
 
         lastMsgEl.after(prof);
         lastMsgEl = prof;
-        scrollChatToBottom();
+        scrollChatToBottom();        
 
-        
+       
+    
 
         // ===== decisão de fluxo =====
         if (ok) {
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: msg })
+        });  
+
+        const d = await r.json(); 
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1000));
+          await tocarUm(d.files[0]);
+          tocando = false;
+        }  
           prof.classList.add("correto");
           esperandoResposta = false;
           expectedAtual = "";
@@ -394,8 +409,8 @@
         // errou
         tentativas++;
         prof.classList.add("errado");
-
-  if (tentativas < MAX_TENTATIVAS) {
+        
+if (tentativas < MAX_TENTATIVAS) {
   // ===== fala AVALIAÇÃO (bloqueante) =====
         const r = await fetch("/tts/line/", {
           method: "POST",
@@ -450,8 +465,6 @@
         lastMsgEl = null;
         return mostrarSistema();
       }
-
-
         // pode tentar de novo
         esperandoResposta = true;
         btnMic.disabled = false;        
