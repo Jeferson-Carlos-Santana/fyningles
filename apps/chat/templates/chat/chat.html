@@ -376,80 +376,53 @@
           tocando = false;
         }  
 
-        // ===== decisão de fluxo =====
-        if (ok) {
-          prof.classList.add("correto");
-          esperandoResposta = false;
-          expectedAtual = "";
-          tentativas = 0;
-          setTimeout(() => {
-            index++;
-            lastMsgEl = null;
-            mostrarSistema();
-          }, 600);
-          return;
-        }
 
-        // errou
-        tentativas++;
-        prof.classList.add("errado");
-        
-        // ERRO COM DICA (ANTES do MAX)
-        // errou
+
+
+
+
+
+
+
+
+// ===== decisão de fluxo =====
+if (ok) {
+  prof.classList.add("correto");
+  esperandoResposta = false;
+  expectedAtual = "";
+  tentativas = 0;
+  setTimeout(() => {
+    index++;
+    lastMsgEl = null;
+    mostrarSistema();
+  }, 600);
+  return;
+}
+
+// ===== ERRO =====
 tentativas++;
 prof.classList.add("errado");
 
-// ERRO COM DICA (MESMA FRASE)
+// 👉 ERRO COM DICA (UMA ÚNICA MENSAGEM)
 if (tentativas < MAX_TENTATIVAS) {
 
   const expectedRaw = expectedAtual || "";
 
   const textoHTML =
-    `${msg} <strong>Please say,</strong> <span class="hint">${expectedRaw}</span>`;
+    `${prof.textContent} <strong>Please say:</strong> <span class="hint">${expectedRaw}</span>`;
 
   const textoTTS =
-    `${msg} Please say, ${expectedRaw}`;
+    `${prof.textContent} Please say: ${expectedRaw}`;
 
-  // atualiza o MESMO balão do professor
+  // atualiza o MESMO balão
   prof.innerHTML = textoHTML;
+  scrollChatToBottom();
 
-  // fala tudo junto
+  // fala UMA vez
   const r = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: textoTTS })
-  });
-
-  const d = await r.json();
-  if (d.files && d.files.length) {
-    tocando = true;
-    await tocarUm(d.files[0]);
-    tocando = false;
-  }
-
-  esperandoResposta = true;
-  btnMic.disabled = false;
-  return;
-}
-
-if (tentativas >= MAX_TENTATIVAS) {
-
-  // mensagem de avanço (SUBSTITUI o último "Let's try again")
-  const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
-
-  const avanco = document.createElement("div");
-  avanco.className = "chat-message system errado";
-  avanco.textContent = msgAvanco;
-
-  lastMsgEl.after(avanco);
-  lastMsgEl = avanco;
-  scrollChatToBottom();
-  
-  // fala a mensagem de avanço
-  const r = await fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: msgAvanco })
   });
 
   const d = await r.json();
@@ -460,27 +433,57 @@ if (tentativas >= MAX_TENTATIVAS) {
     tocando = false;
   }
 
-  // reseta e avança
-  esperandoResposta = false;
-  expectedAtual = "";
-  tentativas = 0;
-  index++;
-  lastMsgEl = null;
-  return mostrarSistema();
+  esperandoResposta = true;
+  btnMic.disabled = false;
+  return;
 }
 
-        //if (tentativas >= MAX_TENTATIVAS) {          
-         // esperandoResposta = false;
-         // expectedAtual = "";
-          //tentativas = 0;
-          //index++;
-          //lastMsgEl = null;
-          //return mostrarSistema();
-        //}
+// ===== ESTOUROU MAX_TENTATIVAS → MSG_AVANCO =====
+const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
 
-        // pode tentar de novo
-        esperandoResposta = true;
-        btnMic.disabled = false;        
+const avanco = document.createElement("div");
+avanco.className = "chat-message system errado";
+avanco.textContent = msgAvanco;
+
+lastMsgEl.after(avanco);
+lastMsgEl = avanco;
+scrollChatToBottom();
+
+// fala MSG_AVANCO
+const r2 = await fetch("/tts/line/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ text: msgAvanco })
+});
+
+const d2 = await r2.json();
+if (d2.files && d2.files.length) {
+  tocando = true;
+  await new Promise(r => setTimeout(r, 1000));
+  await tocarUm(d2.files[0]);
+  tocando = false;
+}
+
+// reseta e avança
+esperandoResposta = false;
+expectedAtual = "";
+tentativas = 0;
+index++;
+lastMsgEl = null;
+return mostrarSistema();
+
+
+
+
+
+
+
+
+
+
+
+
+        
       };        
       
     });
