@@ -393,7 +393,7 @@
         tentativas++;
         prof.classList.add("errado");
 
-  if (tentativas < MAX_TENTATIVAS) {
+  if (tentativas < MAX_TENTATIVAS - 1) {
   // ===== fala AVALIAÇÃO (bloqueante) =====
         const r = await fetch("/tts/line/", {
           method: "POST",
