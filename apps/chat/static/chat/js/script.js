@@ -267,6 +267,8 @@ searchInput.addEventListener("input", () => {
 
       // BOTÃO MICROFONE
       btnMic.onclick = function () {
+        if (!window.recognition) return;
+        window.recognition.start();
         btnMic.disabled = true;
         recognition.start();
       };
