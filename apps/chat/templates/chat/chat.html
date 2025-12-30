@@ -357,35 +357,18 @@
         let feedbackHTML = msg;
 
         // se errou, calcula tentativa que vai contar AGORA
-if (!ok) {
-  const tentativaAgora = tentativas + 1;
-
-  if (tentativaAgora < MAX_TENTATIVAS) {
-    const prof = document.createElement("div");
-    prof.className = "chat-message system";
-    prof.innerHTML = feedbackHTML;
-
-    lastMsgEl.after(prof);
-    lastMsgEl = prof;
-    scrollChatToBottom();
-
-    const expectedRaw = expectedAtual || "";
-    feedbackText = `${msg} Please say, ${expectedRaw}`;
-    feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
-  }
-}
-
+        if (!ok) {
+          const tentativaAgora = tentativas + 1; // porque você ainda não incrementou
+          if (tentativaAgora < MAX_TENTATIVAS) {
+            const expectedRaw = expectedAtual || "";
+            feedbackText = `${msg} Please say, ${expectedRaw}`;
+            feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
+          }
+        }
 
 
         // ===== agora sim: imprime UMA vez =====
-        const prof = document.createElement("div");
-        prof.className = "chat-message system";
-        prof.innerHTML = feedbackHTML;
-
-        lastMsgEl.after(prof);
-        lastMsgEl = prof;
-        scrollChatToBottom();        
-
+     
        
     
 
@@ -419,26 +402,41 @@ if (!ok) {
         // errou
         tentativas++;
         prof.classList.add("errado");
-        
 if (tentativas < MAX_TENTATIVAS) {
-  // ===== fala AVALIAÇÃO (bloqueante) =====
-        const r = await fetch("/tts/line/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: feedbackText })
-        });
+  // cria e mostra feedback (1ª e 2ª tentativa)
+  const prof = document.createElement("div");
+  prof.className = "chat-message system errado";
+  prof.innerHTML = feedbackHTML;
 
-        const d = await r.json();
-        if (d.files && d.files.length) {
-          tocando = true;
-          await new Promise(r => setTimeout(r, 1000));
-          await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
-          tocando = false;
-        }
+  lastMsgEl.after(prof);
+  lastMsgEl = prof;
+  scrollChatToBottom();
+
+  // fala feedback
+  const r = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: feedbackText })
+  });
+
+  const d = await r.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await falarComoAntigo(d.files);
+    tocando = false;
+  }
+
   esperandoResposta = true;
   btnMic.disabled = false;
   return;
 }
+
+
+
+
+    
+        
+
       if (tentativas >= MAX_TENTATIVAS) {
 
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
