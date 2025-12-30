@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => { // ABRE E FECHA O MENU LATERAL
-
+console.log("btnMic:", document.getElementById("btn-mic"));
+     console.log("msgs:", document.querySelectorAll(".chat-message").length);
     const toggle = document.querySelector(".menu-toggle");
     const sidebar = document.querySelector(".sidebar");
 
@@ -54,8 +55,7 @@ searchInput.addEventListener("input", () => {
 
 
       
-     console.log("btnMic:", document.getElementById("btn-mic"));
-     console.log("msgs:", document.querySelectorAll(".chat-message").length);
+     
 
 
       const audioPlayer = new Audio();
