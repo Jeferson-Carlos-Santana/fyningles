@@ -386,7 +386,7 @@ const r = await fetch("/tts/line/", {
         if (d.files && d.files.length) {
           tocando = true;
 
-          await new Promise(r => setTimeout(r, 1000));
+          await new Promise(r => setTimeout(r, 2000));
           await tocarUm(d.files[0]);
 
           tocando = false;
