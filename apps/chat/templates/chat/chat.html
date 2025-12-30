@@ -365,15 +365,21 @@
           }
         }
 
-
         // ===== agora sim: imprime UMA vez =====
-        const prof = document.createElement("div");
-        prof.className = "chat-message system";
-        prof.innerHTML = feedbackHTML;
+        let prof = null;
 
-        lastMsgEl.after(prof);
-        lastMsgEl = prof;
-        scrollChatToBottom();        
+// ⚠️ SÓ MOSTRA FEEDBACK SE NÃO FOR A ÚLTIMA TENTATIVA
+const tentativaAgora = tentativas + 1;
+if (ok || tentativaAgora < MAX_TENTATIVAS) {
+  prof = document.createElement("div");
+  prof.className = "chat-message system";
+  prof.innerHTML = feedbackHTML;
+
+  lastMsgEl.after(prof);
+  lastMsgEl = prof;
+  scrollChatToBottom();
+}
+      
 
         // ===== decisão de fluxo =====
         if (ok) {
@@ -393,8 +399,8 @@
         tentativas++;
         prof.classList.add("errado");
 
-  if (tentativas < MAX_TENTATIVAS - 1) {
-  // ===== fala AVALIAÇÃO (bloqueante) =====
+      if (tentativas < MAX_TENTATIVAS) {
+      // ===== fala AVALIAÇÃO (bloqueante) =====
         const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -405,13 +411,14 @@
         if (d.files && d.files.length) {
           tocando = true;
           await new Promise(r => setTimeout(r, 1000));
-          await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
+          await falarComoAntigo(d.files);
           tocando = false;
         }
-  esperandoResposta = true;
-  btnMic.disabled = false;
-  return;
-}
+        esperandoResposta = true;
+        btnMic.disabled = false;
+        return;
+      }
+
       if (tentativas >= MAX_TENTATIVAS) {
 
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
