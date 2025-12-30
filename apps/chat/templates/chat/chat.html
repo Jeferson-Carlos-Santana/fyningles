@@ -77,10 +77,13 @@
   document.addEventListener("DOMContentLoaded", function () { 
 
       const audioPlayer = new Audio();
-      // TOCA OS AUDIOS UM POR VEZ
       let filaVoz = Promise.resolve();
-       // ===== SPEECH =====
+
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.warn("SpeechRecognition não suportado neste browser");
+        return; // sai do DOMContentLoaded com segurança
+      }
       const recognition = new SpeechRecognition();
       recognition.lang = "en-GB";
       recognition.continuous = false;
@@ -151,9 +154,7 @@
 
         tentar(tries);
       });
-    }
-
-    
+    }    
 
     function falarComoAntigo(files) {
       filaVoz = filaVoz.then(async () => {
@@ -210,9 +211,7 @@
       "Vamos tentar novamente.",
       "You made a mistake, try again.",
       "Você cometeu um erro, tente novamente."
-    ];
-       
-   
+    ];   
 
       // ESCONDE TODAS
       msgs.forEach(m => m.style.display = "none");
