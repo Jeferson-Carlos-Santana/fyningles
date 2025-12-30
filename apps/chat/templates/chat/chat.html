@@ -357,14 +357,24 @@
         let feedbackHTML = msg;
 
         // se errou, calcula tentativa que vai contar AGORA
-        if (!ok) {
-          const tentativaAgora = tentativas + 1; // porque você ainda não incrementou
-          if (tentativaAgora < MAX_TENTATIVAS) {
-            const expectedRaw = expectedAtual || "";
-            feedbackText = `${msg} Please say, ${expectedRaw}`;
-            feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
-          }
-        }
+if (!ok) {
+  const tentativaAgora = tentativas + 1;
+
+  if (tentativaAgora < MAX_TENTATIVAS) {
+    const prof = document.createElement("div");
+    prof.className = "chat-message system";
+    prof.innerHTML = feedbackHTML;
+
+    lastMsgEl.after(prof);
+    lastMsgEl = prof;
+    scrollChatToBottom();
+
+    const expectedRaw = expectedAtual || "";
+    feedbackText = `${msg} Please say, ${expectedRaw}`;
+    feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
+  }
+}
+
 
 
         // ===== agora sim: imprime UMA vez =====
