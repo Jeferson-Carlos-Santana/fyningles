@@ -232,8 +232,8 @@
         const end  = parseInt(msg.dataset.end  || "0");
 
         // APARECE AGORA
-        const textoVisual = limparHTML(msg.innerHTML);
-        msg.textContent = textoVisual;
+       // msg.innerHTML = limparHTML(msg.innerHTML);
+      
         
         msg.style.display = "block";
         lastMsgEl = msg;
