@@ -386,11 +386,27 @@
 
 
 // ===== decisão de fluxo =====
+
+// ✅ ACERTO
 if (ok) {
   prof.classList.add("correto");
+
+  const rOk = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: msg })
+  });
+  const dOk = await rOk.json();
+  if (dOk.files && dOk.files.length) {
+    tocando = true;
+    await tocarUm(dOk.files[0]);
+    tocando = false;
+  }
+
   esperandoResposta = false;
   expectedAtual = "";
   tentativas = 0;
+
   setTimeout(() => {
     index++;
     lastMsgEl = null;
@@ -399,37 +415,33 @@ if (ok) {
   return;
 }
 
-// ===== ERRO =====
+// ❌ ERRO
 tentativas++;
 prof.classList.add("errado");
 
-// 👉 ERRO COM DICA (UMA ÚNICA MENSAGEM)
+// 🔁 ERRO COM DICA
 if (tentativas < MAX_TENTATIVAS) {
 
   const expectedRaw = expectedAtual || "";
 
   const textoHTML =
-    `${prof.textContent} <strong>Please say:</strong> <span class="hint">${expectedRaw}</span>`;
-
+    `${msg} <strong>Please say,</strong> <span class="hint">${expectedRaw}</span>`;
   const textoTTS =
-    `${prof.textContent} Please say: ${expectedRaw}`;
+    `${msg} Please say, ${expectedRaw}`;
 
-  // atualiza o MESMO balão
   prof.innerHTML = textoHTML;
   scrollChatToBottom();
 
-  // fala UMA vez
-  const r = await fetch("/tts/line/", {
+  const rErr = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: textoTTS })
   });
-
-  const d = await r.json();
-  if (d.files && d.files.length) {
+  const dErr = await rErr.json();
+  if (dErr.files && dErr.files.length) {
     tocando = true;
     await new Promise(r => setTimeout(r, 1000));
-    await tocarUm(d.files[0]);
+    await tocarUm(dErr.files[0]);
     tocando = false;
   }
 
@@ -438,7 +450,7 @@ if (tentativas < MAX_TENTATIVAS) {
   return;
 }
 
-// ===== ESTOUROU MAX_TENTATIVAS → MSG_AVANCO =====
+// ⛔ ERRO FINAL → MSG_AVANCO
 const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
 
 const avanco = document.createElement("div");
@@ -449,22 +461,19 @@ lastMsgEl.after(avanco);
 lastMsgEl = avanco;
 scrollChatToBottom();
 
-// fala MSG_AVANCO
-const r2 = await fetch("/tts/line/", {
+const rFin = await fetch("/tts/line/", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ text: msgAvanco })
 });
-
-const d2 = await r2.json();
-if (d2.files && d2.files.length) {
+const dFin = await rFin.json();
+if (dFin.files && dFin.files.length) {
   tocando = true;
   await new Promise(r => setTimeout(r, 1000));
-  await tocarUm(d2.files[0]);
+  await tocarUm(dFin.files[0]);
   tocando = false;
 }
 
-// reseta e avança
 esperandoResposta = false;
 expectedAtual = "";
 tentativas = 0;
@@ -482,7 +491,7 @@ return mostrarSistema();
 
 
 
-
+        
         
       };        
       
