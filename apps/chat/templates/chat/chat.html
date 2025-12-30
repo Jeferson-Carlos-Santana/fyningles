@@ -410,7 +410,23 @@
         tentativas++;
         prof.classList.add("errado");
         
+if (tentativas <= 2) {
+  // ===== fala AVALIAÇÃO (bloqueante) =====
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: feedbackText })
+        });
 
+        const d = await r.json();
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1000));
+          await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
+          tocando = false;
+        }
+  
+}
       if (tentativas >= MAX_TENTATIVAS) {
 
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
