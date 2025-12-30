@@ -375,22 +375,7 @@
         lastMsgEl = prof;
         scrollChatToBottom();
 
-                // ===== fala AVALIAÇÃO (bloqueante) =====
-        const r = await fetch("/tts/line/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: feedbackText })
-        });
         
-
-
-        const d = await r.json();
-        if (d.files && d.files.length) {
-          tocando = true;
-          await new Promise(r => setTimeout(r, 1000));
-          await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
-          tocando = false;
-        }
 
         // ===== decisão de fluxo =====
         if (ok) {
@@ -411,7 +396,20 @@
         prof.classList.add("errado");
 
   if (tentativas < MAX_TENTATIVAS) {
-  // fala feedback/dica
+  // ===== fala AVALIAÇÃO (bloqueante) =====
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: feedbackText })
+        });
+
+        const d = await r.json();
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1000));
+          await falarComoAntigo(d.files);  // <-- TOCA TODOS (erro + please say)
+          tocando = false;
+        }
   esperandoResposta = true;
   btnMic.disabled = false;
   return;
