@@ -11,14 +11,16 @@
 
 /* BASE DA MENSAGEM */
 .chat-message {
-  max-width: 100%;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%; ;
   padding: 5px 10px;
   border-radius: 5px;
   line-height: 1.4;
   word-wrap: break-word;
   color: var(--color-black);
   font-size: 18px;
-  background-color: var(--color-white);
+  background-color: var(--color-primary-light);
 }
 
 /* PROFESSOR (ESQUERDA) */
