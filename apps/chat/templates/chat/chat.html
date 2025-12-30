@@ -355,14 +355,17 @@
         let feedbackText = msg;
         let feedbackHTML = msg;
 
-        // se errou, calcula tentativa que vai contar AGORA
-        const tentativaAgora = tentativas + 1; 
-        let prof = null;
-      
-        if (ok || tentativaAgora < MAX_TENTATIVAS) {
-          const expectedRaw = expectedAtual || "";
+        const tentativaAgora = tentativas + 1;
+        if (!ok) {          
+          if (tentativaAgora < MAX_TENTATIVAS) {
+            const expectedRaw = expectedAtual || "";
             feedbackText = `${msg} Please say, ${expectedRaw}`;
             feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
+          }
+        }
+        
+        let prof = null;      
+        if (ok || tentativaAgora < MAX_TENTATIVAS) {
           prof = document.createElement("div");
           prof.className = "chat-message system";
           prof.innerHTML = feedbackHTML;
@@ -370,8 +373,7 @@
           lastMsgEl.after(prof);
           lastMsgEl = prof;
           scrollChatToBottom();
-        }
-      
+        }      
 
         // ===== decisão de fluxo =====
         if (ok) {
