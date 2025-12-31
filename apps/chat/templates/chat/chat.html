@@ -199,13 +199,13 @@
     }
 
     const FEEDBACK_OK = [
-      "Muito bem!",
-      "Excelente!",
-      "Perfeito!",  
-      "Extraordinário!",     
-      "Ótimo trabalho!"
+      "Muito bem ",
+      "Excelente ",
+      "Perfeito ",  
+      "Extraordinário ",     
+      "Ótimo trabalho "
     ].map(msg =>
-      USER_NAME ? `${USER_NAME}: ${msg}` : msg
+      USER_NAME ? `${msg} ${USER_NAME}!` : msg
     );
 
     const FEEDBACK_ERR = [      
