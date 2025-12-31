@@ -199,33 +199,33 @@
     }
 
     const FEEDBACK_OK = [
-      "muito bem!",
-      "excelente!",
-      "perfeito!",  
-      "extraordinário!",     
-      "ótimo trabalho!"
+      "Muito bem!",
+      "Excelente!",
+      "Perfeito!",  
+      "Extraordinário!",     
+      "Ótimo trabalho!"
     ].map(msg =>
-      USER_NAME ? `${USER_NAME}, ${msg}` : msg
+      USER_NAME ? `${USER_NAME}: ${msg}` : msg
     );
 
     const FEEDBACK_ERR = [      
-      "essa ficou errada, tente novamente.",    
-      "quase lá, tente novamente.",     
-      "não está bem certo, tente novamente.",   
-      "vamos tentar novamente.",   
-      "você cometeu um erro, tente novamente."
+      "Essa ficou errada, tente novamente.",    
+      "Quase lá, tente novamente.",     
+      "Não está bem certo, tente novamente.",   
+      "Vamos tentar novamente.",   
+      "Você cometeu um erro, tente novamente."
     ].map(msg =>
-      USER_NAME ? `${USER_NAME}, ${msg}` : msg
+      USER_NAME ? `${USER_NAME}: ${msg}` : msg
     );  
 
     const MSG_AVANCO = [
-      "errou novamente, mas tudo bem, vamos continuar.",
-      "não tem problema se errou, vamos seguir em frente.",
-      "não marcou pontos, mas tudo bem, vamos em frente.",
-      "errou, mas está tudo bem, vamos continuar.",
-      "não foi dessa vez, vamos tentar a próxima."
+      "Errou novamente, mas tudo bem, vamos continuar.",
+      "Não tem problema se errou, vamos seguir em frente.",
+      "Não marcou pontos, mas tudo bem, vamos em frente.",
+      "Errou, mas está tudo bem, vamos continuar.",
+      "Não foi dessa vez, vamos tentar a próxima."
     ].map(msg =>
-      USER_NAME ? `${USER_NAME}, ${msg}` : msg
+      USER_NAME ? `${USER_NAME}: ${msg}` : msg
     );
 
       // ESCONDE TODAS
