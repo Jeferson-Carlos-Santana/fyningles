@@ -205,27 +205,25 @@
       "Extraordinário",     
       "Ótimo trabalho"
     ].map(msg =>
-      USER_NAME ? `${msg}, ${USER_NAME}` : msg
+      USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
 
     const FEEDBACK_ERR = [      
-      "Essa ficou errada, tente novamente",    
-      "Quase lá, tente novamente",     
-      "Não está bem certo, tente novamente",   
-      "Vamos tentar novamente",   
-      "Você cometeu um erro, tente novamente"
-    ].map(msg =>
-      USER_NAME ? `${msg}, ${USER_NAME}` : msg
-    );  
+      "Essa ficou errada, tente novamente.",    
+      "Quase lá, tente novamente.",     
+      "Não está bem certo, tente novamente.",   
+      "Vamos tentar novamente.",   
+      "Você cometeu um erro, tente novamente."
+    ];  
 
     const MSG_AVANCO = [
-      "Errou novamente, mas tudo bem, vamos continuar",
-      "Não tem problema se errou, vamos seguir em frente",
-      "Não marcou pontos, mas tudo bem, vamos em frente",
-      "Errou, mas está tudo bem, vamos continuar",
-      "Não foi dessa vez, vamos tentar a próxima"
+      "Errou novamente, mas tudo bem, vamos continuar.",
+      "Não tem problema se errou, vamos seguir em frente.",
+      "Não marcou pontos, mas tudo bem, vamos em frente.",
+      "Errou, mas está tudo bem, vamos continuar.",
+      "Não foi dessa vez, vamos tentar a próxima."
     ].map(msg =>
-      USER_NAME ? `${msg}, ${USER_NAME}` : msg
+      USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
 
       // ESCONDE TODAS
@@ -356,8 +354,8 @@
         if (!ok) {          
           if (tentativaAgora < MAX_TENTATIVAS) {
             const expectedRaw = expectedAtual || "";
-            feedbackText = `${msg} Please say, ${expectedRaw}`;
-            feedbackHTML = `${msg} <span class="hint">Please say, ${expectedRaw}</span>`;
+            feedbackText = `${msg} Repita comigo: ${expectedRaw}`;
+            feedbackHTML = `${msg} <span class="hint">Repita comigo: ${expectedRaw}</span>`;
           }
         }
         
@@ -378,7 +376,7 @@
           const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: msg, lang: "pt"})
+          body: JSON.stringify({ text: msg, lang: "pt" })
         });  
 
         const d = await r.json(); 
@@ -408,7 +406,7 @@
         const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: feedbackText, lang: "pt"})
+          body: JSON.stringify({ text: feedbackText })
         });
 
         const d = await r.json();
@@ -439,7 +437,7 @@
         const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: msgAvanco, lang: "pt"})
+          body: JSON.stringify({ text: msgAvanco, lang: "pt" })
         });
 
         const d = await r.json();
