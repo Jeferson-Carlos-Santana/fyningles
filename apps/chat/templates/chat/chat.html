@@ -78,16 +78,7 @@
   document.addEventListener("DOMContentLoaded", function () { 
 
       const audioPlayer = new Audio();
-      audioPlayer.addEventListener("ended", () => {
-  document.querySelectorAll(".chat-message.falando")
-    .forEach(el => el.classList.remove("falando"));
-});
-
-audioPlayer.addEventListener("error", () => {
-  document.querySelectorAll(".chat-message.falando")
-    .forEach(el => el.classList.remove("falando"));
-});
-
+    
       let filaVoz = Promise.resolve();
 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -258,6 +249,9 @@ audioPlayer.addEventListener("error", () => {
         }
 
         const msg = msgs[index];
+        if (lastMsgEl) {
+          lastMsgEl.classList.remove("falando");
+        }
         const lineId = msg.dataset.id;
         const auto = parseInt(msg.dataset.auto || "0");
         const end  = parseInt(msg.dataset.end  || "0");
@@ -266,8 +260,8 @@ audioPlayer.addEventListener("error", () => {
         msg.style.display = "block";
         lastMsgEl = msg;
         scrollChatToBottom();
-         msg.classList.add("falando");
-        // ENQUANTO FALA NAO DEIXA MIC
+        msg.classList.add("falando");
+
         btnMic.disabled = true;   
 
         fetch("/tts/line/", {
