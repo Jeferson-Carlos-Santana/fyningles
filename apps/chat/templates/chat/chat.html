@@ -404,12 +404,12 @@
         tentativas++;
         if (prof) prof.classList.add("errado");
 
-      if (tentativas < MAX_TENTATIVAS) {
+      if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
       // ===== fala AVALIAÇÃO (bloqueante) =====
         const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: feedbackText })
+          body: JSON.stringify({ text: feedbackText, lang: "pt" })
         });
 
         const d = await r.json();
