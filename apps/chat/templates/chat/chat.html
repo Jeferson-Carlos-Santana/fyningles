@@ -250,8 +250,10 @@
         }
 
         const msg = msgs[index];
-        if (lastMsgEl) {
-          lastMsgEl.classList.remove("falando");
+        //if (lastMsgEl) {
+        if (lastFalandoEl && lastFalandoEl !== msg) {
+          //lastMsgEl.classList.remove("falando");
+          lastFalandoEl.classList.remove("falando");
         }
         const lineId = msg.dataset.id;
         const auto = parseInt(msg.dataset.auto || "0");
@@ -262,6 +264,7 @@
         lastMsgEl = msg;
         scrollChatToBottom();
         msg.classList.add("falando");
+        lastFalandoEl = msg;
 
         btnMic.disabled = true;   
 
