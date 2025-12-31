@@ -250,19 +250,19 @@
         }
 
         const msg = msgs[index];
-        if (lastFalandoEl && lastFalandoEl !== msg) {
-          lastFalandoEl.classList.remove("falando");
+        if (lastMsgEl) {
+          lastMsgEl.classList.remove("falando");
         }
         const lineId = msg.dataset.id;
         const auto = parseInt(msg.dataset.auto || "0");
-        const end  = parseInt(msg.dataset.end  || "0");      
+        const end  = parseInt(msg.dataset.end  || "0");
+      
         
         msg.style.display = "block";
-        msg.classList.add("falando");   // pinta background
-        lastFalandoEl = msg;
-
         lastMsgEl = msg;
         scrollChatToBottom();
+        msg.classList.add("falando");
+
         btnMic.disabled = true;   
 
         fetch("/tts/line/", {
