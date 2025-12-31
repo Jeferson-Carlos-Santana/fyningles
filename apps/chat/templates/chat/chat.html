@@ -103,6 +103,15 @@
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
 
+    function marcarFalando(el) {
+      if (!el) return;
+      el.classList.add("falando");
+    }
+
+    function desmarcarFalando(el) {
+      if (!el) return;
+      el.classList.remove("falando");
+    }
 
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
@@ -132,7 +141,7 @@
 
 
     // TOCA UM ÚNICO AUDIO E ESPERA
-    function tocarUm(file, tries = 300, delay = 300, elFalando = null) {
+    function tocarUm(file, tries = 300, delay = 300) {
       return new Promise(resolve => {
         const baseUrl = "/media/cache/" + file; 
         const audioUrl = baseUrl + "?t=" + Date.now(); 
@@ -271,8 +280,10 @@
 
           if (d.files && d.files.length) { 
             tocando = true;
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 1000));            
+            marcarFalando(msgEl);
             await falarComoAntigo(d.files);
+            desmarcarFalando(msgEl);
             tocando = false;
           }  
 
@@ -387,7 +398,7 @@
         if (d.files && d.files.length) {
           tocando = true;
           await new Promise(r => setTimeout(r, 1000));
-          await tocarUm(d.files[0], msgEl);
+          await tocarUm(d.files[0]);
           tocando = false;
         }  
           esperandoResposta = false;
@@ -448,7 +459,7 @@
         if (d.files && d.files.length) {
           tocando = true;
           await new Promise(r => setTimeout(r, 1000));
-          await tocarUm(d.files[0], prof);
+          await tocarUm(d.files[0]);
           tocando = false;
         }
 
