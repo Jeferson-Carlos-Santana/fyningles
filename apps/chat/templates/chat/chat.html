@@ -199,12 +199,14 @@
     }
 
     const FEEDBACK_OK = [
-      "muito bem.",
+      "você foi muito bem.",
       "ótima expressão.",
       "extraordinária resposta.",
       "você acertou.",  
       "extraordinário.",     
-      "ótimo trabalho."
+      "ótimo trabalho.",
+      "ótima resposta.",
+      "você falou corretamente."
     ].map(msg =>
       USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
@@ -220,10 +222,10 @@
     ];  
 
     const MSG_AVANCO = [
-      "errou novamente, mas tudo bem, vamos continuar.",
-      "no tem problema se errou, vamos seguir em frente.",
+      "você errou, mas tudo bem, vamos continuar.",
+      "não tem problema se errou, vamos seguir em frente.",
       "não marcou pontos, mas tudo bem, vamos em frente.",
-      "errou, mas está tudo bem, vamos continuar.",
+      "você errou, sem problemas, seguimos em frente.",
       "não foi dessa vez, vamos tentar a próxima."
     ].map(msg =>
       USER_NAME ? `${USER_NAME}, ${msg}` : msg

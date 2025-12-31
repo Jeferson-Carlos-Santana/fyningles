@@ -527,7 +527,7 @@ class ChatAdmin(admin.ModelAdmin):
     "Tente dizer em inglês a frase: (stp1) <span style='color:blue;'>{pt}</span>",
     "Consegue traduzir para o inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
     "Como ficaria em inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
-    "Pense rápido. Como se fala em inglês? (stp1) <span style='color:blue;'>{pt}</span>",
+    "Pense rápido, como se fala em inglês? (stp1) <span style='color:blue;'>{pt}</span>",
     "Você consegue falar em inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
     "Diga em inglês a seguinte frase: (stp1) <span style='color:blue;'>{pt}</span>",
     "Tente traduzir esta frase para o inglês: (stp1) <span style='color:blue;'>{pt}</span>",
@@ -653,7 +653,7 @@ class ChatAdmin(admin.ModelAdmin):
     "Em inglês, a frase: <span style='color:blue;'>{pt}</span> Pode ser dita como: <span style='color:red;'>{en_abbrev}</span> De forma ainda mais informal, dizemos: <span style='color:red;'>{en_informal}</span>",
     "A tradução dessa frase: <span style='color:blue;'>{pt}</span> Pode ser dita assim: <span style='color:red;'>{en_abbrev}</span> De modo mais informal, você pode dizer: <span style='color:red;'>{en_informal}</span>",
     "Podemos dizer que essa frase: <span style='color:blue;'>{pt}</span> Em inglês significa: <span style='color:red;'>{en_abbrev}</span> E de forma mais casual: <span style='color:red;'>{en_informal}</span>",
-    "Essa frase em português: <span style='color:blue;'>{pt}</span> Em inglês, dizemos: <span style='color:red;'>{en_abbrev}</span> E de modo mais informal: <span style='color:red;'>{en_informal}</span>",
+    "Essa frase em português: <span style='color:blue;'>{pt}</span> Em inglês, dizemos: <span style='color:red;'>{en_abbrev}</span> E de modo mais informal: <span style='color:red;'>{en_informal}</span>",  
     "A frase: <span style='color:blue;'>{pt}</span> Pode ser traduzida como: <span style='color:red;'>{en_abbrev}</span> E falada de forma informal: <span style='color:red;'>{en_informal}</span>",
     "Em português dizemos: <span style='color:blue;'>{pt}</span> Em inglês, a forma é: <span style='color:red;'>{en_abbrev}</span> E de forma mais solta: <span style='color:red;'>{en_informal}</span>",
     "Veja a frase: <span style='color:blue;'>{pt}</span> Em inglês seria: <span style='color:red;'>{en_abbrev}</span> Informalmente, podemos dizer: <span style='color:red;'>{en_informal}</span>",
@@ -668,7 +668,7 @@ class ChatAdmin(admin.ModelAdmin):
     "Em inglês podemos expressar: <span style='color:blue;'>{pt}</span> Usando: <span style='color:red;'>{en_abbrev}</span> E de forma informal: <span style='color:red;'>{en_informal}</span>",
     "Essa expressão: <span style='color:blue;'>{pt}</span> Fica em inglês: <span style='color:red;'>{en_abbrev}</span> E falada de modo leve: <span style='color:red;'>{en_informal}</span>",
     "Em inglês, podemos dizer: <span style='color:blue;'>{pt}</span> Assim: <span style='color:red;'>{en_abbrev}</span> E mais informalmente: <span style='color:red;'>{en_informal}</span>",
-    "A tradução literal é: <span style='color:blue;'>{pt}</span> Mas de forma informal, usamos: <span style='color:red;'>{en_abbrev}</span> Ou ainda: <span style='color:red;'>{en_informal}</span>"
+    "A tradução literal é: <span style='color:blue;'>{pt}</span> Mas de forma informal, usamos: <span style='color:red;'>{en_abbrev}</span> : <span style='color:red;'>{en_informal}</span>"
   ]
   TEMPLATES_CONTENT_4_IT = [
     "Questa frase: <span style='color:blue;'>{it}</span> In inglese diventa: <span style='color:red;'>{en_abbrev}</span> E può essere detta in modo informale: <span style='color:red;'>{en_informal}</span>",
