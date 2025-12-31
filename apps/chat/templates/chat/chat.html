@@ -100,7 +100,8 @@
       let expectedAtual = "";
       const MAX_TENTATIVAS = 3;  
       let tocando = false; 
-      //let lastMsgEl = null; 
+      let lastMsgEl = null; 
+      let lastFalandoEl = null;
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
 
@@ -249,20 +250,19 @@
         }
 
         const msg = msgs[index];
-        if (lastMsgEl && lastMsgEl !== msg) {
-  lastMsgEl.classList.remove("falando");
-}
+        if (lastFalandoEl && lastFalandoEl !== msg) {
+          lastFalandoEl.classList.remove("falando");
+        }
         const lineId = msg.dataset.id;
         const auto = parseInt(msg.dataset.auto || "0");
-        const end  = parseInt(msg.dataset.end  || "0");
-      
+        const end  = parseInt(msg.dataset.end  || "0");      
         
         msg.style.display = "block";
-        msg.classList.add("falando");
+        msg.classList.add("falando");   // pinta background
+        lastFalandoEl = msg;
+
         lastMsgEl = msg;
         scrollChatToBottom();
-        
-
         btnMic.disabled = true;   
 
         fetch("/tts/line/", {
@@ -400,7 +400,7 @@
           tentativas = 0;
           setTimeout(() => {
             index++;
-            //lastMsgEl = null;
+            lastMsgEl = null;
             mostrarSistema();
           }, 100);
           return;
@@ -462,7 +462,7 @@
         expectedAtual = "";
         tentativas = 0;
         index++;
-        //lastMsgEl = null;
+        lastMsgEl = null;
         return mostrarSistema();
       }
 
