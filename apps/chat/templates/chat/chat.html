@@ -386,7 +386,7 @@
         const d = await r.json(); 
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 500));
+          await new Promise(r => setTimeout(r, 1000));
           await tocarUm(d.files[0]);
           tocando = false;
         }  
@@ -416,7 +416,7 @@
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 500));
+          await new Promise(r => setTimeout(r, 1000));
           await falarComoAntigo(d.files);
           tocando = false;
         }
@@ -447,7 +447,7 @@
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 500));
+          await new Promise(r => setTimeout(r, 1000));
           await tocarUm(d.files[0]);
           tocando = false;
         }
