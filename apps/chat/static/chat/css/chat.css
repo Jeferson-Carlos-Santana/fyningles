@@ -34,7 +34,7 @@
 /* ALUNO (DIREITA) */
 .chat-message.user {
   align-self: flex-end;
-  background: var(--color-secondary-light);
+  background: var(--color-primary-light);
   color: var(--color-black);
   border-top-right-radius: 2px;
 }

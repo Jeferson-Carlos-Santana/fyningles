@@ -199,12 +199,12 @@
     }
 
     const FEEDBACK_OK = [
-      "muito bem",
-      "ótima expressão",
-      "extraordinária resposta",
-      "você acertou",  
-      "extraordinário",     
-      "ótimo trabalho"
+      "muito bem.",
+      "ótima expressão.",
+      "extraordinária resposta.",
+      "você acertou.",  
+      "extraordinário.",     
+      "ótimo trabalho."
     ].map(msg =>
       USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
@@ -212,9 +212,11 @@
     const FEEDBACK_ERR = [      
       "Essa ficou errada, tente novamente.",    
       "Quase lá, tente novamente.",     
-      "Não está bem certo, tente novamente.",   
+      "Não está bem certo, tente de novo.",   
       "Vamos tentar novamente.",   
-      "Você cometeu um erro, tente novamente."
+      "Você cometeu um erro, tente novamente.",
+      "Errar faz parte, tente de novo.",
+      "Quer tentar outra vez, essa ficou errada."
     ];  
 
     const MSG_AVANCO = [
