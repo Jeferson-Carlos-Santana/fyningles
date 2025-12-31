@@ -132,7 +132,7 @@
 
 
     // TOCA UM ÚNICO AUDIO E ESPERA
-    function tocarUm(file, tries = 300, delay = 300) {
+    function tocarUm(file, tries = 300, delay = 300, elFalando = null) {
       return new Promise(resolve => {
         const baseUrl = "/media/cache/" + file; 
         const audioUrl = baseUrl + "?t=" + Date.now(); 
@@ -387,7 +387,7 @@
         if (d.files && d.files.length) {
           tocando = true;
           await new Promise(r => setTimeout(r, 1000));
-          await tocarUm(d.files[0]);
+          await tocarUm(d.files[0], msgEl);
           tocando = false;
         }  
           esperandoResposta = false;
@@ -448,7 +448,7 @@
         if (d.files && d.files.length) {
           tocando = true;
           await new Promise(r => setTimeout(r, 1000));
-          await tocarUm(d.files[0]);
+          await tocarUm(d.files[0], prof);
           tocando = false;
         }
 
