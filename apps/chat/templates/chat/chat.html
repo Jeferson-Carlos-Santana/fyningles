@@ -281,9 +281,9 @@
           if (d.files && d.files.length) { 
             tocando = true;
             await new Promise(r => setTimeout(r, 1000));            
-            marcarFalando(msgEl);
+            marcarFalando(prof);
             await falarComoAntigo(d.files);
-            desmarcarFalando(msgEl);
+            desmarcarFalando(prof);
             tocando = false;
           }  
 
