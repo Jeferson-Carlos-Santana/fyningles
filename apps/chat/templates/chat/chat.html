@@ -75,8 +75,9 @@
   <script src="{% static 'chat/js/script.js' %}"></script> 
 
   <script>
-  document.addEventListener("DOMContentLoaded", function () { 
-
+  const USER_NAME = "{{ username|escapejs }}";
+  document.addEventListener("DOMContentLoaded", function () {       
+     
       const audioPlayer = new Audio();
     
       let filaVoz = Promise.resolve();
@@ -198,42 +199,27 @@
     }
 
     const FEEDBACK_OK = [
-      "Very good!",
       "Muito bem!",
-      "Excelente!", 
-      "Excellent!",
-      "Perfect!",
-      "Perfeito!",    
-      "Well done!",
-      "Muito bem feito!",  
-      "Great job!",
+      "Excelente!",
+      "Perfeito!",  
+      "Extraordinário!",     
       "Ótimo trabalho!"
     ];
 
-    const FEEDBACK_ERR = [
-      "Try again.",
-      "Tente novamente.",
-      "Almost, try again.",
-      "Quase lá, tente novamente.",
-      "Not quite right.",
-      "Não está bem certo.",
-      "Let's try again.",
-      "Vamos tentar novamente.",
-      "You made a mistake, try again.",
+    const FEEDBACK_ERR = [      
+      "Essa ficou errada, tente novamente.",    
+      "Quase lá, tente novamente.",     
+      "Não está bem certo, tente novamente.",   
+      "Vamos tentar novamente.",   
       "Você cometeu um erro, tente novamente."
     ];   
 
     const MSG_AVANCO = [
-      "You didn't get it right, but that's okay, let's keep going.",
-      "você não acertou, mas tudo bem, vamos continuar.",
-      "It's alright if you missed it, let's move on.",
+      "Errou novamente, mas tudo bem, vamos continuar.",
       "Não tem problema se errou, vamos seguir em frente.",
-      "No worries, even mistakes help us learn, let's go ahead.",
-      "Sem preocupações, até os erros ajudam a aprender, vamos em frente.",
-      "That wasn't quite right, but it's fine, let's continue.",
-      "Não foi bem certo, mas está tudo bem, vamos continuar.",
-      "Don't worry about that one, let's try the next.",
-      "Não se preocupe com essa, vamos tentar a próxima."
+      "Não marcou pontos, mas tudo bem, vamos em frente.",
+      "Errou, mas está tudo bem, vamos continuar.",
+      "Não foi dessa vez, vamos tentar a próxima."
     ];
 
       // ESCONDE TODAS
@@ -250,15 +236,13 @@
         }
 
         const msg = msgs[index];
-        //if (lastMsgEl) {
+
         if (lastFalandoEl && lastFalandoEl !== msg) {
-          //lastMsgEl.classList.remove("falando");
           lastFalandoEl.classList.remove("falando");
         }
         const lineId = msg.dataset.id;
         const auto = parseInt(msg.dataset.auto || "0");
-        const end  = parseInt(msg.dataset.end  || "0");
-      
+        const end  = parseInt(msg.dataset.end  || "0");      
         
         msg.style.display = "block";
         lastMsgEl = msg;
@@ -354,9 +338,14 @@
         btnMic.disabled = true;
 
         // ===== escolhe feedback =====
-        const msg = ok
-        ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
-        : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
+        const baseMsg = ok
+          ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
+          : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
+
+        const msg = USER_NAME
+          ? `${baseMsg} ${USER_NAME}.`
+          : baseMsg;
+
 
         // ===== monta feedback FINAL (antes de imprimir) =====
         let feedbackText = msg;
@@ -435,7 +424,11 @@
 
       if (tentativas >= MAX_TENTATIVAS) {
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
-        const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
+        //const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
+        const baseAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
+        const msgAvanco = USER_NAME
+          ? `${baseAvanco} ${USER_NAME}.`
+          : baseAvanco;
 
         const avanco = document.createElement("div");
         avanco.className = "chat-message system errado";

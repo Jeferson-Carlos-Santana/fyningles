@@ -69,10 +69,16 @@ def chat(request, lesson_id):
 
     for l in lines:
         l.content_pt = limpar_visual(l.content_pt)
+    
+    username = request.session.get(
+        "username",
+        request.user.first_name if request.user.is_authenticated else ""
+    )
 
     return render(request, "chat/chat.html", {
         "lesson_id": lesson_id,
         "lines": lines,
+        "username": username,
     })
  
 # ENVIAR PARA CRIACAO DE AUDIOS
