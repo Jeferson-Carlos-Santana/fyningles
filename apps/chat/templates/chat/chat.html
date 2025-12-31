@@ -78,6 +78,16 @@
   document.addEventListener("DOMContentLoaded", function () { 
 
       const audioPlayer = new Audio();
+      audioPlayer.addEventListener("ended", () => {
+  document.querySelectorAll(".chat-message.falando")
+    .forEach(el => el.classList.remove("falando"));
+});
+
+audioPlayer.addEventListener("error", () => {
+  document.querySelectorAll(".chat-message.falando")
+    .forEach(el => el.classList.remove("falando"));
+});
+
       let filaVoz = Promise.resolve();
 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -103,16 +113,7 @@
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
 
-    function marcarFalando(el) {
-      if (!el) return;
-      el.classList.add("falando");
-    }
-
-    function desmarcarFalando(el) {
-      if (!el) return;
-      el.classList.remove("falando");
-    }
-
+    
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
       const url = "/media/cache/" + file + "?t=" + Date.now();
@@ -265,7 +266,7 @@
         msg.style.display = "block";
         lastMsgEl = msg;
         scrollChatToBottom();
-
+         msg.classList.add("falando");
         // ENQUANTO FALA NAO DEIXA MIC
         btnMic.disabled = true;   
 
@@ -280,10 +281,8 @@
 
           if (d.files && d.files.length) { 
             tocando = true;
-            await new Promise(r => setTimeout(r, 1000));            
-            marcarFalando(prof);
+            await new Promise(r => setTimeout(r, 1000));
             await falarComoAntigo(d.files);
-            desmarcarFalando(prof);
             tocando = false;
           }  
 
