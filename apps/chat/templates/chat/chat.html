@@ -198,13 +198,15 @@
       return t;
     }
 
-    const FEEDBACK_OK = [
-      "Muito bem!",
-      "Excelente!",
-      "Perfeito!",  
-      "Extraordinário!",     
-      "Ótimo trabalho!"
-    ];
+ const FEEDBACK_OK = [
+  "Muito bem!",
+  "Excelente!",
+  "Perfeito!",  
+  "Extraordinário!",     
+  "Ótimo trabalho!"
+].map(msg =>
+  USER_NAME ? `${USER_NAME}, ${msg}` : msg
+);
 
     const FEEDBACK_ERR = [      
       "Essa ficou errada, tente novamente.",    
@@ -338,14 +340,9 @@
         btnMic.disabled = true;
 
         // ===== escolhe feedback =====
-        const baseMsg = ok
-          ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
-          : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
-
-        const msg = USER_NAME
-          ? `${baseMsg} ${USER_NAME}.`
-          : baseMsg;
-
+        const msg = ok
+        ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
+        : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
         // ===== monta feedback FINAL (antes de imprimir) =====
         let feedbackText = msg;
@@ -424,11 +421,7 @@
 
       if (tentativas >= MAX_TENTATIVAS) {
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
-        //const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
-        const baseAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
-        const msgAvanco = USER_NAME
-          ? `${baseAvanco} ${USER_NAME}.`
-          : baseAvanco;
+        const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
 
         const avanco = document.createElement("div");
         avanco.className = "chat-message system errado";
