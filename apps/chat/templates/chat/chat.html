@@ -234,12 +234,36 @@
       "Não se preocupe com essa, vamos tentar a próxima."
     ];
 
+          async function falarBancoComRetry(lineId, tentativas = 2) {
+  for (let i = 0; i < tentativas; i++) {
+    const r = await fetch("/tts/line/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ line_id: lineId })
+    });
+
+    const d = await r.json();
+    if (d.files && d.files.length) {
+      tocando = true;
+      await new Promise(r => setTimeout(r, 1000));
+      await tocarUm(d.files[0]);
+      tocando = false;
+      return true;
+    }
+
+    // espera curta antes de tentar de novo
+    await new Promise(r => setTimeout(r, 300));
+  }
+  return false;
+}
+
+
       // ESCONDE TODAS
       msgs.forEach(m => m.style.display = "none");
       btnMic.disabled = true;
     
       // MOSTRA FRASE + FALA   
-      function mostrarSistema() {
+      async function mostrarSistema() {
         if (tocando) return;
         if (index >= msgs.length) {
           btnMic.disabled = true;
@@ -259,22 +283,23 @@
 
         // ENQUANTO FALA NAO DEIXA MIC
         btnMic.disabled = true;   
+        await falarBancoComRetry(lineId);
 
-        fetch("/tts/line/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ line_id: lineId })
-        })
+        //fetch("/tts/line/", {
+         // method: "POST",
+          //headers: { "Content-Type": "application/json" },
+          //body: JSON.stringify({ line_id: lineId })
+        //})
 
-        .then(r => r.json())
-        .then(async d => {
+        //.then(r => r.json())
+        //.then(async d => {
 
-          if (d.files && d.files.length) { 
-            tocando = true;
-            await new Promise(r => setTimeout(r, 500));
-            await falarComoAntigo(d.files);
-            tocando = false;
-          }  
+          //if (d.files && d.files.length) { 
+            //tocando = true;
+            //await new Promise(r => setTimeout(r, 500));
+            //await falarComoAntigo(d.files);
+            //tocando = false;
+          //}  
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
@@ -294,7 +319,7 @@
           tentativas = 0;
           btnMic.disabled = false;
 
-        });
+        //});
       }
 
       // BOTÃO INICIAR
@@ -320,6 +345,8 @@
         afterEl.after(div);
         return div;
       }
+
+
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
@@ -350,7 +377,6 @@
         ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
         : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
-        // ===== escreve AVALIAÇÃO (PROFESSOR) =====
         // ===== monta feedback FINAL (antes de imprimir) =====
         let feedbackText = msg;
         let feedbackHTML = msg;
@@ -398,7 +424,7 @@
             index++;
             lastMsgEl = null;
             mostrarSistema();
-          }, 600);
+          }, 100);
           return;
         }
 
