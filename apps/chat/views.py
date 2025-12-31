@@ -75,6 +75,7 @@ def chat(request, lesson_id):
         request.user.first_name if request.user.is_authenticated else ""
     )
 
+
     return render(request, "chat/chat.html", {
         "lesson_id": lesson_id,
         "lines": lines,
