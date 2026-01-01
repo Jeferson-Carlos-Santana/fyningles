@@ -22,8 +22,15 @@
               <li>
                 <a href="/admin/">Administração</a>
               </li>
+
+
             {% endif %}
 
+            <p style="color:red">
+  staff={{ request.user.is_staff }} |
+  super={{ request.user.is_superuser }} |
+  auth={{ request.user.is_authenticated }}
+</p>
           
             <li><a href="/">Dashboard</a></li>                          
             <li><a href="/dictionary/">Dicionário</a></li>                   
