@@ -1,5 +1,5 @@
 from django.urls import path
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth import views as auth_views
 from .views import index, chat, chat_home, lessons, dictionary, dictionary_add, dictionary_delete, tts, tts_line
 
 urlpatterns = [
@@ -12,6 +12,7 @@ urlpatterns = [
     path("dictionary/delete/", dictionary_delete, name="dictionary_delete"),    
     path("tts/", tts, name="tts"),
     path("tts/line/", tts_line, name="tts_line"), 
-    path("logout/", LogoutView.as_view(), name="logout"),
+    path("login/", auth_views.LoginView.as_view(), name="login"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
 
 ]
