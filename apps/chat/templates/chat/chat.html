@@ -22,15 +22,13 @@
               <li>
                 <a href="/admin/">Administração</a>
               </li>
-
-
             {% endif %}
 
-            <p style="color:red">
-  staff={{ request.user.is_staff }} |
-  super={{ request.user.is_superuser }} |
-  auth={{ request.user.is_authenticated }}
-</p>
+            <!-- <p style="color:red">
+              staff={{ request.user.is_staff }} |
+              super={{ request.user.is_superuser }} |
+              auth={{ request.user.is_authenticated }}
+            </p> -->
           
             <li><a href="/">Dashboard</a></li>                          
             <li><a href="/dictionary/">Dicionário</a></li>                   
@@ -46,7 +44,7 @@
         </div>
         <div class="logout">
           <ul class="menu"> 
-            <li><a href="/">Sair</a></li>
+            <li><a href="{% url 'logout' %}">Sair</a></li>
           </ul>
         </div>
       </div>
