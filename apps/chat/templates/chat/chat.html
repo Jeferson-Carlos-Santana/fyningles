@@ -44,7 +44,10 @@
         </div>
         <div class="logout">
           <ul class="menu"> 
-            <li><a href="/admin/logout/">Sair</a></li>
+            <li><form method="post" action="/admin/logout/">
+              {% csrf_token %}
+              <button type="submit">Sair</button>
+            </form></li>
           </ul>
         </div>
       </div>
