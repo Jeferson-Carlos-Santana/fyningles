@@ -78,31 +78,31 @@ def quebrar_frases(text):
     return [p.strip() for p in partes if p.strip()]  
 
 # CHAMAR O CHAT NO HTML
+def chat(request, lesson_id):
+    lines = (
+        Chat.objects
+        .filter(lesson_id=lesson_id, status=True)
+        .order_by("seq")
+    )
+
+    for l in lines:
+        l.content_pt = limpar_visual(l.content_pt)
     
-    def chat(request, lesson_id):
-        lines = (
-            Chat.objects
-            .filter(lesson_id=lesson_id, status=True)
-            .order_by("seq")
-        )
+    username = request.session.get(
+        "username",
+        request.user.first_name if request.user.is_authenticated else ""
+    )
+    
+    lesson_title = LESSON_TITLES.get(lesson_id, f"Lição {lesson_id}")
 
-        for l in lines:
-            l.content_pt = limpar_visual(l.content_pt)
-
-        username = request.session.get(
-            "username",
-            request.user.first_name if request.user.is_authenticated else ""
-        )
-
-        lesson_title = LESSON_TITLES.get(lesson_id, f"Lição {lesson_id}")
-
-        return render(request, "chat/chat.html", {
-            "lesson_id": lesson_id,
-            "lesson_title": lesson_title,
-            "lines": lines,
-            "username": username,
-        })
-
+    return render(request, "chat/chat.html", {
+        "lesson_id": lesson_id,
+        "lesson_title": lesson_title,
+        "lines": lines,
+        "username": username,
+    })
+    
+    
  
 # ENVIAR PARA CRIACAO DE AUDIOS
 @csrf_exempt
