@@ -11,6 +11,17 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Chat
 import re
 
+def chat_home(request):
+    return render(request, "chat/chat.html", {
+        "lesson_id": None,
+        "lines": [],
+        "username": request.session.get(
+            "username",
+            request.user.first_name if request.user.is_authenticated else ""
+        ),
+    })
+
+
 def index(request):
     return render(request, "chat/index.html")
 
@@ -74,7 +85,6 @@ def chat(request, lesson_id):
         "username",
         request.user.first_name if request.user.is_authenticated else ""
     )
-
 
     return render(request, "chat/chat.html", {
         "lesson_id": lesson_id,
