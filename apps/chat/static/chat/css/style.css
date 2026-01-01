@@ -386,3 +386,27 @@ body {
   background: var(--color-li-hover);
 }
 /* FIM INPUT INSERIMENTO DICIONARIO */ 
+
+/* LOGOUT COMO LINK */
+.logout form {
+    margin: 0;
+}
+
+.logout-btn {
+    all: unset; /* remove estilo padrão do button */
+    display: block;
+    width: 100%;
+    padding: 6px;
+    cursor: pointer;
+
+    color: var(--color-tittle-footer);
+    background: var(--color-li);
+    text-decoration: none;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.logout-btn:hover {
+    background: var(--color-li-hover);
+    font-weight: 500;
+}

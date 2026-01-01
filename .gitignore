@@ -4,3 +4,4 @@ venv/
 media/
 apps/chat/services/dictionary/
 stderr.log
+/staticfiles/
