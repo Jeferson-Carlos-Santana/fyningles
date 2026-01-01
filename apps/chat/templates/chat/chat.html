@@ -17,7 +17,14 @@
           <div class="infor">⭐Pontos em andamento: <span class="text-info">253</span></div>
           <div class="infor">⭐Pontos que faltam: <span class="text-info">768</span></div>
           <div class="infor">⭐Pontos feitos: <span class="text-info">422</span></div>
-          <ul class="menu">            
+          <ul class="menu">  
+            {% if request.user.is_staff %}
+              <li>
+                <a href="/admin/">Administração</a>
+              </li>
+            {% endif %}
+
+          
             <li><a href="/">Dashboard</a></li>                          
             <li><a href="/dictionary/">Dicionário</a></li>                   
           </ul>

@@ -100,8 +100,7 @@ def chat(request, lesson_id):
         "lesson_title": lesson_title,
         "lines": lines,
         "username": username,
-    })
-    
+    }) 
     
  
 # ENVIAR PARA CRIACAO DE AUDIOS
