@@ -84,10 +84,12 @@
         </div>
         <div class="painel-master">
             <button class="play-madeira-velha" id="btn-start"></button>
+            <button id="btnAutoSkip" class="auto-off">AUTO SKIP: OFF</button>
+            <button id="btnAutoMic" class="auto-off">AUTO MIC: OFF</button> 
         </div>
         <div class="inline-input">            
             <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />
-           <button id="btnAutoMic" class="auto-off">AUTO MIC: OFF</button> 
+           
             <button id="btnEnviar" class="btn-madeira-velha" onclick="enviarMensagem()">Enviar</button>
             <button class="btn-madeira-velha" id="btn-mic" onclick="toggleMic()">🎤</button>    
         </div>
@@ -152,13 +154,29 @@
       let micTimeout = null;
       const btnAutoMic = document.getElementById("btnAutoMic");
       let autoMicAtivo = false;
-
+      const btnAutoSkip = document.getElementById("btnAutoSkip");
+      let autoSkipAtivo = false;
       const TEMPO_BASE = 5000;          // 3s mínimos
       const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
       const TEMPO_MAX = 12000;         // 12s máximo
 
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
+
+
+    btnAutoSkip.onclick = function () {
+      autoSkipAtivo = !autoSkipAtivo;
+
+      if (autoSkipAtivo) {
+        btnAutoSkip.classList.remove("auto-off");
+        btnAutoSkip.classList.add("auto-on");
+        btnAutoSkip.textContent = "AUTO SKIP: ON";
+      } else {
+        btnAutoSkip.classList.remove("auto-on");
+        btnAutoSkip.classList.add("auto-off");
+        btnAutoSkip.textContent = "AUTO SKIP: OFF";
+      }
+    };
 
     btnAutoMic.onclick = function () {
       autoMicAtivo = !autoMicAtivo;
@@ -188,51 +206,74 @@
       );
     }
 
-function abrirMicrofoneComTempo() {
-  if (btnMic.disabled) return;
+    function abrirMicrofoneComTempo() {
+      if (btnMic.disabled) return;
 
-  // visual de gravando
-  btnMic.textContent = "🎙️";
-  btnMic.classList.add("mic-gravando");
+      // visual de gravando
+      btnMic.textContent = "🎙️";
+      btnMic.classList.add("mic-gravando");
 
-  recognition.start();
+      recognition.start();
 
-  // calcula tempo com base na frase esperada atual
-  const tempoMic = calcularTempoMic(expectedAtual);
+      // calcula tempo com base na frase esperada atual
+      const tempoMic = calcularTempoMic(expectedAtual);
 
-  if (micTimeout) clearTimeout(micTimeout);
+      if (micTimeout) clearTimeout(micTimeout);
 
-  micTimeout = setTimeout(() => {
-    // se ainda estiver esperando resposta, não falou
-    if (esperandoResposta) {
-      // fecha mic
-      try { recognition.stop(); } catch (e) {}
-      btnMic.textContent = "🎤";
-      btnMic.classList.remove("mic-gravando");
+      micTimeout = setTimeout(() => {
+        if (esperandoResposta) {
+          // fecha mic
+          try { recognition.stop(); } catch (e) {}
+          btnMic.textContent = "🎤";
+          btnMic.classList.remove("mic-gravando");
 
-      bloquearEntrada();
+          // 🔹 DECISÃO AQUI
+          if (autoSkipAtivo) {
+            bloquearEntrada();
 
-      // feedback visual opcional
-      const skip = document.createElement("div");
-      skip.className = "chat-message system";
-      skip.textContent = "Tempo esgotado. Avançando.";
-      (lastMsgEl || msgs[index]).after(skip);
+            const skip = document.createElement("div");
+            skip.className = "chat-message system";
+            skip.textContent = "Tempo esgotado. Avançando.";
+            (lastMsgEl || msgs[index]).after(skip);
 
-      // limpa estado
-      esperandoResposta = false;
-      expectedAtual = "";
-      tentativas = 0;
+            esperandoResposta = false;
+            expectedAtual = "";
+            tentativas = 0;
 
-      // avança para a próxima frase
-      setTimeout(() => {
-        index++;
-        lastMsgEl = null;
-        mostrarSistema();
-      }, 100);
+            setTimeout(() => {
+              index++;
+              lastMsgEl = null;
+              mostrarSistema();
+            }, 150);
+          }
+          // 🔹 se autoSkipAtivo === false
+          // simplesmente fecha o mic e espera o usuário
+        }
+      }, tempoMic);
+
     }
-  }, tempoMic);
-}
+    // function abrirMicrofoneComTempo() {
+    //   if (btnMic.disabled) return;
 
+    //   // visual de gravando
+    //   btnMic.textContent = "🎙️";
+    //   btnMic.classList.add("mic-gravando");
+
+    //   recognition.start();
+
+    //   // calcula tempo com base na frase esperada atual
+    //   const tempoMic = calcularTempoMic(expectedAtual);
+    //   if (micTimeout) clearTimeout(micTimeout);
+
+    //   setTimeout(() => {
+    //     // se ainda estiver esperando resposta, fecha o mic
+    //     if (esperandoResposta) {
+    //       recognition.stop();
+    //       btnMic.textContent = "🎤";
+    //       btnMic.classList.remove("mic-gravando");
+    //     }
+    //   }, tempoMic);
+    // }
 
     function encerrarMicrofone() {
       if (micTimeout) {

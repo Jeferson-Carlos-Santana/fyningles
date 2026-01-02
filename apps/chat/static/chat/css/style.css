@@ -480,3 +480,21 @@ body {
   color: #fff;
 }
 
+/* AUTO SKIP  */
+#btnAutoSkip {
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+}
+
+.auto-off {
+  background: #555;
+  color: #fff;
+}
+
+.auto-on {
+  background: #2e7d32;
+  color: #fff;
+}
