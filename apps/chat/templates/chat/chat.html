@@ -148,6 +148,37 @@
       let lastFalandoEl = null;
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
+
+    function bloquearEntrada() {
+      btnMic.disabled = true;
+      btnEnviar.disabled = true;
+
+      btnMic.textContent = "🔇";
+      btnMic.classList.remove("mic-ready");
+      btnMic.classList.add("mic-disabled");
+
+      btnEnviar.classList.remove("btn-ready");
+      btnEnviar.classList.add("btn-disabled");
+    }
+
+    function liberarEntrada() {
+      btnMic.disabled = false;
+      btnEnviar.disabled = false;
+
+      btnMic.textContent = "🎤";
+      btnMic.classList.remove("mic-disabled");
+      btnMic.classList.add("mic-ready");
+
+      btnEnviar.classList.remove("btn-disabled");
+      btnEnviar.classList.add("btn-ready");
+    }
+
+    function micGravando() {
+      btnMic.textContent = "🎙️";
+      btnMic.classList.add("mic-gravando");
+    }
+
+
     
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
@@ -275,17 +306,16 @@
 
       // ESCONDE TODAS
       msgs.forEach(m => m.style.display = "none");
-      btnMic.disabled = true;
-      btnEnviar.disabled = true;
+
+      bloquearEntrada();
       
       
 
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
         if (tocando) return;
-        if (index >= msgs.length) {
-          btnMic.disabled = true;
-          btnStart.disabled = true;
+        if (index >= msgs.length) {   
+          bloquearEntrada();
           return;
         }
 
@@ -304,7 +334,7 @@
         msg.classList.add("falando");
         lastFalandoEl = msg;
 
-        btnMic.disabled = true;   
+        bloquearEntrada();   
 
         fetch("/tts/line/", {
           method: "POST",
@@ -324,8 +354,7 @@
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
-            btnMic.disabled = true;
-            btnStart.disabled = true;
+            bloquearEntrada(); 
             index++;
             return;
           }
@@ -338,7 +367,7 @@
           esperandoResposta = true;
           expectedAtual = msg.dataset.expected || "";
           tentativas = 0;
-          btnMic.disabled = false;
+          liberarEntrada();
 
         });
       }
@@ -353,7 +382,7 @@
 
       // BOTÃO MICROFONE
       btnMic.onclick = function () {
-        btnMic.disabled = true;
+        bloquearEntrada(); 
         recognition.start();
       };
 
@@ -372,8 +401,7 @@
         const texto = e.results[0][0].transcript;
 
         if (!esperandoResposta) return;
-        btnMic.disabled = true; 
-        btnEnviar.disabled = true;
+        bloquearEntrada(); 
 
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
@@ -391,7 +419,7 @@
         const ok = expectedNorms.has(normText(texto));
 
         // bloqueia mic enquanto avalia
-        btnMic.disabled = true;
+        bloquearEntrada(); 
 
         // ===== escolhe feedback =====
         const msg = ok
@@ -471,7 +499,7 @@
           tocando = false;
         }
         esperandoResposta = true;
-        btnMic.disabled = false;
+        liberarEntrada();
         return;
       }
 
@@ -516,8 +544,7 @@
 
         // pode tentar de novo
         esperandoResposta = true;
-        btnMic.disabled = false;
-        btnEnviar.disabled = false;        
+        liberarEntrada();        
       };       
       
     });

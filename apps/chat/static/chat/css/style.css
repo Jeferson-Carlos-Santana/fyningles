@@ -452,3 +452,11 @@ body {
     padding: 5px;
     border-radius: 5px;
 }
+
+.mic-ready { background: #2e7d32; }
+.mic-disabled { background: #555; opacity: .4; }
+.mic-gravando { background: #c62828; }
+
+.btn-ready { background: #2e7d32; }
+.btn-disabled { background: #555; opacity: .4; }
+
