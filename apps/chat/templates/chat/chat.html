@@ -148,10 +148,11 @@
       let lastFalandoEl = null;
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
+      let micTimeout = null;
 
-    const TEMPO_BASE = 2500;          // 3s mínimos
-    const TEMPO_POR_PALAVRA = 500;   // 0.7s por palavra
-    const TEMPO_MAX = 12000;         // 12s máximo
+      const TEMPO_BASE = 5000;          // 3s mínimos
+      const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
+      const TEMPO_MAX = 12000;         // 12s máximo
 
     function calcularTempoMic(frase) {
       if (!frase) return TEMPO_BASE;
@@ -173,6 +174,7 @@
 
       // calcula tempo com base na frase esperada atual
       const tempoMic = calcularTempoMic(expectedAtual);
+      if (micTimeout) clearTimeout(micTimeout);
 
       setTimeout(() => {
         // se ainda estiver esperando resposta, fecha o mic
@@ -184,7 +186,19 @@
       }, tempoMic);
     }
 
+    function encerrarMicrofone() {
+      if (micTimeout) {
+        clearTimeout(micTimeout);
+        micTimeout = null;
+      }
 
+      try {
+        recognition.stop();
+      } catch (e) {}
+
+      btnMic.textContent = "🎤";
+      btnMic.classList.remove("mic-gravando");
+    }
 
     function bloquearEntrada() {
       btnMic.disabled = true;
@@ -435,6 +449,9 @@
         const texto = e.results[0][0].transcript;
 
         if (!esperandoResposta) return;
+
+        encerrarMicrofone();
+
         bloquearEntrada(); 
 
         // ===== escreve ALUNO (sempre após a última mensagem) =====
