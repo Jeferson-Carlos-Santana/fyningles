@@ -87,6 +87,7 @@
         </div>
         <div class="inline-input">            
             <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />
+           <button id="btnAutoMic" class="auto-off">AUTO MIC: OFF</button> 
             <button id="btnEnviar" class="btn-madeira-velha" onclick="enviarMensagem()">Enviar</button>
             <button class="btn-madeira-velha" id="btn-mic" onclick="toggleMic()">🎤</button>    
         </div>
@@ -149,6 +150,8 @@
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
       let micTimeout = null;
+      const btnAutoMic = document.getElementById("btnAutoMic");
+      let autoMicAtivo = false;
 
       const TEMPO_BASE = 5000;          // 3s mínimos
       const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
@@ -156,6 +159,20 @@
 
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.6;
+
+    btnAutoMic.onclick = function () {
+      autoMicAtivo = !autoMicAtivo;
+
+      if (autoMicAtivo) {
+        btnAutoMic.classList.remove("auto-off");
+        btnAutoMic.classList.add("auto-on");
+        btnAutoMic.textContent = "AUTO MIC: ON";
+      } else {
+        btnAutoMic.classList.remove("auto-on");
+        btnAutoMic.classList.add("auto-off");
+        btnAutoMic.textContent = "AUTO MIC: OFF";
+      }
+    };
 
     function tocarBeep() {
       beepPlayer.currentTime = 0;
@@ -407,11 +424,12 @@
             tocando = false;
             tocarBeep();
 
-            // 🔹 abre o microfone automaticamente após o beep
-            setTimeout(() => {
-              abrirMicrofoneComTempo();
-            }, 150);
-          }  
+            if (autoMicAtivo) {
+              setTimeout(() => {
+                  abrirMicrofoneComTempo();
+                }, 150);
+              }  
+            }
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {

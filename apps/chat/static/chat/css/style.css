@@ -460,3 +460,23 @@ body {
 .btn-ready { background: #2e7d32; }
 .btn-disabled { background: #555; opacity: .4; }
 
+
+/* BOTAO AUTOCLICK */
+#btnAutoMic {
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+}
+
+.auto-off {
+  background: #555;
+  color: #fff;
+}
+
+.auto-on {
+  background: #2e7d32;
+  color: #fff;
+}
+
