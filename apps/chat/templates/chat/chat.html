@@ -149,6 +149,43 @@
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
 
+    const TEMPO_BASE = 3000;          // 3s mínimos
+    const TEMPO_POR_PALAVRA = 700;   // 0.7s por palavra
+    const TEMPO_MAX = 12000;         // 12s máximo
+
+    function calcularTempoMic(frase) {
+      if (!frase) return TEMPO_BASE;
+      const qtdPalavras = frase.trim().split(/\s+/).length;
+      return Math.min(
+        TEMPO_BASE + qtdPalavras * TEMPO_POR_PALAVRA,
+        TEMPO_MAX
+      );
+    }
+
+    function abrirMicrofoneComTempo() {
+      if (btnMic.disabled) return;
+
+      // visual de gravando
+      btnMic.textContent = "🎙️";
+      btnMic.classList.add("mic-gravando");
+
+      recognition.start();
+
+      // calcula tempo com base na frase esperada atual
+      const tempoMic = calcularTempoMic(expectedAtual);
+
+      setTimeout(() => {
+        // se ainda estiver esperando resposta, fecha o mic
+        if (esperandoResposta) {
+          recognition.stop();
+          btnMic.textContent = "🎤";
+          btnMic.classList.remove("mic-gravando");
+        }
+      }, tempoMic);
+    }
+
+
+
     function bloquearEntrada() {
       btnMic.disabled = true;
       btnEnviar.disabled = true;
@@ -177,8 +214,6 @@
       btnMic.textContent = "🎙️";
       btnMic.classList.add("mic-gravando");
     }
-
-
     
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
@@ -381,9 +416,12 @@
       };
 
       // BOTÃO MICROFONE
+      //btnMic.onclick = function () {
+        //bloquearEntrada(); 
+        //recognition.start();
+      //};
       btnMic.onclick = function () {
-        bloquearEntrada(); 
-        recognition.start();
+        abrirMicrofoneComTempo();
       };
 
       // RESPOSTA DO USUÁRIO
