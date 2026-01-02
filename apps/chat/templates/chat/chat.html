@@ -111,17 +111,13 @@ function enviarMensagem() {
   const texto = input.value.trim();
   if (!texto) return;
 
-  const chatArea = document.querySelector(".chat-area");
-
-  const user = document.createElement("div");
-  user.className = "chat-message user";
-  user.textContent = texto;
-
-  chatArea.appendChild(user);
   input.value = "";
-  chatArea.scrollTop = chatArea.scrollHeight;
-  
+
+  window.recognition.onresult({
+    results: [[{ transcript: texto }]]
+  });
 }
+
   document.addEventListener("DOMContentLoaded", function () {       
      
       const audioPlayer = new Audio();
