@@ -434,6 +434,11 @@
 
         const d = await r.json();
         if (d.files && d.files.length) {
+            if (lastFalandoEl) lastFalandoEl.classList.remove("falando"); // <<< ADD
+  if (prof) {                                                   // <<< ADD
+    prof.classList.add("falando");                              // <<< ADD
+    lastFalandoEl = prof;                                       // <<< ADD
+  }  
           tocando = true;
           await new Promise(r => setTimeout(r, 1100));
           await falarComoAntigo(d.files);
@@ -465,6 +470,9 @@
 
         const d = await r.json();
         if (d.files && d.files.length) {
+           if (lastFalandoEl) lastFalandoEl.classList.remove("falando"); // <<< ADD
+  avanco.classList.add("falando");                              // <<< ADD
+  lastFalandoEl = avanco;                                       // <<< ADD
           tocando = true;
           await new Promise(r => setTimeout(r, 1100));
           await tocarUm(d.files[0]);
