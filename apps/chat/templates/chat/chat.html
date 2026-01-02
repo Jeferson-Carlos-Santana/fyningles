@@ -477,8 +477,37 @@
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
         const texto = e.results[0][0].transcript;
-
+        const comando = texto.toLowerCase().trim();
         if (!esperandoResposta) return;
+
+        if (["next", "skip"].includes(comando)) {
+          // corta mic imediatamente
+          encerrarMicrofone();
+
+          // bloqueia entradas
+          bloquearEntrada();
+
+          // mensagem visual opcional (recomendado)
+          const skip = document.createElement("div");
+          skip.className = "chat-message system";
+          skip.textContent = "Frase pulada.";
+          (lastMsgEl || msgs[index]).after(skip);
+
+          // limpa estado
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;
+
+          // avança para próxima frase
+          setTimeout(() => {
+            index++;
+            lastMsgEl = null;
+            mostrarSistema();
+          }, 100);
+
+          return;
+        }
+
 
         encerrarMicrofone();
 
