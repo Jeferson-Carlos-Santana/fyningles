@@ -378,7 +378,7 @@
           if (tentativaAgora < MAX_TENTATIVAS) {
             const expectedRaw = expectedAtual || "";
             feedbackText = `${msg} Repita comigo: ${expectedRaw}`;
-            feedbackHTML = `${msg} <span class="hint">Repita comigo: ${expectedRaw}</span>`;
+            feedbackHTML = `${msg} <span class="hint">Repita comigo: <span style:"color: red;">${expectedRaw}</span></span>`;
           }
         }
         
