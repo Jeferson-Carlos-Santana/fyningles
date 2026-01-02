@@ -391,18 +391,12 @@
           lastMsgEl.after(prof);
           lastMsgEl = prof;
           scrollChatToBottom();
-        }      
-        setTimeout(() => {
-  prof.classList.remove("ok");
-  prof.classList.remove("erro");
-  prof.classList.remove("avanco");
-  prof.style.background = "";
-}, 2000);
-
+        }  
 
         // ===== decisão de fluxo =====
         if (ok) {
           if (prof) prof.classList.add("correto");
+          if (prof) setTimeout(() => prof.classList.remove("correto"), 2000);
           const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -430,6 +424,7 @@
         // errou
         tentativas++;
         if (prof) prof.classList.add("errado");
+        if (prof) setTimeout(() => prof.classList.remove("errado"), 2000);
 
       if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
       // ===== fala AVALIAÇÃO (bloqueante) =====
@@ -463,11 +458,7 @@
         lastMsgEl = avanco;
         scrollChatToBottom();
 
-        setTimeout(() => {
-  avanco.classList.remove("erro");
-  avanco.classList.remove("avanco");
-  avanco.style.background = "";
-}, 2000);
+        setTimeout(() => avanco.classList.remove("errado"), 2000);
         
         // fala a mensagem de avanço
         const r = await fetch("/tts/line/", {
