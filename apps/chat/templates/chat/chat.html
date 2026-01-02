@@ -154,6 +154,15 @@
       const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
       const TEMPO_MAX = 12000;         // 12s máximo
 
+      const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
+      beepPlayer.volume = 0.6;
+
+    function tocarBeep() {
+      beepPlayer.currentTime = 0;
+      beepPlayer.play().catch(() => {});
+    }
+
+
     function calcularTempoMic(frase) {
       if (!frase) return TEMPO_BASE;
       const qtdPalavras = frase.trim().split(/\s+/).length;
@@ -399,6 +408,7 @@
             await new Promise(r => setTimeout(r, 1100));
             await falarComoAntigo(d.files);
             tocando = false;
+            tocarBeep();
           }  
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
