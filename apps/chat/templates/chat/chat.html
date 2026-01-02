@@ -162,7 +162,6 @@
       beepPlayer.play().catch(() => {});
     }
 
-
     function calcularTempoMic(frase) {
       if (!frase) return TEMPO_BASE;
       const qtdPalavras = frase.trim().split(/\s+/).length;
@@ -365,9 +364,7 @@
       // ESCONDE TODAS
       msgs.forEach(m => m.style.display = "none");
 
-      bloquearEntrada();
-      
-      
+      bloquearEntrada();      
 
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
@@ -409,6 +406,11 @@
             await falarComoAntigo(d.files);
             tocando = false;
             tocarBeep();
+
+            // 🔹 abre o microfone automaticamente após o beep
+            setTimeout(() => {
+              abrirMicrofoneComTempo();
+            }, 150);
           }  
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
