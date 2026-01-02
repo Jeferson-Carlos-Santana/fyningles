@@ -149,8 +149,8 @@
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
 
-    const TEMPO_BASE = 3000;          // 3s mínimos
-    const TEMPO_POR_PALAVRA = 700;   // 0.7s por palavra
+    const TEMPO_BASE = 2000;          // 3s mínimos
+    const TEMPO_POR_PALAVRA = 500;   // 0.7s por palavra
     const TEMPO_MAX = 12000;         // 12s máximo
 
     function calcularTempoMic(frase) {
@@ -416,10 +416,6 @@
       };
 
       // BOTÃO MICROFONE
-      //btnMic.onclick = function () {
-        //bloquearEntrada(); 
-        //recognition.start();
-      //};
       btnMic.onclick = function () {
         abrirMicrofoneComTempo();
       };
