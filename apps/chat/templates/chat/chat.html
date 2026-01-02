@@ -105,7 +105,6 @@
   <script>
   const USER_NAME = "{{ username|escapejs }}";
 
-  
 function enviarMensagem() {
   const input = document.getElementById("mensagem");
   const texto = input.value.trim();
@@ -122,6 +121,7 @@ function enviarMensagem() {
   chatArea.scrollTop = chatArea.scrollHeight;
   
 }
+
   document.addEventListener("DOMContentLoaded", function () {       
      
       const audioPlayer = new Audio();
@@ -134,7 +134,6 @@ function enviarMensagem() {
         return; // sai do DOMContentLoaded com segurança
       }
       const recognition = new SpeechRecognition(); 
-      window.recognition = recognition;
       recognition.lang = "en-GB";
       recognition.continuous = false;
       recognition.interimResults = false;
