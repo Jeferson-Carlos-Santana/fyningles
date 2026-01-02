@@ -4,6 +4,7 @@
 <head>
     <link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'chat/css/chat.css' %}">
+    <link rel="stylesheet" href="{% static 'chat/css/btn.css' %}">
     <meta charset="utf-8">
     <title>chat</title>
 </head>
@@ -62,8 +63,11 @@
             <button class="menu-toggle" aria-label="Abrir menu">
               <img src="{% static 'chat/img/menu.png' %}" alt="Menu">
             </button> 
-            chat : {{ lesson_title }}
-          </div>                        
+            chat : {{ lesson_title }} 
+           
+          </div>  
+        
+                                  
         </div>
 
         <div class="chat-area">
@@ -78,9 +82,16 @@
           </div>
           {% endfor %}
         </div>
-
-        <button id="btn-start">▶️ Iniciar lição</button>
-        <button id="btn-mic" disabled>🎤 Falar</button>
+        <div class="painel-master">
+            <button class="play-madeira-velha" id="btn-start"></button>
+        </div>
+        <div class="inline-input">            
+            <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />
+            <button id="btnEnviar" class="btn-madeira-velha" onclick="enviarMensagem()">Enviar</button>
+            <button class="btn-madeira-velha" id="btn-mic" onclick="toggleMic()">🎤</button>    
+        </div>
+        
+        <!-- <button id="btn-mic" disabled>🎤 Falar</button> -->
 
         <div class="footer-cont">
           {% comment %} <button class="theme-toggle" aria-label="Trocar tema">🌙 </button> {% endcomment %}
@@ -94,6 +105,23 @@
   <script>
   const USER_NAME = "{{ username|escapejs }}";
 
+  
+function enviarMensagem() {
+  const input = document.getElementById("mensagem");
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  const chatArea = document.querySelector(".chat-area");
+
+  const user = document.createElement("div");
+  user.className = "chat-message user";
+  user.textContent = texto;
+
+  chatArea.appendChild(user);
+  input.value = "";
+  chatArea.scrollTop = chatArea.scrollHeight;
+  
+}
   document.addEventListener("DOMContentLoaded", function () {       
      
       const audioPlayer = new Audio();
@@ -105,7 +133,8 @@
         console.warn("SpeechRecognition não suportado neste browser");
         return; // sai do DOMContentLoaded com segurança
       }
-      const recognition = new SpeechRecognition();
+      const recognition = new SpeechRecognition(); 
+      window.recognition = recognition;
       recognition.lang = "en-GB";
       recognition.continuous = false;
       recognition.interimResults = false;
@@ -488,7 +517,7 @@
         // pode tentar de novo
         esperandoResposta = true;
         btnMic.disabled = false;        
-      };        
+      };       
       
     });
     
