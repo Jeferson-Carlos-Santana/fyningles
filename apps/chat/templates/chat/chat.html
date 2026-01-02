@@ -152,7 +152,6 @@
       let micTimeout = null;
       const btnAutoMic = document.getElementById("btnAutoMic");
       let autoMicAtivo = false;
-      let modoComando = false;
 
       const TEMPO_BASE = 5000;          // 3s mínimos
       const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
@@ -160,39 +159,6 @@
 
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
-
-    function ativarModoComando() {
-          modoComando = true;
-
-          recognition.lang = "en-US";
-          recognition.continuous = true;
-          recognition.interimResults = false;
-
-          try {
-            recognition.start();
-          } catch (e) {}
-        }
-
-        function encerrarMicrofone() {
-      if (micTimeout) {
-        clearTimeout(micTimeout);
-        micTimeout = null;
-      }
-
-      try {
-        recognition.stop();
-      } catch (e) {}
-
-      btnMic.textContent = "🎤";
-      btnMic.classList.remove("mic-gravando");
-
-      // 👉 entra em modo comando se ainda estiver esperando resposta
-      if (esperandoResposta) {
-        setTimeout(() => ativarModoComando(), 300);
-      }
-    }
-
-
 
     btnAutoMic.onclick = function () {
       autoMicAtivo = !autoMicAtivo;
@@ -222,28 +188,51 @@
       );
     }
 
-    function abrirMicrofoneComTempo() {
-      if (btnMic.disabled) return;
+function abrirMicrofoneComTempo() {
+  if (btnMic.disabled) return;
 
-      // visual de gravando
-      btnMic.textContent = "🎙️";
-      btnMic.classList.add("mic-gravando");
+  // visual de gravando
+  btnMic.textContent = "🎙️";
+  btnMic.classList.add("mic-gravando");
 
-      recognition.start();
+  recognition.start();
 
-      // calcula tempo com base na frase esperada atual
-      const tempoMic = calcularTempoMic(expectedAtual);
-      if (micTimeout) clearTimeout(micTimeout);
+  // calcula tempo com base na frase esperada atual
+  const tempoMic = calcularTempoMic(expectedAtual);
 
+  if (micTimeout) clearTimeout(micTimeout);
+
+  micTimeout = setTimeout(() => {
+    // se ainda estiver esperando resposta, não falou
+    if (esperandoResposta) {
+      // fecha mic
+      try { recognition.stop(); } catch (e) {}
+      btnMic.textContent = "🎤";
+      btnMic.classList.remove("mic-gravando");
+
+      bloquearEntrada();
+
+      // feedback visual opcional
+      const skip = document.createElement("div");
+      skip.className = "chat-message system";
+      skip.textContent = "Tempo esgotado. Avançando.";
+      (lastMsgEl || msgs[index]).after(skip);
+
+      // limpa estado
+      esperandoResposta = false;
+      expectedAtual = "";
+      tentativas = 0;
+
+      // avança para a próxima frase
       setTimeout(() => {
-        // se ainda estiver esperando resposta, fecha o mic
-        if (esperandoResposta) {
-          recognition.stop();
-          btnMic.textContent = "🎤";
-          btnMic.classList.remove("mic-gravando");
-        }
-      }, tempoMic);
+        index++;
+        lastMsgEl = null;
+        mostrarSistema();
+      }, 100);
     }
+  }, tempoMic);
+}
+
 
     function encerrarMicrofone() {
       if (micTimeout) {
@@ -512,25 +501,7 @@
       recognition.onresult = async function (e) {
         const texto = e.results[0][0].transcript;
         const comando = texto.toLowerCase().trim();
-
         if (!esperandoResposta) return;
-        
-
-        // COMANDO DE REABRIR MICROFONE
-        if (modoComando && comando === "start") {
-          modoComando = false;
-
-          try {
-            recognition.stop();
-          } catch (e) {}
-
-          setTimeout(() => {
-            abrirMicrofoneComTempo();
-          }, 200);
-
-          return;
-        }
-        
 
         if (["next", "skip"].includes(comando)) {
           // corta mic imediatamente
@@ -555,7 +526,7 @@
             index++;
             lastMsgEl = null;
             mostrarSistema();
-          }, 200);
+          }, 100);
 
           return;
         }
