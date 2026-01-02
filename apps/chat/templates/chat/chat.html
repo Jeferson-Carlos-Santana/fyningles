@@ -85,7 +85,8 @@
         <div class="painel-master">
             <button class="play-madeira-velha" id="btn-start"></button>
         </div>
-        <div class="inline-input">            
+        <div class="inline-input"> 
+            
             <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />
             <button id="btnEnviar" class="btn-madeira-velha" onclick="enviarMensagem()">Enviar</button>
             <button class="btn-madeira-velha" id="btnMic" onclick="toggleMic()">🎤</button>    
@@ -105,23 +106,6 @@
   <script>
   const USER_NAME = "{{ username|escapejs }}";
 
-function enviarMensagem() {
-  const input = document.getElementById("mensagem");
-  const texto = input.value.trim();
-  if (!texto) return;
-
-  const chatArea = document.querySelector(".chat-area");
-
-  const user = document.createElement("div");
-  user.className = "chat-message user";
-  user.textContent = texto;
-
-  chatArea.appendChild(user);
-  input.value = "";
-  chatArea.scrollTop = chatArea.scrollHeight;
-  
-}
-
   document.addEventListener("DOMContentLoaded", function () {       
      
       const audioPlayer = new Audio();
@@ -133,7 +117,7 @@ function enviarMensagem() {
         console.warn("SpeechRecognition não suportado neste browser");
         return; // sai do DOMContentLoaded com segurança
       }
-      const recognition = new SpeechRecognition(); 
+      const recognition = new SpeechRecognition();
       recognition.lang = "en-GB";
       recognition.continuous = false;
       recognition.interimResults = false;
@@ -516,7 +500,7 @@ function enviarMensagem() {
         // pode tentar de novo
         esperandoResposta = true;
         btnMic.disabled = false;        
-      };       
+      };        
       
     });
     
