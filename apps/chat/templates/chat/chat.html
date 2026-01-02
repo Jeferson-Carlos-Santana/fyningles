@@ -104,19 +104,18 @@
 
   <script>
   const USER_NAME = "{{ username|escapejs }}";
-
   
-function enviarMensagem() {
-  const input = document.getElementById("mensagem");
-  const texto = input.value.trim();
-  if (!texto) return;
+  function enviarMensagem() {
+    const input = document.getElementById("mensagem");
+    const texto = input.value.trim();
+    if (!texto) return;
 
-  input.value = "";
+    input.value = "";
 
-  window.recognition.onresult({
-    results: [[{ transcript: texto }]]
-  });
-}
+    window.recognition.onresult({
+      results: [[{ transcript: texto }]]
+    });
+  }
 
   document.addEventListener("DOMContentLoaded", function () {       
      
@@ -138,6 +137,7 @@ function enviarMensagem() {
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");
       const btnMic = document.getElementById("btn-mic");
+      const btnEnviar = document.getElementById("btnEnviar");
 
       let index = 0;
       let esperandoResposta = false;
@@ -148,7 +148,6 @@ function enviarMensagem() {
       let lastFalandoEl = null;
       let tentativas = 0;    
       const chatArea = document.querySelector(".chat-area");
-
     
     // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
     function playWhenReady(file, tries = 30) { 
@@ -277,7 +276,10 @@ function enviarMensagem() {
       // ESCONDE TODAS
       msgs.forEach(m => m.style.display = "none");
       btnMic.disabled = true;
-    
+      btnEnviar.disabled = true;
+      
+      
+
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
         if (tocando) return;
@@ -370,6 +372,8 @@ function enviarMensagem() {
         const texto = e.results[0][0].transcript;
 
         if (!esperandoResposta) return;
+        btnMic.disabled = true; 
+        btnEnviar.disabled = true;
 
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
@@ -512,7 +516,8 @@ function enviarMensagem() {
 
         // pode tentar de novo
         esperandoResposta = true;
-        btnMic.disabled = false;        
+        btnMic.disabled = false;
+        btnEnviar.disabled = false;        
       };       
       
     });
