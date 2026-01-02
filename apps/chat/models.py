@@ -1,8 +1,9 @@
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Max, F
 
 class Chat(models.Model):
     lesson_id = models.IntegerField(verbose_name="Lesson ID")
-    seq = models.IntegerField(verbose_name="Sequência")
+    seq = models.IntegerField(null=True, blank=True, verbose_name="Sequência")
     role = models.CharField(max_length=30, verbose_name="Role")
     auto = models.BooleanField(default=False, verbose_name="Auto")
     end = models.BooleanField(default=False, verbose_name="End")
@@ -27,11 +28,125 @@ class Chat(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
     modified_at = models.DateTimeField(auto_now=True, null=True, blank=True, verbose_name="Modified At")
+    
 
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+
+            # =====================
+            # INSERT (novo registro)
+            # =====================
+            if self.pk is None:
+
+                # se NÃO informou seq → vai para o final
+                if not self.seq:
+                    ultimo = (
+                        Chat.objects
+                        .filter(lesson_id=self.lesson_id)
+                        .aggregate(max_seq=Max("seq"))
+                        .get("max_seq")
+                    )
+                    self.seq = (ultimo or 0) + 1
+
+                # se INFORMOU seq → respeita e abre espaço
+                else:
+                    Chat.objects.filter(
+                        lesson_id=self.lesson_id,
+                        seq__gte=self.seq
+                    ).update(seq=F("seq") + 1)
+
+                super().save(*args, **kwargs)
+
+                # normaliza a lição
+                qs = (
+                    Chat.objects
+                    .filter(lesson_id=self.lesson_id)
+                    .order_by("seq", "id")
+                )
+                for i, obj in enumerate(qs, start=1):
+                    if obj.seq != i:
+                        Chat.objects.filter(pk=obj.pk).update(seq=i)
+
+                return
+
+            # =====================
+            # EDIT (registro existente)
+            # =====================
+            antigo = Chat.objects.get(pk=self.pk)
+
+            lesson_antiga = antigo.lesson_id
+            lesson_nova = self.lesson_id
+
+            seq_antigo = antigo.seq
+            seq_novo = self.seq
+
+            # ---------------------
+            # CASO 1: mudou de lição
+            # ---------------------
+            if lesson_antiga != lesson_nova:
+
+                # 1) REMOVE da lição antiga (fecha buracos)
+                qs_antiga = (
+                    Chat.objects
+                    .filter(lesson_id=lesson_antiga)
+                    .exclude(pk=self.pk)
+                    .order_by("seq")
+                )
+                for i, obj in enumerate(qs_antiga, start=1):
+                    Chat.objects.filter(pk=obj.pk).update(seq=i)
+
+                # 2) ABRE ESPAÇO na lição nova respeitando seq_novo
+                Chat.objects.filter(
+                    lesson_id=lesson_nova,
+                    seq__gte=seq_novo
+                ).update(seq=F("seq") + 1)
+
+                # mantém exatamente o seq informado
+                self.seq = seq_novo
+
+            # ---------------------
+            # CASO 2: mesma lição, mudou seq
+            # ---------------------
+            else:
+                if seq_novo != seq_antigo:
+                    if seq_novo > seq_antigo:
+                        Chat.objects.filter(
+                            lesson_id=lesson_nova,
+                            seq__gt=seq_antigo,
+                            seq__lte=seq_novo
+                        ).exclude(pk=self.pk).update(seq=F("seq") - 1)
+                    else:
+                        Chat.objects.filter(
+                            lesson_id=lesson_nova,
+                            seq__gte=seq_novo,
+                            seq__lt=seq_antigo
+                        ).exclude(pk=self.pk).update(seq=F("seq") + 1)
+
+            # salva o próprio registro
+            super().save(*args, **kwargs)
+
+            # =====================
+            # NORMALIZA AMBAS AS LIÇÕES ENVOLVIDAS
+            # =====================
+            for lesson_id in {lesson_antiga, lesson_nova}:
+                qs = (
+                    Chat.objects
+                    .filter(lesson_id=lesson_id)
+                    .order_by("seq", "id")
+                )
+                for i, obj in enumerate(qs, start=1):
+                    if obj.seq != i:
+                        Chat.objects.filter(pk=obj.pk).update(seq=i)
+
+
+
+
+        
     def __str__(self):
-        return f"Lesson {self.lesson_id} | Seq {self.seq}"
+        return f"Lesson {self.lesson_id} | Seq {self.seq}"    
 
     class Meta:
         verbose_name = "Chat"
         verbose_name_plural = "Chats"
         db_table = "chats"
+        ordering = ["lesson_id", "seq"]

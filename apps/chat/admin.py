@@ -32,9 +32,8 @@ class ChatAdmin(admin.ModelAdmin):
   )
   # LISTA DO QUE APARECE NA TABELA
   list_display = (
-    "id",
-    "lesson_id",
     "seq",
+    "lesson_id",    
     "role",
     "lang",
     "status",

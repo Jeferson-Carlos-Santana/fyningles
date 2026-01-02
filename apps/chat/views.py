@@ -110,9 +110,6 @@ def tts_line(request):
 
     files = []
 
-    # =========================
-    # 1) MODO FEEDBACK (JS)
-    # =========================
     if data.get("text"):
         texto = limpar_html(data.get("text"))
         texto = normalizar_marcadores(texto)
