@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="{% static 'chat/css/login.css' %}">
+</head>
+<body>
+
+<div class="layout">
+
+  <main class="login-main">
+    <div class="login-card">
+
+      <header class="login-header">
+        <h1>Entrar</h1>
+      </header>
+
+      <section class="login-body">
+        <form method="post" class="login-form">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+          <div class="login-error">
+            {{ form.non_field_errors }}
+          </div>
+          {% endif %}
+
+          <div class="login-field">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+          </div>
+
+          <div class="login-field">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+          </div>
+
+          <button type="submit" class="login-button">
+            Entrar
+          </button>
+        </form>
+      </section>
+
+      <footer class="login-footer">
+        <strong>© 2026 - JPM-development</strong>
+      </footer>
+
+    </div>
+  </main>
+
+</div>
+
+</body>
+</html>

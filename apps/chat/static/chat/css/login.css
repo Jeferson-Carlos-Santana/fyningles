@@ -1,0 +1,136 @@
+/* VARIAVEIS GLOBAIS */
+:root {
+    --color-black: #000000;
+    --color-white: #ffffff;
+    --color-danger: #ff0000;
+    --color-danger-light: #ffb3b3;
+    --color-primary: #3b82f6;
+    --color-primary-light: #cee0fd;
+    --color-warning: #b37700;
+    --color-warning-light: #ffd480;
+    --color-secondary: #64748b;
+    --color-secondary-light: #c4cbd4;
+    --color-success: #1f6442; 
+    --color-success-light: #8cd9b3;
+    /* AQUI USAR UMA DAS CORES ACIMA */
+    --color-tittle-footer: #cee0fd;
+    --color-font-tittle-footer: #3b82f6;
+
+    --color-sidebar: #1c2533;
+    --color-li: #243042;
+    --color-li-hover: #2d3b52;   
+}
+body{
+  background: var(--color-secondary-light);
+}
+
+.login-card *,
+.login-card *::before,
+.login-card *::after {
+  box-sizing: border-box;
+}
+
+/* ===== LOGIN LAYOUT ===== */
+.login-main {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== CARD ===== */
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  min-height: 340px;
+  background: var(--color-secondary);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.4);
+  overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.login-header {
+  padding: 24px;
+  text-align: center;
+  background: var(--color-white);
+}
+
+.login-header h1 {
+  margin: 0;
+  color: var(--color-warning);
+  font-size: 1.4rem;
+}
+
+/* ===== BODY ===== */
+.login-body {
+  padding: 24px 24px 72px 24px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: .85rem;
+  color: var(--color-warning-light);
+}
+
+.login-field input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: none;
+  background: var(--color-warning-light);
+  color: var(--color-white);
+  outline: none;
+}
+
+.login-field input:focus {
+  box-shadow: 0 0 0 2px var(--color-warning-light);
+}
+
+/* ===== ERROR ===== */
+.login-error {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: .85rem;
+}
+
+/* ===== BUTTON ===== */
+.login-button {
+  margin-top: 8px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+  filter: brightness(0.9);
+}
+
+/* ===== FOOTER ===== */
+.login-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  text-align: center;
+  font-size: .75rem;
+  background: var(--color-white);
+  color: var(--color-warning);
+}
