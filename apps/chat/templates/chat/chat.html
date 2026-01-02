@@ -392,13 +392,12 @@
           lastMsgEl = prof;
           scrollChatToBottom();
         }      
-        if (prof) {                                     // <<< ADD
-          prof.style.color = ok ? "green" : "red";      // <<< ADD
-          setTimeout(() => {                            // <<< ADD
-            prof.style.color = "";                     // <<< ADD
-          }, 2000);                                    // <<< ADD
-        }
-
+        setTimeout(() => {
+  prof.classList.remove("ok");
+  prof.classList.remove("erro");
+  prof.classList.remove("avanco");
+  prof.style.background = "";
+}, 2000);
 
 
         // ===== decisão de fluxo =====
@@ -464,10 +463,11 @@
         lastMsgEl = avanco;
         scrollChatToBottom();
 
-        avanco.style.color = "red";        // <<< ADD
-          setTimeout(() => {                 // <<< ADD
-            avanco.style.color = "";         // <<< ADD
-          }, 2000);                          // <<< ADD
+        setTimeout(() => {
+  avanco.classList.remove("erro");
+  avanco.classList.remove("avanco");
+  avanco.style.background = "";
+}, 2000);
         
         // fala a mensagem de avanço
         const r = await fetch("/tts/line/", {
