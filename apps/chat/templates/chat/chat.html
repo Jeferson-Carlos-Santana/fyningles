@@ -392,6 +392,14 @@
           lastMsgEl = prof;
           scrollChatToBottom();
         }      
+        if (prof) {                                     // <<< ADD
+          prof.style.color = ok ? "green" : "red";      // <<< ADD
+          setTimeout(() => {                            // <<< ADD
+            prof.style.color = "";                     // <<< ADD
+          }, 2000);                                    // <<< ADD
+        }
+
+
 
         // ===== decisão de fluxo =====
         if (ok) {
@@ -434,11 +442,6 @@
 
         const d = await r.json();
         if (d.files && d.files.length) {
-            if (lastFalandoEl) lastFalandoEl.classList.remove("falando"); // <<< ADD
-  if (prof) {                                                   // <<< ADD
-    prof.classList.add("falando");                              // <<< ADD
-    lastFalandoEl = prof;                                       // <<< ADD
-  }  
           tocando = true;
           await new Promise(r => setTimeout(r, 1100));
           await falarComoAntigo(d.files);
@@ -460,6 +463,11 @@
         lastMsgEl.after(avanco);
         lastMsgEl = avanco;
         scrollChatToBottom();
+
+        avanco.style.color = "red";        // <<< ADD
+          setTimeout(() => {                 // <<< ADD
+            avanco.style.color = "";         // <<< ADD
+          }, 2000);                          // <<< ADD
         
         // fala a mensagem de avanço
         const r = await fetch("/tts/line/", {
@@ -470,9 +478,6 @@
 
         const d = await r.json();
         if (d.files && d.files.length) {
-           if (lastFalandoEl) lastFalandoEl.classList.remove("falando"); // <<< ADD
-  avanco.classList.add("falando");                              // <<< ADD
-  lastFalandoEl = avanco;                                       // <<< ADD
           tocando = true;
           await new Promise(r => setTimeout(r, 1100));
           await tocarUm(d.files[0]);
