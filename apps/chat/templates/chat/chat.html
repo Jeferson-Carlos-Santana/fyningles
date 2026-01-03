@@ -628,16 +628,14 @@
 
         const expected = expectedAtual || "";
         const expectedNorm = normText(expected);        
-        const spoken = expandContractionsEn(texto);
+        const spoken = expandContractionsEn(expectedNorm);
         const ok = texto === spoken || texto === expectedNorm;
 
   console.log({
-  expectedAtual,
+  expected,
   expectedNorm,
-  texto: texto,
-  spoken: normText(expandContractionsEn(textoBruto)),
-  expectedNorm_len: expectedNorm.length,
-  spoken_len: normText(expandContractionsEn(textoBruto)).length
+  spoken,
+  texto
 });
 
 
