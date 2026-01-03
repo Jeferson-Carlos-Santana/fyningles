@@ -227,29 +227,60 @@ function normalizeSpeechInput(text) {
   return t;
 }
 
+function buildExpectedSignature(expected) {
+  const words = expected.split(" ");
 
-function similarEnough(spoken, expected) {
-  if (!spoken || !expected) return false;
+  return {
+    words,
+    hasNegation: words.includes("not"),
+    hasPastBe: words.includes("was") || words.includes("were"),
+    anchors: words.slice(-1) // última palavra (ex: "here")
+  };
+}
 
+function matchesExpectedIntent(spoken, expected) {
+  const S = spoken.split(" ");
+  const sig = buildExpectedSignature(expected);
+
+  // 🔒 negação obrigatória
+  if (sig.hasNegation) {
+    const negEvidence = S.some(w =>
+      ["not", "nt", "one", "won"].includes(w)
+    );
+    if (!negEvidence) return false;
+  }
+
+  // 🔒 verbo "be" no passado
+  if (sig.hasPastBe) {
+    const beEvidence = S.some(w =>
+      ["was", "were", "wer", "weren"].includes(w)
+    );
+    if (!beEvidence) return false;
+  }
+
+  // 🔒 âncoras finais (ex: "here")
+  for (const a of sig.anchors) {
+    if (!S.includes(a)) return false;
+  }
+
+  return true;
+}
+
+function isAnswerAcceptable(spoken, expected) {
   const S = spoken.split(" ");
   const E = expected.split(" ");
 
-  // ❌ frase curta demais (ex: "I like" vs "I like cars")
+  // frase muito curta → rejeita
   if (S.length < E.length - 1) return false;
 
+  // cobertura geral
   let hits = 0;
   for (const w of E) {
     if (S.includes(w)) hits++;
   }
 
   const coverage = hits / E.length;
-
-  // precisa cobrir pelo menos 85% do esperado
-  if (coverage < 0.95) return false;
-
-  // tolerância de tamanho (evita frases cortadas)
-  const ratio = S.length / E.length;
-  if (ratio < 0.95) return false;
+  if (coverage < 0.9) return false;
 
   return true;
 }
@@ -657,21 +688,22 @@ function similarEnough(spoken, expected) {
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
+        //troca um pelo outro
         //const texto = e.results[0][0].transcript;
         //const comando = texto.toLowerCase().trim();
         //if (!esperandoResposta) return;
         const textoBruto = e.results[0][0].transcript;
           if (!esperandoResposta) return;
 
-          // pipeline profissional (igual ao que eu uso)
-          const textoCorrigido = aplicarCorrecoesBasicas(textoBruto);
-          const textoNormalizado = normalizeSpeechInput(textoCorrigido);
+          // 1️⃣ correções básicas (microfone)
+          const corrigido = aplicarCorrecoesBasicas(textoBruto);
 
-          // comandos de controle (skip / next)
-          const comando = textoNormalizado;
+          // 2️⃣ normalização
+          const spoken = normalizeSpeechInput(corrigido);
+          const expectedNorm = normalizeSpeechInput(expectedAtual);
 
 
-        if (["next", "skip"].includes(comando)) {
+        if (["next", "skip"].includes(spoken)) {
           // corta mic imediatamente
           encerrarMicrofone();
 
@@ -694,7 +726,7 @@ function similarEnough(spoken, expected) {
             index++;
             lastMsgEl = null;
             mostrarSistema();
-          }, 100);
+          }, 200);
 
           return;
         }
@@ -706,8 +738,10 @@ function similarEnough(spoken, expected) {
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
         user.className = "chat-message user";
+
+        //troca um pelo outro
         user.textContent = textoBruto;
-        //user.textContent = comando;
+        //user.textContent = texto;
         
 
         (lastMsgEl || msgs[index]).after(user);
@@ -718,11 +752,12 @@ function similarEnough(spoken, expected) {
         normText(expected),
         normText(expandContractionsEn(expected))
         ]);
+
+        //troca um pelo outro
         // const ok = expectedNorms.has(normText(texto));
-        const ok = similarEnough(
-          textoNormalizado,
-          normalizeSpeechInput(expectedAtual)
-        );
+        const ok =
+          matchesExpectedIntent(spoken, expectedNorm) &&
+          isAnswerAcceptable(spoken, expectedNorm);
 
 
         // bloqueia mic enquanto avalia
@@ -781,7 +816,7 @@ function similarEnough(spoken, expected) {
             index++;
             lastMsgEl = null;
             mostrarSistema();
-          }, 100);
+          }, 200);
           return;
         }
 
@@ -804,6 +839,9 @@ function similarEnough(spoken, expected) {
           await new Promise(r => setTimeout(r, 1100));
           await falarComoAntigo(d.files);
           tocando = false;
+
+          tocarBeep();
+
           if (autoMicAtivo) {
             setTimeout(() => {
                 abrirMicrofoneComTempo();
