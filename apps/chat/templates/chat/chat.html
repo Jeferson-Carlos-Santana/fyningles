@@ -630,7 +630,9 @@
         normText(expected),
         normText(expandContractionsEn(expected))
         ]);
-        const ok = expectedNorms.has(normText(texto));
+        const ok = expectedNorms.has(
+          normText(expandContractionsEn(texto))
+        );
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
