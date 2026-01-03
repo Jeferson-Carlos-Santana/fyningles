@@ -7,6 +7,14 @@ from django.db import models
 from django import forms
 from .admin_forms import ChatAdminForm
 
+@admin.action(description="Marcar status = ATIVO")
+def marcar_status_ativo(modeladmin, request, queryset):
+    queryset.update(status=True)
+
+@admin.action(description="Marcar status = INATIVO")
+def marcar_status_inativo(modeladmin, request, queryset):
+    queryset.update(status=False)
+
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
   form = ChatAdminForm
@@ -60,6 +68,10 @@ class ChatAdmin(admin.ModelAdmin):
     },
   }
   
+  actions = [
+        marcar_status_ativo,
+        marcar_status_inativo,
+    ]
   # FUNCAO INFORMAL
   def gerar_informal(self, frase: str) -> str:
     reducoes = {
