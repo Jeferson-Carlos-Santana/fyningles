@@ -162,6 +162,53 @@
 
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
+    
+      const CORRECOES_VOZ = {
+        "daive": "they have",
+        "dave": "they have",
+        "ive": "i have",
+        "youre": "you are",
+        "cant": "cannot",
+        "david": "they've",
+        "everyday": "every day",
+        "ivy": "I've",
+        "hue": "He'll",
+        "cole": "call",
+        "gunn": "gone",
+        "gunt": "gone",
+        "dare": "they're",
+        "81": "It won't",
+        "workout": "work out",
+        "seedan": "see then",
+        "realized": "realised",
+        "sherwood": "she would",
+        "abeat": "a bit",
+        "ishi": "is she",
+        "taiwah": "they were",
+        "Whitney": "were they",
+        "alito": "a little",
+        "shilco": "She'll call",
+        "tay": "they",
+        "iopant": "i opened",
+        "ican": "i can",
+        "sthey": "stay",
+        "dtu": "Did you",
+        "itches": "it's",
+        "payen": "paying",
+        "ital": "It'll",
+        "leche": "Let's",
+        "letis": "Let's"
+      };
+
+    function aplicarCorrecoesVoz(texto) {
+      let t = texto;
+      for (const errado in CORRECOES_VOZ) {
+        const certo = CORRECOES_VOZ[errado];
+        const re = new RegExp(`\\b${errado}\\b`, "gi");
+        t = t.replace(re, certo);
+      }
+      return t;
+    }
 
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
@@ -420,13 +467,6 @@
          return t;
     }
 
-    function normText(s) {
-      let t = (s || "").toLowerCase();
-      t = t.replace(/[.,:!?]/g, " ");   // tira pontuação básica
-      t = t.replace(/\s+/g, " ").trim(); // colapsa espaços + trim
-      return t;
-    }
-
     function normEn(s) {
       let t = (s || "").toLowerCase();
       // normaliza aspas
@@ -515,7 +555,7 @@
 
           if (d.files && d.files.length) { 
             tocando = true;
-            await new Promise(r => setTimeout(r, 1100));
+            await new Promise(r => setTimeout(r, 1500));
             await falarComoAntigo(d.files);
             tocando = false;
             tocarBeep();
@@ -574,7 +614,8 @@
       recognition.onresult = async function (e) {
         const textoBruto = e.results[0][0].transcript;        
         if (!esperandoResposta) return;
-        const texto = normEn(textoBruto);
+        const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+        const texto = normEn(textoBruto);        
 
         if (["next", "skip"].includes(texto)) {
           // corta mic imediatamente
@@ -599,7 +640,7 @@
             index++;
             lastMsgEl = null;
             mostrarSistema();
-          }, 100);
+          }, 150);
 
           return;
         }
@@ -616,7 +657,7 @@
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
 
-        const recebido = normEn(texto);
+        const recebido = normEn(textoCorrigido);
         const esperado = normEn(expectedAtual);
 
         const ok = recebido === esperado;
@@ -656,7 +697,7 @@
         // ===== decisão de fluxo =====
         if (ok) {
           if (prof) prof.classList.add("correto");
-          if (prof) setTimeout(() => prof.classList.remove("correto"), 5000);
+          if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
           const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -677,14 +718,14 @@
             index++;
             lastMsgEl = null;
             mostrarSistema();
-          }, 100);
+          }, 150);
           return;
         }
 
         // errou
         tentativas++;
         if (prof) prof.classList.add("errado");
-        if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
+        if (prof) setTimeout(() => prof.classList.remove("errado"), 7000);
 
       if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
       // ===== fala AVALIAÇÃO (bloqueante) =====
@@ -726,7 +767,7 @@
         lastMsgEl = avanco;
         scrollChatToBottom();
 
-        setTimeout(() => avanco.classList.remove("errado"), 7000);
+        setTimeout(() => avanco.classList.remove("errado"), 8000);
         
         // fala a mensagem de avanço
         const r = await fetch("/tts/line/", {
