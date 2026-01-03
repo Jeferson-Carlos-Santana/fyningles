@@ -630,10 +630,11 @@
         const expectedNorm = normText(expected);        
         const spoken = expandContractionsEn(texto);
         const ok = spoken === expectedNorm || texto === expected;
-        
-        console.log({
+
+  console.log({
   expectedAtual,
   expectedNorm,
+  texto: texto,
   spoken: normText(expandContractionsEn(textoBruto)),
   expectedNorm_len: expectedNorm.length,
   spoken_len: normText(expandContractionsEn(textoBruto)).length
