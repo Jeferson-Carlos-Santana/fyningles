@@ -629,18 +629,18 @@
         lastMsgEl = user;
 
         const expected = expectedAtual || "";
-const expectedNorm = normText(expected);
-const expectedAbrev = normText(expandContractionsEn(expected));
+        const expectedNorm = normText(expected);
+        const expectedAbrev = normText(expandContractionsEn(expected));
 
-const ok =
-  texto === expectedNorm ||
-  texto === expectedAbrev;
+        const ok =
+          texto === expectedNorm ||
+          texto === expectedAbrev;
 
   console.log({
   expected,
   expectedNorm,
   texto,
-  spoken
+  expectedAbrev
 });
 
 
