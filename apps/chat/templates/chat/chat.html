@@ -628,7 +628,7 @@
 
         const expected = expectedAtual || "";
         const expectedNorm = normText(expected);
-        const ok = expandContractionsEn(texto) === expectedNorm;
+        const ok = expandContractionsEn(texto) === expectedNorm || expandContractionsEn(texto) === expected;
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
