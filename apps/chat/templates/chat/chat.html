@@ -163,7 +163,6 @@
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
 
-
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
 
@@ -246,34 +245,10 @@
               mostrarSistema();
             }, 150);
           }
-          // 🔹 se autoSkipAtivo === false
-          // simplesmente fecha o mic e espera o usuário
         }
       }, tempoMic);
 
     }
-    // function abrirMicrofoneComTempo() {
-    //   if (btnMic.disabled) return;
-
-    //   // visual de gravando
-    //   btnMic.textContent = "🎙️";
-    //   btnMic.classList.add("mic-gravando");
-
-    //   recognition.start();
-
-    //   // calcula tempo com base na frase esperada atual
-    //   const tempoMic = calcularTempoMic(expectedAtual);
-    //   if (micTimeout) clearTimeout(micTimeout);
-
-    //   setTimeout(() => {
-    //     // se ainda estiver esperando resposta, fecha o mic
-    //     if (esperandoResposta) {
-    //       recognition.stop();
-    //       btnMic.textContent = "🎤";
-    //       btnMic.classList.remove("mic-gravando");
-    //     }
-    //   }, tempoMic);
-    // }
 
     function encerrarMicrofone() {
       if (micTimeout) {
@@ -452,23 +427,18 @@
       return t;
     }
 
-function normEn(s) {
-  let t = (s || "").toLowerCase();
-
-  // normaliza aspas
-  t = t.replace(/[’]/g, "'").replace(/[“”]/g, '"');
-
-  // 🔥 EXPANDE ANTES DE TUDO
-  t = expandContractionsEn(t);
-
-  // remove pontuação
-  t = t.replace(/[^\w\s]/g, " ");
-
-  // normaliza espaços
-  t = t.replace(/\s+/g, " ").trim();
-
-  return t;
-}
+    function normEn(s) {
+      let t = (s || "").toLowerCase();
+      // normaliza aspas
+      t = t.replace(/[’]/g, "'").replace(/[“”]/g, '"');
+      // EXPANDE ANTES DE TUDO
+      t = expandContractionsEn(t);
+      // remove pontuação
+      t = t.replace(/[^\w\s]/g, " ");
+      // normaliza espaços
+      t = t.replace(/\s+/g, " ").trim();
+      return t;
+    }
 
 
     const FEEDBACK_OK = [
@@ -604,7 +574,7 @@ function normEn(s) {
       recognition.onresult = async function (e) {
         const textoBruto = e.results[0][0].transcript;        
         if (!esperandoResposta) return;
-        const texto = normText(textoBruto);
+        const texto = normEn(textoBruto);
 
         if (["next", "skip"].includes(texto)) {
           // corta mic imediatamente
@@ -633,7 +603,6 @@ function normEn(s) {
 
           return;
         }
-
 
         encerrarMicrofone();
 
@@ -731,6 +700,14 @@ function normEn(s) {
           await new Promise(r => setTimeout(r, 1100));
           await falarComoAntigo(d.files);
           tocando = false;
+
+          tocarBeep();
+
+          if (autoMicAtivo) {
+            setTimeout(() => {
+                abrirMicrofoneComTempo();
+              }, 150);
+            }  
         }
         esperandoResposta = true;
         liberarEntrada();
