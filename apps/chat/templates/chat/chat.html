@@ -237,12 +237,23 @@ function similarEnough(a, b) {
   // tolerância de tamanho
   if (Math.abs(A.length - B.length) > 1) return false;
 
+  // ❌ frase curta demais (ex: "I like" vs "I like cars")
+  if (S.length < E.length - 1) return false;
+
   let hits = 0;
   for (const w of A) {
     if (B.includes(w)) hits++;
   }
 
-  return hits / A.length >= 0.8; // 80% de equivalência
+  const coverage = hits / E.length;
+
+  // precisa cobrir pelo menos 85% do esperado
+  if (coverage < 0.85) return false;
+
+    const ratio = S.length / E.length;
+  if (ratio < 0.85) return false;
+
+  return hits / A.length >= 0.85; // 80% de equivalência
 }
 
 
