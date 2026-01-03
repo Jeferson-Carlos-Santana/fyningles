@@ -245,11 +245,11 @@ function similarEnough(spoken, expected) {
   const coverage = hits / E.length;
 
   // precisa cobrir pelo menos 85% do esperado
-  if (coverage < 0.85) return false;
+  if (coverage < 0.95) return false;
 
   // tolerância de tamanho (evita frases cortadas)
   const ratio = S.length / E.length;
-  if (ratio < 0.85) return false;
+  if (ratio < 0.95) return false;
 
   return true;
 }
