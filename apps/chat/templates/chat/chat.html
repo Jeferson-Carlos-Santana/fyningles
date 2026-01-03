@@ -452,6 +452,25 @@
       return t;
     }
 
+function normEn(s) {
+  let t = (s || "").toLowerCase();
+
+  // normaliza aspas
+  t = t.replace(/[’]/g, "'").replace(/[“”]/g, '"');
+
+  // 🔥 EXPANDE ANTES DE TUDO
+  t = expandContractionsEn(t);
+
+  // remove pontuação
+  t = t.replace(/[^\w\s]/g, " ");
+
+  // normaliza espaços
+  t = t.replace(/\s+/g, " ").trim();
+
+  return t;
+}
+
+
     const FEEDBACK_OK = [
       "você foi muito bem.",
       "ótima expressão.",
@@ -628,20 +647,18 @@
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
 
-        const expected = expectedAtual || "";
-        const expectedNorm = normText(expected);
-        const expectedAbrev = normText(expandContractionsEn(expected));
+const recebido = normEn(textoBruto);
+const esperado = normEn(expectedAtual);
 
-        const ok =
-          texto === expectedNorm ||
-          texto === expectedAbrev;
+const ok = recebido === esperado;
 
-  console.log({
-  expected,
-  expectedNorm,
-  texto,
-  expectedAbrev
+console.log({
+  recebido,
+  esperado,
+  textoBruto,
+  expectedAtual
 });
+
 
 
         // bloqueia mic enquanto avalia
