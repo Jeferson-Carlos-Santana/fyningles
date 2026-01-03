@@ -228,21 +228,18 @@ function normalizeSpeechInput(text) {
 }
 
 
-function similarEnough(a, b) {
-  if (!a || !b) return false;
+function similarEnough(spoken, expected) {
+  if (!spoken || !expected) return false;
 
-  const A = a.split(" ");
-  const B = b.split(" ");
-
-  // tolerância de tamanho
-  if (Math.abs(A.length - B.length) > 1) return false;
+  const S = spoken.split(" ");
+  const E = expected.split(" ");
 
   // ❌ frase curta demais (ex: "I like" vs "I like cars")
   if (S.length < E.length - 1) return false;
 
   let hits = 0;
-  for (const w of A) {
-    if (B.includes(w)) hits++;
+  for (const w of E) {
+    if (S.includes(w)) hits++;
   }
 
   const coverage = hits / E.length;
@@ -250,10 +247,11 @@ function similarEnough(a, b) {
   // precisa cobrir pelo menos 85% do esperado
   if (coverage < 0.85) return false;
 
-    const ratio = S.length / E.length;
+  // tolerância de tamanho (evita frases cortadas)
+  const ratio = S.length / E.length;
   if (ratio < 0.85) return false;
 
-  return hits / A.length >= 0.85; // 80% de equivalência
+  return true;
 }
 
 
