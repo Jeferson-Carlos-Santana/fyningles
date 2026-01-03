@@ -227,65 +227,6 @@ function normalizeSpeechInput(text) {
   return t;
 }
 
-function buildExpectedSignature(expected) {
-  const words = expected.split(" ");
-
-  return {
-    words,
-    hasNegation: words.includes("not"),
-    hasPastBe: words.includes("was") || words.includes("were"),
-    anchors: words.slice(-1) // última palavra (ex: "here")
-  };
-}
-
-function matchesExpectedIntent(spoken, expected) {
-  const S = spoken.split(" ");
-  const sig = buildExpectedSignature(expected);
-
-  // 🔒 negação obrigatória
-  if (sig.hasNegation) {
-    const negEvidence = S.some(w =>
-      ["not", "nt", "one", "won"].includes(w)
-    );
-    if (!negEvidence) return false;
-  }
-
-  // 🔒 verbo "be" no passado
-  if (sig.hasPastBe) {
-    const beEvidence = S.some(w =>
-      ["was", "were", "wer", "weren"].includes(w)
-    );
-    if (!beEvidence) return false;
-  }
-
-  // 🔒 âncoras finais (ex: "here")
-  for (const a of sig.anchors) {
-    if (!S.includes(a)) return false;
-  }
-
-  return true;
-}
-
-function isAnswerAcceptable(spoken, expected) {
-  const S = spoken.split(" ");
-  const E = expected.split(" ");
-
-  // frase muito curta → rejeita
-  if (S.length < E.length - 1) return false;
-
-  // cobertura geral
-  let hits = 0;
-  for (const w of E) {
-    if (S.includes(w)) hits++;
-  }
-
-  const coverage = hits / E.length;
-  if (coverage < 0.9) return false;
-
-  return true;
-}
-
-
 
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
@@ -689,25 +630,21 @@ function isAnswerAcceptable(spoken, expected) {
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
         //troca um pelo outro
-        //const texto = e.results[0][0].transcript;
-        //const comando = texto.toLowerCase().trim();
+        //const texto = e.results[0][0].transcript;        
         //if (!esperandoResposta) return;
+        //const comando = texto.toLowerCase().trim();
         const textoBruto = e.results[0][0].transcript;
           if (!esperandoResposta) return;
-
-          // 1️⃣ correções básicas (microfone)
+          // correções básicas (microfone)
           const corrigido = aplicarCorrecoesBasicas(textoBruto);
-
-          // 2️⃣ normalização
+          // normalização (higiene de texto)
           const spoken = normalizeSpeechInput(corrigido);
-          const expectedNorm = normalizeSpeechInput(expectedAtual);
-
+          const expectedNorm = normalizeSpeechInput(expectedAtual);        
 
         if (["next", "skip"].includes(spoken)) {
-          // corta mic imediatamente
+          
           encerrarMicrofone();
-
-          // bloqueia entradas
+          
           bloquearEntrada();
 
           // mensagem visual opcional (recomendado)
@@ -755,9 +692,7 @@ function isAnswerAcceptable(spoken, expected) {
 
         //troca um pelo outro
         // const ok = expectedNorms.has(normText(texto));
-        const ok =
-          matchesExpectedIntent(spoken, expectedNorm) &&
-          isAnswerAcceptable(spoken, expectedNorm);
+        const ok = spoken === expectedNorm;
 
 
         // bloqueia mic enquanto avalia
