@@ -228,6 +228,7 @@ function normalizeSpeechInput(text) {
 }
 
 
+
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
 
@@ -428,66 +429,61 @@ function normalizeSpeechInput(text) {
 
       return filaVoz;
     }
-
+    
+    // PRECISA ANDAR ALINHADDA COM A LISTA QUE ESTA NO ADMIN.PY
     function expandContractionsEn(t) {
-      return (t || "")
-        // n’t forms (maior prioridade)
-        .replace(/\bwon[’']?t\b/gi, "will not")
-        .replace(/\bcan[’']?t\b/gi, "cannot")
-        .replace(/\bdon[’']?t\b/gi, "do not")
-        .replace(/\bdoesn[’']?t\b/gi, "does not")
-        .replace(/\bdidn[’']?t\b/gi, "did not")
-        .replace(/\baren[’']?t\b/gi, "are not")
-        .replace(/\bisn[’']?t\b/gi, "is not")
-        .replace(/\bwasn[’']?t\b/gi, "was not")
-        .replace(/\bweren[’']?t\b/gi, "were not")
-        .replace(/\bshouldn[’']?t\b/gi, "should not")
-        .replace(/\bwouldn[’']?t\b/gi, "would not")
-        .replace(/\bcouldn[’']?t\b/gi, "could not")
-
-        // formas com ’ll
-        .replace(/\by(?:ou)?[’']?ll\b/gi, "you will")
-        .replace(/\bwe[’']?ll\b/gi, "we will")
-        .replace(/\bthey[’']?ll\b/gi, "they will")
-        .replace(/\bit[’']?ll\b/gi, "it will")
-        .replace(/\bhe[’']?ll\b/gi, "he will")
-        .replace(/\bshe[’']?ll\b/gi, "she will")
-        .replace(/\bi[’']?ll\b/gi, "i will")
-
-        // formas com ’re
-        .replace(/\by(?:ou)?[’']?re\b/gi, "you are")
-        .replace(/\bwe[’']?re\b/gi, "we are")
-        .replace(/\bthey[’']?re\b/gi, "they are")
-
-        // formas com ’ve
-        .replace(/\by(?:ou)?[’']?ve\b/gi, "you have")
-        .replace(/\bwe[’']?ve\b/gi, "we have")
-        .replace(/\bthey[’']?ve\b/gi, "they have")
-        .replace(/\bi[’']?ve\b/gi, "i have")
-
-        // formas com ’d (forçado para would)
-        .replace(/\bi[’']?d\b/gi, "i would")
-        .replace(/\bthey[’']?d\b/gi, "they would")
-
-        // formas com ’s (significados fixos)
-        .replace(/\bit[’']?s\b/gi, "it is")
-        .replace(/\bthat[’']?s\b/gi, "that is")
-        .replace(/\bwho[’']?s\b/gi, "who is")
-        .replace(/\bhe[’']?s\b/gi, "he is")
-        .replace(/\bshe[’']?s\b/gi, "she is")
-
-        // casos especiais
-        .replace(/\bgonna\b/gi, "going to")
-        .replace(/\blet[’']?s\b/gi, "let us")
-        .replace(/\beveryone[’']?s\b/gi, "everyone has")
-        .replace(/\bfood[’']?s\b/gi, "food has")
-        .replace(/\bphone[’']?s\b/gi, "phone has")
-
-        // casos de "i'm"
-        .replace(/\bi[’']?m\b/gi, "i am")
-
-        // caso isolado
-        .replace(/\bi wasn[’']?t\b/gi, "i was not");
+      return (t || "")   
+      .replace(/\bi[’']?m\b/gi, "i am")
+      .replace(/\byou[’']?re\b/gi, "you are")
+      .replace(/\bwe[’']?re\b/gi, "we are")
+      .replace(/\bthey[’']?re\b/gi, "they are")
+      .replace(/\bi[’']?ve\b/gi, "i have")
+      .replace(/\byou[’']?ve\b/gi, "you have")
+      .replace(/\bwe[’']?ve\b/gi, "we have")
+      .replace(/\bthey[’']?ve\b/gi, "they have")
+      .replace(/\bi[’']?ll\b/gi, "i will")
+      .replace(/\byou[’']?ll\b/gi, "you will")
+      .replace(/\bwe[’']?ll\b/gi, "we will")
+      .replace(/\bthey[’']?ll\b/gi, "they will")
+      .replace(/\bdon[’']?t\b/gi, "do not")
+      .replace(/\bdoesn[’']?t\b/gi, "does not")
+      .replace(/\bdidn[’']?t\b/gi, "did not")
+      .replace(/\bcannot\b/gi, "can not")
+      .replace(/\bwon[’']?t\b/gi, "will not")
+      .replace(/\bisn[’']?t\b/gi, "is not")
+      .replace(/\baren[’']?t\b/gi, "are not")
+      .replace(/\bweren[’']?t\b/gi, "were not")
+      .replace(/\bhe[’']?s\b/gi, "he is")
+      .replace(/\bshe[’']?s\b/gi, "she is")
+      .replace(/\bit[’']?s\b/gi, "it is")
+      .replace(/\bthat[’']?s\b/gi, "that is")
+      .replace(/\bthere[’']?s\b/gi, "there is")
+      .replace(/\bthere[’']?re\b/gi, "there are")
+      .replace(/\bwho[’']?s\b/gi, "who is")
+      .replace(/\bwhat[’']?s\b/gi, "what is")
+      .replace(/\bwhere[’']?s\b/gi, "where is")
+      .replace(/\bwhen[’']?s\b/gi, "when is")
+      .replace(/\bhow[’']?s\b/gi, "how is")
+      .replace(/\bi[’']?d\b/gi, "i had")
+      .replace(/\byou[’']?d\b/gi, "you had")
+      .replace(/\bhe[’']?d\b/gi, "he had")
+      .replace(/\bshe[’']?d\b/gi, "she had")
+      .replace(/\bwe[’']?d\b/gi, "we had")
+      .replace(/\bthey[’']?d\b/gi, "they had")
+      .replace(/\bcouldn[’']?t\b/gi, "could not")
+      .replace(/\bshouldn[’']?t\b/gi, "should not")
+      .replace(/\bwouldn[’']?t\b/gi, "would not")
+      .replace(/\bmustn[’']?t\b/gi, "must not")
+      .replace(/\bmayn[’']?t\b/gi, "may not")
+      .replace(/\bmightn[’']?t\b/gi, "might not")
+      .replace(/\bhasn[’']?t\b/gi, "has not")
+      .replace(/\bhaven[’']?t\b/gi, "have not")
+      .replace(/\bhadn[’']?t\b/gi, "had not")
+      .replace(/\bhe[’']?ll\b/gi, "he will")
+      .replace(/\bshe[’']?ll\b/gi, "she will")
+      .replace(/\bit[’']?ll\b/gi, "it will")
+      .replace(/\bgonna\b/gi, "going to")
+      .replace(/\blet[’']?s\b/gi, "let us")
     }
 
     function normText(s) {
@@ -693,7 +689,6 @@ function normalizeSpeechInput(text) {
         //troca um pelo outro
         // const ok = expectedNorms.has(normText(texto));
         const ok = spoken === expectedNorm;
-
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 

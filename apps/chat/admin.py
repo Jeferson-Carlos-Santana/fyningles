@@ -1,3 +1,4 @@
+
 from django.contrib import admin
 from .models import Chat
 import random, re
@@ -79,10 +80,11 @@ class ChatAdmin(admin.ModelAdmin):
     for padrao, reduzida in reducoes.items():
         frase = re.sub(padrao, reduzida, frase, flags=re.IGNORECASE)
     return frase
-  # FUNCAO ABREVIADO E FULL
+ 
+  # // PRECISA ANDAR ALINHADDA COM A LISTA QUE ESTA NO JS DO CHAT
   def contract_en(self, t: str) -> str:
     reps = [
-      (r"\bi am\b", "I'm"),
+      (r"\bi am\b", "i'm"),
       (r"\byou are\b", "you're"),
       (r"\bwe are\b", "we're"),
       (r"\bthey are\b", "they're"),
@@ -97,11 +99,42 @@ class ChatAdmin(admin.ModelAdmin):
       (r"\bdo not\b", "don't"),
       (r"\bdoes not\b", "doesn't"),
       (r"\bdid not\b", "didn't"),
-      (r"\bgoing to\b", "gonna"),
       (r"\bcan not\b", "cannot"),
       (r"\bwill not\b", "won't"),
       (r"\bis not\b", "isn't"),
       (r"\bare not\b", "aren't"),
+      (r"\bwere not\b", "weren't"),
+      (r"\bhe is\b", "he's"),
+      (r"\bshe is\b", "she's"),
+      (r"\bit is\b", "it's"),
+      (r"\bthat is\b", "that's"),
+      (r"\bthere is\b", "there's"),
+      (r"\bthere are\b", "there're"),
+      (r"\bwho is\b", "who's"),
+      (r"\bwhat is\b", "what's"),
+      (r"\bwhere is\b", "where's"),
+      (r"\bwhen is\b", "when's"),
+      (r"\bhow is\b", "how's"),      
+      (r"\bi had\b", "i'd"),
+      (r"\byou had\b", "you'd"),
+      (r"\bhe had\b", "he'd"),
+      (r"\bshe had\b", "she'd"),
+      (r"\bwe had\b", "we'd"),
+      (r"\bthey had\b", "they'd"),
+      (r"\bcould not\b", "couldn't"),
+      (r"\bshould not\b", "shouldn't"),
+      (r"\bwould not\b", "wouldn't"),
+      (r"\bmust not\b", "mustn't"),
+      (r"\bmay not\b", "mayn't"),
+      (r"\bmight not\b", "mightn't"),
+      (r"\bhas not\b", "hasn't"),
+      (r"\bhave not\b", "haven't"),
+      (r"\bhad not\b", "hadn't"),
+      (r"\bhe will\b", "he'll"),
+      (r"\bshe will\b", "she'll"),
+      (r"\bit will\b", "it'll"),
+      (r"\bgoing to\b", "gonna"),
+      (r"\blet us\b", "let's"),
     ]
 
     for regex, repl in reps:
