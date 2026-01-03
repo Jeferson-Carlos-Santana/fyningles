@@ -624,19 +624,13 @@ function normalizeSpeechInput(text) {
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
-        //troca um pelo outro
-        //const texto = e.results[0][0].transcript;        
-        //if (!esperandoResposta) return;
-        //const comando = texto.toLowerCase().trim();
-        const textoBruto = e.results[0][0].transcript;
-          if (!esperandoResposta) return;
-          // correções básicas (microfone)
-          const corrigido = aplicarCorrecoesBasicas(textoBruto);
-          // normalização (higiene de texto)
-          const spoken = normalizeSpeechInput(corrigido);
-          const expectedNorm = normalizeSpeechInput(expectedAtual);        
+      
+        const texto = e.results[0][0].transcript;        
+        if (!esperandoResposta) return;
+        const comando = texto.toLowerCase().trim();
+   
 
-        if (["next", "skip"].includes(spoken)) {
+        if (["next", "skip"].includes(comando)) {
           
           encerrarMicrofone();
           
@@ -672,22 +666,18 @@ function normalizeSpeechInput(text) {
         user.className = "chat-message user";
 
         //troca um pelo outro
-        user.textContent = textoBruto;
-        //user.textContent = texto;
+        user.textContent = texto;
         
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
 
         const expectedNorms = new Set([
-          normalizeSpeechInput(expected)
-        ]);
-
-        const ok = expectedNorms.has(spoken);
-
-        //troca um pelo outro
-        // const ok = expectedNorms.has(normText(texto));
-        //const ok = spoken === expectedNorm;
+        normalizeSpeechInput(expected),
+        normalizeSpeechInput(expandContractionsEn(expected))
+      ]);
+   
+        const ok = expectedNorms.has(normText(texto));
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
