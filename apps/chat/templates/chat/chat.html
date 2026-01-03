@@ -393,7 +393,7 @@
         .replace(/\bi[’']?m\b/gi, "i am")
         .replace(/\byou[’']?re\b/gi, "you are")
         .replace(/\bweren[’']?t\b/gi, "were not")
-        .replace(/\bwe[’']?re\b/gi, "we are")
+        //.replace(/\bwe[’']?re\b/gi, "we are")
         .replace(/\bthey[’']?re\b/gi, "they are")
         .replace(/\bi[’']?ve\b/gi, "i have")
         .replace(/\byou[’']?ve\b/gi, "you have")
@@ -629,7 +629,7 @@
         const expected = expectedAtual || "";
         const expectedNorm = normText(expected);        
         const spoken = expandContractionsEn(texto);
-        const ok = spoken === expectedNorm || texto === expectedNorm;
+        const ok = texto === spoken || texto === expectedNorm;
 
   console.log({
   expectedAtual,
