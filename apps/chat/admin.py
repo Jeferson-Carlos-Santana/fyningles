@@ -81,7 +81,7 @@ class ChatAdmin(admin.ModelAdmin):
         frase = re.sub(padrao, reduzida, frase, flags=re.IGNORECASE)
     return frase
  
-  # // PRECISA ANDAR ALINHADDA COM A LISTA QUE ESTA NO JS DO CHAT
+  # // PRECISA ANDAR ALINHADDA COM A LISTA QUE ESTA NO ADMIN.PY
   def contract_en(self, t: str) -> str:
     reps = [
       (r"\bi am\b", "i'm"),
