@@ -163,6 +163,89 @@
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
 
+const CORRECOES_VOZ = {
+  "daive": "they have",
+  "dave": "they have",
+  "ive": "i have",
+  "youre": "you are",
+  "cant": "cannot",
+  "david": "they've",
+  "everyday": "every day",
+  "ivy": "I've",
+  "hue": "He'll",
+  "cole": "call",
+  "gunn": "gone",
+  "gunt": "gone",
+  "dare": "they're",
+  "81": "It won't",
+  "workout": "work out",
+  "seedan": "see then",
+  "realized": "realised",
+  "sherwood": "she would",
+  "abeat": "a bit",
+  "ishi": "is she",
+  "taiwah": "they were",
+  "Whitney": "were they",
+  "alito": "a little",
+  "shilco": "She'll call",
+  "tay": "they",
+  "iopant": "i opened",
+  "ican": "i can",
+  "sthey": "stay",
+  "dtu": "Did you",
+  "itches": "it's",
+  "payen": "paying",
+  "ital": "It'll",
+  "leche": "Let's",
+  "letis": "Let's"
+};
+
+function aplicarCorrecoesBasicas(text) {
+  let t = (text || "").toLowerCase();
+  for (const errado in CORRECOES_VOZ) {
+    const re = new RegExp(`\\b${errado}\\b`, "gi");
+    t = t.replace(re, CORRECOES_VOZ[errado]);
+  }
+  return t;
+}
+
+function normalizeSpeechInput(text) {
+  let t = (text || "").toLowerCase();
+
+  // normaliza aspas
+  t = t.replace(/[’‘]/g, "'");
+
+  // remove pontuação (mantém apóstrofo)
+  t = t.replace(/[^\w\s']/g, " ");
+
+  // colapsa espaços
+  t = t.replace(/\s+/g, " ").trim();
+
+  // expande contrações (sua função completa)
+  t = expandContractionsEn(t);
+
+  return t;
+}
+
+
+function similarEnough(a, b) {
+  if (!a || !b) return false;
+
+  const A = a.split(" ");
+  const B = b.split(" ");
+
+  // tolerância de tamanho
+  if (Math.abs(A.length - B.length) > 1) return false;
+
+  let hits = 0;
+  for (const w of A) {
+    if (B.includes(w)) hits++;
+  }
+
+  return hits / A.length >= 0.8; // 80% de equivalência
+}
+
+
 
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
@@ -252,28 +335,6 @@
       }, tempoMic);
 
     }
-    // function abrirMicrofoneComTempo() {
-    //   if (btnMic.disabled) return;
-
-    //   // visual de gravando
-    //   btnMic.textContent = "🎙️";
-    //   btnMic.classList.add("mic-gravando");
-
-    //   recognition.start();
-
-    //   // calcula tempo com base na frase esperada atual
-    //   const tempoMic = calcularTempoMic(expectedAtual);
-    //   if (micTimeout) clearTimeout(micTimeout);
-
-    //   setTimeout(() => {
-    //     // se ainda estiver esperando resposta, fecha o mic
-    //     if (esperandoResposta) {
-    //       recognition.stop();
-    //       btnMic.textContent = "🎤";
-    //       btnMic.classList.remove("mic-gravando");
-    //     }
-    //   }, tempoMic);
-    // }
 
     function encerrarMicrofone() {
       if (micTimeout) {
@@ -344,7 +405,6 @@
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-
     // TOCA UM ÚNICO AUDIO E ESPERA
     function tocarUm(file, tries = 300, delay = 300) {
       return new Promise(resolve => {
@@ -390,15 +450,63 @@
 
     function expandContractionsEn(t) {
       return (t || "")
-        .replace(/\bi['’]?m\b/gi, "i am")
-        .replace(/\byou['’]?re\b/gi, "you are")
-        .replace(/\bhe['’]?s\b/gi, "he is")
-        .replace(/\bshe['’]?s\b/gi, "she is")
-        .replace(/\bit['’]?s\b/gi, "it is")
-        .replace(/\bwe['’]?re\b/gi, "we are")
-        .replace(/\bthey['’]?re\b/gi, "they are")
-        .replace(/\bcan['’]?t\b/gi, "cannot")
-        .replace(/\bdon['’]?t\b/gi, "do not");
+        // n’t forms (maior prioridade)
+        .replace(/\bwon[’']?t\b/gi, "will not")
+        .replace(/\bcan[’']?t\b/gi, "cannot")
+        .replace(/\bdon[’']?t\b/gi, "do not")
+        .replace(/\bdoesn[’']?t\b/gi, "does not")
+        .replace(/\bdidn[’']?t\b/gi, "did not")
+        .replace(/\baren[’']?t\b/gi, "are not")
+        .replace(/\bisn[’']?t\b/gi, "is not")
+        .replace(/\bwasn[’']?t\b/gi, "was not")
+        .replace(/\bweren[’']?t\b/gi, "were not")
+        .replace(/\bshouldn[’']?t\b/gi, "should not")
+        .replace(/\bwouldn[’']?t\b/gi, "would not")
+        .replace(/\bcouldn[’']?t\b/gi, "could not")
+
+        // formas com ’ll
+        .replace(/\by(?:ou)?[’']?ll\b/gi, "you will")
+        .replace(/\bwe[’']?ll\b/gi, "we will")
+        .replace(/\bthey[’']?ll\b/gi, "they will")
+        .replace(/\bit[’']?ll\b/gi, "it will")
+        .replace(/\bhe[’']?ll\b/gi, "he will")
+        .replace(/\bshe[’']?ll\b/gi, "she will")
+        .replace(/\bi[’']?ll\b/gi, "i will")
+
+        // formas com ’re
+        .replace(/\by(?:ou)?[’']?re\b/gi, "you are")
+        .replace(/\bwe[’']?re\b/gi, "we are")
+        .replace(/\bthey[’']?re\b/gi, "they are")
+
+        // formas com ’ve
+        .replace(/\by(?:ou)?[’']?ve\b/gi, "you have")
+        .replace(/\bwe[’']?ve\b/gi, "we have")
+        .replace(/\bthey[’']?ve\b/gi, "they have")
+        .replace(/\bi[’']?ve\b/gi, "i have")
+
+        // formas com ’d (forçado para would)
+        .replace(/\bi[’']?d\b/gi, "i would")
+        .replace(/\bthey[’']?d\b/gi, "they would")
+
+        // formas com ’s (significados fixos)
+        .replace(/\bit[’']?s\b/gi, "it is")
+        .replace(/\bthat[’']?s\b/gi, "that is")
+        .replace(/\bwho[’']?s\b/gi, "who is")
+        .replace(/\bhe[’']?s\b/gi, "he is")
+        .replace(/\bshe[’']?s\b/gi, "she is")
+
+        // casos especiais
+        .replace(/\bgonna\b/gi, "going to")
+        .replace(/\blet[’']?s\b/gi, "let us")
+        .replace(/\beveryone[’']?s\b/gi, "everyone has")
+        .replace(/\bfood[’']?s\b/gi, "food has")
+        .replace(/\bphone[’']?s\b/gi, "phone has")
+
+        // casos de "i'm"
+        .replace(/\bi[’']?m\b/gi, "i am")
+
+        // caso isolado
+        .replace(/\bi wasn[’']?t\b/gi, "i was not");
     }
 
     function normText(s) {
@@ -491,7 +599,7 @@
             if (autoMicAtivo) {
               setTimeout(() => {
                   abrirMicrofoneComTempo();
-                }, 150);
+                }, 200);
               }  
             }
 
@@ -540,9 +648,19 @@
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
-        const texto = e.results[0][0].transcript;
-        const comando = texto.toLowerCase().trim();
-        if (!esperandoResposta) return;
+        //const texto = e.results[0][0].transcript;
+        //const comando = texto.toLowerCase().trim();
+        //if (!esperandoResposta) return;
+        const textoBruto = e.results[0][0].transcript;
+          if (!esperandoResposta) return;
+
+          // pipeline profissional (igual ao que eu uso)
+          const textoCorrigido = aplicarCorrecoesBasicas(textoBruto);
+          const textoNormalizado = normalizeSpeechInput(textoCorrigido);
+
+          // comandos de controle (skip / next)
+          const comando = textoNormalizado;
+
 
         if (["next", "skip"].includes(comando)) {
           // corta mic imediatamente
@@ -572,7 +690,6 @@
           return;
         }
 
-
         encerrarMicrofone();
 
         bloquearEntrada(); 
@@ -580,7 +697,9 @@
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
         user.className = "chat-message user";
-        user.textContent = texto;
+        user.textContent = textoBruto;
+        //user.textContent = comando;
+        
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
@@ -590,7 +709,12 @@
         normText(expected),
         normText(expandContractionsEn(expected))
         ]);
-        const ok = expectedNorms.has(normText(texto));
+        // const ok = expectedNorms.has(normText(texto));
+        const ok = similarEnough(
+          textoNormalizado,
+          normalizeSpeechInput(expectedAtual)
+        );
+
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
@@ -671,6 +795,11 @@
           await new Promise(r => setTimeout(r, 1100));
           await falarComoAntigo(d.files);
           tocando = false;
+          if (autoMicAtivo) {
+            setTimeout(() => {
+                abrirMicrofoneComTempo();
+              }, 200);
+            } 
         }
         esperandoResposta = true;
         liberarEntrada();
