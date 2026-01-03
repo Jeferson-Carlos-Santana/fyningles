@@ -626,9 +626,12 @@
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
 
-        const expected = expectedAtual || "";
-        const expectedNorm = normText(expected);
-        const ok = expandContractionsEn(texto) === expectedNorm || expandContractionsEn(texto) === expected;
+       // const expected = expectedAtual || "";
+        //const expectedNorm = normText(expected);
+        //const ok = expandContractionsEn(texto) === expectedNorm || expandContractionsEn(texto) === expected;
+const spoken = normText(expandContractionsEn(textoBruto));
+const expectedNorm = normText(expected);
+const ok = spoken === expectedNorm;
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
