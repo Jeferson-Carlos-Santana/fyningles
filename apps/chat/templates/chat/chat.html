@@ -647,19 +647,10 @@ function normEn(s) {
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
 
-const recebido = normEn(textoBruto);
-const esperado = normEn(expectedAtual);
+        const recebido = normEn(texto);
+        const esperado = normEn(expectedAtual);
 
-const ok = recebido === esperado;
-
-console.log({
-  recebido,
-  esperado,
-  textoBruto,
-  expectedAtual
-});
-
-
+        const ok = recebido === esperado;
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
