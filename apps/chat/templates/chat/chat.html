@@ -163,71 +163,6 @@
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
 
-const CORRECOES_VOZ = {
-  "daive": "they have",
-  "dave": "they have",
-  "ive": "i have",
-  "youre": "you are",
-  "cant": "cannot",
-  "david": "they've",
-  "everyday": "every day",
-  "ivy": "I've",
-  "hue": "He'll",
-  "cole": "call",
-  "gunn": "gone",
-  "gunt": "gone",
-  "dare": "they're",
-  "81": "It won't",
-  "workout": "work out",
-  "seedan": "see then",
-  "realized": "realised",
-  "sherwood": "she would",
-  "abeat": "a bit",
-  "ishi": "is she",
-  "taiwah": "they were",
-  "Whitney": "were they",
-  "alito": "a little",
-  "shilco": "She'll call",
-  "tay": "they",
-  "iopant": "i opened",
-  "ican": "i can",
-  "sthey": "stay",
-  "dtu": "Did you",
-  "itches": "it's",
-  "payen": "paying",
-  "ital": "It'll",
-  "leche": "Let's",
-  "letis": "Let's"
-};
-
-function aplicarCorrecoesBasicas(text) {
-  let t = (text || "").toLowerCase();
-  for (const errado in CORRECOES_VOZ) {
-    const re = new RegExp(`\\b${errado}\\b`, "gi");
-    t = t.replace(re, CORRECOES_VOZ[errado]);
-  }
-  return t;
-}
-
-function normalizeSpeechInput(text) {
-  let t = (text || "").toLowerCase();
-
-  // normaliza aspas
-  t = t.replace(/[’‘]/g, "'");
-
-  // remove pontuação (mantém apóstrofo)
-  t = t.replace(/[^\w\s']/g, " ");
-
-  // colapsa espaços
-  t = t.replace(/\s+/g, " ").trim();
-
-  // expande contrações (sua função completa)
-  t = expandContractionsEn(t);
-
-  return t;
-}
-
-
 
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
@@ -317,6 +252,28 @@ function normalizeSpeechInput(text) {
       }, tempoMic);
 
     }
+    // function abrirMicrofoneComTempo() {
+    //   if (btnMic.disabled) return;
+
+    //   // visual de gravando
+    //   btnMic.textContent = "🎙️";
+    //   btnMic.classList.add("mic-gravando");
+
+    //   recognition.start();
+
+    //   // calcula tempo com base na frase esperada atual
+    //   const tempoMic = calcularTempoMic(expectedAtual);
+    //   if (micTimeout) clearTimeout(micTimeout);
+
+    //   setTimeout(() => {
+    //     // se ainda estiver esperando resposta, fecha o mic
+    //     if (esperandoResposta) {
+    //       recognition.stop();
+    //       btnMic.textContent = "🎤";
+    //       btnMic.classList.remove("mic-gravando");
+    //     }
+    //   }, tempoMic);
+    // }
 
     function encerrarMicrofone() {
       if (micTimeout) {
@@ -387,6 +344,7 @@ function normalizeSpeechInput(text) {
       chatArea.scrollTop = chatArea.scrollHeight;
     }
 
+
     // TOCA UM ÚNICO AUDIO E ESPERA
     function tocarUm(file, tries = 300, delay = 300) {
       return new Promise(resolve => {
@@ -432,57 +390,57 @@ function normalizeSpeechInput(text) {
 
     function expandContractionsEn(t) {
       return (t || "")
-      .replace(/\bi[’']?m\b/gi, "i am")
-      .replace(/\byou[’']?re\b/gi, "you are")
-      .replace(/\bwe[’']?re\b/gi, "we are")
-      .replace(/\bthey[’']?re\b/gi, "they are")
-      .replace(/\bi[’']?ve\b/gi, "i have")
-      .replace(/\byou[’']?ve\b/gi, "you have")
-      .replace(/\bwe[’']?ve\b/gi, "we have")
-      .replace(/\bthey[’']?ve\b/gi, "they have")
-      .replace(/\bi[’']?ll\b/gi, "i will")
-      .replace(/\byou[’']?ll\b/gi, "you will")
-      .replace(/\bwe[’']?ll\b/gi, "we will")
-      .replace(/\bthey[’']?ll\b/gi, "they will")
-      .replace(/\bdon[’']?t\b/gi, "do not")
-      .replace(/\bdoesn[’']?t\b/gi, "does not")
-      .replace(/\bdidn[’']?t\b/gi, "did not")
-      .replace(/\bcannot\b/gi, "can not")
-      .replace(/\bwon[’']?t\b/gi, "will not")
-      .replace(/\bisn[’']?t\b/gi, "is not")
-      .replace(/\baren[’']?t\b/gi, "are not")
-      .replace(/\bweren[’']?t\b/gi, "were not")
-      .replace(/\bhe[’']?s\b/gi, "he is")
-      .replace(/\bshe[’']?s\b/gi, "she is")
-      .replace(/\bit[’']?s\b/gi, "it is")
-      .replace(/\bthat[’']?s\b/gi, "that is")
-      .replace(/\bthere[’']?s\b/gi, "there is")
-      .replace(/\bthere[’']?re\b/gi, "there are")
-      .replace(/\bwho[’']?s\b/gi, "who is")
-      .replace(/\bwhat[’']?s\b/gi, "what is")
-      .replace(/\bwhere[’']?s\b/gi, "where is")
-      .replace(/\bwhen[’']?s\b/gi, "when is")
-      .replace(/\bhow[’']?s\b/gi, "how is")
-      .replace(/\bi[’']?d\b/gi, "i had")
-      .replace(/\byou[’']?d\b/gi, "you had")
-      .replace(/\bhe[’']?d\b/gi, "he had")
-      .replace(/\bshe[’']?d\b/gi, "she had")
-      .replace(/\bwe[’']?d\b/gi, "we had")
-      .replace(/\bthey[’']?d\b/gi, "they had")
-      .replace(/\bcouldn[’']?t\b/gi, "could not")
-      .replace(/\bshouldn[’']?t\b/gi, "should not")
-      .replace(/\bwouldn[’']?t\b/gi, "would not")
-      .replace(/\bmustn[’']?t\b/gi, "must not")
-      .replace(/\bmayn[’']?t\b/gi, "may not")
-      .replace(/\bmightn[’']?t\b/gi, "might not")
-      .replace(/\bhasn[’']?t\b/gi, "has not")
-      .replace(/\bhaven[’']?t\b/gi, "have not")
-      .replace(/\bhadn[’']?t\b/gi, "had not")
-      .replace(/\bhe[’']?ll\b/gi, "he will")
-      .replace(/\bshe[’']?ll\b/gi, "she will")
-      .replace(/\bit[’']?ll\b/gi, "it will")
-      .replace(/\bgonna\b/gi, "going to")
-      .replace(/\blet[’']?s\b/gi, "let us")
+        .replace(/\bi[’']?m\b/gi, "i am")
+        .replace(/\byou[’']?re\b/gi, "you are")
+        .replace(/\bwe[’']?re\b/gi, "we are")
+        .replace(/\bthey[’']?re\b/gi, "they are")
+        .replace(/\bi[’']?ve\b/gi, "i have")
+        .replace(/\byou[’']?ve\b/gi, "you have")
+        .replace(/\bwe[’']?ve\b/gi, "we have")
+        .replace(/\bthey[’']?ve\b/gi, "they have")
+        .replace(/\bi[’']?ll\b/gi, "i will")
+        .replace(/\byou[’']?ll\b/gi, "you will")
+        .replace(/\bwe[’']?ll\b/gi, "we will")
+        .replace(/\bthey[’']?ll\b/gi, "they will")
+        .replace(/\bdon[’']?t\b/gi, "do not")
+        .replace(/\bdoesn[’']?t\b/gi, "does not")
+        .replace(/\bdidn[’']?t\b/gi, "did not")
+        .replace(/\bcannot\b/gi, "can not")
+        .replace(/\bwon[’']?t\b/gi, "will not")
+        .replace(/\bisn[’']?t\b/gi, "is not")
+        .replace(/\baren[’']?t\b/gi, "are not")
+        .replace(/\bweren[’']?t\b/gi, "were not")
+        .replace(/\bhe[’']?s\b/gi, "he is")
+        .replace(/\bshe[’']?s\b/gi, "she is")
+        .replace(/\bit[’']?s\b/gi, "it is")
+        .replace(/\bthat[’']?s\b/gi, "that is")
+        .replace(/\bthere[’']?s\b/gi, "there is")
+        .replace(/\bthere[’']?re\b/gi, "there are")
+        .replace(/\bwho[’']?s\b/gi, "who is")
+        .replace(/\bwhat[’']?s\b/gi, "what is")
+        .replace(/\bwhere[’']?s\b/gi, "where is")
+        .replace(/\bwhen[’']?s\b/gi, "when is")
+        .replace(/\bhow[’']?s\b/gi, "how is")
+        .replace(/\bi[’']?d\b/gi, "i had")
+        .replace(/\byou[’']?d\b/gi, "you had")
+        .replace(/\bhe[’']?d\b/gi, "he had")
+        .replace(/\bshe[’']?d\b/gi, "she had")
+        .replace(/\bwe[’']?d\b/gi, "we had")
+        .replace(/\bthey[’']?d\b/gi, "they had")
+        .replace(/\bcouldn[’']?t\b/gi, "could not")
+        .replace(/\bshouldn[’']?t\b/gi, "should not")
+        .replace(/\bwouldn[’']?t\b/gi, "would not")
+        .replace(/\bmustn[’']?t\b/gi, "must not")
+        .replace(/\bmayn[’']?t\b/gi, "may not")
+        .replace(/\bmightn[’']?t\b/gi, "might not")
+        .replace(/\bhasn[’']?t\b/gi, "has not")
+        .replace(/\bhaven[’']?t\b/gi, "have not")
+        .replace(/\bhadn[’']?t\b/gi, "had not")
+        .replace(/\bhe[’']?ll\b/gi, "he will")
+        .replace(/\bshe[’']?ll\b/gi, "she will")
+        .replace(/\bit[’']?ll\b/gi, "it will")
+        .replace(/\bgonna\b/gi, "going to")
+        .replace(/\blet[’']?s\b/gi, "let us")
     }
 
     function normText(s) {
@@ -575,7 +533,7 @@ function normalizeSpeechInput(text) {
             if (autoMicAtivo) {
               setTimeout(() => {
                   abrirMicrofoneComTempo();
-                }, 200);
+                }, 150);
               }  
             }
 
@@ -624,16 +582,15 @@ function normalizeSpeechInput(text) {
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
-      
-        const texto = e.results[0][0].transcript;        
-        if (!esperandoResposta) return;
+        const texto = e.results[0][0].transcript;
         const comando = texto.toLowerCase().trim();
-   
+        if (!esperandoResposta) return;
 
         if (["next", "skip"].includes(comando)) {
-          
+          // corta mic imediatamente
           encerrarMicrofone();
-          
+
+          // bloqueia entradas
           bloquearEntrada();
 
           // mensagem visual opcional (recomendado)
@@ -652,10 +609,11 @@ function normalizeSpeechInput(text) {
             index++;
             lastMsgEl = null;
             mostrarSistema();
-          }, 200);
+          }, 100);
 
           return;
         }
+
 
         encerrarMicrofone();
 
@@ -664,19 +622,16 @@ function normalizeSpeechInput(text) {
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
         user.className = "chat-message user";
-
-        //troca um pelo outro
         user.textContent = texto;
-        
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
 
+        const expected = expectedAtual || "";
         const expectedNorms = new Set([
-        normalizeSpeechInput(expected),
-        normalizeSpeechInput(expandContractionsEn(expected))
-      ]);
-   
+        normText(expected),
+        normText(expandContractionsEn(expected))
+        ]);
         const ok = expectedNorms.has(normText(texto));
 
         // bloqueia mic enquanto avalia
@@ -735,7 +690,7 @@ function normalizeSpeechInput(text) {
             index++;
             lastMsgEl = null;
             mostrarSistema();
-          }, 200);
+          }, 100);
           return;
         }
 
@@ -758,14 +713,6 @@ function normalizeSpeechInput(text) {
           await new Promise(r => setTimeout(r, 1100));
           await falarComoAntigo(d.files);
           tocando = false;
-
-          tocarBeep();
-
-          if (autoMicAtivo) {
-            setTimeout(() => {
-                abrirMicrofoneComTempo();
-              }, 200);
-            } 
         }
         esperandoResposta = true;
         liberarEntrada();
