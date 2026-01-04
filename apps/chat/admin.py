@@ -107,6 +107,7 @@ class ChatAdmin(admin.ModelAdmin):
     return frase
  
   # // PRECISA ANDAR ALINHADDA COM A LISTA QUE ESTA NO ADMIN.PY
+  
   def contract_en(self, t: str) -> str:
     reps = [
       (r"\bi am\b", "i'm"),
@@ -163,8 +164,15 @@ class ChatAdmin(admin.ModelAdmin):
     ]
 
     for regex, repl in reps:
-        t = re.sub(regex, repl, t, flags=re.IGNORECASE)
+        t = re.sub(
+            regex,
+            lambda m: self._preserve_case(m.group(0), repl),
+            t,
+            flags=re.IGNORECASE
+        )
+
     return t
+
 
   # Move ., ?, ! ou : de dentro do </span> para fora.
   def mover_pontuacao(self, texto: str) -> str:    
