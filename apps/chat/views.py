@@ -378,8 +378,13 @@ def save_progress(request):
     except Exception:
         return JsonResponse({"error": "Dados inválidos"}, status=400)
 
-    # model Progress (lazy import para evitar circular)
     Progress = apps.get_model("chat", "Progress")
+
+    if not Chat.objects.filter(id=chat_id).exists():
+        return JsonResponse(
+            {"ok": False, "error": "chat_id inexistente"},
+            status=400
+        )
 
     with transaction.atomic():
         obj, created = Progress.objects.update_or_create(
