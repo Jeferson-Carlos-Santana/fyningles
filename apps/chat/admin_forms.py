@@ -16,6 +16,23 @@ class ChatAdminForm(forms.ModelForm):
         required=False,
         label="Template de conteúdo"
     )
+    
+    def clean_expected_en(self):
+        expected = self.cleaned_data.get("expected_en", "").strip()
+
+        qs = Chat.objects.filter(expected_en__iexact=expected)
+
+        # ignora o próprio registro ao editar
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+
+        if qs.exists():
+            raise forms.ValidationError(
+                "Já existe um registro com esse expected_en."
+            )
+
+        return expected
+
 
     class Meta:
         model = Chat
