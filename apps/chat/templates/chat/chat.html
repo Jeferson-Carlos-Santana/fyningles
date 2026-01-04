@@ -658,9 +658,13 @@
         lastMsgEl = user;
 
         const recebido = normEn(textoCorrigido);
-        const esperado = normEn(expectedAtual);
 
-        const ok = recebido === esperado;
+        // divide expected_en por OR / or (case-insensitive)
+        const esperados = (expectedAtual || "")
+          .split(/\s+or\s+/i)
+          .map(e => normEn(e));
+
+        const ok = esperados.includes(recebido);
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
