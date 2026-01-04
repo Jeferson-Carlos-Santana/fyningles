@@ -72,6 +72,19 @@ class ChatAdmin(admin.ModelAdmin):
         marcar_status_ativo,
         marcar_status_inativo,
     ]
+ 
+  search_fields = (
+    "expected_en",
+    "expected_pt",
+    "expected_it",
+    "expected_fr",
+    "expected_es",
+    "content_pt",
+    "content_it",
+    "content_fr",
+    "content_es",
+  )
+ 
   # FUNCAO INFORMAL
   def gerar_informal(self, frase: str) -> str:
     reducoes = {
