@@ -12,9 +12,9 @@ from .models import Chat
 import re
 
 LESSON_TITLES = {
-    1: "Tempo de repetir",
-    2: "Quando usar (a) e (an)?",
-    3: "I mean vs I mean it",
+    1: "Usando verbos",
+    2: "Expressões populares",
+    3: "Utilidades diárias",
 }
 
 

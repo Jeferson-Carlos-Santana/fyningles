@@ -304,7 +304,7 @@ class ChatAdmin(admin.ModelAdmin):
     "Significa: <span style='color:blue;'>{pt}</span>",
     
     "Próxima frase é: <span style='color:blue;'>{pt}</span> "
-    "Abrevida em inglês: <span style='color:red;'>{en_abbrev}</span> "
+    "Abreviada em inglês: <span style='color:red;'>{en_abbrev}</span> "
     "E sem abreviação: <span style='color:red;'>{en_full}</span>",
     
     "Abreviado fica: <span style='color:red;'>{en_abbrev}</span> "
