@@ -65,8 +65,7 @@
             </button> 
             chat : {{ lesson_title }} 
            
-          </div>  
-        
+          </div>     
                                   
         </div>
 
@@ -578,7 +577,7 @@
             agendarLiberacaoSegura(calcularTempoMic(expectedTmp) + 3000);
             //FIM PARAR AUDIO NO MEIO
 
-            //await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, 2000));
             await falarComoAntigo(d.files);
 
             //PARAR AUDIO NO MEIO
@@ -644,6 +643,37 @@
         afterEl.after(div);
         return div;
       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function salvarProgresso({ chatId, lessonId, attempts, points }) {
+  fetch("/progress/save/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      lesson_id: lessonId,
+      attempts: attempts,
+      points: points
+    })
+  }).catch(() => {});
+}
+
+
+
+
+
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
@@ -750,9 +780,35 @@
           await tocarUm(d.files[0]);
           tocando = false;
         }  
+
+
+
+        // === SALVA PROGRESSO (ACERTO) ===
+const tentativaFinal = tentativas + 1;
+const pontos =
+  tentativaFinal === 1 ? 5 :
+  tentativaFinal === 2 ? 3 :
+  1;
+
+salvarProgresso({
+  chatId: msg.dataset.id,
+  lessonId: {{ lesson_id }},
+  attempts: tentativaFinal,
+  points: pontos
+});
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
+
+
+
+
+
+
+
+
+
+          
           setTimeout(() => {
             index++;
             lastMsgEl = null;
@@ -795,6 +851,14 @@
       }
 
       if (tentativas >= MAX_TENTATIVAS) {
+salvarProgresso({
+  chatId: msgs[index].dataset.id,
+  lessonId: {{ lesson_id }},
+  attempts: MAX_TENTATIVAS,
+  points: 0
+});
+
+
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
         const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
 

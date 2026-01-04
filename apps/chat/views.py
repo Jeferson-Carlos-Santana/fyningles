@@ -11,6 +11,13 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Chat
 import re
 
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.conf import settings
+from django.apps import apps
+
 LESSON_TITLES = {
     1: "Usando verbos",
     2: "Expressões populares",
@@ -27,7 +34,6 @@ def chat_home(request):
             request.user.first_name if request.user.is_authenticated else ""
         ),
     })
-
 
 def index(request):
     return render(request, "chat/index.html")
@@ -349,3 +355,41 @@ def dictionary_delete(request):
     return redirect(f"/dictionary/?lang={lang}")
 # FIM APAGAR DADOS NO JSON
 
+@csrf_exempt
+@login_required
+def save_progress(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Método inválido"}, status=400)
+
+    try:
+        data = json.loads(request.body)
+
+        chat_id = int(data.get("chat_id"))
+        lesson_id = int(data.get("lesson_id"))
+        attempts = int(data.get("attempts"))
+        points = int(data.get("points"))
+
+        user_id = request.user.id
+
+    except Exception:
+        return JsonResponse({"error": "Dados inválidos"}, status=400)
+
+    # model Progress (lazy import para evitar circular)
+    Progress = apps.get_model("chat", "Progress")
+
+    with transaction.atomic():
+        obj, created = Progress.objects.update_or_create(
+            user_id=user_id,
+            chat_id=chat_id,
+            defaults={
+                "lesson_id": lesson_id,
+                "attempts": attempts,
+                "points": points,
+                "updated_at": timezone.now(),
+            }
+        )
+
+    return JsonResponse({
+        "ok": True,
+        "created": created
+    })

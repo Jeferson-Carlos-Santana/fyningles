@@ -1,6 +1,8 @@
 from django.db import models, transaction
 from django.db.models import Max, F
 
+from django.conf import settings
+
 class Chat(models.Model):
     lesson_id = models.IntegerField(verbose_name="Lesson ID")
     seq = models.IntegerField(null=True, blank=True, verbose_name="Sequência")
@@ -33,9 +35,8 @@ class Chat(models.Model):
     def save(self, *args, **kwargs):
         with transaction.atomic():
 
-            # =====================
             # INSERT (novo registro)
-            # =====================
+            
             if self.pk is None:
 
                 # se NÃO informou seq → vai para o final
@@ -69,9 +70,7 @@ class Chat(models.Model):
 
                 return
 
-            # =====================
-            # EDIT (registro existente)
-            # =====================
+            # EDIT (registro existente)            
             antigo = Chat.objects.get(pk=self.pk)
 
             lesson_antiga = antigo.lesson_id
@@ -79,10 +78,8 @@ class Chat(models.Model):
 
             seq_antigo = antigo.seq
             seq_novo = self.seq
-
-            # ---------------------
-            # CASO 1: mudou de lição
-            # ---------------------
+            
+            # CASO 1: mudou de lição            
             if lesson_antiga != lesson_nova:
 
                 # 1) REMOVE da lição antiga (fecha buracos)
@@ -104,9 +101,8 @@ class Chat(models.Model):
                 # mantém exatamente o seq informado
                 self.seq = seq_novo
 
-            # ---------------------
-            # CASO 2: mesma lição, mudou seq
-            # ---------------------
+            
+            # CASO 2: mesma lição, mudou seq            
             else:
                 if seq_novo != seq_antigo:
                     if seq_novo > seq_antigo:
@@ -124,10 +120,8 @@ class Chat(models.Model):
 
             # salva o próprio registro
             super().save(*args, **kwargs)
-
-            # =====================
-            # NORMALIZA AMBAS AS LIÇÕES ENVOLVIDAS
-            # =====================
+  
+            # NORMALIZA AMBAS AS LIÇÕES ENVOLVIDAS       
             for lesson_id in {lesson_antiga, lesson_nova}:
                 qs = (
                     Chat.objects
@@ -138,9 +132,6 @@ class Chat(models.Model):
                     if obj.seq != i:
                         Chat.objects.filter(pk=obj.pk).update(seq=i)
 
-
-
-
         
     def __str__(self):
         return f"Lesson {self.lesson_id} | Seq {self.seq}"    
@@ -150,3 +141,39 @@ class Chat(models.Model):
         verbose_name_plural = "Chats"
         db_table = "chats"
         ordering = ["lesson_id", "seq"]
+
+
+# MODELS PROGRESS
+
+
+
+class Progress(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="progress"
+    )
+
+    lesson_id = models.IntegerField()
+
+    chat = models.ForeignKey(
+        "Chat",
+        on_delete=models.CASCADE,
+        related_name="progress"
+    )
+
+    attempts = models.IntegerField()
+    points = models.IntegerField()
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "progress"
+        indexes = [
+            models.Index(fields=["user"]),
+            models.Index(fields=["lesson_id"]),
+            models.Index(fields=["chat"]),
+        ]
+
+    def __str__(self):
+        return f"{self.user_id} | lesson {self.lesson_id} | chat {self.chat_id}"

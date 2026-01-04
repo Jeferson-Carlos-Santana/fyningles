@@ -219,7 +219,6 @@ class ChatAdmin(admin.ModelAdmin):
                 
     # AQUI GRAVA NO JSON AS VARIAVEIS
 
-
     template_choice = form.cleaned_data.get("template_choice")
 
     if template_choice == "1":
