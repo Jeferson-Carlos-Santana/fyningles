@@ -355,11 +355,15 @@ def dictionary_delete(request):
     return redirect(f"/dictionary/?lang={lang}")
 # FIM APAGAR DADOS NO JSON
 
+
+
 @csrf_exempt
-@login_required
 def save_progress(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Método inválido"}, status=400)
+        return JsonResponse({"ok": False, "error": "invalid method"}, status=400)
+
+    if not request.user.is_authenticated:
+        return JsonResponse({"ok": False, "error": "not authenticated"}, status=401)
 
     try:
         data = json.loads(request.body)
