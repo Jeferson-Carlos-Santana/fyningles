@@ -807,9 +807,10 @@ function salvarProgresso({ chatId, lessonId, attempts, points }) {
         // === SALVA PROGRESSO (ACERTO) ===
 const tentativaFinal = tentativas + 1;
 const pontos =
-  tentativaFinal === 1 ? 5 :
-  tentativaFinal === 2 ? 3 :
-  1;
+  tentativaFinal === 0 ? 5 :
+  tentativaFinal === 1 ? 3 :
+  tentativaFinal === 2 ? 1 :
+  3;
 
 salvarProgresso({
   chatId: msgs[index].dataset.id,
