@@ -165,8 +165,6 @@ class ChatAdmin(admin.ModelAdmin):
     for regex, repl in reps:
       t = re.sub(regex, repl, t) 
     return t
-  
-
 
   # Move ., ?, ! ou : de dentro do </span> para fora.
   def mover_pontuacao(self, texto: str) -> str:    
@@ -174,7 +172,13 @@ class ChatAdmin(admin.ModelAdmin):
     
   # TRADUZ, DEFINE FRASES ABREVIADAS E INFORMAIS, E ESCOLHE O TEMPLATE.
   def save_model(self, request, obj, form, change):
-    en_full = obj.expected_en
+    
+    #en_full = obj.expected_en
+    raw_expected = obj.expected_en or ""
+    # divide por OR / or (case-insensitive)
+    parts = re.split(r"\s+or\s+", raw_expected, flags=re.IGNORECASE)
+    en_full = parts[0].strip() if len(parts) > 0 else ""
+    en_full_M = parts[1].strip() if len(parts) > 1 else ""
     en_abbrev = self.contract_en(en_full)
     en_informal = self.gerar_informal(en_full)
 
@@ -259,6 +263,7 @@ class ChatAdmin(admin.ModelAdmin):
     if not obj.content_pt:
       texto = random.choice(templates_pt).format(
           en_full=en_full,
+          en_full_M=en_full_M,
           en_abbrev=en_abbrev,
           en_informal=en_informal,
           pt=pt
@@ -268,6 +273,7 @@ class ChatAdmin(admin.ModelAdmin):
     if not obj.content_es:
       texto = random.choice(templates_es).format(
           en_full=en_full,
+          en_full_M=en_full_M,
           en_abbrev=en_abbrev,
           en_informal=en_informal,
           es=es
@@ -277,6 +283,7 @@ class ChatAdmin(admin.ModelAdmin):
     if not obj.content_fr:
       texto = random.choice(templates_fr).format(
           en_full=en_full,
+          en_full_M=en_full_M,
           en_abbrev=en_abbrev,
           en_informal=en_informal,
           fr=fr
@@ -286,12 +293,12 @@ class ChatAdmin(admin.ModelAdmin):
     if not obj.content_it:
       texto = random.choice(templates_it).format(
           en_full=en_full,
+          en_full_M=en_full_M,
           en_abbrev=en_abbrev,
           en_informal=en_informal,
           it=it
       )
-      obj.content_it = self.mover_pontuacao(texto)
-      
+      obj.content_it = self.mover_pontuacao(texto)      
  
     super().save_model(request, obj, form, change)
 
@@ -796,16 +803,202 @@ class ChatAdmin(admin.ModelAdmin):
     "La traducción literal es: <span style='color:blue;'>{es}</span> Pero de forma informal usamos: <span style='color:red;'>{en_abbrev}</span> O también: <span style='color:red;'>{en_informal}</span>"
   ]
   
-  # NÃO DEFINIDO
+  # COLOCAR 2 TRADUCÕES PARA O INGLES, MAS NÃO ABREVIACAO.
   TEMPLATES_CONTENT_5_PT = [
-    "Não definido ainda!!!"    
+    "Pode repetir comigo a frase: <span style='color:blue;'>{pt}</span> Que traduzida em inglês fica: "
+    "<span style='color:red;'>{en_full}</span> ou então (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Agora repita comigo: <span style='color:blue;'>{pt}</span> Que em inglês dizemos: "
+    "<span style='color:red;'>{en_full}</span> ou pode ser também (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Vamos praticar juntos: <span style='color:blue;'>{pt}</span> A tradução correta em inglês é: "
+    "<span style='color:red;'>{en_full}</span> ou ainda (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Repita esta frase comigo: <span style='color:blue;'>{pt}</span> Essa frase em inglês seria: "
+    "<span style='color:red;'>{en_full}</span> ou então (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Tente falar comigo: <span style='color:blue;'>{pt}</span> Que em inglês a forma certa é: "
+    "<span style='color:red;'>{en_full}</span> ou pode ser também (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Repita comigo a seguinte frase: <span style='color:blue;'>{pt}</span> Falando em inglês fica: "
+    "<span style='color:red;'>{en_full}</span> ou ainda (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Vamos repetir juntos: <span style='color:blue;'>{pt}</span> Isso em inglês significa: "
+    "<span style='color:red;'>{en_full}</span> ou então (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Tente pronunciar comigo: <span style='color:blue;'>{pt}</span> Traduzida para o inglês significa: "
+    "<span style='color:red;'>{en_full}</span> ou pode ser também (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Fale comigo esta frase: <span style='color:blue;'>{pt}</span> Traduzida para o inglês é: "
+    "<span style='color:red;'>{en_full}</span> ou então (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Pode treinar comigo dizendo: <span style='color:blue;'>{pt}</span> Em inglês falamos: "
+    "<span style='color:red;'>{en_full}</span> ou pode ser também (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Vamos juntos repetir: <span style='color:blue;'>{pt}</span> Essa versão em inglês seria: "
+    "<span style='color:red;'>{en_full}</span> ou ainda (stp1) <span style='color:red;'>{en_full_M}</span>",    
+
+    "Em português: <span style='color:blue;'>{pt}</span> Agora repita em inglês: "
+    "<span style='color:red;'>{en_full}</span> ou então (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Em português fica assim: <span style='color:blue;'>{pt}</span> Repita em inglês: "
+    "<span style='color:red;'>{en_full}</span> ou pode ser também (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Em português temos: <span style='color:blue;'>{pt}</span> Vamos repetir em inglês? "
+    "<span style='color:red;'>{en_full}</span> ou ainda (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Falamos assim em português: <span style='color:blue;'>{pt}</span> Você poderia repetir em inglês? "
+    "<span style='color:red;'>{en_full}</span> ou então (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Frase em português: <span style='color:blue;'>{pt}</span> Tenta repetir em inglês: "
+    "<span style='color:red;'>{en_full}</span> ou pode ser também (stp1) <span style='color:red;'>{en_full_M}</span>"   
   ]
   TEMPLATES_CONTENT_5_IT = [
-    "Não definido ainda!!!"
+    "Puoi ripetere con me la frase: <span style='color:blue;'>{it}</span> Che tradotta in inglese diventa: "
+    "<span style='color:red;'>{en_full}</span> oppure (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Ora ripeti con me: <span style='color:blue;'>{it}</span> Che in inglese diciamo: "
+    "<span style='color:red;'>{en_full}</span> o può essere anche (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Pratichiamo insieme: <span style='color:blue;'>{it}</span> La traduzione corretta in inglese è: "
+    "<span style='color:red;'>{en_full}</span> oppure ancora (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Ripeti questa frase con me: <span style='color:blue;'>{it}</span> Questa frase in inglese sarebbe: "
+    "<span style='color:red;'>{en_full}</span> oppure (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Prova a parlare con me: <span style='color:blue;'>{it}</span> Che in inglese la forma corretta è: "
+    "<span style='color:red;'>{en_full}</span> o può essere anche (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Ripeti con me la seguente frase: <span style='color:blue;'>{it}</span> Detto in inglese diventa: "
+    "<span style='color:red;'>{en_full}</span> oppure ancora (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Ripetiamo insieme: <span style='color:blue;'>{it}</span> Questo in inglese significa: "
+    "<span style='color:red;'>{en_full}</span> oppure (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Prova a pronunciare con me: <span style='color:blue;'>{it}</span> Tradotta in inglese significa: "
+    "<span style='color:red;'>{en_full}</span> o può essere anche (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Di’ con me questa frase: <span style='color:blue;'>{it}</span> Tradotta in inglese è: "
+    "<span style='color:red;'>{en_full}</span> oppure (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Puoi allenarti con me dicendo: <span style='color:blue;'>{it}</span> In inglese diciamo: "
+    "<span style='color:red;'>{en_full}</span> o può essere anche (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Ripetiamo insieme: <span style='color:blue;'>{it}</span> Questa versione in inglese sarebbe: "
+    "<span style='color:red;'>{en_full}</span> oppure ancora (stp1) <span style='color:red;'>{en_full_M}</span>",    
+
+    "In italiano: <span style='color:blue;'>{it}</span> Ora ripeti in inglese: "
+    "<span style='color:red;'>{en_full}</span> oppure (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "In italiano è così: <span style='color:blue;'>{it}</span> Ripeti in inglese: "
+    "<span style='color:red;'>{en_full}</span> o può essere anche (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "In italiano abbiamo: <span style='color:blue;'>{it}</span> Ripetiamo in inglese? "
+    "<span style='color:red;'>{en_full}</span> oppure ancora (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Così diciamo in italiano: <span style='color:blue;'>{it}</span> Potresti ripetere in inglese? "
+    "<span style='color:red;'>{en_full}</span> oppure (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Frase in italiano: <span style='color:blue;'>{it}</span> Prova a ripetere in inglese: "
+    "<span style='color:red;'>{en_full}</span> o può essere anche (stp1) <span style='color:red;'>{en_full_M}</span>"
+
   ]
   TEMPLATES_CONTENT_5_FR = [
-    "Não definido ainda!!!"
+    "Peux-tu répéter avec moi la phrase : <span style='color:blue;'>{fr}</span> Qui, traduite en anglais, devient : "
+    "<span style='color:red;'>{en_full}</span> ou alors (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Maintenant répète avec moi : <span style='color:blue;'>{fr}</span> Qu’en anglais on dit : "
+    "<span style='color:red;'>{en_full}</span> ou peut aussi être (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Pratiquons ensemble : <span style='color:blue;'>{fr}</span> La traduction correcte en anglais est : "
+    "<span style='color:red;'>{en_full}</span> ou encore (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Répète cette phrase avec moi : <span style='color:blue;'>{fr}</span> Cette phrase en anglais serait : "
+    "<span style='color:red;'>{en_full}</span> ou alors (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Essaie de parler avec moi : <span style='color:blue;'>{fr}</span> Qu’en anglais, la forme correcte est : "
+    "<span style='color:red;'>{en_full}</span> ou peut aussi être (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Répète avec moi la phrase suivante : <span style='color:blue;'>{fr}</span> En anglais, cela devient : "
+    "<span style='color:red;'>{en_full}</span> ou encore (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Répétons ensemble : <span style='color:blue;'>{fr}</span> Cela signifie en anglais : "
+    "<span style='color:red;'>{en_full}</span> ou alors (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Essaie de prononcer avec moi : <span style='color:blue;'>{fr}</span> Traduit en anglais, cela signifie : "
+    "<span style='color:red;'>{en_full}</span> ou peut aussi être (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Dis cette phrase avec moi : <span style='color:blue;'>{fr}</span> Traduit en anglais, c’est : "
+    "<span style='color:red;'>{en_full}</span> ou alors (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Tu peux t’entraîner avec moi en disant : <span style='color:blue;'>{fr}</span> En anglais, on dit : "
+    "<span style='color:red;'>{en_full}</span> ou peut aussi être (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Répétons ensemble : <span style='color:blue;'>{fr}</span> Cette version en anglais serait : "
+    "<span style='color:red;'>{en_full}</span> ou encore (stp1) <span style='color:red;'>{en_full_M}</span>",    
+
+    "En français : <span style='color:blue;'>{fr}</span> Maintenant répète en anglais : "
+    "<span style='color:red;'>{en_full}</span> ou alors (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "En français, c’est ainsi : <span style='color:blue;'>{fr}</span> Répète en anglais : "
+    "<span style='color:red;'>{en_full}</span> ou peut aussi être (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "En français, nous avons : <span style='color:blue;'>{fr}</span> Répétons en anglais ? "
+    "<span style='color:red;'>{en_full}</span> ou encore (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "On dit ainsi en français : <span style='color:blue;'>{fr}</span> Pourrais-tu répéter en anglais ? "
+    "<span style='color:red;'>{en_full}</span> ou alors (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Phrase en français : <span style='color:blue;'>{fr}</span> Essaie de répéter en anglais : "
+    "<span style='color:red;'>{en_full}</span> ou peut aussi être (stp1) <span style='color:red;'>{en_full_M}</span>"
+
   ]
   TEMPLATES_CONTENT_5_ES = [
-    "Não definido ainda!!!"
+    "Puedes repetir conmigo la frase: <span style='color:blue;'>{es}</span> Que traducida al inglés queda: "
+    "<span style='color:red;'>{en_full}</span> o entonces (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Ahora repite conmigo: <span style='color:blue;'>{es}</span> Que en inglés decimos: "
+    "<span style='color:red;'>{en_full}</span> o también puede ser (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Vamos a practicar juntos: <span style='color:blue;'>{es}</span> La traducción correcta al inglés es: "
+    "<span style='color:red;'>{en_full}</span> o incluso (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Repite esta frase conmigo: <span style='color:blue;'>{es}</span> Esta frase en inglés sería: "
+    "<span style='color:red;'>{en_full}</span> o entonces (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Intenta hablar conmigo: <span style='color:blue;'>{es}</span> Que en inglés la forma correcta es: "
+    "<span style='color:red;'>{en_full}</span> o también puede ser (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Repite conmigo la siguiente frase: <span style='color:blue;'>{es}</span> Dicho en inglés queda: "
+    "<span style='color:red;'>{en_full}</span> o incluso (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Vamos a repetir juntos: <span style='color:blue;'>{es}</span> Esto en inglés significa: "
+    "<span style='color:red;'>{en_full}</span> o entonces (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Intenta pronunciar conmigo: <span style='color:blue;'>{es}</span> Traducida al inglés significa: "
+    "<span style='color:red;'>{en_full}</span> o también puede ser (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Di conmigo esta frase: <span style='color:blue;'>{es}</span> Traducida al inglés es: "
+    "<span style='color:red;'>{en_full}</span> o entonces (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Puedes entrenar conmigo diciendo: <span style='color:blue;'>{es}</span> En inglés decimos: "
+    "<span style='color:red;'>{en_full}</span> o también puede ser (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Vamos a repetir juntos: <span style='color:blue;'>{es}</span> Esta versión en inglés sería: "
+    "<span style='color:red;'>{en_full}</span> o incluso (stp1) <span style='color:red;'>{en_full_M}</span>",    
+
+    "En español: <span style='color:blue;'>{es}</span> Ahora repite en inglés: "
+    "<span style='color:red;'>{en_full}</span> o entonces (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "En español queda así: <span style='color:blue;'>{es}</span> Repite en inglés: "
+    "<span style='color:red;'>{en_full}</span> o también puede ser (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "En español tenemos: <span style='color:blue;'>{es}</span> ¿Repetimos en inglés? "
+    "<span style='color:red;'>{en_full}</span> o incluso (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Así hablamos en español: <span style='color:blue;'>{es}</span> ¿Podrías repetir en inglés? "
+    "<span style='color:red;'>{en_full}</span> o entonces (stp1) <span style='color:red;'>{en_full_M}</span>",
+
+    "Frase en español: <span style='color:blue;'>{es}</span> Intenta repetir en inglés: "
+    "<span style='color:red;'>{en_full}</span> o también puede ser (stp1) <span style='color:red;'>{en_full_M}</span>"
   ]

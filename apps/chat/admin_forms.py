@@ -8,7 +8,7 @@ class ChatAdminForm(forms.ModelForm):
         ("2", "Frase sem abreviação."),
         ("3", "Frase em português para traduzir para o inglês."),
         ("4", "Frase sem abreviação e informal"),
-        ("5", "Não definido ainda!"),
+        ("5", "Frase com 2 traducões. Ex: He's home. or He's at home."),
     ]
 
     template_choice = forms.ChoiceField(
@@ -26,13 +26,13 @@ class ChatAdminForm(forms.ModelForm):
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
 
-        if qs.exists():
+        # permite até 2 iguais
+        if qs.count() >= 2:
             raise forms.ValidationError(
-                "Já existe um registro com esse expected_en."
+                "Já existem dois registros com esse expected_en. Não é permitido cadastrar um terceiro."
             )
 
         return expected
-
 
     class Meta:
         model = Chat
