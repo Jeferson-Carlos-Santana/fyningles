@@ -498,7 +498,6 @@
       return t;
     }
 
-
     const FEEDBACK_OK = [
       "você foi muito bem.",
       "ótima expressão.",
@@ -579,7 +578,7 @@
             agendarLiberacaoSegura(calcularTempoMic(expectedTmp) + 3000);
             //FIM PARAR AUDIO NO MEIO
 
-            await new Promise(r => setTimeout(r, 2000));
+            //await new Promise(r => setTimeout(r, 2000));
             await falarComoAntigo(d.files);
 
             //PARAR AUDIO NO MEIO
