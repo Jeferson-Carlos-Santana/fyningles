@@ -156,14 +156,32 @@
       let autoMicAtivo = false;
       const btnAutoSkip = document.getElementById("btnAutoSkip");
       let autoSkipAtivo = false;
+
+      //PARAR AUDIO NO MEIO
+      let safetyUnlockTimer = null;
+      //FIM PARAR AUDIO NO MEIO
+
       const TEMPO_BASE = 5000;          // 3s mínimos
       const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
       const TEMPO_MAX = 12000;         // 12s máximo
 
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
+
+    //PARAR AUDIO NO MEIO
+    function agendarLiberacaoSegura(maxMs = 15000) {
+      clearTimeout(safetyUnlockTimer);
+      safetyUnlockTimer = setTimeout(() => {
+        console.warn("Liberação de segurança acionada");
+
+        tocando = false;
+        esperandoResposta = true;
+        liberarEntrada();
+      }, maxMs);
+    }
+    //FIM PARAR AUDIO NO MEIO
     
-      const CORRECOES_VOZ = {
+    const CORRECOES_VOZ = {
         "daive": "they have",
         "dave": "they have",
         "ive": "i have",
@@ -555,8 +573,19 @@
 
           if (d.files && d.files.length) { 
             tocando = true;
-            await new Promise(r => setTimeout(r, 1500));
+
+            //PARAR AUDIO NO MEIO
+            const expectedTmp = msg.dataset.expected || "";
+            agendarLiberacaoSegura(calcularTempoMic(expectedTmp) + 3000);
+            //FIM PARAR AUDIO NO MEIO
+
+            await new Promise(r => setTimeout(r, 2000));
             await falarComoAntigo(d.files);
+
+            //PARAR AUDIO NO MEIO
+            clearTimeout(safetyUnlockTimer);
+            //FIM PARAR AUDIO NO MEIO
+
             tocando = false;
             tocarBeep();
 
@@ -566,6 +595,13 @@
                 }, 150);
               }  
             }
+            
+            //PARAR AUDIO NO MEIO
+            if (!esperandoResposta && !tocando) {
+              esperandoResposta = true;
+              liberarEntrada();
+            }
+            //FIM PARAR AUDIO NO MEIO
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
