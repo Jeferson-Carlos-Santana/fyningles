@@ -657,7 +657,7 @@
 
 
 
-    function salvarProgresso({ chatId, lessonId, attempts, points }) {
+function salvarProgresso({ chatId, lessonId, attempts, points }) {
   fetch("/progress/save/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -667,8 +667,29 @@
       attempts: attempts,
       points: points
     })
-  }).catch(() => {});
+  })
+  .then(() => {
+    // ✅ FEEDBACK VISUAL DE SUCESSO
+    const ok = document.createElement("div");
+    ok.className = "chat-message system";
+    ok.style.color = "green";
+    ok.textContent = "✓ progresso enviado";
+    (lastMsgEl || msgs[index]).after(ok);
+
+    setTimeout(() => ok.remove(), 2500);
+  })
+  .catch(() => {
+    // ❌ FEEDBACK VISUAL DE ERRO
+    const err = document.createElement("div");
+    err.className = "chat-message system";
+    err.style.color = "red";
+    err.textContent = "✗ erro ao salvar progresso";
+    (lastMsgEl || msgs[index]).after(err);
+
+    setTimeout(() => err.remove(), 3000);
+  });
 }
+
 
 
 
@@ -851,12 +872,12 @@ salvarProgresso({
       }
 
       if (tentativas >= MAX_TENTATIVAS) {
-salvarProgresso({
-  chatId: msgs[index].dataset.id,
-  lessonId: {{ lesson_id }},
-  attempts: MAX_TENTATIVAS,
-  points: 0
-});
+        salvarProgresso({
+          chatId: msgs[index].dataset.id,
+          lessonId: {{ lesson_id }},
+          attempts: MAX_TENTATIVAS,
+          points: 0
+        });
 
 
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
