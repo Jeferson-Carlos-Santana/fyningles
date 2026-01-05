@@ -370,7 +370,6 @@ def save_progress(request):
 
         chat_id = int(data.get("chat_id"))
         lesson_id = int(data.get("lesson_id"))
-        attempts = int(data.get("attempts"))
         points = int(data.get("points"))
 
         user_id = request.user.id
@@ -392,7 +391,6 @@ def save_progress(request):
             chat_id=chat_id,
             defaults={
                 "lesson_id": lesson_id,
-                "attempts": attempts,
                 "points": points,
                 "updated_at": timezone.now(),
             }

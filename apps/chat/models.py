@@ -145,8 +145,6 @@ class Chat(models.Model):
 
 # MODELS PROGRESS
 
-
-
 class Progress(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -162,7 +160,7 @@ class Progress(models.Model):
         related_name="progress"
     )
 
-    attempts = models.IntegerField()
+    
     points = models.IntegerField()
 
     updated_at = models.DateTimeField(auto_now=True)
