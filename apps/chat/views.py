@@ -82,66 +82,31 @@ def quebrar_frases(text):
 
     # limpa espaços e descarta vazios
     return [p.strip() for p in partes if p.strip()]  
-    
-from django.utils.timezone import now
-from django.db.models import Sum
-from apps.chat.models import Progress, Chat
 
+# CHAMAR O CHAT NO HTML
 def chat(request, lesson_id):
-    today = now().date()
-
-    pontos_hoje = (
-        Progress.objects
-        .filter(
-            user=request.user,
-            lesson_id=lesson_id,
-            updated_at__date=today
-        )
-        .aggregate(total=Sum("stage"))["total"] or 0
-    )
-
-    bloqueia_hoje = pontos_hoje >= 5
-
     lines = (
         Chat.objects
         .filter(lesson_id=lesson_id, status=True)
         .order_by("seq")
-    ) if not bloqueia_hoje else Chat.objects.none()
+    )
 
     for l in lines:
         l.content_pt = limpar_visual(l.content_pt)
+    
+    username = request.session.get(
+        "username",
+        request.user.first_name if request.user.is_authenticated else ""
+    )
+    
+    lesson_title = LESSON_TITLES.get(lesson_id, f"Lição {lesson_id}")
 
     return render(request, "chat/chat.html", {
         "lesson_id": lesson_id,
-        "lesson_title": LESSON_TITLES.get(lesson_id),
+        "lesson_title": lesson_title,
         "lines": lines,
-        "username": request.user.first_name,
-    })
-     
-# # CHAMAR O CHAT NO HTML
-# def chat(request, lesson_id):
-#     lines = (
-#         Chat.objects
-#         .filter(lesson_id=lesson_id, status=True)
-#         .order_by("seq")
-#     )
-
-#     for l in lines:
-#         l.content_pt = limpar_visual(l.content_pt)
-    
-#     username = request.session.get(
-#         "username",
-#         request.user.first_name if request.user.is_authenticated else ""
-#     )
-    
-#     lesson_title = LESSON_TITLES.get(lesson_id, f"Lição {lesson_id}")
-
-#     return render(request, "chat/chat.html", {
-#         "lesson_id": lesson_id,
-#         "lesson_title": lesson_title,
-#         "lines": lines,
-#         "username": username,
-#     }) 
+        "username": username,
+    }) 
     
  
 # ENVIAR PARA CRIACAO DE AUDIOS

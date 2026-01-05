@@ -157,7 +157,7 @@
       let autoSkipAtivo = false;
 
       //PARAR AUDIO NO MEIO
-      let safetyUnlockTimer = null;
+      //let safetyUnlockTimer = null;
       //FIM PARAR AUDIO NO MEIO
 
       const TEMPO_BASE = 5000;          // 3s mínimos
@@ -168,16 +168,16 @@
       beepPlayer.volume = 0.9;
 
     //PARAR AUDIO NO MEIO
-    function agendarLiberacaoSegura(maxMs = 15000) {
-      clearTimeout(safetyUnlockTimer);
-      safetyUnlockTimer = setTimeout(() => {
-        console.warn("Liberação de segurança acionada");
+    // function agendarLiberacaoSegura(maxMs = 15000) {
+    //   clearTimeout(safetyUnlockTimer);
+    //   safetyUnlockTimer = setTimeout(() => {
+    //     console.warn("Liberação de segurança acionada");
 
-        tocando = false;
-        esperandoResposta = true;
-        liberarEntrada();
-      }, maxMs);
-    }
+    //     tocando = false;
+    //     esperandoResposta = true;
+    //     liberarEntrada();
+    //   }, maxMs);
+    // }
     //FIM PARAR AUDIO NO MEIO
     
     const CORRECOES_VOZ = {
@@ -573,15 +573,15 @@
             tocando = true;
 
             //PARAR AUDIO NO MEIO
-            const expectedTmp = msg.dataset.expected || "";
-            agendarLiberacaoSegura(calcularTempoMic(expectedTmp) + 3000);
+            //const expectedTmp = msg.dataset.expected || "";
+            //agendarLiberacaoSegura(calcularTempoMic(expectedTmp) + 3000);
             //FIM PARAR AUDIO NO MEIO
 
             await new Promise(r => setTimeout(r, 2000));
             await falarComoAntigo(d.files);
 
             //PARAR AUDIO NO MEIO
-            clearTimeout(safetyUnlockTimer);
+            //clearTimeout(safetyUnlockTimer);
             //FIM PARAR AUDIO NO MEIO
 
             tocando = false;
@@ -595,10 +595,10 @@
             }
             
             //PARAR AUDIO NO MEIO
-            if (!esperandoResposta && !tocando) {
-              esperandoResposta = true;
-              liberarEntrada();
-            }
+            //if (!esperandoResposta && !tocando) {
+              //esperandoResposta = true;
+              //liberarEntrada();
+            //}
             //FIM PARAR AUDIO NO MEIO
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
