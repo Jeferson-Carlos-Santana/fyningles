@@ -386,7 +386,7 @@ def save_progress(request):
         )
 
     with transaction.atomic():
-        obj, created = Progress.objects.update_or_create(
+        obj, created = Progress.objects.get_or_create(
             user_id=user_id,
             chat_id=chat_id,
             defaults={
@@ -394,9 +394,14 @@ def save_progress(request):
                 "points": points,
                 "status": 0,
                 "stage": 0,
-                "concluded_at": None,
             }
         )
+
+        if not created:
+            obj.points += points
+            obj.updated_at = timezone.now()
+            obj.save(update_fields=["points", "updated_at"])
+
 
     return JsonResponse({
         "ok": True,
