@@ -18,8 +18,6 @@ from django.db import transaction
 from django.conf import settings
 from django.apps import apps
 
-
-
 LESSON_TITLES = {
     1: "Usando verbos",
     2: "Expressões populares",
@@ -85,7 +83,6 @@ def quebrar_frases(text):
     # limpa espaços e descarta vazios
     return [p.strip() for p in partes if p.strip()]  
     
-    
 from django.utils.timezone import now
 from django.db.models import Sum
 from apps.chat.models import Progress, Chat
@@ -100,36 +97,27 @@ def chat(request, lesson_id):
             lesson_id=lesson_id,
             updated_at__date=today
         )
-        .aggregate(total=Sum("points"))["total"] or 0
+        .aggregate(total=Sum("stage"))["total"] or 0
     )
 
-    if pontos_hoje >= 5:
-        lines = Chat.objects.none()   # efeito de status=False HOJE
-    else:
-        lines = (
-            Chat.objects
-            .filter(lesson_id=lesson_id, status=True)
-            .order_by("seq")
-        )
+    bloqueia_hoje = pontos_hoje >= 5
+
+    lines = (
+        Chat.objects
+        .filter(lesson_id=lesson_id, status=True)
+        .order_by("seq")
+    ) if not bloqueia_hoje else Chat.objects.none()
 
     for l in lines:
         l.content_pt = limpar_visual(l.content_pt)
 
-    username = request.session.get(
-        "username",
-        request.user.first_name if request.user.is_authenticated else ""
-    )
-
-    lesson_title = LESSON_TITLES.get(lesson_id, f"Lição {lesson_id}")
-
     return render(request, "chat/chat.html", {
         "lesson_id": lesson_id,
-        "lesson_title": lesson_title,
+        "lesson_title": LESSON_TITLES.get(lesson_id),
         "lines": lines,
-        "username": username,
+        "username": request.user.first_name,
     })
-
-
+     
 # # CHAMAR O CHAT NO HTML
 # def chat(request, lesson_id):
 #     lines = (
