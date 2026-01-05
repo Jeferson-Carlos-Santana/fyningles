@@ -159,11 +159,8 @@ class Progress(models.Model):
         on_delete=models.CASCADE,
         related_name="progress"
     )
-
     
     points = models.IntegerField()
-
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "progress"

@@ -392,7 +392,6 @@ def save_progress(request):
             defaults={
                 "lesson_id": lesson_id,
                 "points": points,
-                "updated_at": timezone.now(),
             }
         )
 
