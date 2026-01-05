@@ -159,16 +159,21 @@ class Progress(models.Model):
         on_delete=models.CASCADE,
         related_name="progress"
     )
-    
+
     points = models.IntegerField()
+
+    status = models.PositiveSmallIntegerField(default=0)
+    stage = models.PositiveSmallIntegerField(default=0)
+    concluded_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "progress"
         indexes = [
-            models.Index(fields=["user"]),
+            models.Index(fields=["user", "chat"]),
             models.Index(fields=["lesson_id"]),
-            models.Index(fields=["chat"]),
         ]
 
     def __str__(self):
         return f"{self.user_id} | lesson {self.lesson_id} | chat {self.chat_id}"
+

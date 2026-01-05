@@ -392,6 +392,9 @@ def save_progress(request):
             defaults={
                 "lesson_id": lesson_id,
                 "points": points,
+                "status": 0,
+                "stage": 0,
+                "concluded_at": None,
             }
         )
 
