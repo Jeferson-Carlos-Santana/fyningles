@@ -113,7 +113,7 @@ def chat(request, lesson_id):
         )
         .values("chat_id")
         .annotate(total=Sum("points"))
-        .filter(total__gte=settings.LIMITE_PONTOS_DIA)
+        .filter(total__gte=20)
         .values_list("chat_id", flat=True)
     )
     
