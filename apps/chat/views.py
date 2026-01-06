@@ -113,7 +113,7 @@ def chat(request, lesson_id):
         )
         .values("chat_id")
         .annotate(total=Sum("points"))
-        .filter(total__gte=5)
+        .filter(total__gte=settings.LIMITE_PONTOS_DIA)
         .values_list("chat_id", flat=True)
     )
     
@@ -129,7 +129,7 @@ def chat(request, lesson_id):
     
     username = request.session.get(
         "username",
-        request.user.first_name if request.user.is_authenticated else ""
+        user.first_name if user.is_authenticated else ""
     )
     
     lesson_title = LESSON_TITLES.get(lesson_id, f"Lição {lesson_id}")
