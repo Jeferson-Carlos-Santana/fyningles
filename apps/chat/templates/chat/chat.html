@@ -670,6 +670,18 @@ function salvarProgresso({ chatId, lessonId, points }) {
 }
 
 
+function salvarProgressoTmp({ chatId, points }) {
+  fetch("/progress/tmp/save/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      points: points
+    })
+  });
+}
+
+
 
 
 
@@ -795,6 +807,10 @@ salvarProgresso({
   points: pontos
 });
 
+salvarProgressoTmp({
+  chatId: msgs[index].dataset.id,
+  points: pontos
+});
 
 
 

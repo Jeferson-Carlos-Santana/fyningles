@@ -356,7 +356,7 @@ def dictionary_delete(request):
 # FIM APAGAR DADOS NO JSON
 
 
-
+# CADASTRAR NA TABELA progress e editar    
 @csrf_exempt
 def save_progress(request):
     if request.method != "POST":
@@ -406,4 +406,42 @@ def save_progress(request):
     return JsonResponse({
         "ok": True,
         "created": created
+    })
+
+# CADASTRAR NA TABELA progress_tmp    
+@csrf_exempt
+def save_progress_tmp(request):
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "invalid method"}, status=400)
+
+    if not request.user.is_authenticated:
+        return JsonResponse({"ok": False, "error": "not authenticated"}, status=401)
+
+    try:
+        data = json.loads(request.body)
+
+        chat_id = int(data.get("chat_id"))
+        points = int(data.get("points"))
+
+        user_id = request.user.id
+
+    except Exception:
+        return JsonResponse({"error": "Dados inválidos"}, status=400)
+
+    if not Chat.objects.filter(id=chat_id).exists():
+        return JsonResponse(
+            {"ok": False, "error": "chat_id inexistente"},
+            status=400
+        )
+
+    ProgressTmp = apps.get_model("chat", "ProgressTmp")
+
+    ProgressTmp.objects.create(
+        user_id=user_id,
+        chat_id=chat_id,
+        points=points
+    )
+
+    return JsonResponse({
+        "ok": True
     })
