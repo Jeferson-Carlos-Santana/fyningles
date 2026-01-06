@@ -176,4 +176,29 @@ class Progress(models.Model):
 
     def __str__(self):
         return f"{self.user_id} | lesson {self.lesson_id} | chat {self.chat_id}"
+    
+#    CLASS TMP_PROGRESS
+
+class ProgressTmp(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    chat = models.ForeignKey(
+        "Chat",
+        on_delete=models.CASCADE
+    )
+
+    points = models.PositiveSmallIntegerField()
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "progress_tmp"
+        indexes = [
+            models.Index(fields=["user", "chat"]),
+            models.Index(fields=["updated_at"]),
+        ]
+
 

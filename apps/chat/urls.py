@@ -12,5 +12,4 @@ urlpatterns = [
     path("tts/", tts, name="tts"),
     path("tts/line/", tts_line, name="tts_line"), 
     path("progress/save/", views.save_progress, name="save_progress"),
-
 ]
