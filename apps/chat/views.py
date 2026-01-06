@@ -454,15 +454,20 @@ def save_progress(request):
                 "points": points,
                 "status": 0,
                 "stage": 0,
+                "concluded_at": timezone.now(),  # mantém coerência no INSERT
             }
         )
 
         if not created:
             obj.points += points
             obj.updated_at = timezone.now()
+            
             # =====================================================
-            # NOVO CÓDIGO — ATUALIZA STAGE COM BASE NOS PONTOS
+            # NOVO CÓDIGO — DETECTA TROCA DE STAGE
             # =====================================================
+            stage_anterior = obj.stage
+            # =====================================================
+          
             STAGES = [
                 (STAGE_12, 12),
                 (STAGE_11, 11),
@@ -482,10 +487,17 @@ def save_progress(request):
                 if obj.points >= limite and obj.stage < stage:
                     obj.stage = stage
                     break
+                
+            # =====================================================
+            # NOVO CÓDIGO — ATUALIZA concluded_at SE O STAGE MUDOU
+            # =====================================================
+            if obj.stage != stage_anterior:
+                obj.concluded_at = timezone.now()
             # =====================================================
             # FIM DO NOVO CÓDIGO
             # =====================================================
-            obj.save(update_fields=["points", "updated_at", "stage"])
+            
+            obj.save(update_fields=["points", "updated_at", "stage", "concluded_at"])
 
     return JsonResponse({
         "ok": True,
