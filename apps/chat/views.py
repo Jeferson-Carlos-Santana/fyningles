@@ -8,7 +8,7 @@ from langdetect import detect, LangDetectException
 from apps.chat.services.language_detector import detectar_idioma
 import requests, json
 from django.views.decorators.csrf import csrf_exempt
-from .models import Chat
+from .models import Chat, ProgressTmp
 import re
 
 from django.views.decorators.csrf import csrf_exempt
@@ -17,6 +17,11 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.conf import settings
 from django.apps import apps
+from datetime import timedelta
+
+
+
+
 
 LESSON_TITLES = {
     1: "Usando verbos",
@@ -85,6 +90,10 @@ def quebrar_frases(text):
 
 # CHAMAR O CHAT NO HTML
 def chat(request, lesson_id):
+    # DELETE > 2 dias (aqui, na tabela progress_tmp)
+    limite = timezone.now() - timedelta(days=2)
+    ProgressTmp.objects.filter(updated_at__lt=limite).delete()
+    
     lines = (
         Chat.objects
         .filter(lesson_id=lesson_id, status=True)
