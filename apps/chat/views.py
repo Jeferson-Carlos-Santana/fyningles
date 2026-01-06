@@ -20,9 +20,36 @@ from django.apps import apps
 from datetime import timedelta
 from django.db.models import Sum
 
+# TOTAL DE PONTOS POR DIA
+TOTAL_POINTS_DAY = 50
 
+# VALORES DOS ESTAGIOS
+# STAGE_1  = 25
+# STAGE_2  = 50
+# STAGE_3  = 70
+# STAGE_4  = 90
+# STAGE_5  = 110
+# STAGE_6  = 125
+# STAGE_7  = 140
+# STAGE_8  = 150
+# STAGE_9  = 160
+# STAGE_10 = 165
+# STAGE_11 = 170
+# STAGE_12 = 175
 
-
+# TESTE
+STAGE_1  = 5
+STAGE_2  = 10
+STAGE_3  = 15
+STAGE_4  = 25
+STAGE_5  = 30
+STAGE_6  = 35
+STAGE_7  = 40
+STAGE_8  = 45
+STAGE_9  = 50
+STAGE_10 = 55
+STAGE_11 = 60
+STAGE_12 = 65
 
 
 LESSON_TITLES = {
@@ -113,7 +140,7 @@ def chat(request, lesson_id):
         )
         .values("chat_id")
         .annotate(total=Sum("points"))
-        .filter(total__gte=20)
+        .filter(total__gte=TOTAL_POINTS_DAY)
         .values_list("chat_id", flat=True)
     )
     
@@ -433,8 +460,32 @@ def save_progress(request):
         if not created:
             obj.points += points
             obj.updated_at = timezone.now()
-            obj.save(update_fields=["points", "updated_at"])
+            # =====================================================
+            # NOVO CÓDIGO — ATUALIZA STAGE COM BASE NOS PONTOS
+            # =====================================================
+            STAGES = [
+                (STAGE_12, 12),
+                (STAGE_11, 11),
+                (STAGE_10, 10),
+                (STAGE_9, 9),
+                (STAGE_8, 8),
+                (STAGE_7, 7),
+                (STAGE_6, 6),
+                (STAGE_5, 5),
+                (STAGE_4, 4),
+                (STAGE_3, 3),
+                (STAGE_2, 2),
+                (STAGE_1, 1),
+            ]
 
+            for limite, stage in STAGES:
+                if obj.points >= limite and obj.stage < stage:
+                    obj.stage = stage
+                    break
+            # =====================================================
+            # FIM DO NOVO CÓDIGO
+            # =====================================================
+            obj.save(update_fields=["points", "updated_at", "stage"])
 
     return JsonResponse({
         "ok": True,
