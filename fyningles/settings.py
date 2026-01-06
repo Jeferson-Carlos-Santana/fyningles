@@ -31,10 +31,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-# MINHAS VARIAVEIS
-#LIMITE_PONTOS_DIA = 20
-
-
 
 # Application definition
 
