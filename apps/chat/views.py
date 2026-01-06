@@ -92,34 +92,14 @@ def quebrar_frases(text):
 
 # CHAMAR O CHAT NO HTML
 def chat(request, lesson_id):
-    user = request.user
-    now = timezone.now()
     # DELETE > 2 dias (aqui, na tabela progress_tmp)
     limite = timezone.now() - timedelta(days=2)
     ProgressTmp.objects.filter(updated_at__lt=limite).delete()
     # FIM DELETE > 2 dias (aqui, na tabela progress_tmp)
     
-    # JANELA MOVEL DE 5 DIAS
-    cutoff_5d = now - timedelta(days=5)
-    
-    # 3) SOMA DOS PONTOS POR CHAT DOS ULTIMO 5 DIAs
-    # CHATS que já bateram 15+ pontos nos últimos 5 dias
-    chats_bloqueados = (
-        Progress.objects
-        .filter(
-            user_id=user.id,
-            updated_at__gte=cutoff_5d
-        )
-        .values("chat_id")
-        .annotate(total=Sum("points"))
-        .filter(total__gte=15)
-        .values_list("chat_id", flat=True)
-    )
-    
     lines = (
         Chat.objects
         .filter(lesson_id=lesson_id, status=True)
-        .exclude(id__in=chats_bloqueados)
         .order_by("seq")
     )
 
