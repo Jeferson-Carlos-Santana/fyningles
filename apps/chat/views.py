@@ -144,10 +144,27 @@ def chat(request, lesson_id):
         .values_list("chat_id", flat=True)
     )
     
+    # =====================================================
+    # NOVO CÓDIGO — CHATS BLOQUEADOS PELO STATUS (progress)
+    # =====================================================
+    chats_bloqueados_status = (
+        Progress.objects
+        .filter(
+            user_id=user.id,
+            status=1
+        )
+        .values_list("chat_id", flat=True)
+    )
+    # =====================================================
+    # FIM DO NOVO CÓDIGO
+    # =====================================================
+
+    
     lines = (
         Chat.objects
         .filter(lesson_id=lesson_id, status=True)
         .exclude(id__in=chats_bloqueados_hoje)
+        .exclude(id__in=chats_bloqueados_status)  # <<< NOVO
         .order_by("seq")
     )
 
