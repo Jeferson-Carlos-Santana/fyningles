@@ -462,11 +462,10 @@ def save_progress(request):
             obj.points += points
             obj.updated_at = timezone.now()
             
-            # =====================================================
-            # NOVO CÓDIGO — DETECTA TROCA DE STAGE
-            # =====================================================
+       
+            # DETECTA TROCA DE STAGE           
             stage_anterior = obj.stage
-            # =====================================================
+            # FIM DETECTA TROCA DE STAGE  
           
             STAGES = [
                 (STAGE_12, 12),
@@ -488,16 +487,43 @@ def save_progress(request):
                     obj.stage = stage
                     break
                 
-            # =====================================================
-            # NOVO CÓDIGO — ATUALIZA concluded_at SE O STAGE MUDOU
-            # =====================================================
+
+            # ATUALIZA concluded_at SE O STAGE MUDOU
             if obj.stage != stage_anterior:
                 obj.concluded_at = timezone.now()
+            # FIM ATUALIZA concluded_at SE O STAGE MUDOU
+            
+            # =====================================================
+            # NOVO CÓDIGO — REGRA DE TEMPO POR STAGE (STATUS)
+            # =====================================================
+            STAGE_DAYS = {
+                1: 8,
+                2: 8,
+                3: 6,
+                4: 6,
+                5: 6,
+                6: 5,
+                7: 5,
+                8: 4,
+                9: 4,
+                10: 3,
+                11: 3,
+                12: 3,
+            }
+
+            if obj.stage in STAGE_DAYS and obj.concluded_at:
+                dias_minimos = STAGE_DAYS[obj.stage]
+                dias_passados = (timezone.now().date() - obj.concluded_at.date()).days
+
+                if dias_passados < dias_minimos:
+                    obj.status = 1  # frase para / bloqueia
+                else:
+                    obj.status = 0  # frase continua
             # =====================================================
             # FIM DO NOVO CÓDIGO
-            # =====================================================
+            # =====================================================     
             
-            obj.save(update_fields=["points", "updated_at", "stage", "concluded_at"])
+            obj.save(update_fields=["points", "updated_at", "stage", "concluded_at", "status"])
 
     return JsonResponse({
         "ok": True,
