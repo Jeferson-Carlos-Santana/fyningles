@@ -123,6 +123,46 @@ def chat(request, lesson_id):
     user = request.user
     now = timezone.now()
     
+    # =====================================================
+    # NOVO CÓDIGO — REVALIDA STATUS PELO TEMPO (CHAT)
+    # =====================================================
+    STAGE_DAYS = {
+        1: 8,
+        2: 8,
+        3: 6,
+        4: 6,
+        5: 6,
+        6: 5,
+        7: 5,
+        8: 4,
+        9: 4,
+        10: 3,
+        11: 3,
+        12: 3,
+    }
+
+    progressos_bloqueados = Progress.objects.filter(
+        user_id=user.id,
+        status=1
+    )
+
+    for p in progressos_bloqueados:
+        if not p.concluded_at or p.stage == 0:
+            continue
+
+        dias_minimos = STAGE_DAYS.get(p.stage)
+        if dias_minimos is None:
+            continue
+
+        dias_passados = (now.date() - p.concluded_at.date()).days
+
+        if dias_passados >= dias_minimos:
+            p.status = 0
+            p.save(update_fields=["status"])
+    # =====================================================
+    # FIM DO NOVO CÓDIGO
+    # =====================================================
+    
     # DELETE > 2 dias (aqui, na tabela progress_tmp)
     limite = timezone.now() - timedelta(days=2)
     ProgressTmp.objects.filter(updated_at__lt=limite).delete()
@@ -144,9 +184,7 @@ def chat(request, lesson_id):
         .values_list("chat_id", flat=True)
     )
     
-    # =====================================================
-    # NOVO CÓDIGO — CHATS BLOQUEADOS PELO STATUS (progress)
-    # =====================================================
+    # CHATS BLOQUEADOS PELO STATUS (progress)
     chats_bloqueados_status = (
         Progress.objects
         .filter(
@@ -155,16 +193,13 @@ def chat(request, lesson_id):
         )
         .values_list("chat_id", flat=True)
     )
-    # =====================================================
-    # FIM DO NOVO CÓDIGO
-    # =====================================================
-
+    # FIM # CHATS BLOQUEADOS PELO STATUS (progress)
     
     lines = (
         Chat.objects
         .filter(lesson_id=lesson_id, status=True)
         .exclude(id__in=chats_bloqueados_hoje)
-        .exclude(id__in=chats_bloqueados_status)  # <<< NOVO
+        .exclude(id__in=chats_bloqueados_status)
         .order_by("seq")
     )
 
@@ -510,9 +545,7 @@ def save_progress(request):
                 obj.concluded_at = timezone.now()
             # FIM ATUALIZA concluded_at SE O STAGE MUDOU
             
-            # =====================================================
-            # NOVO CÓDIGO — REGRA DE TEMPO POR STAGE (STATUS)
-            # =====================================================
+            # REGRA DE TEMPO POR STAGE (STATUS)
             STAGE_DAYS = {
                 1: 8,
                 2: 8,
@@ -536,9 +569,8 @@ def save_progress(request):
                     obj.status = 1  # frase para / bloqueia
                 else:
                     obj.status = 0  # frase continua
-            # =====================================================
-            # FIM DO NOVO CÓDIGO
-            # =====================================================     
+            # FIM # REGRA DE TEMPO POR STAGE (STATUS) 
+            
             
             obj.save(update_fields=["points", "updated_at", "stage", "concluded_at", "status"])
 
