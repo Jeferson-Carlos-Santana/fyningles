@@ -6,11 +6,8 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from langdetect import detect, LangDetectException
 from apps.chat.services.language_detector import detectar_idioma
-import requests, json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Chat, Progress, ProgressTmp
-import re
-
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -19,45 +16,64 @@ from django.conf import settings
 from django.apps import apps
 from datetime import timedelta
 from django.db.models import Sum
+import requests, json, re
 
 # TOTAL DE PONTOS POR DIA
 TOTAL_POINTS_DAY = 50
 
-# VALORES DOS ESTAGIOS
-STAGE_1  = 25
-STAGE_2  = 50
-STAGE_3  = 70
-STAGE_4  = 90
-STAGE_5  = 110
-STAGE_6  = 125
-STAGE_7  = 140
-STAGE_8  = 150
-STAGE_9  = 160
-STAGE_10 = 165
-STAGE_11 = 170
-STAGE_12 = 175
+# DIAS QUE AS FRASES NAO APARECE
+SUSPIRO = 5  # 5, 6, 7
 
-# TESTE
-# STAGE_1  = 10
-# STAGE_2  = 15
-# STAGE_3  = 20
-# STAGE_4  = 30
-# STAGE_5  = 35
-# STAGE_6  = 40
-# STAGE_7  = 45
-# STAGE_8  = 50
-# STAGE_9  = 55
-# STAGE_10 = 60
-# STAGE_11 = 65
-# STAGE_12 = 70
+# NIVEL BAIXO MEDIO E ALTO
+NIVEL = 0    # 0, 5, 10
 
+# PONTOS PARA CADA ESTAGIO
+STAGE_1  = 25 + (NIVEL * 1)  # 25 30 35
+STAGE_2  = 50 + (NIVEL * 2)  # 50 60 70
+STAGE_3  = 70 + (NIVEL * 3)  # 70 85  100 
+STAGE_4  = 90 + (NIVEL * 4)  # 90 110 130
+STAGE_5  = 105 + (NIVEL * 5) # 105 130 155
+STAGE_6  = 120 + (NIVEL * 6) # 120 150 180
+STAGE_7  = 130 + (NIVEL * 7) # 130 165 200
+STAGE_8  = 140 + (NIVEL * 8) # 140 180 220
+STAGE_9  = 145 + (NIVEL * 9) # 145 190 235
+STAGE_10 = 150 + (NIVEL * 10) # 150 200 250
+STAGE_11 = STAGE_10 + 5
+STAGE_12 = STAGE_10 + 10
+STAGE_13 = STAGE_10 + 15
+
+# DIAS PARA  STAGE_DAYS
+DAY_1  = (STAGE_1 // 5) + SUSPIRO      
+DAY_2  = (STAGE_2 // 5) + SUSPIRO
+DAY_3  = (STAGE_3 // 5) + SUSPIRO - 1  
+DAY_4  = (STAGE_4 // 5) + SUSPIRO - 1
+DAY_5  = (STAGE_5 // 5) + SUSPIRO - 2  
+DAY_6  = (STAGE_6 // 5) + SUSPIRO - 2
+DAY_7  = (STAGE_7 // 5) + SUSPIRO - 2  
+DAY_8  = (STAGE_8 // 5) + SUSPIRO - 2
+DAY_9  = (STAGE_9 // 5) + SUSPIRO - 2  
+DAY_10 = (STAGE_10 // 5) + SUSPIRO - 2 
+
+# DIAS PARA EXECUTAR OS PONTOS EM CADA ESTAGIO
+STAGE_DAYS_1  = DAY_1    
+STAGE_DAYS_2  = DAY_2
+STAGE_DAYS_3  = DAY_3    
+STAGE_DAYS_4  = DAY_4 
+STAGE_DAYS_5  = DAY_5     
+STAGE_DAYS_6  = DAY_6
+STAGE_DAYS_7  = DAY_7     
+STAGE_DAYS_8  = DAY_8
+STAGE_DAYS_9  = DAY_9     
+STAGE_DAYS_10 = DAY_10
+STAGE_DAYS_11 = 30
+STAGE_DAYS_12 = 30
+STAGE_DAYS_13 = 30
 
 LESSON_TITLES = {
     1: "Usando verbos",
     2: "Expressões populares",
     3: "Utilidades diárias",
 }
-
 
 def chat_home(request):
     return render(request, "chat/chat.html", {
@@ -121,24 +137,23 @@ def quebrar_frases(text):
 def chat(request, lesson_id):
     
     user = request.user
-    now = timezone.now()
-    
-    # =====================================================
+    now = timezone.now()    
+   
     # NOVO CÓDIGO — REVALIDA STATUS PELO TEMPO (CHAT)
-    # =====================================================
     STAGE_DAYS = {
-        1: 8,
-        2: 8,
-        3: 6,
-        4: 6,
-        5: 6,
-        6: 5,
-        7: 5,
-        8: 4,
-        9: 4,
-        10: 3,
-        11: 3,
-        12: 3,
+        1: STAGE_DAYS_1,
+        2: STAGE_DAYS_2,
+        3: STAGE_DAYS_3,
+        4: STAGE_DAYS_4,
+        5: STAGE_DAYS_5,
+        6: STAGE_DAYS_6,
+        7: STAGE_DAYS_7,
+        8: STAGE_DAYS_8,
+        9: STAGE_DAYS_9,
+        10: STAGE_DAYS_10,
+        11: STAGE_DAYS_11,
+        12: STAGE_DAYS_12,
+        13: STAGE_DAYS_13,
     }
 
     progressos_bloqueados = Progress.objects.filter(
@@ -520,6 +535,7 @@ def save_progress(request):
             # FIM DETECTA TROCA DE STAGE  
           
             STAGES = [
+                (STAGE_13, 13),
                 (STAGE_12, 12),
                 (STAGE_11, 11),
                 (STAGE_10, 10),
@@ -547,18 +563,19 @@ def save_progress(request):
             
             # REGRA DE TEMPO POR STAGE (STATUS)
             STAGE_DAYS = {
-                1: 8,
-                2: 8,
-                3: 6,
-                4: 6,
-                5: 6,
-                6: 5,
-                7: 5,
-                8: 4,
-                9: 4,
-                10: 3,
-                11: 3,
-                12: 3,
+                1: STAGE_DAYS_1,
+                2: STAGE_DAYS_2,
+                3: STAGE_DAYS_3,
+                4: STAGE_DAYS_4,
+                5: STAGE_DAYS_5,
+                6: STAGE_DAYS_6,
+                7: STAGE_DAYS_7,
+                8: STAGE_DAYS_8,
+                9: STAGE_DAYS_9,
+                10: STAGE_DAYS_10,
+                11: STAGE_DAYS_11,
+                12: STAGE_DAYS_12,
+                13: STAGE_DAYS_13,
             }
 
             if obj.stage in STAGE_DAYS and obj.concluded_at:
@@ -569,8 +586,7 @@ def save_progress(request):
                     obj.status = 1  # frase para / bloqueia
                 else:
                     obj.status = 0  # frase continua
-            # FIM # REGRA DE TEMPO POR STAGE (STATUS) 
-            
+            # FIM # REGRA DE TEMPO POR STAGE (STATUS)            
             
             obj.save(update_fields=["points", "updated_at", "stage", "concluded_at", "status"])
 
