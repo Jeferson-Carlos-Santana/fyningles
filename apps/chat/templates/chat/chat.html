@@ -141,8 +141,9 @@
 
 
   document.addEventListener("DOMContentLoaded", function () {  
-      const elAndamento = document.getElementById("points-andamento");
-      if (elAndamento) elAndamento.textContent = pontosAndamento;     
+    const elAndamento = document.getElementById("points-andamento");
+    if (elAndamento) elAndamento.textContent = pontosAndamento;
+     
       atualizarPontosTotais();
       const audioPlayer = new Audio();
     
@@ -424,6 +425,9 @@
 
     
     function resetarAula() {
+      pontosAndamento = 0;
+      if (elAndamento) elAndamento.textContent = 0;
+
       // para áudio
       try {
         audioPlayer.pause();
@@ -810,10 +814,10 @@
         // INICIA TIMER
         iniciarTimerVisual();
         agendarResetAula();
-        mostrarSistema();
-        pontosAndamento = 0;
 
-        const elAndamento = document.getElementById("points-andamento");
+        mostrarSistema();
+
+        pontosAndamento = 0;
         if (elAndamento) elAndamento.textContent = 0;
 
       };
@@ -956,6 +960,11 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: msg, lang: "pt" })
+
+          
+          pontosAndamento += pontos;
+          if (elAndamento) elAndamento.textContent = pontosAndamento;
+
         });  
 
         const d = await r.json(); 
@@ -971,12 +980,6 @@
           tentativas === 0 ? 5 :
           tentativas === 1 ? 3 :
           1;
-
-          pontosAndamento += pontos;
-
-          const elAndamento = document.getElementById("points-andamento");
-          if (elAndamento) elAndamento.textContent = pontosAndamento;
-
 
           salvarProgresso({
             chatId: msgs[index].dataset.id,
