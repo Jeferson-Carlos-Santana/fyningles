@@ -200,17 +200,15 @@
     
     // ATUALIZAR OS PONTOS EM TEMPO REAL
     function atualizarPontosTotais() {
-      fetch("/progress/total/")
+      fetch("/progress/total/", { credentials: "same-origin" })
         .then(r => r.json())
         .then(data => {
           const el = document.getElementById("total-points");
           if (!el) return;
-
-          const valor = Number(data.total || 0);
-          el.textContent = valor.toLocaleString("pt-BR");
-        })
-        .catch(() => {});
+          el.textContent = Number(data.total || 0).toLocaleString("pt-BR");
+        });
     }
+
 
     
     const CORRECOES_VOZ = {
