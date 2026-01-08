@@ -167,6 +167,11 @@
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
 
+      // MODIFICACAO 001
+      const TEMPO_LIMITE_MIN = 1;
+      let timerResetAula = null;
+      //FIM  MODIFICACAO 001
+
     //PARAR AUDIO NO MEIO
     // function agendarLiberacaoSegura(maxMs = 15000) {
     //   clearTimeout(safetyUnlockTimer);
@@ -352,6 +357,70 @@
       btnEnviar.classList.add("btn-ready");
     }
 
+
+
+    // MODIFICACAO 001
+    function resetarAula() {
+      // para qualquer áudio em andamento
+      try {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      } catch (e) {}
+
+      // limpa fila de voz
+      filaVoz = Promise.resolve();
+
+      // limpa timers
+      if (micTimeout) {
+        clearTimeout(micTimeout);
+        micTimeout = null;
+      }
+
+      // zera estado da aula
+      index = 0;
+      tentativas = 0;
+      esperandoResposta = false;
+      tocando = false;
+      expectedAtual = "";
+      lastMsgEl = null;
+      lastFalandoEl = null;
+
+      // esconde todas as mensagens
+      msgs.forEach(m => {
+        m.style.display = "none";
+        m.classList.remove("falando");
+      });
+
+      // mensagem final visual
+      const fim = document.createElement("div");
+      fim.className = "chat-message system";
+      fim.textContent =
+        "⏱️ Tempo máximo da aula atingido. A aula foi encerrada. Inicie novamente.";
+      chatArea.appendChild(fim);
+      scrollChatToBottom();
+
+      // bloqueia entradas
+      bloquearEntrada();
+
+      // reativa botão start
+      btnStart.disabled = false;
+    }
+
+    function agendarResetAula() {
+      // evita múltiplos timers
+      if (timerResetAula) {
+        clearTimeout(timerResetAula);
+      }
+
+      timerResetAula = setTimeout(() => {
+        resetarAula();
+      }, TEMPO_LIMITE_MIN * 60 * 1000);
+    }
+    // FIM MODIFICACAO 001
+
+
+
+
     function micGravando() {
       btnMic.textContent = "🎙️";
       btnMic.classList.add("mic-gravando");
@@ -382,7 +451,6 @@
     function scrollChatToBottom() {
       chatArea.scrollTop = chatArea.scrollHeight;
     }
-
 
     // TOCA UM ÚNICO AUDIO E ESPERA
     function tocarUm(file, tries = 300, delay = 300) {
@@ -538,10 +606,28 @@
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
         if (tocando) return;
-        if (index >= msgs.length) {   
+
+
+
+        // MODIFICACAO 001
+        // if (index >= msgs.length) {   
+        //   bloquearEntrada();
+        //   return;
+        // }
+
+        if (index >= msgs.length) {
+          if (timerResetAula) {
+            clearTimeout(timerResetAula);
+            timerResetAula = null;
+          }
           bloquearEntrada();
+          btnStart.disabled = false;
           return;
         }
+        // FIM MODIFICACAO 001
+
+
+
 
         const msg = msgs[index];
 
@@ -620,14 +706,42 @@
 
         });
       }
+      
 
+
+
+
+      // MODIFICACAO 001
       // BOTÃO INICIAR
+      // btnStart.onclick = function () {
+      //   btnStart.disabled = true;
+      //   index = 0;
+      //   msgs.forEach(m => m.style.display = "none");      
+      //   mostrarSistema();
+      // };
+
       btnStart.onclick = function () {
         btnStart.disabled = true;
+
+        // zera estado
         index = 0;
-        msgs.forEach(m => m.style.display = "none");      
-        mostrarSistema();
-      };
+        tentativas = 0;
+        esperandoResposta = false;
+        expectedAtual = "";
+        lastMsgEl = null;
+        lastFalandoEl = null;
+
+        msgs.forEach(m => {
+          m.style.display = "none";
+          m.classList.remove("falando");
+        });
+
+      // agenda reset automático da aula
+      agendarResetAula();
+
+      mostrarSistema();
+    };
+    // FIM MODIFICACAO 001
 
       // BOTÃO MICROFONE
       btnMic.onclick = function () {
@@ -644,48 +758,30 @@
         return div;
       }
 
+      // ENVIA DADOS PARA SALVAR NA TABELA progress
+      function salvarProgresso({ chatId, lessonId, points }) {
+        fetch("/progress/save/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            lesson_id: lessonId,
+            points: points
+          })
+        })  
+      }
 
-
-
-
-
-
-
-
-
-
-
-
-
-function salvarProgresso({ chatId, lessonId, points }) {
-  fetch("/progress/save/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: chatId,
-      lesson_id: lessonId,
-      points: points
-    })
-  })  
-}
-
-
-function salvarProgressoTmp({ chatId, points }) {
-  fetch("/progress/tmp/save/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: chatId,
-      points: points
-    })
-  });
-}
-
-
-
-
-
-
+      // ENVIA DADOS PARA SALVAR NA TABELA progress_tmp
+      function salvarProgressoTmp({ chatId, points }) {
+        fetch("/progress/tmp/save/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            points: points
+          })
+        });
+      }
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
@@ -791,28 +887,24 @@ function salvarProgressoTmp({ chatId, points }) {
           await new Promise(r => setTimeout(r, 1100));
           await tocarUm(d.files[0]);
           tocando = false;
-        }  
+        }
 
+        // === SALVA PROGRESSO (ACERTO) ===
+        const pontos =
+          tentativas === 0 ? 5 :
+          tentativas === 1 ? 3 :
+          1;
 
+          salvarProgresso({
+            chatId: msgs[index].dataset.id,
+            lessonId: {{ lesson_id }},
+            points: pontos
+          });
 
-// === SALVA PROGRESSO (ACERTO) ===
-const pontos =
-  tentativas === 0 ? 5 :
-  tentativas === 1 ? 3 :
-  1;
-
-salvarProgresso({
-  chatId: msgs[index].dataset.id,
-  lessonId: {{ lesson_id }},
-  points: pontos
-});
-
-salvarProgressoTmp({
-  chatId: msgs[index].dataset.id,
-  points: pontos
-});
-
-
+          salvarProgressoTmp({
+            chatId: msgs[index].dataset.id,
+            points: pontos
+          });
 
           esperandoResposta = false;
           expectedAtual = "";

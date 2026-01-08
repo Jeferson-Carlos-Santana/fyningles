@@ -31,7 +31,6 @@ def traduz_com_retry(en_full, tentativas=2, espera=1):
             time.sleep(espera)
     return {"pt": None, "es": None, "fr": None, "it": None}
 
-
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
   
