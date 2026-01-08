@@ -7,6 +7,7 @@ from django.db import models
 from django import forms
 from .admin_forms import ChatAdminForm
 from django.utils.html import format_html
+import time
 
 @admin.action(description="Marcar status = ATIVO")
 def marcar_status_ativo(modeladmin, request, queryset):
@@ -15,6 +16,21 @@ def marcar_status_ativo(modeladmin, request, queryset):
 @admin.action(description="Marcar status = INATIVO")
 def marcar_status_inativo(modeladmin, request, queryset):
     queryset.update(status=False)
+ 
+# IMPLEMENTACAO 1
+def traduz_com_retry(en_full, tentativas=2, espera=1):
+    for _ in range(tentativas):
+        try:
+            return {
+                "pt": GoogleTranslator(source="en", target="pt").translate(en_full),
+                "es": GoogleTranslator(source="en", target="es").translate(en_full),
+                "fr": GoogleTranslator(source="en", target="fr").translate(en_full),
+                "it": GoogleTranslator(source="en", target="it").translate(en_full),
+            }
+        except Exception:
+            time.sleep(espera)
+    return {"pt": None, "es": None, "fr": None, "it": None}
+
 
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
@@ -204,15 +220,21 @@ class ChatAdmin(admin.ModelAdmin):
     en_full_M = parts[1].strip() if len(parts) > 1 else ""
     en_abbrev = self.contract_en(en_full)
     en_informal = self.gerar_informal(en_full)
-
+    
+    # TROCA OS 2 CODIGOS DE: IMPLEMENTACAO 1, POR ESSE
     # traduções base
-    try:
-      pt = GoogleTranslator(source="en", target="pt").translate(en_full)
-      es = GoogleTranslator(source="en", target="es").translate(en_full)
-      fr = GoogleTranslator(source="en", target="fr").translate(en_full)
-      it = GoogleTranslator(source="en", target="it").translate(en_full)
-    except Exception:
-      pt = es = fr = it = None
+    # try:
+    #   pt = GoogleTranslator(source="en", target="pt").translate(en_full)
+    #   es = GoogleTranslator(source="en", target="es").translate(en_full)
+    #   fr = GoogleTranslator(source="en", target="fr").translate(en_full)
+    #   it = GoogleTranslator(source="en", target="it").translate(en_full)
+    # except Exception:
+    #   pt = es = fr = it = None
+    
+    # IMPLEMENTACAO 1
+    trads = traduz_com_retry(en_full)
+    pt, es, fr, it = trads["pt"], trads["es"], trads["fr"], trads["it"]
+
  
     # AQUI GRAVA NO JSON AS VARIAVEIS
     from apps.chat.utils.dictionary_writer import add_term, term_exists
