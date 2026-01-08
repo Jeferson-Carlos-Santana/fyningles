@@ -635,7 +635,7 @@ def save_progress_tmp(request):
 
 
 
-
+# CONTA O TOTAL DOS PONTOS DE CADA USUARIO
 @login_required
 def total_points(request):
     total = (
@@ -648,3 +648,4 @@ def total_points(request):
     return JsonResponse({
         "total": total
     })
+

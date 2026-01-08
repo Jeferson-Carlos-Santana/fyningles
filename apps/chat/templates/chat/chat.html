@@ -15,9 +15,9 @@
         <div class="bar-1">
           <div class="infor">👤 Jeferson carlos Santana</div>
           <div class="infor">⭐Pontos acumulados: <span class="text-success" id="total-points">0</span></div>
-          <div class="infor">⭐Pontos em andamento: <span class="text-info">253</span></div>
-          <div class="infor">⭐Pontos que faltam: <span class="text-info">768</span></div>
-          <div class="infor">⭐Pontos feitos: <span class="text-info">422</span></div>
+          <div class="infor">⭐Pontos em andamento: <span class="text-info" id="points-andamento">0</span></div>
+          <div class="infor">⭐Pontos que faltam: <span class="text-info" id="points-faltam">0</span></div>
+          <div class="infor">⭐Pontos feitos: <span class="text-info" id="points-feitos">0</span></div>
           <ul class="menu">  
             {% if request.user.is_superuser %}
               <li>
@@ -127,9 +127,19 @@
       results: [[{ transcript: texto }]]
     });
   }
-
+  
+      // ATUALIZAR OS PONTOS EM TEMPO REAL
+    function atualizarPontosTotais() {
+      fetch("/progress/total/", { credentials: "same-origin" })
+        .then(r => r.json())
+        .then(data => {
+          const el = document.getElementById("total-points");
+          if (!el) return;
+          el.textContent = Number(data.total || 0).toLocaleString("pt-BR");
+        });
+    }
   document.addEventListener("DOMContentLoaded", function () {       
-     
+      atualizarPontosTotais();
       const audioPlayer = new Audio();
     
       let filaVoz = Promise.resolve();
@@ -198,16 +208,7 @@
     // }
     //FIM PARAR AUDIO NO MEIO
     
-    // ATUALIZAR OS PONTOS EM TEMPO REAL
-    function atualizarPontosTotais() {
-      fetch("/progress/total/", { credentials: "same-origin" })
-        .then(r => r.json())
-        .then(data => {
-          const el = document.getElementById("total-points");
-          if (!el) return;
-          el.textContent = Number(data.total || 0).toLocaleString("pt-BR");
-        });
-    }
+
 
 
     
@@ -1070,6 +1071,7 @@
         esperandoResposta = true;
         liberarEntrada();        
       };       
+      
       
     });
     
