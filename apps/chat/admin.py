@@ -6,6 +6,7 @@ from deep_translator import GoogleTranslator
 from django.db import models
 from django import forms
 from .admin_forms import ChatAdminForm
+from django.utils.html import format_html
 
 @admin.action(description="Marcar status = ATIVO")
 def marcar_status_ativo(modeladmin, request, queryset):
@@ -17,6 +18,23 @@ def marcar_status_inativo(modeladmin, request, queryset):
 
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
+  
+  def Sequencia(self, obj):
+    if obj.role == "pt-mark":
+        return format_html(
+            '<span style="background:pink; '
+            'display:flex; '
+            'border-radius: 50%; '
+            'padding: 2px 5px;'
+            'align-items:center; '
+            'justify-content:center; '
+            'height:100%;">{}</span>',
+            obj.seq
+        )
+    return obj.seq
+
+  Sequencia.short_description = "" 
+  
   form = ChatAdminForm
   # ORDEM DO FORM
   fields = (
@@ -41,7 +59,7 @@ class ChatAdmin(admin.ModelAdmin):
   )
   # LISTA DO QUE APARECE NA TABELA
   list_display = (
-    "seq",
+    "Sequencia",
     "lesson_id",    
     "role",
     "lang",

@@ -2,6 +2,13 @@ from django import forms
 from .models import Chat
 
 class ChatAdminForm(forms.ModelForm):
+    
+    role = forms.ChoiceField(
+        choices=[
+        ("pt-mark", "Setar traduzir para portugues"),
+        ("teacher", "Teacher"),
+        ]
+    )
 
     TEMPLATE_CHOICES = [
         ("1", "Frase com abreviação e sem abreviação."),
