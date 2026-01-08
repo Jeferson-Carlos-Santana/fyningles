@@ -85,6 +85,15 @@
             <button class="play-madeira-velha" id="btn-start"></button>
             <button id="btnAutoSkip" class="auto-off">AUTO SKIP: OFF</button>
             <button id="btnAutoMic" class="auto-off">AUTO MIC: OFF</button> 
+
+            <span id="timer-aula" style="
+              margin-left: 12px;
+              font-weight: bold;
+              color: #ffb300;
+            ">
+              ⏱️ 00:00
+            </span>
+
         </div>
         <div class="inline-input">            
             <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />
@@ -170,6 +179,10 @@
       // MODIFICACAO 001
       const TEMPO_LIMITE_MIN = 1;
       let timerResetAula = null;
+     
+      let timerIntervaloVisual = null;
+      let tempoRestanteSeg = 0;
+      const timerEl = document.getElementById("timer-aula");
       //FIM  MODIFICACAO 001
 
     //PARAR AUDIO NO MEIO
@@ -357,26 +370,64 @@
       btnEnviar.classList.add("btn-ready");
     }
 
-
-
     // MODIFICACAO 001
+    function iniciarTimerVisual() {
+      tempoRestanteSeg = TEMPO_LIMITE_MIN * 60;
+
+      atualizarTimerVisual();
+
+      if (timerIntervaloVisual) {
+        clearInterval(timerIntervaloVisual);
+      }
+
+      timerIntervaloVisual = setInterval(() => {
+        tempoRestanteSeg--;
+
+        atualizarTimerVisual();
+
+        if (tempoRestanteSeg <= 0) {
+          clearInterval(timerIntervaloVisual);
+          timerIntervaloVisual = null;
+        }
+      }, 1000);
+    }
+
+    function atualizarTimerVisual() {
+      if (!timerEl) return;
+
+      const min = Math.floor(tempoRestanteSeg / 60);
+      const sec = tempoRestanteSeg % 60;
+
+      timerEl.textContent =
+        `⏱️ ${min}:${sec.toString().padStart(2, "0")}`;
+    }
+
+    
     function resetarAula() {
-      // para qualquer áudio em andamento
+      // para áudio
       try {
         audioPlayer.pause();
         audioPlayer.currentTime = 0;
       } catch (e) {}
 
-      // limpa fila de voz
       filaVoz = Promise.resolve();
 
-      // limpa timers
       if (micTimeout) {
         clearTimeout(micTimeout);
         micTimeout = null;
       }
 
-      // zera estado da aula
+      if (timerIntervaloVisual) {
+        clearInterval(timerIntervaloVisual);
+        timerIntervaloVisual = null;
+      }
+
+      if (timerResetAula) {
+        clearTimeout(timerResetAula);
+        timerResetAula = null;
+      }
+
+      // ZERA ESTADO
       index = 0;
       tentativas = 0;
       esperandoResposta = false;
@@ -385,26 +436,26 @@
       lastMsgEl = null;
       lastFalandoEl = null;
 
-      // esconde todas as mensagens
-      msgs.forEach(m => {
-        m.style.display = "none";
-        m.classList.remove("falando");
-      });
+      // LIMPA COMPLETAMENTE O CHAT (CHAVE)
+      chatArea.innerHTML = "";
 
-      // mensagem final visual
+      // RESET VISUAL DO TIMER
+      if (timerEl) {
+        timerEl.textContent = "⏱️ 00:00";
+      }
+
+      // MENSAGEM FINAL
       const fim = document.createElement("div");
       fim.className = "chat-message system";
       fim.textContent =
-        "⏱️ Tempo máximo da aula atingido. A aula foi encerrada. Inicie novamente.";
+        "⏱️ Tempo máximo da aula atingido. A aula foi encerrada.";
       chatArea.appendChild(fim);
       scrollChatToBottom();
 
-      // bloqueia entradas
       bloquearEntrada();
-
-      // reativa botão start
       btnStart.disabled = false;
     }
+
 
     function agendarResetAula() {
       // evita múltiplos timers
@@ -723,7 +774,6 @@
       btnStart.onclick = function () {
         btnStart.disabled = true;
 
-        // zera estado
         index = 0;
         tentativas = 0;
         esperandoResposta = false;
@@ -731,16 +781,19 @@
         lastMsgEl = null;
         lastFalandoEl = null;
 
+        // ESCONDE TODAS AS FRASES BASE
         msgs.forEach(m => {
           m.style.display = "none";
           m.classList.remove("falando");
         });
 
-      // agenda reset automático da aula
-      agendarResetAula();
+        // INICIA TIMER
+        iniciarTimerVisual();
+        agendarResetAula();
 
-      mostrarSistema();
-    };
+        mostrarSistema();
+      };
+
     // FIM MODIFICACAO 001
 
       // BOTÃO MICROFONE
