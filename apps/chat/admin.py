@@ -21,19 +21,24 @@ class ChatAdmin(admin.ModelAdmin):
   
   def Sequencia(self, obj):
     if obj.role == "pt-mark":
-        return format_html(
-            '<span style="background:pink; '
-            'display:flex; '
-            'border-radius: 50%; '
-            'padding: 2px 5px;'
-            'align-items:center; '
-            'justify-content:center; '
-            'height:100%;">{}</span>',
-            obj.seq
-        )
-    return obj.seq
+        color = "pink"
+    elif obj.role == "single-mark":
+        color = "#00ff80"
+    else:
+        return obj.seq
 
-  Sequencia.short_description = "" 
+    return format_html(
+        '<span style="background:{}; '
+        'display:flex; '
+        'border-radius:50%; '
+        'padding:2px 5px; '
+        'align-items:center; '
+        'justify-content:center;">{}</span>',
+        color,
+        obj.seq
+    )
+
+  Sequencia.short_description = ""
   
   form = ChatAdminForm
   # ORDEM DO FORM
@@ -318,6 +323,22 @@ class ChatAdmin(admin.ModelAdmin):
       obj.content_it = self.mover_pontuacao(texto)      
  
     super().save_model(request, obj, form, change)
+    
+    # --- REGRA single-mark (segunda inserção) ---
+    frase = (obj.expected_en or "").strip()
+
+    qs = Chat.objects.filter(
+        lesson_id=obj.lesson_id,
+        expected_en__iexact=frase
+    ).order_by("id")
+
+    if qs.count() == 2:
+        antigo = qs.first()
+        if antigo.role == "teacher":
+            antigo.role = "single-mark"
+            antigo.save(update_fields=["role"])
+    # --- FIM ---
+
 
   # FRASES COM ABREVIACOES E SEM ABREVIACOES
   TEMPLATES_CONTENT_1_PT = [     
