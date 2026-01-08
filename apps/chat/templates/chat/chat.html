@@ -140,10 +140,7 @@
   }
 
 
-  document.addEventListener("DOMContentLoaded", function () {  
-    const elAndamento = document.getElementById("points-andamento");
-    if (elAndamento) elAndamento.textContent = pontosAndamento;
-     
+  document.addEventListener("DOMContentLoaded", function () {       
       atualizarPontosTotais();
       const audioPlayer = new Audio();
     
@@ -200,7 +197,7 @@
       const timerEl = document.getElementById("timer-aula");
       //FIM  MODIFICACAO 001
 
-      let pontosAndamento = 0;
+  
 
     //PARAR AUDIO NO MEIO
     // function agendarLiberacaoSegura(maxMs = 15000) {
@@ -425,9 +422,6 @@
 
     
     function resetarAula() {
-      pontosAndamento = 0;
-      if (elAndamento) elAndamento.textContent = 0;
-
       // para áudio
       try {
         audioPlayer.pause();
@@ -816,10 +810,6 @@
         agendarResetAula();
 
         mostrarSistema();
-
-        pontosAndamento = 0;
-        if (elAndamento) elAndamento.textContent = 0;
-
       };
 
     // FIM MODIFICACAO 001
@@ -960,11 +950,6 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: msg, lang: "pt" })
-
-          
-          pontosAndamento += pontos;
-          if (elAndamento) elAndamento.textContent = pontosAndamento;
-
         });  
 
         const d = await r.json(); 
