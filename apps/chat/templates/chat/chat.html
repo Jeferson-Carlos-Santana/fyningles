@@ -14,7 +14,7 @@
       <div class="sidebar-inner">
         <div class="bar-1">
           <div class="infor">👤 Jeferson carlos Santana</div>
-          <div class="infor">⭐Pontos acumulados: <span class="text-success">1.075.352</span></div>
+          <div class="infor">⭐Pontos acumulados: <span class="text-success" id="total-points">0</span></div>
           <div class="infor">⭐Pontos em andamento: <span class="text-info">253</span></div>
           <div class="infor">⭐Pontos que faltam: <span class="text-info">768</span></div>
           <div class="infor">⭐Pontos feitos: <span class="text-info">422</span></div>
@@ -197,6 +197,21 @@
     //   }, maxMs);
     // }
     //FIM PARAR AUDIO NO MEIO
+    
+    // ATUALIZAR OS PONTOS EM TEMPO REAL
+    function atualizarPontosTotais() {
+      fetch("/progress/total/")
+        .then(r => r.json())
+        .then(data => {
+          const el = document.getElementById("total-points");
+          if (!el) return;
+
+          const valor = Number(data.total || 0);
+          el.textContent = valor.toLocaleString("pt-BR");
+        })
+        .catch(() => {});
+    }
+
     
     const CORRECOES_VOZ = {
         "daive": "they have",
@@ -953,6 +968,8 @@
             lessonId: {{ lesson_id }},
             points: pontos
           });
+
+          atualizarPontosTotais();
 
           salvarProgressoTmp({
             chatId: msgs[index].dataset.id,

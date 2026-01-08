@@ -632,3 +632,19 @@ def save_progress_tmp(request):
     return JsonResponse({
         "ok": True
     })
+
+
+
+
+@login_required
+def total_points(request):
+    total = (
+        Progress.objects
+        .filter(user=request.user)
+        .aggregate(total=Sum("points"))
+        .get("total") or 0
+    )
+
+    return JsonResponse({
+        "total": total
+    })
