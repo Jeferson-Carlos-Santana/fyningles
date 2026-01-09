@@ -79,12 +79,11 @@
             ">
               ⏱️ 00:00
             </span>
-
         </div>
 
         <div class="chat-area">
           {% for line in lines %}
-          <div class="chat-message {{ line.role }}"
+          <div class="chat-message {{ line.role }} base"
             data-id="{{ line.id }}"
             data-auto="{{ line.auto|yesno:'1,0' }}"
             data-end="{{ line.end|yesno:'1,0' }}"
@@ -507,7 +506,16 @@
       lastFalandoEl = null;
 
       // LIMPA COMPLETAMENTE O CHAT (CHAVE)
-      chatArea.innerHTML = "";
+      //chatArea.innerHTML = "";
+      // remove apenas mensagens dinâmicas (feedback, user, system)
+      chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());
+
+      // esconde novamente as frases base
+      msgs.forEach(m => {
+        m.style.display = "none";
+        m.classList.remove("falando");
+      });
+
 
       // RESET VISUAL DO TIMER
       if (timerEl) {
@@ -1102,7 +1110,6 @@
           points: 0
         });
 
-
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
         const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
 
@@ -1139,7 +1146,6 @@
         lastMsgEl = null;
         return mostrarSistema();
       }
-
 
         // pode tentar de novo
         esperandoResposta = true;

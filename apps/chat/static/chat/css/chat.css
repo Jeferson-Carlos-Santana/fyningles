@@ -94,7 +94,7 @@
     height: 40px;
     margin-left: 3px;
 }
-#btnMic{
+#btn-mic{
    height: 40px;
    margin-left: 3px;
 }
@@ -175,10 +175,6 @@
 /* FIM BOTÃO START DESABILITADO */
 
 /* TOOLTIP — SOMENTE FRASES QUE EXIGEM RESPOSTA (data-expected) */
-/* =====================================================
-   TOOLTIP — FRASES QUE EXIGEM RESPOSTA (data-expected)
-   ===================================================== */
-
 /* base da mensagem precisa permitir tooltip */
 .chat-message {
   overflow: visible;
@@ -228,11 +224,6 @@
   z-index: 9998;
 }
 
-/* =====================================================
-   EXCEÇÃO — PRIMEIRA FRASE DO CHAT
-   Tooltip aparece EMBAIXO
-   ===================================================== */
-
 .chat-area .chat-message:first-child[data-expected]:not([data-expected=""]):hover::after {
   bottom: auto;
   top: 100%;
@@ -245,5 +236,4 @@
   top: calc(100% - 1px);
   border-color: transparent transparent #222 transparent;
 }
-
 /*FIM TOOLTIP — SOMENTE FRASES QUE EXIGEM RESPOSTA (data-expected) */
