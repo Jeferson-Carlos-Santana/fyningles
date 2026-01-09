@@ -64,10 +64,22 @@
             <button class="menu-toggle" aria-label="Abrir menu">
               <img src="{% static 'chat/img/menu.png' %}" alt="Menu">
             </button> 
-            chat : {{ lesson_title }} 
-           
-          </div>     
-                                  
+            chat : {{ lesson_title }}           
+          </div>                                  
+        </div>
+        <div class="painel-master">
+            <button class="play-madeira-velha" id="btn-start" title="Iniciar lição." disabled></button>
+            <button id="btnAutoSkip" class="auto-off" title="Avança para próxima frase quando fecha o microfone.">AUTO SKIP: OFF</button>
+            <button id="btnAutoMic" class="auto-off" title="Ativar o microfone automáticamente.">AUTO MIC: OFF</button> 
+
+            <span id="timer-aula" style="
+              margin-left: 12px;
+              font-weight: bold;
+              color: #ffb300;
+            ">
+              ⏱️ 00:00
+            </span>
+
         </div>
 
         <div class="chat-area">
@@ -82,20 +94,7 @@
           </div>
           {% endfor %}
         </div>
-        <div class="painel-master">
-            <button class="play-madeira-velha" id="btn-start" disabled></button>
-            <button id="btnAutoSkip" class="auto-off">AUTO SKIP: OFF</button>
-            <button id="btnAutoMic" class="auto-off">AUTO MIC: OFF</button> 
-
-            <span id="timer-aula" style="
-              margin-left: 12px;
-              font-weight: bold;
-              color: #ffb300;
-            ">
-              ⏱️ 00:00
-            </span>
-
-        </div>
+        
         <div class="inline-input">            
             <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />
            

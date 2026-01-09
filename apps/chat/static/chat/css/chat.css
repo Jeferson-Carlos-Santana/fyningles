@@ -100,10 +100,11 @@
 }
 
 .painel-master {
-  margin: 0 3px;
+  
+  margin: 0 -4px;
   background-color: rgba(215, 185, 94, 0.15);
   padding: 5px;
-  border-radius: 5px;
+  /* border-radius: 5px; */
 
   display: flex;
   align-items: center;
@@ -170,4 +171,53 @@
 /* remove hover quando desabilitado */
 #btn-start:disabled:hover {
   background: #9e9e9e;
+}
+
+
+/* TOOLTIP DA FRASE ESPERADA (expected_en)
+   Funciona com: <div class="chat-message teacher" data-expected="...">
+*/
+
+.chat-message.teacher {
+  position: relative;
+  cursor: help;
+}
+
+/* Caixa do tooltip */
+.chat-message.teacher:hover::after {
+  content: attr(data-expected);
+  position: absolute;
+
+  bottom: 100%;              /* acima do balão */
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+
+  background: #f6f4f4;
+  color: #0d0b0b;
+  padding: 6px 10px;
+  border-radius: 6px;
+
+  font-size: 13px;
+  white-space: nowrap;
+
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* Setinha */
+.chat-message.teacher:hover::before {
+  content: "";
+  position: absolute;
+
+  bottom: calc(100% - 1px);
+  left: 50%;
+  transform: translateX(-50%);
+
+  border-width: 6px;
+  border-style: solid;
+  border-color: #222 transparent transparent transparent;
+
+  z-index: 9998;
 }
