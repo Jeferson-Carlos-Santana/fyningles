@@ -145,9 +145,6 @@
     
       let filaVoz = Promise.resolve();
 
-      
-
-
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
         console.warn("SpeechRecognition não suportado neste browser");
@@ -260,7 +257,6 @@
           atualizarPontosFaltam(feitos);
         });
     }
-
 
      // ATUALIZAR PONTOS EM ANDAMENTO
     function atualizarPontosAndamento() {
