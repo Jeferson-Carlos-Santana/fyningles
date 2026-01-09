@@ -113,7 +113,7 @@
   </div>
   <script src="{% static 'chat/js/script.js' %}"></script> 
 
-  <script>
+btnStart.onclick = function () {  <script>
   const USER_NAME = "{{ username|escapejs }}";
   
   function enviarMensagem() {
@@ -138,10 +138,12 @@
         el.textContent = Number(data.total || 0).toLocaleString("pt-BR");
       });
   }
+  
+  document.addEventListener("DOMContentLoaded", function () {    
 
-
-  document.addEventListener("DOMContentLoaded", function () {       
-      atualizarPontosTotais();
+    
+   
+     
       const audioPlayer = new Audio();
     
       let filaVoz = Promise.resolve();
@@ -197,8 +199,7 @@
       const timerEl = document.getElementById("timer-aula");
       //FIM  MODIFICACAO 001
 
-  
-
+      let pontosAndamento = 0;
     //PARAR AUDIO NO MEIO
     // function agendarLiberacaoSegura(maxMs = 15000) {
     //   clearTimeout(safetyUnlockTimer);
@@ -214,7 +215,13 @@
     
 
 
-
+     atualizarPontosTotais();
+    
+     // ATUALIZAR PONTOS EM ANDAMENTO
+    function atualizarPontosAndamento() {
+      const el = document.getElementById("points-andamento");
+      if (el) el.textContent = pontosAndamento;
+    }
     
     const CORRECOES_VOZ = {
         "daive": "they have",
@@ -422,6 +429,10 @@
 
     
     function resetarAula() {
+      // NOVO — reset total dos pontos visuais
+      pontosAndamento = 0;
+      atualizarPontosAndamento();
+
       // para áudio
       try {
         audioPlayer.pause();
@@ -691,6 +702,11 @@
           }
           bloquearEntrada();
           btnStart.disabled = false;
+
+          // NOVO — fim da lição, zera pontos visuais
+          pontosAndamento = 0;
+          atualizarPontosAndamento();
+
           return;
         }
         // FIM MODIFICACAO 001
@@ -796,6 +812,10 @@
         tentativas = 0;
         esperandoResposta = false;
         expectedAtual = "";
+
+        pontosAndamento = 0;
+        atualizarPontosAndamento();
+
         lastMsgEl = null;
         lastFalandoEl = null;
 
@@ -965,6 +985,11 @@
           tentativas === 0 ? 5 :
           tentativas === 1 ? 3 :
           1;
+
+          // NOVO — soma pontos visuais da lição
+          pontosAndamento += pontos;
+          atualizarPontosAndamento();
+
 
           salvarProgresso({
             chatId: msgs[index].dataset.id,
