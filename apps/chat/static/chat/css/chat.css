@@ -175,33 +175,75 @@
 /* FIM BOTÃO START DESABILITADO */
 
 /* TOOLTIP — SOMENTE FRASES QUE EXIGEM RESPOSTA (data-expected) */
+/* =====================================================
+   TOOLTIP — FRASES QUE EXIGEM RESPOSTA (data-expected)
+   ===================================================== */
+
+/* base da mensagem precisa permitir tooltip */
+.chat-message {
+  overflow: visible;
+}
+
+/* somente mensagens com expected */
 .chat-message[data-expected]:not([data-expected=""]) {
   position: relative;
   cursor: help;
 }
 
+/* TOOLTIP PADRÃO — aparece EM CIMA */
 .chat-message[data-expected]:not([data-expected=""]):hover::after {
   content: attr(data-expected);
-  position: fixed;
+  position: absolute;
 
-  top: 120px;              /* ajusta aqui se quiser */
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
+  margin-bottom: 6px;
 
   background: #f6f4f4;
   color: #0d0b0b;
   padding: 6px 10px;
   border-radius: 6px;
+
   font-size: 13px;
   white-space: nowrap;
 
-  z-index: 999999;
+  z-index: 9999;
   pointer-events: none;
 }
 
+/* SETINHA — PADRÃO (para cima) */
+.chat-message[data-expected]:not([data-expected=""]):hover::before {
+  content: "";
+  position: absolute;
 
+  bottom: calc(100% - 1px);
+  left: 50%;
+  transform: translateX(-50%);
 
-.chat-message {
-  overflow: visible;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #222 transparent transparent transparent;
+
+  z-index: 9998;
 }
+
+/* =====================================================
+   EXCEÇÃO — PRIMEIRA FRASE DO CHAT
+   Tooltip aparece EMBAIXO
+   ===================================================== */
+
+.chat-area .chat-message:first-child[data-expected]:not([data-expected=""]):hover::after {
+  bottom: auto;
+  top: 100%;
+  margin-bottom: 0;
+  margin-top: 6px;
+}
+
+.chat-area .chat-message:first-child[data-expected]:not([data-expected=""]):hover::before {
+  bottom: auto;
+  top: calc(100% - 1px);
+  border-color: transparent transparent #222 transparent;
+}
+
 /*FIM TOOLTIP — SOMENTE FRASES QUE EXIGEM RESPOSTA (data-expected) */
