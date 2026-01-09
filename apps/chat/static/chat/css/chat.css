@@ -59,6 +59,10 @@
   background-color: var(--color-warning-light);
 }
 
+.info-lesson{
+  background-color: rgba(215, 185, 94, 0.15);
+}
+
 /* MOBILE */
 @media (max-width: 520px) {
   .chat-message {
@@ -99,25 +103,22 @@
    margin-left: 3px;
 }
 
-.painel-master {
-  
+.painel-master {  
   margin: 0 -4px 0 -4px;
   background-color: rgba(215, 185, 94, 0.15);
   padding: 5px;
-  /* border-radius: 5px; */
-
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: nowrap;
 }
 
-.mic-ready { background: #2e7d32; }
-.mic-disabled { background: #555; opacity: .4; }
-.mic-gravando { background: #c62828; }
+.mic-ready { background: var(--color-success); }
+.mic-disabled { background: var(--color-secondary); opacity: .4; }
+.mic-gravando { background: var(--color-danger); }
 
-.btn-ready { background: #2e7d32; }
-.btn-disabled { background: #555; opacity: .4; }
+.btn-ready { background: var(--color-success); }
+.btn-disabled { background: var(--color-secondary); opacity: .4; }
 
 
 /* BOTAO AUTOCLICK */
@@ -130,13 +131,13 @@
 }
 
 .auto-off {
-  background: #555;
+  background: var(--color-secondary);
   color: #fff;
 }
 
 .auto-on {
-  background: #2e7d32;
-  color: #fff;
+  background: var(--color-success);
+  color: var(--color-white);
 }
 
 /* AUTO SKIP  */
@@ -149,19 +150,19 @@
 }
 
 .auto-off {
-  background: #555;
-  color: #fff;
+  background: var(--color-secondary);
+  color: var(--color-white);
 }
 
 .auto-on {
-  background: #2e7d32;
-  color: #fff;
+  background: var(--color-success);
+  color: var(--color-white);
 }
 
 /* BOTÃO START DESABILITADO */
 #btn-start:disabled {
-  background: #9e9e9e;
-  color: #555;
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
   cursor: not-allowed;
   filter: grayscale(100%);
   opacity: 0.6;
@@ -170,7 +171,7 @@
 
 /* remove hover quando desabilitado */
 #btn-start:disabled:hover {
-  background: #9e9e9e;
+  background: var(--color-secondary-light);
 }
 /* FIM BOTÃO START DESABILITADO */
 
@@ -196,8 +197,8 @@
   transform: translateX(-50%);
   margin-bottom: 6px;
 
-  background: #f6f4f4;
-  color: #0d0b0b;
+  background: var(--color-secondary);
+  color: var(--color-warning-light);
   padding: 6px 10px;
   border-radius: 6px;
 

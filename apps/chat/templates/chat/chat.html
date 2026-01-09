@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'chat/css/chat.css' %}">
     <link rel="stylesheet" href="{% static 'chat/css/btn.css' %}">
+    <link rel="stylesheet" href="{% static 'chat/css/others.css' %}">
     <meta charset="utf-8">
     <title>chat</title>
 </head>
@@ -13,12 +14,14 @@
   <div class="layout">
     <nav class="sidebar">
       <div class="sidebar-inner">
-        <div class="bar-1">
-          <div class="infor">👤 Jeferson carlos Santana</div>
-          <div class="infor">⭐Pontos acumulados: <span class="text-success" id="total-points">0</span></div>
-          <div class="infor">⭐Pontos em andamento: <span class="text-info" id="points-andamento">0</span></div>
-          <div class="infor">⭐Pontos que faltam: <span class="text-info" id="points-faltam">0</span></div>
-          <div class="infor">⭐Pontos feitos: <span class="text-info" id="points-feitos">0</span></div>
+        <div class="bar-1">          
+          <div class="infor" style="padding: 5px;">Olá, {{ request.user.username }}!</div>
+          <div class="info-lesson">
+          <div class="infor">Pontos acumulados: <span class="text-warning-middle" id="total-points">0</span></div>
+          <div class="infor">Pontos em andamento: <span class="text-warning-middle" id="points-andamento">0</span></div>
+          <div class="infor">Pontos que faltam: <span class="text-warning-middle" id="points-faltam">0</span></div>
+          <div class="infor">Pontos feitos: <span class="text-warning-middle" id="points-feitos">0</span></div>
+          </div>
           <ul class="menu">  
             {% if request.user.is_superuser %}
               <li>
@@ -69,9 +72,8 @@
         </div>
         <div class="painel-master">
             <button class="play-madeira-velha" id="btn-start" title="Iniciar lição." disabled></button>
-            <button id="btnAutoSkip" class="auto-off" title="Avança para próxima frase quando fecha o microfone.">AUTO SKIP: OFF</button>
-            <button id="btnAutoMic" class="auto-off" title="Ativar o microfone automáticamente.">AUTO MIC: OFF</button> 
-
+            <button id="btnAutoSkip" class="auto-off" title="Avança para próxima frase quando fecha o microfone.">SKIP: OFF</button>
+            <button id="btnAutoMic" class="auto-off" title="Ativar o microfone automáticamente.">MIC: OFF</button> 
             <span id="timer-aula" style="
               margin-left: 12px;
               font-weight: bold;
@@ -115,6 +117,7 @@
 <script>
   const USER_NAME = "{{ username|escapejs }}";
   
+  // ENVIAR MENSAGEM
   function enviarMensagem() {
     const input = document.getElementById("mensagem");
     const texto = input.value.trim();
@@ -186,14 +189,12 @@
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
 
-      // MODIFICACAO 001
       const TEMPO_LIMITE_MIN = 3;
       let timerResetAula = null;
      
       let timerIntervaloVisual = null;
       let tempoRestanteSeg = 0;
       const timerEl = document.getElementById("timer-aula");
-      //FIM  MODIFICACAO 001
 
       let pontosAndamento = 0;
       // NOVO — meta diária visual
@@ -209,8 +210,7 @@
         // se estiver em /chat/<id>/, habilita
         if (lessonId && lessonId !== "") {
           btnStart.disabled = false;
-        }
-      
+        }      
 
     //PARAR AUDIO NO MEIO
     // function agendarLiberacaoSegura(maxMs = 15000) {
@@ -225,13 +225,10 @@
     // }
     //FIM PARAR AUDIO NO MEIO
 
-
     
-     atualizarPontosFaltam(0);
-     atualizarPontosFeitos();
-     atualizarPontosTotais();
-
-    
+    atualizarPontosFaltam(0);
+    atualizarPontosFeitos();
+    atualizarPontosTotais();    
     
     // PONTOS QUE FALTAM PARA A META DO DIA
     function atualizarPontosFaltam(pontosFeitos) {
@@ -316,11 +313,11 @@
       if (autoSkipAtivo) {
         btnAutoSkip.classList.remove("auto-off");
         btnAutoSkip.classList.add("auto-on");
-        btnAutoSkip.textContent = "AUTO SKIP: ON";
+        btnAutoSkip.textContent = "SKIP: ON";
       } else {
         btnAutoSkip.classList.remove("auto-on");
         btnAutoSkip.classList.add("auto-off");
-        btnAutoSkip.textContent = "AUTO SKIP: OFF";
+        btnAutoSkip.textContent = "SKIP: OFF";
       }
     };
 
@@ -330,11 +327,11 @@
       if (autoMicAtivo) {
         btnAutoMic.classList.remove("auto-off");
         btnAutoMic.classList.add("auto-on");
-        btnAutoMic.textContent = "AUTO MIC: ON";
+        btnAutoMic.textContent = "MIC: ON";
       } else {
         btnAutoMic.classList.remove("auto-on");
         btnAutoMic.classList.add("auto-off");
-        btnAutoMic.textContent = "AUTO MIC: OFF";
+        btnAutoMic.textContent = "MIC: OFF";
       }
     };
 
@@ -435,7 +432,6 @@
       btnEnviar.classList.add("btn-ready");
     }
 
-    // MODIFICACAO 001
     function iniciarTimerVisual() {
       tempoRestanteSeg = TEMPO_LIMITE_MIN * 60;
 
@@ -466,7 +462,6 @@
       timerEl.textContent =
         `⏱️ ${min}:${sec.toString().padStart(2, "0")}`;
     }
-
     
     function resetarAula() {
       // NOVO — reset total dos pontos visuais
@@ -516,7 +511,6 @@
         m.classList.remove("falando");
       });
 
-
       // RESET VISUAL DO TIMER
       if (timerEl) {
         timerEl.textContent = "⏱️ 00:00";
@@ -533,7 +527,6 @@
       btnStart.disabled = false;
     }
 
-
     function agendarResetAula() {
       // evita múltiplos timers
       if (timerResetAula) {
@@ -544,10 +537,6 @@
         resetarAula();
       }, TEMPO_LIMITE_MIN * 60 * 1000);
     }
-    // FIM MODIFICACAO 001
-
-
-
 
     function micGravando() {
       btnMic.textContent = "🎙️";
@@ -735,14 +724,6 @@
       function mostrarSistema() {
         if (tocando) return;
 
-
-
-        // MODIFICACAO 001
-        // if (index >= msgs.length) {   
-        //   bloquearEntrada();
-        //   return;
-        // }
-
         if (index >= msgs.length) {
           if (timerResetAula) {
             clearTimeout(timerResetAula);
@@ -757,10 +738,6 @@
 
           return;
         }
-        // FIM MODIFICACAO 001
-
-
-
 
         const msg = msgs[index];
 
@@ -838,26 +815,13 @@
           liberarEntrada();
 
         });
-      }
-      
-
-
-
-
-      // MODIFICACAO 001
-      // BOTÃO INICIAR
-      // btnStart.onclick = function () {
-      //   btnStart.disabled = true;
-      //   index = 0;
-      //   msgs.forEach(m => m.style.display = "none");      
-      //   mostrarSistema();
-      // };
+      }    
 
       btnStart.onclick = function () {
         btnStart.disabled = true;
         // remove mensagem de fim de aula, se existir
         chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
-        
+
         index = 0;
         tentativas = 0;
         esperandoResposta = false;
@@ -881,8 +845,6 @@
 
         mostrarSistema();
       };
-
-    // FIM MODIFICACAO 001
 
       // BOTÃO MICROFONE
       btnMic.onclick = function () {

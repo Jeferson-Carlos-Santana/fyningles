@@ -4,21 +4,26 @@
     --color-white: #ffffff;
     --color-danger: #ff0000;
     --color-danger-light: #ffb3b3;
-    --color-primary: #3b82f6;
-    --color-primary-light: #cee0fd;
+    --color-primary: #0d6efd;
+    --color-primary-light: #cde1fe;
     --color-warning: #b37700;
+    --color-warning-middle: #ffb300;
     --color-warning-light: #ffd480;
-    --color-secondary: #64748b;
-    --color-secondary-light: #c4cbd4;
+    --color-secondary: #6c757d;
+    --color-secondary-light: #d6d9db;
     --color-success: #1f6442; 
+    --color-success-middle: #aaff00;
     --color-success-light: #8cd9b3;
+    --color-info: #0bb8da; 
+    --color-info-light: #b6f0fb;
     /* AQUI USAR UMA DAS CORES ACIMA */
     --color-tittle-footer: #ffffff;
     --color-font-tittle-footer: #b37700;
 
-    --color-sidebar: #1c2533;
+    --color-sidebar: rgba(28, 37, 51, 0.95);
     --color-li: #243042;
     --color-li-hover: #2d3b52;   
+    
 }
 
 /* RESETE */
