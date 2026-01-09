@@ -649,3 +649,17 @@ def total_points(request):
         "total": total
     })
 
+# PONTOS FEITOS NO MESMO DIA
+@login_required
+def points_feitos(request):
+    total = (
+        ProgressTmp.objects
+        .filter(user=request.user)
+        .aggregate(total=Sum("points"))
+        .get("total") or 0
+    )
+
+    return JsonResponse({
+        "total": total
+    })
+

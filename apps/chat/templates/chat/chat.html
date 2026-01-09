@@ -113,7 +113,7 @@
   </div>
   <script src="{% static 'chat/js/script.js' %}"></script> 
 
-btnStart.onclick = function () {  <script>
+<script>
   const USER_NAME = "{{ username|escapejs }}";
   
   function enviarMensagem() {
@@ -139,10 +139,7 @@ btnStart.onclick = function () {  <script>
       });
   }
   
-  document.addEventListener("DOMContentLoaded", function () {    
-
-    
-   
+  document.addEventListener("DOMContentLoaded", function () {   
      
       const audioPlayer = new Audio();
     
@@ -214,9 +211,20 @@ btnStart.onclick = function () {  <script>
     //FIM PARAR AUDIO NO MEIO
     
 
+     atualizarPontosFeitos();
 
      atualizarPontosTotais();
     
+    function atualizarPontosFeitos() {
+      fetch("/progress/feitos/", { credentials: "same-origin" })
+        .then(r => r.json())
+        .then(data => {
+          const el = document.getElementById("points-feitos");
+          if (el) el.textContent = Number(data.total || 0);
+        });
+    }
+
+
      // ATUALIZAR PONTOS EM ANDAMENTO
     function atualizarPontosAndamento() {
       const el = document.getElementById("points-andamento");
@@ -997,12 +1005,16 @@ btnStart.onclick = function () {  <script>
             points: pontos
           });
 
-          atualizarPontosTotais();
+          
 
           salvarProgressoTmp({
             chatId: msgs[index].dataset.id,
             points: pontos
           });
+
+          atualizarPontosTotais();
+          
+          atualizarPontosFeitos();
 
           esperandoResposta = false;
           expectedAtual = "";

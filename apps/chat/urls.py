@@ -14,4 +14,6 @@ urlpatterns = [
     path("progress/save/", views.save_progress, name="save_progress"),
     path("progress/tmp/save/", views.save_progress_tmp, name="save_progress_tmp"),
     path("progress/total/", views.total_points, name="total_points"),
+    path("progress/feitos/", views.points_feitos, name="points_feitos"),
+
 ]
