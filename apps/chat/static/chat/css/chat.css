@@ -174,16 +174,15 @@
 }
 
 
-/* TOOLTIP DA FRASE ESPERADA — PROFESSOR (ROLE = system) */
-/* Funciona com: <div class="chat-message system" data-expected="..."> */
+/* TOOLTIP — SOMENTE FRASES QUE EXIGEM RESPOSTA (data-expected) */
 
-.chat-message.system {
+.chat-message[data-expected]:not([data-expected=""]) {
   position: relative;
   cursor: help;
 }
 
 /* Caixa do tooltip */
-.chat-message.system:hover::after {
+.chat-message[data-expected]:not([data-expected=""]):hover::after {
   content: attr(data-expected);
   position: absolute;
 
@@ -202,11 +201,10 @@
 
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.95;
 }
 
 /* Setinha */
-.chat-message.system:hover::before {
+.chat-message[data-expected]:not([data-expected=""]):hover::before {
   content: "";
   position: absolute;
 
@@ -220,6 +218,7 @@
 
   z-index: 9998;
 }
+
 
 .chat-message {
   overflow: visible;
