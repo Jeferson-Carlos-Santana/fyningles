@@ -199,6 +199,8 @@
       let pontosAndamento = 0;
       // NOVO — meta diária visual
       const META_DO_DIA = 1000;
+      
+
     //PARAR AUDIO NO MEIO
     // function agendarLiberacaoSegura(maxMs = 15000) {
     //   clearTimeout(safetyUnlockTimer);
@@ -212,9 +214,8 @@
     // }
     //FIM PARAR AUDIO NO MEIO
     
-
+     atualizarPontosFaltam(0);
      atualizarPontosFeitos();
-
      atualizarPontosTotais();
     
     // PONTOS QUE FALTAM PARA A META DO DIA
@@ -231,9 +232,12 @@
       fetch("/progress/feitos/", { credentials: "same-origin" })
         .then(r => r.json())
         .then(data => {
+          const feitos = Number(data.total || 0);
+
           const el = document.getElementById("points-feitos");
-          if (el) el.textContent = Number(data.total || 0);
-          // NOVO — atualiza pontos que faltam
+          if (el) el.textContent = feitos;
+
+          // CORRETO — agora a variável existe
           atualizarPontosFaltam(feitos);
         });
     }
