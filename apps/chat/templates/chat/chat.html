@@ -524,12 +524,11 @@
 
       // MENSAGEM FINAL
       const fim = document.createElement("div");
-      fim.className = "chat-message system";
+      fim.className = "chat-message system fim-aula";
       fim.textContent =
         "⏱️ Tempo máximo da aula atingido. A aula foi encerrada.";
       chatArea.appendChild(fim);
       scrollChatToBottom();
-
       bloquearEntrada();
       btnStart.disabled = false;
     }
@@ -856,7 +855,9 @@
 
       btnStart.onclick = function () {
         btnStart.disabled = true;
-
+        // remove mensagem de fim de aula, se existir
+        chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
+        
         index = 0;
         tentativas = 0;
         esperandoResposta = false;
