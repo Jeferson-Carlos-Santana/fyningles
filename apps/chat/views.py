@@ -105,6 +105,7 @@ def normalizar_marcadores(text):
         "(stp2)": "—",
         "(stp3)": "— —",
         "(a)": "",
+        "(as)": "",
     }
 
     for k, v in trocas.items():
