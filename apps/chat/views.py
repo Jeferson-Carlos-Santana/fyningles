@@ -652,9 +652,15 @@ def total_points(request):
 # PONTOS FEITOS NO MESMO DIA
 @login_required
 def points_feitos(request):
+    now = timezone.now()
+    inicio_dia = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
     total = (
         ProgressTmp.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user,
+            updated_at__gte=inicio_dia
+        )
         .aggregate(total=Sum("points"))
         .get("total") or 0
     )
