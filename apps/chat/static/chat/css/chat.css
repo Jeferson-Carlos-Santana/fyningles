@@ -174,21 +174,20 @@
 }
 
 
-/* TOOLTIP DA FRASE ESPERADA (expected_en)
-   Funciona com: <div class="chat-message teacher" data-expected="...">
-*/
+/* TOOLTIP DA FRASE ESPERADA — PROFESSOR (ROLE = system) */
+/* Funciona com: <div class="chat-message system" data-expected="..."> */
 
-.chat-message.teacher {
+.chat-message.system {
   position: relative;
   cursor: help;
 }
 
 /* Caixa do tooltip */
-.chat-message.teacher:hover::after {
+.chat-message.system:hover::after {
   content: attr(data-expected);
   position: absolute;
 
-  bottom: 100%;              /* acima do balão */
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
   margin-bottom: 6px;
@@ -207,7 +206,7 @@
 }
 
 /* Setinha */
-.chat-message.teacher:hover::before {
+.chat-message.system:hover::before {
   content: "";
   position: absolute;
 
@@ -220,4 +219,8 @@
   border-color: #222 transparent transparent transparent;
 
   z-index: 9998;
+}
+
+.chat-message {
+  overflow: visible;
 }
