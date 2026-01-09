@@ -104,6 +104,7 @@ def normalizar_marcadores(text):
         "(stp1)": ".", # atencao usar esse quebra a frase com uma pausa
         "(stp2)": "—",
         "(stp3)": "— —",
+        "(a)": "",
     }
 
     for k, v in trocas.items():

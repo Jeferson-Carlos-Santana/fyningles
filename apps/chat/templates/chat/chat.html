@@ -8,7 +8,8 @@
     <meta charset="utf-8">
     <title>chat</title>
 </head>
-<body> 
+<body data-lesson-id="{{ lesson_id|default:'' }}">
+
   <div class="layout">
     <nav class="sidebar">
       <div class="sidebar-inner">
@@ -82,7 +83,7 @@
           {% endfor %}
         </div>
         <div class="painel-master">
-            <button class="play-madeira-velha" id="btn-start"></button>
+            <button class="play-madeira-velha" id="btn-start" disabled></button>
             <button id="btnAutoSkip" class="auto-off">AUTO SKIP: OFF</button>
             <button id="btnAutoMic" class="auto-off">AUTO MIC: OFF</button> 
 
@@ -145,6 +146,9 @@
     
       let filaVoz = Promise.resolve();
 
+      
+
+
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
         console.warn("SpeechRecognition não suportado neste browser");
@@ -199,6 +203,18 @@
       let pontosAndamento = 0;
       // NOVO — meta diária visual
       const META_DO_DIA = 1000;
+
+      // CONTROLE DO BOTÃO START (habilita só quando há lição)
+
+        const lessonId = document.body.dataset.lessonId;
+
+        // começa desabilitado
+        btnStart.disabled = true;
+
+        // se estiver em /chat/<id>/, habilita
+        if (lessonId && lessonId !== "") {
+          btnStart.disabled = false;
+        }
       
 
     //PARAR AUDIO NO MEIO
@@ -213,10 +229,14 @@
     //   }, maxMs);
     // }
     //FIM PARAR AUDIO NO MEIO
+
+
     
      atualizarPontosFaltam(0);
      atualizarPontosFeitos();
      atualizarPontosTotais();
+
+    
     
     // PONTOS QUE FALTAM PARA A META DO DIA
     function atualizarPontosFaltam(pontosFeitos) {

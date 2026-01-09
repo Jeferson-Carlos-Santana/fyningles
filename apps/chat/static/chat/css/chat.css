@@ -99,11 +99,16 @@
    margin-left: 3px;
 }
 
-.painel-master{
-    margin: 0 3px;
-    background-color: rgba(215, 185, 94, 0.15);
-    padding: 5px;
-    border-radius: 5px;
+.painel-master {
+  margin: 0 3px;
+  background-color: rgba(215, 185, 94, 0.15);
+  padding: 5px;
+  border-radius: 5px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .mic-ready { background: #2e7d32; }
@@ -150,4 +155,19 @@
 .auto-on {
   background: #2e7d32;
   color: #fff;
+}
+
+/* BOTÃO START DESABILITADO */
+#btn-start:disabled {
+  background: #9e9e9e;
+  color: #555;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+/* remove hover quando desabilitado */
+#btn-start:disabled:hover {
+  background: #9e9e9e;
 }
