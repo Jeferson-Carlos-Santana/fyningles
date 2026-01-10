@@ -113,15 +113,18 @@
       </div>
     </main>
   </div>
-
-  <div id="nivel-modal" class="nivel-modal" style="display:none;">
+<!-- MODAL NIVEL -->
+<div id="nivel-modal" class="nivel-modal" style="display:none;">
   <div class="nivel-box">
+    <button class="nivel-close" aria-label="Fechar">×</button>
     <h3>Qual nível você se encaixa?</h3>
 
-    <label><input type="radio" name="nivel" value="1"> Baixo</label><br>
-    <label><input type="radio" name="nivel" value="2"> Médio</label><br>
-    <label><input type="radio" name="nivel" value="3"> Alto</label><br><br>
-
+    <label><input type="radio" name="nivel" value="1"> Repetição básica <span class="text-warning-middle">(repete menos vezes a frase)</span>.</label>
+    <label><input type="radio" name="nivel" value="2"> Repetição intermediária.</label>
+    <label><input type="radio" name="nivel" value="3"> Repetição intensiva <span class="text-warning-middle">(repete a frase mais vezes)</span>.</label>
+    <label>Essas repetições serão distribuídas ao longo do tempo, de modo a garantir maior eficácia no processo de aprendizagem.</label>
+    <label>Essas opções estão relacionadas à facilidade individual de aprendizagem. Caso tenha dúvida, recomenda-se optar pela opção intermediária. A escolha poderá ser realizada apenas uma única vez.</label>
+    <label>A pergunta a ser considerada é: <i class="text-warning-middle">Eu aprendo frases com facilidade?</i></label>
     <button id="btn-salvar-nivel">Confirmar</button>
   </div>
 </div>
@@ -137,6 +140,9 @@
   return document.querySelector("[name=csrfmiddlewaretoken]").value;
 }
 
+document.querySelector(".nivel-close").onclick = () => {
+  document.getElementById("nivel-modal").style.display = "none";
+};
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
