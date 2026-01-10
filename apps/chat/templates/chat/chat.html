@@ -140,9 +140,9 @@
   return document.querySelector("[name=csrfmiddlewaretoken]").value;
 }
 
-document.querySelector(".nivel-close").onclick = () => {
-  document.getElementById("nivel-modal").style.display = "none";
-};
+// document.querySelector(".nivel-close").onclick = () => {
+//   document.getElementById("nivel-modal").style.display = "none";
+// };
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
@@ -1190,33 +1190,33 @@ document.querySelector(".nivel-close").onclick = () => {
    
     
 
-  document.getElementById("btn-salvar-nivel").onclick = async function () {
-  const nivel = document.querySelector("input[name='nivel']:checked");
+//   document.getElementById("btn-salvar-nivel").onclick = async function () {
+//   const nivel = document.querySelector("input[name='nivel']:checked");
 
-  if (!nivel) {
-    alert("Escolha um nível");
-    return;
-  }
+//   if (!nivel) {
+//     alert("Escolha um nível");
+//     return;
+//   }
 
-  const r = await fetch("/user/nivel/set/", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-CSRFToken": getCSRFToken()
-  },
-  body: JSON.stringify({ nivel: nivel.value })
-});
+//   const r = await fetch("/user/nivel/set/", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//     "X-CSRFToken": getCSRFToken()
+//   },
+//   body: JSON.stringify({ nivel: nivel.value })
+// });
 
 
-  if (!r.ok) {
-    alert("Erro ao salvar nível");
-    return;
-  }
+//   if (!r.ok) {
+//     alert("Erro ao salvar nível");
+//     return;
+//   }
 
-  document.getElementById("nivel-modal").style.display = "none";
+//   document.getElementById("nivel-modal").style.display = "none";
 
-  iniciarLicao();
-};
+//   iniciarLicao();
+// };
 
   </script>
 </body>
