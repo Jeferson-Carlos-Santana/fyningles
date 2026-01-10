@@ -1,4 +1,5 @@
 {% load static %}
+{% csrf_token %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,6 +132,11 @@
 
 <script>
   const USER_NAME = "{{ username|escapejs }}";
+
+  function getCSRFToken() {
+  return document.querySelector("[name=csrfmiddlewaretoken]").value;
+}
+
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
@@ -1187,10 +1193,14 @@
   }
 
   const r = await fetch("/user/nivel/set/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nivel: nivel.value })
-  });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-CSRFToken": getCSRFToken()
+  },
+  body: JSON.stringify({ nivel: nivel.value })
+});
+
 
   if (!r.ok) {
     alert("Erro ao salvar nível");
