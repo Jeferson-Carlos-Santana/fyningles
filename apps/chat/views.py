@@ -7,7 +7,7 @@ from django.contrib import messages
 from langdetect import detect, LangDetectException
 from apps.chat.services.language_detector import detectar_idioma
 from django.views.decorators.csrf import csrf_exempt
-from .models import Chat, Progress, ProgressTmp
+from .models import Chat, Progress, ProgressTmp, UserNivel
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -16,7 +16,13 @@ from django.conf import settings
 from django.apps import apps
 from datetime import timedelta
 from django.db.models import Sum
+from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_POST
 import requests, json, re
+
+
+
+
 
 # TOTAL DE PONTOS POR DIA
 TOTAL_POINTS_DAY = 500
@@ -684,3 +690,40 @@ def points_feitos(request):
         "total": total
     })
 
+
+
+@login_required
+@require_GET
+def user_nivel_get(request):
+    try:
+        obj = UserNivel.objects.get(user=request.user)
+        return JsonResponse({
+            "exists": True,
+            "nivel": obj.nivel
+        })
+    except UserNivel.DoesNotExist:
+        return JsonResponse({
+            "exists": False
+        })
+
+
+
+
+@login_required
+@require_POST
+def user_nivel_set(request):
+    if UserNivel.objects.filter(user=request.user).exists():
+        return JsonResponse({"error": "nivel já definido"}, status=400)
+
+    data = json.loads(request.body)
+    nivel = int(data.get("nivel", 0))
+
+    if nivel not in (1, 2, 3):
+        return JsonResponse({"error": "nivel inválido"}, status=400)
+
+    UserNivel.objects.create(
+        user=request.user,
+        nivel=nivel
+    )
+
+    return JsonResponse({"ok": True})

@@ -15,5 +15,7 @@ urlpatterns = [
     path("progress/tmp/save/", views.save_progress_tmp, name="save_progress_tmp"),
     path("progress/total/", views.total_points, name="total_points"),
     path("progress/feitos/", views.points_feitos, name="points_feitos"),
+    path("user/nivel/", views.user_nivel_get, name="user_nivel_get"),
+    path("user/nivel/set/", views.user_nivel_set, name="user_nivel_set"),
 
 ]

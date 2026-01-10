@@ -112,6 +112,21 @@
       </div>
     </main>
   </div>
+
+  <div id="nivel-modal" class="nivel-modal" style="display:none;">
+  <div class="nivel-box">
+    <h3>Qual nível você se encaixa?</h3>
+
+    <label><input type="radio" name="nivel" value="1"> Baixo</label><br>
+    <label><input type="radio" name="nivel" value="2"> Médio</label><br>
+    <label><input type="radio" name="nivel" value="3"> Alto</label><br><br>
+
+    <button id="btn-salvar-nivel">Confirmar</button>
+  </div>
+</div>
+
+
+
   <script src="{% static 'chat/js/script.js' %}"></script> 
 
 <script>
@@ -816,9 +831,10 @@
 
         });
       }    
-
-      btnStart.onclick = function () {
+      
+      function iniciarLicao() {
         btnStart.disabled = true;
+
         // remove mensagem de fim de aula, se existir
         chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
 
@@ -844,6 +860,48 @@
         agendarResetAula();
 
         mostrarSistema();
+      }
+
+
+      btnStart.onclick = async function () {
+
+        const r = await fetch("/user/nivel/");
+          const data = await r.json();
+
+          if (!data.exists) {
+            document.getElementById("nivel-modal").style.display = "block";
+            return;
+          }
+           iniciarLicao();
+
+           
+ 
+        // btnStart.disabled = true;
+        // // remove mensagem de fim de aula, se existir
+        // chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
+
+        // index = 0;
+        // tentativas = 0;
+        // esperandoResposta = false;
+        // expectedAtual = "";
+
+        // pontosAndamento = 0;
+        // atualizarPontosAndamento();
+
+        // lastMsgEl = null;
+        // lastFalandoEl = null;
+
+        // // ESCONDE TODAS AS FRASES BASE
+        // msgs.forEach(m => {
+        //   m.style.display = "none";
+        //   m.classList.remove("falando");
+        // });
+
+        // // INICIA TIMER
+        // iniciarTimerVisual();
+        // agendarResetAula();
+
+        // mostrarSistema();
       };
 
       // BOTÃO MICROFONE
@@ -1117,7 +1175,33 @@
       
       
     });
+   
     
+
+  document.getElementById("btn-salvar-nivel").onclick = async function () {
+  const nivel = document.querySelector("input[name='nivel']:checked");
+
+  if (!nivel) {
+    alert("Escolha um nível");
+    return;
+  }
+
+  const r = await fetch("/user/nivel/set/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nivel: nivel.value })
+  });
+
+  if (!r.ok) {
+    alert("Erro ao salvar nível");
+    return;
+  }
+
+  document.getElementById("nivel-modal").style.display = "none";
+
+  iniciarLicao();
+};
+
   </script>
 </body>
 </html> 
