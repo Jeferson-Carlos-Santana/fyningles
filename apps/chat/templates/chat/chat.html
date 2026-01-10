@@ -932,30 +932,29 @@ document.querySelector(".nivel-close").onclick = () => {
       }
 
       // ENVIA DADOS PARA SALVAR NA TABELA progress
-      fetch("/progress/save/", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          lesson_id: lessonId,
-          points: points
-        })
-      });
-
+      function salvarProgresso({ chatId, lessonId, points }) {
+        fetch("/progress/save/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            lesson_id: lessonId,
+            points: points
+          })
+        })  
+      }
 
       // ENVIA DADOS PARA SALVAR NA TABELA progress_tmp
-      fetch("/progress/tmp/save/", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          points: points
-        })
-      });
-
-
+      function salvarProgressoTmp({ chatId, points }) {
+        fetch("/progress/tmp/save/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            points: points
+          })
+        });
+      }
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
