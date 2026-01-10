@@ -114,7 +114,7 @@
     </main>
   </div>
 <!-- MODAL NIVEL -->
-<div id="nivel-modal" class="nivel-modal" style="display:none;">
+<!-- <div id="nivel-modal" class="nivel-modal" style="display:none;">
   <div class="nivel-box">
     <button class="nivel-close" aria-label="Fechar">×</button>
     <h3>Qual nível você se encaixa?</h3>
@@ -127,7 +127,7 @@
     <label>A pergunta a ser considerada é: <i class="text-warning-middle">Eu aprendo frases com facilidade?</i></label>
     <button id="btn-salvar-nivel">Confirmar</button>
   </div>
-</div>
+</div> -->
 
 
 
@@ -877,13 +877,13 @@ document.querySelector(".nivel-close").onclick = () => {
 
       btnStart.onclick = async function () {
 
-        const r = await fetch("/user/nivel/");
-          const data = await r.json();
+        // const r = await fetch("/user/nivel/");
+        //   const data = await r.json();
 
-          if (!data.exists) {
-            document.getElementById("nivel-modal").style.display = "block";
-            return;
-          }
+        //   if (!data.exists) {
+        //     document.getElementById("nivel-modal").style.display = "block";
+        //     return;
+        //   }
            iniciarLicao();
 
            
