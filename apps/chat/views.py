@@ -39,8 +39,8 @@ STAGE_8  = 140 + (NIVEL * 8)  # 140 180 220
 STAGE_9  = 145 + (NIVEL * 9)  # 145 190 235
 STAGE_10 = 150 + (NIVEL * 10) # 150 200 250
 STAGE_11 = STAGE_10 + 5
-STAGE_12 = STAGE_10 + 10
-STAGE_13 = STAGE_10 + 15
+STAGE_12 = STAGE_11 + 5
+STAGE_13 = STAGE_12 + 30
 
 # DIAS PARA  STAGE_DAYS
 DAY_1  = (STAGE_1 // 5) + SUSPIRO                  #  8    9   10
@@ -172,6 +172,9 @@ def chat(request, lesson_id):
             continue
 
         dias_passados = (now.date() - p.concluded_at.date()).days
+        
+        if p.stage == 13 and p.points >= STAGE_13:
+            continue  # nunca reabre
 
         if dias_passados >= dias_minimos:
             p.status = 0
@@ -529,8 +532,7 @@ def save_progress(request):
 
         if not created:
             obj.points += points
-            obj.updated_at = timezone.now()
-            
+            obj.updated_at = timezone.now()            
        
             # DETECTA TROCA DE STAGE           
             stage_anterior = obj.stage
@@ -561,7 +563,7 @@ def save_progress(request):
             # ATUALIZA concluded_at SE O STAGE MUDOU
             if obj.stage != stage_anterior:
                 obj.concluded_at = timezone.now()
-            # FIM ATUALIZA concluded_at SE O STAGE MUDOU
+            # FIM ATUALIZA concluded_at SE O STAGE MUDOU           
             
             # REGRA DE TEMPO POR STAGE (STATUS)
             STAGE_DAYS = {
@@ -579,15 +581,26 @@ def save_progress(request):
                 12: STAGE_DAYS_12,
                 13: STAGE_DAYS_13,
             }
+            
+             # REGRA DEFINITIVA DO STAGE 13
+            if obj.points >= STAGE_13:
+                obj.stage = 13
+                obj.status = 1
+                obj.concluded_at = timezone.now()
+            else:
+                dias_minimos = STAGE_DAYS.get(obj.stage)
+                if dias_minimos and obj.concluded_at:
+                    dias_passados = (timezone.now().date() - obj.concluded_at.date()).days
+                    obj.status = 1 if dias_passados < dias_minimos else 0
 
-            if obj.stage in STAGE_DAYS and obj.concluded_at:
-                dias_minimos = STAGE_DAYS[obj.stage]
-                dias_passados = (timezone.now().date() - obj.concluded_at.date()).days
+            # if obj.stage in STAGE_DAYS and obj.concluded_at:
+            #     dias_minimos = STAGE_DAYS[obj.stage]
+            #     dias_passados = (timezone.now().date() - obj.concluded_at.date()).days
 
-                if dias_passados < dias_minimos:
-                    obj.status = 1  # frase para / bloqueia
-                else:
-                    obj.status = 0  # frase continua
+            #     if dias_passados < dias_minimos:
+            #         obj.status = 1  # frase para / bloqueia
+            #     else:
+            #         obj.status = 0  # frase continua
             # FIM # REGRA DE TEMPO POR STAGE (STATUS)            
             
             obj.save(update_fields=["points", "updated_at", "stage", "concluded_at", "status"])
