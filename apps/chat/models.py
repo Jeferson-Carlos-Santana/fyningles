@@ -3,6 +3,7 @@ from django.db.models import Max, F
 
 from django.conf import settings
 
+
 class Chat(models.Model):
     lesson_id = models.IntegerField(verbose_name="Lesson ID")
     seq = models.IntegerField(null=True, blank=True, verbose_name="Sequência")
@@ -178,7 +179,6 @@ class Progress(models.Model):
         return f"{self.user_id} | lesson {self.lesson_id} | chat {self.chat_id}"
     
 #    CLASS TMP_PROGRESS
-
 class ProgressTmp(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -202,3 +202,19 @@ class ProgressTmp(models.Model):
         ]
 
 
+
+
+class UserNivel(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="nivel"
+    )
+
+    nivel = models.PositiveSmallIntegerField(default=0)  # 0, 1, 2, 3
+
+    class Meta:
+        db_table = "user_nivel"
+
+    def __str__(self):
+        return f"{self.user_id} | nivel {self.nivel}"
