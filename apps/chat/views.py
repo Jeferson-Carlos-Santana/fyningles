@@ -19,41 +19,41 @@ from django.db.models import Sum
 import requests, json, re
 
 # TOTAL DE PONTOS POR DIA
-TOTAL_POINTS_DAY = 50
+TOTAL_POINTS_DAY = 500
 
 # DIAS QUE AS FRASES NAO APARECE
-SUSPIRO = 5  # 5, 6, 7
+SUSPIRO = 3
 
 # NIVEL BAIXO MEDIO E ALTO
 NIVEL = 0    # 0, 5, 10
 
 # PONTOS PARA CADA ESTAGIO
-STAGE_1  = 25 + (NIVEL * 1)  # 25 30 35
-STAGE_2  = 50 + (NIVEL * 2)  # 50 60 70
-STAGE_3  = 70 + (NIVEL * 3)  # 70 85  100 
-STAGE_4  = 90 + (NIVEL * 4)  # 90 110 130
-STAGE_5  = 105 + (NIVEL * 5) # 105 130 155
-STAGE_6  = 120 + (NIVEL * 6) # 120 150 180
-STAGE_7  = 130 + (NIVEL * 7) # 130 165 200
-STAGE_8  = 140 + (NIVEL * 8) # 140 180 220
-STAGE_9  = 145 + (NIVEL * 9) # 145 190 235
+STAGE_1  = 25 + (NIVEL * 1)   # 25  30  35
+STAGE_2  = 50 + (NIVEL * 2)   # 50  60  70
+STAGE_3  = 70 + (NIVEL * 3)   # 70  85  100 
+STAGE_4  = 90 + (NIVEL * 4)   # 90  110 130
+STAGE_5  = 105 + (NIVEL * 5)  # 105 130 155
+STAGE_6  = 120 + (NIVEL * 6)  # 120 150 180
+STAGE_7  = 130 + (NIVEL * 7)  # 130 165 200
+STAGE_8  = 140 + (NIVEL * 8)  # 140 180 220
+STAGE_9  = 145 + (NIVEL * 9)  # 145 190 235
 STAGE_10 = 150 + (NIVEL * 10) # 150 200 250
 STAGE_11 = STAGE_10 + 5
 STAGE_12 = STAGE_10 + 10
 STAGE_13 = STAGE_10 + 15
 
 # DIAS PARA  STAGE_DAYS
-DAY_1  = (STAGE_1 // 5) + SUSPIRO      
-DAY_2  = (STAGE_2 // 5) + SUSPIRO
-DAY_3  = (STAGE_3 // 5) + SUSPIRO - 1  
-DAY_4  = (STAGE_4 // 5) + SUSPIRO - 1
-DAY_5  = (STAGE_5 // 5) + SUSPIRO - 2  
-DAY_6  = (STAGE_6 // 5) + SUSPIRO - 2
-DAY_7  = (STAGE_7 // 5) + SUSPIRO - 2  
-DAY_8  = (STAGE_8 // 5) + SUSPIRO - 2
-DAY_9  = (STAGE_9 // 5) + SUSPIRO - 2  
-DAY_10 = (STAGE_10 // 5) + SUSPIRO - 2 
-
+DAY_1  = (STAGE_1 // 5) + SUSPIRO                  #  8    9   10
+DAY_2  = ((STAGE_2 - STAGE_1) // 5) + SUSPIRO      #  8    9   10
+DAY_3  = ((STAGE_3 - STAGE_2) // 5) + SUSPIRO      #  7    8   9
+DAY_4  = ((STAGE_4 - STAGE_3) // 5) + SUSPIRO      #  7    8   9
+DAY_5  = ((STAGE_5 - STAGE_4) // 5) + SUSPIRO      #  6    7   8
+DAY_6  = ((STAGE_6 - STAGE_5) // 5) + SUSPIRO      #  6    7   8
+DAY_7  = ((STAGE_7 - STAGE_6) // 5) + SUSPIRO      #  5    6   7
+DAY_8  = ((STAGE_8 - STAGE_7) // 5) + SUSPIRO      #  5    6   7
+DAY_9  = ((STAGE_9 - STAGE_8) // 5) + SUSPIRO      #  4    5   6
+DAY_10 = ((STAGE_10 - STAGE_9) // 5) + SUSPIRO     #  4    5   6
+                                                   #  60   70  80
 # DIAS PARA EXECUTAR OS PONTOS EM CADA ESTAGIO
 STAGE_DAYS_1  = DAY_1    
 STAGE_DAYS_2  = DAY_2
