@@ -26,51 +26,6 @@ TOTAL_POINTS_DAY = 500
 # DIAS QUE AS FRASES NAO APARECE
 SUSPIRO = 3
 
-# NIVEL BAIXO MEDIO E ALTO
-NIVEL = 0    # 0, 5, 10
-
-# PONTOS PARA CADA ESTAGIO
-STAGE_1  = 25 + (NIVEL * 1)   # 25  30  35
-STAGE_2  = 50 + (NIVEL * 2)   # 50  60  70
-STAGE_3  = 70 + (NIVEL * 3)   # 70  85  100 
-STAGE_4  = 90 + (NIVEL * 4)   # 90  110 130
-STAGE_5  = 105 + (NIVEL * 5)  # 105 130 155
-STAGE_6  = 120 + (NIVEL * 6)  # 120 150 180
-STAGE_7  = 130 + (NIVEL * 7)  # 130 165 200
-STAGE_8  = 140 + (NIVEL * 8)  # 140 180 220
-STAGE_9  = 145 + (NIVEL * 9)  # 145 190 235
-STAGE_10 = 150 + (NIVEL * 10) # 150 200 250
-STAGE_11 = STAGE_10 + 5
-STAGE_12 = STAGE_11 + 5
-STAGE_13 = STAGE_12 + 5
-
-# DIAS PARA  STAGE_DAYS
-DAY_1  = (STAGE_1 // 5) + SUSPIRO                  #  8    9   10
-DAY_2  = ((STAGE_2 - STAGE_1) // 5) + SUSPIRO      #  8    9   10
-DAY_3  = ((STAGE_3 - STAGE_2) // 5) + SUSPIRO      #  7    8   9
-DAY_4  = ((STAGE_4 - STAGE_3) // 5) + SUSPIRO      #  7    8   9
-DAY_5  = ((STAGE_5 - STAGE_4) // 5) + SUSPIRO      #  6    7   8
-DAY_6  = ((STAGE_6 - STAGE_5) // 5) + SUSPIRO      #  6    7   8
-DAY_7  = ((STAGE_7 - STAGE_6) // 5) + SUSPIRO      #  5    6   7
-DAY_8  = ((STAGE_8 - STAGE_7) // 5) + SUSPIRO      #  5    6   7
-DAY_9  = ((STAGE_9 - STAGE_8) // 5) + SUSPIRO      #  4    5   6
-DAY_10 = ((STAGE_10 - STAGE_9) // 5) + SUSPIRO     #  4    5   6
-                                                   #  60   70  80
-# DIAS PARA EXECUTAR OS PONTOS EM CADA ESTAGIO
-STAGE_DAYS_1  = DAY_1    
-STAGE_DAYS_2  = DAY_2
-STAGE_DAYS_3  = DAY_3    
-STAGE_DAYS_4  = DAY_4 
-STAGE_DAYS_5  = DAY_5     
-STAGE_DAYS_6  = DAY_6
-STAGE_DAYS_7  = DAY_7     
-STAGE_DAYS_8  = DAY_8
-STAGE_DAYS_9  = DAY_9     
-STAGE_DAYS_10 = DAY_10
-STAGE_DAYS_11 = 30
-STAGE_DAYS_12 = 30
-STAGE_DAYS_13 = 30
-
 LESSON_TITLES = {
     1: "Usando verbos",
     2: "Expressões populares",
@@ -142,7 +97,63 @@ def chat(request, lesson_id):
     
     user = request.user
     now = timezone.now()    
-   
+    
+    # NIVEL condicionado pelo banco
+    try:
+        nivel_db = UserNivel.objects.get(user=request.user).nivel
+    except UserNivel.DoesNotExist:
+        nivel_db = 1
+
+    if nivel_db == 1:
+        NIVEL = 0
+    elif nivel_db == 2:
+        NIVEL = 5
+    elif nivel_db == 3:
+        NIVEL = 10
+    else:
+        NIVEL = 0
+        
+    STAGE_1  = 25 + (NIVEL * 1)   # 25  30  35
+    STAGE_2  = 50 + (NIVEL * 2)   # 50  60  70
+    STAGE_3  = 70 + (NIVEL * 3)   # 70  85  100 
+    STAGE_4  = 90 + (NIVEL * 4)   # 90  110 130
+    STAGE_5  = 105 + (NIVEL * 5)  # 105 130 155
+    STAGE_6  = 120 + (NIVEL * 6)  # 120 150 180
+    STAGE_7  = 130 + (NIVEL * 7)  # 130 165 200
+    STAGE_8  = 140 + (NIVEL * 8)  # 140 180 220
+    STAGE_9  = 145 + (NIVEL * 9)  # 145 190 235
+    STAGE_10 = 150 + (NIVEL * 10) # 150 200 250
+    STAGE_11 = STAGE_10 + 5
+    STAGE_12 = STAGE_11 + 5
+    STAGE_13 = STAGE_12 + 5
+
+    # DIAS PARA  STAGE_DAYS
+    DAY_1  = (STAGE_1 // 5) + SUSPIRO                  #  8    9   10
+    DAY_2  = ((STAGE_2 - STAGE_1) // 5) + SUSPIRO      #  8    9   10
+    DAY_3  = ((STAGE_3 - STAGE_2) // 5) + SUSPIRO      #  7    8   9
+    DAY_4  = ((STAGE_4 - STAGE_3) // 5) + SUSPIRO      #  7    8   9
+    DAY_5  = ((STAGE_5 - STAGE_4) // 5) + SUSPIRO      #  6    7   8
+    DAY_6  = ((STAGE_6 - STAGE_5) // 5) + SUSPIRO      #  6    7   8
+    DAY_7  = ((STAGE_7 - STAGE_6) // 5) + SUSPIRO      #  5    6   7
+    DAY_8  = ((STAGE_8 - STAGE_7) // 5) + SUSPIRO      #  5    6   7
+    DAY_9  = ((STAGE_9 - STAGE_8) // 5) + SUSPIRO      #  4    5   6
+    DAY_10 = ((STAGE_10 - STAGE_9) // 5) + SUSPIRO     #  4    5   6
+                                                    #  60   70  80
+    # DIAS PARA EXECUTAR OS PONTOS EM CADA ESTAGIO
+    STAGE_DAYS_1  = DAY_1    
+    STAGE_DAYS_2  = DAY_2
+    STAGE_DAYS_3  = DAY_3    
+    STAGE_DAYS_4  = DAY_4 
+    STAGE_DAYS_5  = DAY_5     
+    STAGE_DAYS_6  = DAY_6
+    STAGE_DAYS_7  = DAY_7     
+    STAGE_DAYS_8  = DAY_8
+    STAGE_DAYS_9  = DAY_9     
+    STAGE_DAYS_10 = DAY_10
+    STAGE_DAYS_11 = 30
+    STAGE_DAYS_12 = 30
+    STAGE_DAYS_13 = 30
+    
     # NOVO CÓDIGO — REVALIDA STATUS PELO TEMPO (CHAT)
     STAGE_DAYS = {
         1: STAGE_DAYS_1,
@@ -518,6 +529,62 @@ def save_progress(request):
             {"ok": False, "error": "chat_id inexistente"},
             status=400
         )
+    
+    # NIVEL condicionado pelo banco
+    try:
+        nivel_db = UserNivel.objects.get(user=request.user).nivel
+    except UserNivel.DoesNotExist:
+        nivel_db = 1
+
+    if nivel_db == 1:
+        NIVEL = 0
+    elif nivel_db == 2:
+        NIVEL = 5
+    elif nivel_db == 3:
+        NIVEL = 10
+    else:
+        NIVEL = 0
+        
+    STAGE_1  = 25 + (NIVEL * 1)   # 25  30  35
+    STAGE_2  = 50 + (NIVEL * 2)   # 50  60  70
+    STAGE_3  = 70 + (NIVEL * 3)   # 70  85  100 
+    STAGE_4  = 90 + (NIVEL * 4)   # 90  110 130
+    STAGE_5  = 105 + (NIVEL * 5)  # 105 130 155
+    STAGE_6  = 120 + (NIVEL * 6)  # 120 150 180
+    STAGE_7  = 130 + (NIVEL * 7)  # 130 165 200
+    STAGE_8  = 140 + (NIVEL * 8)  # 140 180 220
+    STAGE_9  = 145 + (NIVEL * 9)  # 145 190 235
+    STAGE_10 = 150 + (NIVEL * 10) # 150 200 250
+    STAGE_11 = STAGE_10 + 5
+    STAGE_12 = STAGE_11 + 5
+    STAGE_13 = STAGE_12 + 5
+
+    # DIAS PARA  STAGE_DAYS
+    DAY_1  = (STAGE_1 // 5) + SUSPIRO                  #  8    9   10
+    DAY_2  = ((STAGE_2 - STAGE_1) // 5) + SUSPIRO      #  8    9   10
+    DAY_3  = ((STAGE_3 - STAGE_2) // 5) + SUSPIRO      #  7    8   9
+    DAY_4  = ((STAGE_4 - STAGE_3) // 5) + SUSPIRO      #  7    8   9
+    DAY_5  = ((STAGE_5 - STAGE_4) // 5) + SUSPIRO      #  6    7   8
+    DAY_6  = ((STAGE_6 - STAGE_5) // 5) + SUSPIRO      #  6    7   8
+    DAY_7  = ((STAGE_7 - STAGE_6) // 5) + SUSPIRO      #  5    6   7
+    DAY_8  = ((STAGE_8 - STAGE_7) // 5) + SUSPIRO      #  5    6   7
+    DAY_9  = ((STAGE_9 - STAGE_8) // 5) + SUSPIRO      #  4    5   6
+    DAY_10 = ((STAGE_10 - STAGE_9) // 5) + SUSPIRO     #  4    5   6
+                                                    #  60   70  80
+    # DIAS PARA EXECUTAR OS PONTOS EM CADA ESTAGIO
+    STAGE_DAYS_1  = DAY_1    
+    STAGE_DAYS_2  = DAY_2
+    STAGE_DAYS_3  = DAY_3    
+    STAGE_DAYS_4  = DAY_4 
+    STAGE_DAYS_5  = DAY_5     
+    STAGE_DAYS_6  = DAY_6
+    STAGE_DAYS_7  = DAY_7     
+    STAGE_DAYS_8  = DAY_8
+    STAGE_DAYS_9  = DAY_9     
+    STAGE_DAYS_10 = DAY_10
+    STAGE_DAYS_11 = 30
+    STAGE_DAYS_12 = 30
+    STAGE_DAYS_13 = 30
 
     with transaction.atomic():
         obj, created = Progress.objects.get_or_create(
