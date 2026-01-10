@@ -945,15 +945,16 @@ document.querySelector(".nivel-close").onclick = () => {
 
 
       // ENVIA DADOS PARA SALVAR NA TABELA progress_tmp
-      fetch("/progress/save/", {
+      fetch("/progress/tmp/save/", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: chatId,
-          lesson_id: lessonId,
           points: points
         })
-      })
+      });
+
 
 
       // ===== RESPOSTA DO USUÁRIO =====
