@@ -20,10 +20,6 @@ from django.views.decorators.http import require_GET
 from django.views.decorators.http import require_POST
 import requests, json, re
 
-
-
-
-
 # TOTAL DE PONTOS POR DIA
 TOTAL_POINTS_DAY = 500
 
@@ -705,8 +701,6 @@ def user_nivel_get(request):
         return JsonResponse({
             "exists": False
         })
-
-
 
 
 @login_required
