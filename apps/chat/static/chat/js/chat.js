@@ -85,13 +85,6 @@ const USER_NAME = document.body.dataset.username || "";
       let tempoRestanteSeg = 0;
       const timerEl = document.getElementById("timer-aula");
 
-      // IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-      const TEMPO_SILENCIO_ENTRE_PALAVRAS = 5000;
-      let bufferFala = "";
-      let silencioTimeout = null;
-      // FIM IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-
-
       let pontosAndamento = 0;
       const META_DO_DIA = 1000;      
 
@@ -278,17 +271,6 @@ const USER_NAME = document.body.dataset.username || "";
         micTimeout = null;
       }
 
-
-      // IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-      if (silencioTimeout) {
-        clearTimeout(silencioTimeout);
-        silencioTimeout = null;
-      }
-
-      bufferFala = "";
-      // FIM IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-
-
       try {
         recognition.stop();
       } catch (e) {}
@@ -296,37 +278,6 @@ const USER_NAME = document.body.dataset.username || "";
       btnMic.textContent = "🎤";
       btnMic.classList.remove("mic-gravando");
     }
-
-
-
-
-
-
-// IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-function finalizarFalaPorSilencio() {
-  if (!esperandoResposta) return;
-  if (!bufferFala.trim()) return;
-
-  // simula o resultado final do reconhecimento
-  window.recognition.onresult({
-    results: [[{ transcript: bufferFala.trim() }]]
-  });
-
-  bufferFala = "";
-}
-//FIM IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-
-
-
-
-
-
-
-
-
-
-
-
 
     function bloquearEntrada() {
       btnMic.disabled = true;
@@ -841,27 +792,7 @@ function finalizarFalaPorSilencio() {
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
-        const textoBruto = e.results[0][0].transcript;  
-        
-        
-
-        // IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-        // acumula fala (preserva essência)
-        bufferFala = bufferFala
-          ? bufferFala + " " + textoBruto
-          : textoBruto;
-
-        // reinicia timer de silêncio
-        if (silencioTimeout) clearTimeout(silencioTimeout);
-
-        silencioTimeout = setTimeout(() => {
-          finalizarFalaPorSilencio();
-        }, TEMPO_SILENCIO_ENTRE_PALAVRAS);
-        // IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-
-
-
-
+        const textoBruto = e.results[0][0].transcript;        
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
         const texto = normEn(textoBruto);        
