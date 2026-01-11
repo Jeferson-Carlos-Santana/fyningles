@@ -304,7 +304,7 @@ body {
 /* MEDIDA DA TELA MENOR QUE 900 */
 @media (max-width: 900px) {
     .footer-cont {
-        padding-bottom: 30px;
+        padding-bottom: 50px;
         height: auto;
     }
     .sidebar:not(.collapsed) .sidebar-close {
