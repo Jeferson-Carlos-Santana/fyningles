@@ -1,6 +1,6 @@
-  const USER_NAME = document.body.dataset.username || "";
+const USER_NAME = document.body.dataset.username || "";
 
-  // const USER_NAME = "{{ username|escapejs }}";
+  //const USER_NAME = "{{ username|escapejs }}";
 
   function getCSRFToken() {
     return document.querySelector("[name=csrfmiddlewaretoken]").value;
@@ -592,7 +592,7 @@
 
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
-        //if (tocando) return;
+        if (tocando) return;
 
         if (index >= msgs.length) {
           if (timerResetAula) {
@@ -886,7 +886,7 @@
           lastMsgEl = prof;
           scrollChatToBottom();
         }  
-
+        const LESSON_ID = Number(document.body.dataset.lessonId);
         // ===== decisão de fluxo =====
         if (ok) {
           if (prof) prof.classList.add("correto");
@@ -900,7 +900,7 @@
         const d = await r.json(); 
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 2000));
+          await new Promise(r => setTimeout(r, 1100));
           await tocarUm(d.files[0]);
           tocando = false;
         }
@@ -915,7 +915,7 @@
           atualizarPontosAndamento();
           
           // PONTO MECHIDO SEM TESTAR
-          const LESSON_ID = Number("{{ lesson_id }}");
+          //const LESSON_ID = Number("{{ lesson_id }}");
           salvarProgresso({
             chatId: msgs[index].dataset.id,
             // lessonId: {{ lesson_id }},
@@ -960,7 +960,7 @@
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 2000));
+          await new Promise(r => setTimeout(r, 1100));
           await falarComoAntigo(d.files);
           tocando = false;
 
@@ -1009,7 +1009,7 @@
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 2000));
+          await new Promise(r => setTimeout(r, 1100));
           await tocarUm(d.files[0]);
           tocando = false;
         }
@@ -1060,4 +1060,3 @@
 
   iniciarLicao();
 };
-
