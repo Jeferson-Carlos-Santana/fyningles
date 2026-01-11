@@ -1,128 +1,130 @@
 {% load static %}
+{% csrf_token %}
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'chat/css/btn.css' %}">
-    <link rel="stylesheet" href="{% static 'chat/css/others.css' %}">
-    <meta charset="utf-8">
-    <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <title>chat</title>
+  <link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'chat/css/chat.css' %}">
+  <link rel="stylesheet" href="{% static 'chat/css/btn.css' %}">
+  <link rel="stylesheet" href="{% static 'chat/css/others.css' %}">    
 </head>
 <body>
 
-        <div class="layout">
-            <nav class="sidebar">
-                <div class="sidebar-inner">
-                    <div class="bar-1">
-                        <ul class="menu">
-                            <div class="infor">👤 Jeferson carlos Santana</div>
-                            <div class="infor">⭐Pontos acumulados: <span class="text-success-light">1.075.352</span></div>
-                            <div class="infor">⭐Pontos em andamento: <span class="text-secondary-light">253</span></div>
-                            <div class="infor">⭐Pontos que faltam: <span class="text-secondary-light">768</span></div>
-                            <div class="infor">⭐Pontos feitos: <span class="text-secondary-light">422</span></div>
-                            <li><a href="/">Dashboard</a></li>
-                            <li><a href="/chat/">Chat</a></li>                                             
-                        </ul>
-                    </div>                
-                    <div class="logout">
-                        <li><a href="/">Sair</a></li>
-                    </div>
-                </div>
-            </nav>
-            <main class="content">
-                  <div class="content-inner">
-                    <div class="tittle-cont">
-                      <div class="aula">                    
-                          <button class="menu-toggle" aria-label="Abrir menu">
-                            <img src="{% static 'chat/img/menu.png' %}" alt="Menu">
-                          </button> 
-                          Dicionário
-                      </div>                        
-                    </div>
-                    <div class="content-cont">
-                      <div class="dictionary">
-                        <label for="lang">Escolha o idioma:</label>
-                        <select class="select-lang" id="lang" name="lang" onchange="changeLang(this.value)">
-                          <option value="pt" {% if lang == "pt" %}selected{% endif %}>Português</option>
-                          <option value="en" {% if lang == "en" %}selected{% endif %}>Inglês</option>
-                          <option value="fr" {% if lang == "fr" %}selected{% endif %}>Francês</option>
-                          <option value="es" {% if lang == "es" %}selected{% endif %}>Espanhol</option>
-                          <option value="it" {% if lang == "it" %}selected{% endif %}>Italiano</option>
-                        </select>
-
-                        {% if messages %}
-                          {% for message in messages %}
-                            <div class="msg-success">{{ message }}</div>
-                          {% endfor %}
-                        {% endif %}
-
-                        {% if request.GET.confirm %}
-                          Quer cadastrar?
-                          <button class="btn-madeira-velha-escura" type="button" onclick="confirmForce()">Sim</button>
-                          <a class="btn-madeira-velha-escura" href="/dictionary/?lang={{ lang }}">Não</a>
-                        {% endif %}
-
-                        <div id="deleteModal" style="display:none;">
-                          <p>Tem certeza que deseja apagar?</p>
-                          <form method="post" action="{% url 'dictionary_delete' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="lang" value="{{ lang }}">
-                            <input type="hidden" id="deleteTerm" name="term">
-                            <button class="btn-madeira-velha-escura" type="submit">Sim</button>
-                            <button class="btn-madeira-velha-escura" type="button" onclick="closeDeleteModal()">Não</button>
-                          </form>
-                        </div>
-
-                        <!-- 2) Form (inicia escondido) -->
-                        <form id="dict-form" method="post" action="{% url 'dictionary_add' %}" >
-                          {% csrf_token %}
-                         
-                         <input type="hidden" name="lang" value="{{ lang }}">
-                         <input type="hidden" name="force" id="force" value="">
-
-                          <!-- 3) input único -->                         
-                          {% comment %} <input id="term" name="term" type="text" placeholder="Digite a palavra ou frase desejada." required> {% endcomment %}
-                          <input id="term" name="term" type="text"
-                                value="{{ request.GET.term|default:'' }}"
-                                placeholder="Digite a palavra ou frase desejada." required>
-
-                          <!-- 4) submit -->
-                          <button class="btn-madeira-velha-escura" type="submit">Adicionar</button>
-                        </form>
-                      </div>
-                    <input type="text" id="list-search" placeholder="Buscar..." class="lesson-search">
-                    <ul>
-                    {% for term in terms %}
-                      <li>
-                        {{ term }}
-                        <form method="post" action="{% url 'dictionary_delete' %}" style="display:inline;">
-                          {% csrf_token %}
-                          <input type="hidden" name="lang" value="{{ lang }}">
-                          <input type="hidden" name="term" value="{{ term }}">
-                          <button type="button" onclick="openDeleteModal('{{ term }}')">🗑️</button>
-                        </form>
-                      </li>
-                    {% empty %}
-                      <li>Nenhum termo cadastrado.</li>
-                    {% endfor %}
-                  </ul>                    
-                    
-                    </div>
-
-
-                  <div class="footer-cont">
-                    {% comment %} <button class="theme-toggle" aria-label="Trocar tema">🌙 </button> {% endcomment %}
-                    <i>© 2026 - JPM-development - All rights reserved - Engineering & Technology<i>                        
-                  </div>
-                    
-                </div>
-            </main>
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-inner">
+        <div class="bar-1">
+          <div class="infor" style="padding: 5px;">
+            Olá, {{ request.user.username }}!
+          </div>
+          <ul class="menu">                           
+            <li><a href="/dashboard/">Dashboard</a></li>
+            <li><a href="/chat/">Chat</a></li>                                             
+          </ul>
         </div>  
+        <div class="bar-2">                        
+        <!-- CONTEUDO DAS LICOES -->
+        </div>              
+<div class="logout">
+  <li><a href="/">Sair</a></li>
+</div>
+</div>
+</nav>
+<main class="content">
+  <div class="content-inner">
+    <div class="tittle-cont">
+      <div class="aula">                    
+        <button class="menu-toggle" aria-label="Abrir menu">
+          <img src="{% static 'chat/img/menu.png' %}" alt="Menu">
+        </button> 
+        Dicionário
+      </div>                        
+    </div>
+    <div class="content-cont">
+      <div class="dictionary">
+        <label for="lang">Escolha o idioma:</label>
+        <select class="select-lang" id="lang" name="lang" onchange="changeLang(this.value)">
+          <option value="pt" {% if lang == "pt" %}selected{% endif %}>Português</option>
+          <option value="en" {% if lang == "en" %}selected{% endif %}>Inglês</option>
+          <option value="fr" {% if lang == "fr" %}selected{% endif %}>Francês</option>
+          <option value="es" {% if lang == "es" %}selected{% endif %}>Espanhol</option>
+          <option value="it" {% if lang == "it" %}selected{% endif %}>Italiano</option>
+        </select>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="msg-success">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        {% if request.GET.confirm %}
+        Quer cadastrar?
+        <button class="btn-madeira-velha-escura" type="button" onclick="confirmForce()">Sim</button>
+        <a class="btn-madeira-velha-escura" href="/dictionary/?lang={{ lang }}">Não</a>
+        {% endif %}
+
+        <div id="deleteModal" style="display:none;">
+          <p>Tem certeza que deseja apagar?</p>
+          <form method="post" action="{% url 'dictionary_delete' %}">
+            {% csrf_token %}
+            <input type="hidden" name="lang" value="{{ lang }}">
+            <input type="hidden" id="deleteTerm" name="term">
+            <button class="btn-madeira-velha-escura" type="submit">Sim</button>
+            <button class="btn-madeira-velha-escura" type="button" onclick="closeDeleteModal()">Não</button>
+          </form>
+        </div>
+
+<!-- 2) Form (inicia escondido) -->
+<form id="dict-form" method="post" action="{% url 'dictionary_add' %}" >
+  {% csrf_token %}
+
+  <input type="hidden" name="lang" value="{{ lang }}">
+  <input type="hidden" name="force" id="force" value="">
+
+<!-- 3) input único -->                         
+{% comment %} <input id="term" name="term" type="text" placeholder="Digite a palavra ou frase desejada." required> {% endcomment %}
+<input id="term" name="term" type="text"
+value="{{ request.GET.term|default:'' }}"
+placeholder="Digite a palavra ou frase desejada." required>
+
+<!-- 4) submit -->
+<button class="btn-madeira-velha-escura" type="submit">Adicionar</button>
+</form>
+</div>
+<input type="text" id="list-search" placeholder="Buscar..." class="lesson-search">
+<ul>
+  {% for term in terms %}
+  <li>
+    {{ term }}
+    <form method="post" action="{% url 'dictionary_delete' %}" style="display:inline;">
+      {% csrf_token %}
+      <input type="hidden" name="lang" value="{{ lang }}">
+      <input type="hidden" name="term" value="{{ term }}">
+      <button type="button" onclick="openDeleteModal('{{ term }}')">🗑️</button>
+    </form>
+  </li>
+  {% empty %}
+  <li>Nenhum termo cadastrado.</li>
+  {% endfor %}
+</ul>                    
+
+</div>
+
+
+<div class="footer-cont">
+<!-- {% comment %} <button class="theme-toggle" aria-label="Trocar tema">🌙 </button> {% endcomment %} -->
+<i>© 2026 - JPM-development - All rights reserved - Engineering & Technology<i>                        
+</div>
+
+</div>
+</main>
+</div>  
 
 
 <script src="{% static 'chat/js/script.js' %}"></script>
 <script src="{% static 'chat/js/dictionary.js' %}"></script>
 </body>
 </html>
-

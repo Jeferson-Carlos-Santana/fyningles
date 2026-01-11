@@ -1,0 +1,1062 @@
+  const USER_NAME = "{{ username|escapejs }}";
+
+  function getCSRFToken() {
+    return document.querySelector("[name=csrfmiddlewaretoken]").value;
+  }
+
+  document.querySelector(".nivel-close").onclick = () => {
+    document.getElementById("nivel-modal").style.display = "none";
+  };
+  
+  // ENVIAR MENSAGEM
+  function enviarMensagem() {
+    const input = document.getElementById("mensagem");
+    const texto = input.value.trim();
+    if (!texto) return;
+
+    input.value = "";
+
+    window.recognition.onresult({
+      results: [[{ transcript: texto }]]
+    });
+  }
+  
+  // ATUALIZAR OS PONTOS EM TEMPO REAL
+  function atualizarPontosTotais() {
+    fetch("/progress/total/", { credentials: "same-origin" })
+      .then(r => r.json())
+      .then(data => {
+        const el = document.getElementById("total-points");
+        if (!el) return;
+        el.textContent = Number(data.total || 0).toLocaleString("pt-BR");
+      });
+  }
+  
+  document.addEventListener("DOMContentLoaded", function () {   
+     
+      const audioPlayer = new Audio();
+    
+      let filaVoz = Promise.resolve();
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.warn("SpeechRecognition não suportado neste browser");
+        return;
+      }
+      const recognition = new SpeechRecognition(); 
+      window.recognition = recognition;
+      recognition.lang = "en-GB";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      const msgs = document.querySelectorAll(".chat-message");
+      const btnStart = document.getElementById("btn-start");
+      const btnMic = document.getElementById("btn-mic");
+      const btnEnviar = document.getElementById("btnEnviar");
+
+      let index = 0;
+      let esperandoResposta = false;
+      let expectedAtual = "";
+      const MAX_TENTATIVAS = 3;  
+      let tocando = false; 
+      let lastMsgEl = null; 
+      let lastFalandoEl = null;
+      let tentativas = 0;    
+      const chatArea = document.querySelector(".chat-area");
+      let micTimeout = null;
+      const btnAutoMic = document.getElementById("btnAutoMic");
+      let autoMicAtivo = false;
+      const btnAutoSkip = document.getElementById("btnAutoSkip");
+      let autoSkipAtivo = false;
+
+      const TEMPO_BASE = 5000;          // 3s mínimos
+      const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
+      const TEMPO_MAX = 12000;         // 12s máximo
+
+      const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
+      beepPlayer.volume = 0.9;
+
+      const TEMPO_LIMITE_MIN = 30;
+      let timerResetAula = null;
+     
+      let timerIntervaloVisual = null;
+      let tempoRestanteSeg = 0;
+      const timerEl = document.getElementById("timer-aula");
+
+      let pontosAndamento = 0;
+      const META_DO_DIA = 1000;      
+
+      const lessonId = document.body.dataset.lessonId;
+
+      // começa desabilitado
+      btnStart.disabled = true;
+
+      // se estiver em /chat/<id>/, habilita
+      if (lessonId && lessonId !== "") {
+        btnStart.disabled = false;
+      }
+
+    atualizarPontosFaltam(0);
+    atualizarPontosFeitos();
+    atualizarPontosTotais();    
+    
+    // PONTOS QUE FALTAM PARA A META DO DIA
+    function atualizarPontosFaltam(pontosFeitos) {
+      const el = document.getElementById("points-faltam");
+      if (!el) return;
+
+      const faltam = Math.max(META_DO_DIA - pontosFeitos, 0);
+      el.textContent = faltam;    
+    }
+    
+     // PONTOS FEITO NO DIA CORRENTE
+    function atualizarPontosFeitos() {
+      fetch("/progress/feitos/", { credentials: "same-origin" })
+        .then(r => r.json())
+        .then(data => {
+          const feitos = Number(data.total || 0);
+
+          const el = document.getElementById("points-feitos");
+          if (el) el.textContent = feitos;
+
+          atualizarPontosFaltam(feitos);
+        });
+    }
+
+     // ATUALIZAR PONTOS EM ANDAMENTO
+    function atualizarPontosAndamento() {
+      const el = document.getElementById("points-andamento");
+      if (el) el.textContent = pontosAndamento;
+    }
+    
+    const CORRECOES_VOZ = {
+        "daive": "they have",
+        "dave": "they have",
+        "ive": "i have",
+        "youre": "you are",
+        "cant": "cannot",
+        "david": "they've",
+        "everyday": "every day",
+        "ivy": "I've",
+        "hue": "He'll",
+        "cole": "call",
+        "gunn": "gone",
+        "gunt": "gone",
+        "dare": "they're",
+        "81": "It won't",
+        "workout": "work out",
+        "seedan": "see then",
+        "realized": "realised",
+        "sherwood": "she would",
+        "abeat": "a bit",
+        "ishi": "is she",
+        "taiwah": "they were",
+        "Whitney": "were they",
+        "alito": "a little",
+        "shilco": "She'll call",
+        "tay": "they",
+        "iopant": "i opened",
+        "ican": "i can",
+        "sthey": "stay",
+        "dtu": "Did you",
+        "itches": "it's",
+        "payen": "paying",
+        "ital": "It'll",
+        "leche": "Let's",
+        "letis": "Let's"
+      };
+
+    function aplicarCorrecoesVoz(texto) {
+      let t = texto;
+      for (const errado in CORRECOES_VOZ) {
+        const certo = CORRECOES_VOZ[errado];
+        const re = new RegExp(`\\b${errado}\\b`, "gi");
+        t = t.replace(re, certo);
+      }
+      return t;
+    }
+
+    btnAutoSkip.onclick = function () {
+      autoSkipAtivo = !autoSkipAtivo;
+
+      if (autoSkipAtivo) {
+        btnAutoSkip.classList.remove("auto-off");
+        btnAutoSkip.classList.add("auto-on");
+        btnAutoSkip.textContent = "SKIP: ON";
+      } else {
+        btnAutoSkip.classList.remove("auto-on");
+        btnAutoSkip.classList.add("auto-off");
+        btnAutoSkip.textContent = "SKIP: OFF";
+      }
+    };
+
+    btnAutoMic.onclick = function () {
+      autoMicAtivo = !autoMicAtivo;
+
+      if (autoMicAtivo) {
+        btnAutoMic.classList.remove("auto-off");
+        btnAutoMic.classList.add("auto-on");
+        btnAutoMic.textContent = "MIC: ON";
+      } else {
+        btnAutoMic.classList.remove("auto-on");
+        btnAutoMic.classList.add("auto-off");
+        btnAutoMic.textContent = "MIC: OFF";
+      }
+    };
+
+    function tocarBeep() {
+      beepPlayer.currentTime = 0;
+      beepPlayer.play().catch(() => {});
+    }
+
+    function calcularTempoMic(frase) {
+      if (!frase) return TEMPO_BASE;
+      const qtdPalavras = frase.trim().split(/\s+/).length;
+      return Math.min(
+        TEMPO_BASE + qtdPalavras * TEMPO_POR_PALAVRA,
+        TEMPO_MAX
+      );
+    }
+
+    function abrirMicrofoneComTempo() {
+      if (btnMic.disabled) return;
+
+      // visual de gravando
+      btnMic.textContent = "🎙️";
+      btnMic.classList.add("mic-gravando");
+
+      recognition.start();
+
+      // calcula tempo com base na frase esperada atual
+      const tempoMic = calcularTempoMic(expectedAtual);
+
+      if (micTimeout) clearTimeout(micTimeout);
+
+      micTimeout = setTimeout(() => {
+        if (esperandoResposta) {
+          // fecha mic
+          try { recognition.stop(); } catch (e) {}
+          btnMic.textContent = "🎤";
+          btnMic.classList.remove("mic-gravando");
+
+          // 🔹 DECISÃO AQUI
+          if (autoSkipAtivo) {
+            bloquearEntrada();
+
+            const skip = document.createElement("div");
+            skip.className = "chat-message system";
+            skip.textContent = "Tempo esgotado. Avançando.";
+            (lastMsgEl || msgs[index]).after(skip);
+
+            esperandoResposta = false;
+            expectedAtual = "";
+            tentativas = 0;
+
+            setTimeout(() => {
+              index++;
+              lastMsgEl = null;
+              mostrarSistema();
+            }, 150);
+          }
+        }
+      }, tempoMic);
+
+    }
+
+    function encerrarMicrofone() {
+      if (micTimeout) {
+        clearTimeout(micTimeout);
+        micTimeout = null;
+      }
+
+      try {
+        recognition.stop();
+      } catch (e) {}
+
+      btnMic.textContent = "🎤";
+      btnMic.classList.remove("mic-gravando");
+    }
+
+    function bloquearEntrada() {
+      btnMic.disabled = true;
+      btnEnviar.disabled = true;
+
+      btnMic.textContent = "🔇";
+      btnMic.classList.remove("mic-ready");
+      btnMic.classList.add("mic-disabled");
+
+      btnEnviar.classList.remove("btn-ready");
+      btnEnviar.classList.add("btn-disabled");
+    }
+
+    function liberarEntrada() {
+      btnMic.disabled = false;
+      btnEnviar.disabled = false;
+
+      btnMic.textContent = "🎤";
+      btnMic.classList.remove("mic-disabled");
+      btnMic.classList.add("mic-ready");
+
+      btnEnviar.classList.remove("btn-disabled");
+      btnEnviar.classList.add("btn-ready");
+    }
+
+    function iniciarTimerVisual() {
+      tempoRestanteSeg = TEMPO_LIMITE_MIN * 60;
+
+      atualizarTimerVisual();
+
+      if (timerIntervaloVisual) {
+        clearInterval(timerIntervaloVisual);
+      }
+
+      timerIntervaloVisual = setInterval(() => {
+        tempoRestanteSeg--;
+
+        atualizarTimerVisual();
+
+        if (tempoRestanteSeg <= 0) {
+          clearInterval(timerIntervaloVisual);
+          timerIntervaloVisual = null;
+        }
+      }, 1000);
+    }
+
+    function atualizarTimerVisual() {
+      if (!timerEl) return;
+
+      const min = Math.floor(tempoRestanteSeg / 60);
+      const sec = tempoRestanteSeg % 60;
+
+      timerEl.textContent =
+        `⏱️ ${min}:${sec.toString().padStart(2, "0")}`;
+    }
+    
+    function resetarAula() {
+      // NOVO — reset total dos pontos visuais
+      pontosAndamento = 0;
+      atualizarPontosAndamento();
+
+      // para áudio
+      try {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      } catch (e) {}
+
+      filaVoz = Promise.resolve();
+
+      if (micTimeout) {
+        clearTimeout(micTimeout);
+        micTimeout = null;
+      }
+
+      if (timerIntervaloVisual) {
+        clearInterval(timerIntervaloVisual);
+        timerIntervaloVisual = null;
+      }
+
+      if (timerResetAula) {
+        clearTimeout(timerResetAula);
+        timerResetAula = null;
+      }
+
+      // ZERA ESTADO
+      index = 0;
+      tentativas = 0;
+      esperandoResposta = false;
+      tocando = false;
+      expectedAtual = "";
+      lastMsgEl = null;
+      lastFalandoEl = null;
+
+      // LIMPA COMPLETAMENTE O CHAT (CHAVE)
+      //chatArea.innerHTML = "";
+      // remove apenas mensagens dinâmicas (feedback, user, system)
+      chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());
+
+      // esconde novamente as frases base
+      msgs.forEach(m => {
+        m.style.display = "none";
+        m.classList.remove("falando");
+      });
+
+      // RESET VISUAL DO TIMER
+      if (timerEl) {
+        timerEl.textContent = "⏱️ 00:00";
+      }
+
+      // MENSAGEM FINAL
+      const fim = document.createElement("div");
+      fim.className = "chat-message system fim-aula";
+      fim.textContent =
+        "⏱️ Tempo máximo da aula atingido. A aula foi encerrada.";
+      chatArea.appendChild(fim);
+      scrollChatToBottom();
+      bloquearEntrada();
+      btnStart.disabled = false;
+    }
+
+    function agendarResetAula() {
+      // evita múltiplos timers
+      if (timerResetAula) {
+        clearTimeout(timerResetAula);
+      }
+
+      timerResetAula = setTimeout(() => {
+        resetarAula();
+      }, TEMPO_LIMITE_MIN * 60 * 1000);
+    }
+
+    function micGravando() {
+      btnMic.textContent = "🎙️";
+      btnMic.classList.add("mic-gravando");
+    }
+    
+    // GARANTE QUE O AUDIO VAI SER LIDO PELA VOZ MESMO SE AINDA NAO EXISTIR
+    function playWhenReady(file, tries = 30) { 
+      const url = "/media/cache/" + file + "?t=" + Date.now();
+      fetch(url, { method: "HEAD" })
+        .then(r => {
+          if (!r.ok) throw new Error("not ready");
+          const a = new Audio(url);
+          a.play().catch(() => {
+            if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+          });
+        })
+        .catch(() => {
+          if (tries > 0) setTimeout(() => playWhenReady(file, tries - 1), 150);
+        });
+    } 
+
+    // AUDIO – PLAYER ÚNICO     
+    function limparHTML(html) {
+      return html.replace(/<[^>]+>/g, "");
+    }
+    
+    // MANTEM O CHAT EM TELA
+    function scrollChatToBottom() {
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // TOCA UM ÚNICO AUDIO E ESPERA
+    function tocarUm(file, tries = 300, delay = 300) {
+      return new Promise(resolve => {
+        const baseUrl = "/media/cache/" + file; 
+        const audioUrl = baseUrl + "?t=" + Date.now(); 
+
+        function tentar(n) {
+          fetch(baseUrl, { method: "HEAD", cache: "no-store" })
+          .then(r => {
+            if (!r.ok) throw new Error("not ready");
+
+            // LIMPA QUALQUER AUDIO EM ANDAMENTO
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            audioPlayer.onended = null;
+            audioPlayer.onerror = null;
+
+            audioPlayer.src = audioUrl;
+            audioPlayer.onended = resolve;
+            audioPlayer.onerror = resolve;
+
+            audioPlayer.play().catch(resolve);
+          })
+          .catch(() => {
+            if (n > 0) return setTimeout(() => tentar(n - 1), delay);
+            resolve();
+          });
+        }
+
+        tentar(tries);
+      });
+    }    
+
+    function falarComoAntigo(files) {
+      filaVoz = filaVoz.then(async () => {
+        for (const file of files) {
+          await tocarUm(file);
+        }
+      }).catch(() => {});
+
+      return filaVoz;
+    }
+
+    function expandContractionsEn(t) {
+      return (t || "")
+        .replace(/\bi[’']?m\b/gi, "i am")
+        .replace(/\byou[’']?re\b/gi, "you are")
+        .replace(/\bweren[’']?t\b/gi, "were not")
+        .replace(/\bwe[’']?re\b/gi, "we are")
+        .replace(/\bthey[’']?re\b/gi, "they are")
+        .replace(/\bi[’']?ve\b/gi, "i have")
+        .replace(/\byou[’']?ve\b/gi, "you have")
+        .replace(/\bwe[’']?ve\b/gi, "we have")
+        .replace(/\bthey[’']?ve\b/gi, "they have")
+        .replace(/\bi[’']?ll\b/gi, "i will")
+        .replace(/\byou[’']?ll\b/gi, "you will")
+        .replace(/\bwe[’']?ll\b/gi, "we will")
+        .replace(/\bthey[’']?ll\b/gi, "they will")
+        .replace(/\bdon[’']?t\b/gi, "do not")
+        .replace(/\bdoesn[’']?t\b/gi, "does not")
+        .replace(/\bdidn[’']?t\b/gi, "did not")
+        .replace(/\bcannot\b/gi, "can not")
+        .replace(/\bwon[’']?t\b/gi, "will not")
+        .replace(/\bisn[’']?t\b/gi, "is not")
+        .replace(/\baren[’']?t\b/gi, "are not")        
+        .replace(/\bhe[’']?s\b/gi, "he is")
+        .replace(/\bshe[’']?s\b/gi, "she is")
+        .replace(/\bit[’']?s\b/gi, "it is")
+        .replace(/\bthat[’']?s\b/gi, "that is")
+        .replace(/\bthere[’']?s\b/gi, "there is")
+        .replace(/\bthere[’']?re\b/gi, "there are")
+        .replace(/\bwho[’']?s\b/gi, "who is")
+        .replace(/\bwhat[’']?s\b/gi, "what is")
+        .replace(/\bwhere[’']?s\b/gi, "where is")
+        .replace(/\bwhen[’']?s\b/gi, "when is")
+        .replace(/\bhow[’']?s\b/gi, "how is")
+        .replace(/\bi[’']?d\b/gi, "i had")
+        .replace(/\byou[’']?d\b/gi, "you had")
+        .replace(/\bhe[’']?d\b/gi, "he had")
+        .replace(/\bshe[’']?d\b/gi, "she had")
+        .replace(/\bwe[’']?d\b/gi, "we had")
+        .replace(/\bthey[’']?d\b/gi, "they had")
+        .replace(/\bcouldn[’']?t\b/gi, "could not")
+        .replace(/\bshouldn[’']?t\b/gi, "should not")
+        .replace(/\bwouldn[’']?t\b/gi, "would not")
+        .replace(/\bmustn[’']?t\b/gi, "must not")
+        .replace(/\bmayn[’']?t\b/gi, "may not")
+        .replace(/\bmightn[’']?t\b/gi, "might not")
+        .replace(/\bhasn[’']?t\b/gi, "has not")
+        .replace(/\bhaven[’']?t\b/gi, "have not")
+        .replace(/\bhadn[’']?t\b/gi, "had not")
+        .replace(/\bhe[’']?ll\b/gi, "he will")
+        .replace(/\bshe[’']?ll\b/gi, "she will")
+        .replace(/\bit[’']?ll\b/gi, "it will")
+        .replace(/\bgonna\b/gi, "going to")
+        .replace(/\blet[’']?s\b/gi, "let us")
+
+         return t;
+    }
+
+    function normEn(s) {
+      let t = (s || "").toLowerCase();
+      // normaliza aspas
+      t = t.replace(/[’]/g, "'").replace(/[“”]/g, '"');
+      // EXPANDE ANTES DE TUDO
+      t = expandContractionsEn(t);
+      // remove pontuação
+      t = t.replace(/[^\w\s]/g, " ");
+      // normaliza espaços
+      t = t.replace(/\s+/g, " ").trim();
+      return t;
+    }
+
+    const FEEDBACK_OK = [
+      "você foi muito bem.",
+      "ótima expressão.",
+      "extraordinária resposta.",
+      "você acertou.",  
+      "extraordinário.",     
+      "ótimo trabalho.",
+      "ótima resposta.",
+      "você falou corretamente."
+    ].map(msg =>
+      USER_NAME ? `${USER_NAME}, ${msg}` : msg
+    );
+
+    const FEEDBACK_ERR = [      
+      "Essa ficou errada, tente novamente.",    
+      "Quase lá, tente novamente.",     
+      "Não está bem certo, tente de novo.",   
+      "Vamos tentar novamente.",   
+      "Você cometeu um erro, tente novamente.",
+      "Errar faz parte, tente de novo.",
+      "Quer tentar outra vez, essa ficou errada."
+    ];  
+
+    const MSG_AVANCO = [
+      "você errou, mas tudo bem, vamos continuar.",
+      "não tem problema se errou, vamos seguir em frente.",
+      "não marcou pontos, mas tudo bem, vamos em frente.",
+      "você errou, sem problemas, seguimos em frente.",
+      "não foi dessa vez, vamos tentar a próxima."
+    ].map(msg =>
+      USER_NAME ? `${USER_NAME}, ${msg}` : msg
+    );
+
+      // ESCONDE TODAS
+      msgs.forEach(m => m.style.display = "none");
+
+      bloquearEntrada();      
+
+      // MOSTRA FRASE + FALA   
+      function mostrarSistema() {
+        if (tocando) return;
+
+        if (index >= msgs.length) {
+          if (timerResetAula) {
+            clearTimeout(timerResetAula);
+            timerResetAula = null;
+          }
+          bloquearEntrada();
+          btnStart.disabled = false;
+
+          // NOVO — fim da lição, zera pontos visuais
+          pontosAndamento = 0;
+          atualizarPontosAndamento();
+
+          return;
+        }
+
+        const msg = msgs[index];
+
+        if (lastFalandoEl && lastFalandoEl !== msg) {
+          lastFalandoEl.classList.remove("falando");
+        }
+        const lineId = msg.dataset.id;
+        const auto = parseInt(msg.dataset.auto || "0");
+        const end  = parseInt(msg.dataset.end  || "0");      
+        
+        msg.style.display = "block";
+        lastMsgEl = msg;
+        scrollChatToBottom();
+        msg.classList.add("falando");
+        lastFalandoEl = msg;
+
+        bloquearEntrada();   
+
+        fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ line_id: lineId })
+        })
+
+        .then(r => r.json())
+        .then(async d => {
+
+          if (d.files && d.files.length) { 
+            tocando = true;
+
+            //PARAR AUDIO NO MEIO
+            //const expectedTmp = msg.dataset.expected || "";
+            //agendarLiberacaoSegura(calcularTempoMic(expectedTmp) + 3000);
+            //FIM PARAR AUDIO NO MEIO
+
+            await new Promise(r => setTimeout(r, 2000));
+            await falarComoAntigo(d.files);
+
+            //PARAR AUDIO NO MEIO
+            //clearTimeout(safetyUnlockTimer);
+            //FIM PARAR AUDIO NO MEIO
+
+            tocando = false;
+            tocarBeep();
+
+            if (autoMicAtivo) {
+              setTimeout(() => {
+                  abrirMicrofoneComTempo();
+                }, 150);
+              }  
+            }
+            
+            //PARAR AUDIO NO MEIO
+            //if (!esperandoResposta && !tocando) {
+              //esperandoResposta = true;
+              //liberarEntrada();
+            //}
+            //FIM PARAR AUDIO NO MEIO
+
+          // SÓ AGORA DECIDE O PRÓXIMO PASSO
+          if (end === 1) {
+            bloquearEntrada(); 
+            index++;
+            return;
+          }
+
+          if (auto === 1) {
+            index++;
+            return mostrarSistema();
+          }
+
+          esperandoResposta = true;
+          expectedAtual = msg.dataset.expected || "";
+          tentativas = 0;
+          liberarEntrada();
+
+        });
+      }    
+      
+      function iniciarLicao() {
+        btnStart.disabled = true;
+
+        // remove mensagem de fim de aula, se existir
+        chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
+
+        index = 0;
+        tentativas = 0;
+        esperandoResposta = false;
+        expectedAtual = "";
+
+        pontosAndamento = 0;
+        atualizarPontosAndamento();
+
+        lastMsgEl = null;
+        lastFalandoEl = null;
+
+        // ESCONDE TODAS AS FRASES BASE
+        msgs.forEach(m => {
+          m.style.display = "none";
+          m.classList.remove("falando");
+        });
+
+        // INICIA TIMER
+        iniciarTimerVisual();
+        agendarResetAula();
+
+        mostrarSistema();
+      }
+
+
+      btnStart.onclick = async function () {
+
+        const r = await fetch("/user/nivel/");
+          const data = await r.json();
+
+          if (!data.exists) {
+            document.getElementById("nivel-modal").style.display = "block";
+            return;
+          }
+           iniciarLicao();
+
+           
+ 
+        // btnStart.disabled = true;
+        // // remove mensagem de fim de aula, se existir
+        // chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
+
+        // index = 0;
+        // tentativas = 0;
+        // esperandoResposta = false;
+        // expectedAtual = "";
+
+        // pontosAndamento = 0;
+        // atualizarPontosAndamento();
+
+        // lastMsgEl = null;
+        // lastFalandoEl = null;
+
+        // // ESCONDE TODAS AS FRASES BASE
+        // msgs.forEach(m => {
+        //   m.style.display = "none";
+        //   m.classList.remove("falando");
+        // });
+
+        // // INICIA TIMER
+        // iniciarTimerVisual();
+        // agendarResetAula();
+
+        // mostrarSistema();
+      };
+
+      // BOTÃO MICROFONE
+      btnMic.onclick = function () {
+        abrirMicrofoneComTempo();
+      };
+
+      // RESPOSTA DO USUÁRIO
+      // ===== escreve avaliação do professor =====
+      function escreverProfessor(text, afterEl) {
+        const div = document.createElement("div");
+        div.className = "chat-message system";
+        div.textContent = text;
+        afterEl.after(div);
+        return div;
+      }
+
+      // ENVIA DADOS PARA SALVAR NA TABELA progress
+      function salvarProgresso({ chatId, lessonId, points }) {
+        fetch("/progress/save/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            lesson_id: lessonId,
+            points: points
+          })
+        })  
+      }
+
+      // ENVIA DADOS PARA SALVAR NA TABELA progress_tmp
+      function salvarProgressoTmp({ chatId, points }) {
+        fetch("/progress/tmp/save/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            points: points
+          })
+        });
+      }
+
+      // ===== RESPOSTA DO USUÁRIO =====
+      recognition.onresult = async function (e) {
+        const textoBruto = e.results[0][0].transcript;        
+        if (!esperandoResposta) return;
+        const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+        const texto = normEn(textoBruto);        
+
+        if (["next", "skip"].includes(texto)) {
+          // corta mic imediatamente
+          encerrarMicrofone();
+
+          // bloqueia entradas
+          bloquearEntrada();
+
+          // mensagem visual opcional (recomendado)
+          const skip = document.createElement("div");
+          skip.className = "chat-message system";
+          skip.textContent = "Frase pulada.";
+          (lastMsgEl || msgs[index]).after(skip);
+
+          // limpa estado
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;
+
+          // avança para próxima frase
+          setTimeout(() => {
+            index++;
+            lastMsgEl = null;
+            mostrarSistema();
+          }, 150);
+
+          return;
+        }
+
+        encerrarMicrofone();
+
+        bloquearEntrada(); 
+
+        // ===== escreve ALUNO (sempre após a última mensagem) =====
+        const user = document.createElement("div");
+        user.className = "chat-message user";
+        user.textContent = textoBruto;
+
+        (lastMsgEl || msgs[index]).after(user);
+        lastMsgEl = user;
+
+        const recebido = normEn(textoCorrigido);
+
+        // divide expected_en por OR / or (case-insensitive)
+        const esperados = (expectedAtual || "")
+          .split(/\s+or\s+/i)
+          .map(e => normEn(e));
+
+        const ok = esperados.includes(recebido);
+
+        // bloqueia mic enquanto avalia
+        bloquearEntrada(); 
+
+        // ===== escolhe feedback =====
+        const msg = ok
+        ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
+        : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
+
+        // ===== monta feedback FINAL (antes de imprimir) =====
+        let feedbackText = msg;
+        let feedbackHTML = msg;
+
+        const tentativaAgora = tentativas + 1;
+        if (!ok) {          
+          if (tentativaAgora < MAX_TENTATIVAS) {
+            const expectedRaw = expectedAtual || "";
+            feedbackText = `${msg} Repita comigo: ${expectedRaw}`;
+            feedbackHTML = `${msg} <span class="hint">Repita comigo: <span style="color: red;">${expectedRaw}</span></span>`;
+          }
+        }
+        
+        let prof = null;      
+        if (ok || tentativaAgora < MAX_TENTATIVAS) {
+          prof = document.createElement("div");
+          prof.className = "chat-message system";
+          prof.innerHTML = feedbackHTML;
+
+          lastMsgEl.after(prof);
+          lastMsgEl = prof;
+          scrollChatToBottom();
+        }  
+
+        // ===== decisão de fluxo =====
+        if (ok) {
+          if (prof) prof.classList.add("correto");
+          if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
+          const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: msg, lang: "pt" })
+        });  
+
+        const d = await r.json(); 
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1100));
+          await tocarUm(d.files[0]);
+          tocando = false;
+        }
+
+        // === SALVA PROGRESSO (ACERTO) ===
+        const pontos =
+          tentativas === 0 ? 5 :
+          tentativas === 1 ? 3 :
+          1;
+          
+          pontosAndamento += pontos;
+          atualizarPontosAndamento();
+          
+          // PONTO MECHIDO SEM TESTAR
+          const LESSON_ID = Number("{{ lesson_id }}");
+          salvarProgresso({
+            chatId: msgs[index].dataset.id,
+            // lessonId: {{ lesson_id }},
+            lessonId: LESSON_ID,
+            points: pontos
+          });          
+
+          salvarProgressoTmp({
+            chatId: msgs[index].dataset.id,
+            points: pontos
+          });
+
+          atualizarPontosTotais();
+          
+          atualizarPontosFeitos();
+
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;
+                    
+          setTimeout(() => {
+            index++;
+            lastMsgEl = null;
+            mostrarSistema();
+          }, 150);
+          return;
+        }
+
+        // errou
+        tentativas++;
+        if (prof) prof.classList.add("errado");
+        if (prof) setTimeout(() => prof.classList.remove("errado"), 7000);
+
+      if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
+      // ===== fala AVALIAÇÃO (bloqueante) =====
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: feedbackText, lang: "pt" })
+        });
+
+        const d = await r.json();
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1100));
+          await falarComoAntigo(d.files);
+          tocando = false;
+
+          tocarBeep();
+
+          if (autoMicAtivo) {
+            setTimeout(() => {
+                abrirMicrofoneComTempo();
+              }, 150);
+            }  
+        }
+        esperandoResposta = true;
+        liberarEntrada();
+        return;
+      }
+
+      if (tentativas >= MAX_TENTATIVAS) {
+        salvarProgresso({
+          chatId: msgs[index].dataset.id,
+          // lessonId: {{ lesson_id }},
+          lessonId: LESSON_ID,
+          attempts: MAX_TENTATIVAS,
+          points: 0
+        });
+
+        // mensagem de avanço (SUBSTITUI o último "Let's try again")
+        const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
+
+        const avanco = document.createElement("div");
+        avanco.className = "chat-message system errado";
+        avanco.textContent = msgAvanco;
+
+        lastMsgEl.after(avanco);
+        lastMsgEl = avanco;
+        scrollChatToBottom();
+
+        setTimeout(() => avanco.classList.remove("errado"), 8000);
+        
+        // fala a mensagem de avanço
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: msgAvanco, lang: "pt" })
+        });
+
+        const d = await r.json();
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1100));
+          await tocarUm(d.files[0]);
+          tocando = false;
+        }
+
+        // reseta e avança
+        esperandoResposta = false;
+        expectedAtual = "";
+        tentativas = 0;
+        index++;
+        lastMsgEl = null;
+        return mostrarSistema();
+      }
+
+        // pode tentar de novo
+        esperandoResposta = true;
+        liberarEntrada();        
+      };       
+      
+      
+    });
+   
+    
+
+  document.getElementById("btn-salvar-nivel").onclick = async function () {
+  const nivel = document.querySelector("input[name='nivel']:checked");
+
+  if (!nivel) {
+    alert("Escolha um nível");
+    return;
+  }
+
+  const r = await fetch("/user/nivel/set/", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-CSRFToken": getCSRFToken()
+  },
+  body: JSON.stringify({ nivel: nivel.value })
+});
+
+
+  if (!r.ok) {
+    alert("Erro ao salvar nível");
+    return;
+  }
+
+  document.getElementById("nivel-modal").style.display = "none";
+
+  iniciarLicao();
+};
+

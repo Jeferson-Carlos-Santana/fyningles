@@ -1,31 +1,46 @@
 {% load static %}
+{% csrf_token %}
 <!DOCTYPE html>
 <html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
-    <meta charset="utf-8">
-    <title>Dashboard</title>
-</head>
-<body>
-
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <title>chat</title>
+        <link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'chat/css/chat.css' %}">
+        <link rel="stylesheet" href="{% static 'chat/css/btn.css' %}">
+        <link rel="stylesheet" href="{% static 'chat/css/others.css' %}">    
+    </head>
+    <body>
         <div class="layout">
             <nav class="sidebar">
                 <div class="sidebar-inner">
-                    <div class="bar-1">
-                        <ul class="menu">
-                            <div class="infor">👤 Jeferson carlos Santana</div>
-                            <div class="infor">⭐Pontos acumulados: <span class="text-success">1.075.352</span></div>
-                            <div class="infor">⭐Pontos em andamento: <span class="text-info">253</span></div>
-                            <div class="infor">⭐Pontos que faltam: <span class="text-info">768</span></div>
-                            <div class="infor">⭐Pontos feitos: <span class="text-info">422</span></div>
-                            <li><a href="/chat/">Chat</a></li>                            
-                            <li><a href="/dictionary/">Dicionário</a></li>                   
+                    <div class="bar-1">          
+                        <div class="infor" style="padding: 5px;">
+                           Olá, {{ request.user.username }}!
+                        </div>                     
+                        <ul class="menu">  
+                            {% if request.user.is_superuser %}
+                            <li><a href="/admin/">Administração</a></li>
+                            {% endif %}          
+                            <li><a href="/chat/">Chat</a></li>   
+                            {% if request.user.is_superuser %}                        
+                            <li><a href="/dictionary/">Dicionário</a></li> 
+                            {% endif %}                  
                         </ul>
+                    </div>                        
+                    <div class="bar-2">                        
+                    <!-- CONTEUDO DAS LICOES -->
                     </div>
-                     
                     <div class="logout">
-                        <li><a href="/">Sair</a></li>
+                        <ul class="menu"> 
+                            <li>
+                            <form method="post" action="/admin/logout/">
+                                {% csrf_token %}
+                                <button type="submit">Sair</button>
+                            </form>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
@@ -41,23 +56,17 @@
                         </div>                        
                     </div>
                     <div class="content-cont">
-                        <p>conteudo</p>
-                        <p>conteudo</p>
-                        <p>conteudo</p>
-                        <p>conteudo</p>
-                        <p>conteudo</p>
-                        <p>conteudo</p>                 
-                   
+                        <p>conteudo</p>                   
                     </div>
                     
                     <div class="footer-cont">
-                        <button class="theme-toggle" aria-label="Trocar tema">🌙 </button>
+                        <!-- <button class="theme-toggle" aria-label="Trocar tema">🌙 </button> -->
                          <i><strong>© 2026 - JPM-development - All rights reserved - Engineering & Technology</strong><i>                        
-                    </div>
-                    
+                    </div>                    
                 </div>
             </main>
         </div>
-    <script src="{% static 'chat/js/script.js' %}"></script>
-</body>
+        <script src="{% static 'chat/js/script.js' %}"></script>
+        <script src="{% static 'chat/js/chat.js' %}"></script>
+    </body>
 </html>
