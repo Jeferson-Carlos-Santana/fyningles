@@ -1,4 +1,6 @@
-  const USER_NAME = "{{ username|escapejs }}";
+  const USER_NAME = document.body.dataset.username || "";
+
+  // const USER_NAME = "{{ username|escapejs }}";
 
   function getCSRFToken() {
     return document.querySelector("[name=csrfmiddlewaretoken]").value;

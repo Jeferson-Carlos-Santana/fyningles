@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="{% static 'chat/css/btn.css' %}">
     <link rel="stylesheet" href="{% static 'chat/css/others.css' %}">    
 </head>
-<body data-lesson-id="{{ lesson_id|default:'' }}">
+<body data-lesson-id="{{ lesson_id|default:'' }}" data-username="{{ username|escapejs }}">
+
   <div class="layout">
     <nav class="sidebar">
       <div class="sidebar-inner">
