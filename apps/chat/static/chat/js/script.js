@@ -6,6 +6,20 @@ document.addEventListener("DOMContentLoaded", () => { // ABRE E FECHA O MENU LAT
     toggle.addEventListener("click", () => {
         sidebar.classList.toggle("collapsed");
     });
+
+const closeBtn = document.querySelector(".sidebar-close");
+
+closeBtn.addEventListener("click", () => {
+  sidebar.classList.add("collapsed");
+});
+
+if (window.innerWidth <= 900) {
+  sidebar.classList.add("collapsed");
+} else {
+  sidebar.classList.remove("collapsed");
+}
+
+    
 // FIM ABRE E FECHA O MENU LATERAL
 
 // BUSCA LICOES NO MENU LATERAL

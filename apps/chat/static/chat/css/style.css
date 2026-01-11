@@ -288,16 +288,50 @@ body {
 
 /* FIM TEMA DIA E NOITE */
 
+
+.sidebar-close {
+  position: absolute;
+  top: 0;
+  right: 8px;
+  font-size: 22px;
+  cursor: pointer;
+  color: #fff;
+  z-index: 1100;
+  display: none;
+}
+
+
 /* MEDIDA DA TELA MENOR QUE 900 */
 @media (max-width: 900px) {
+    .footer-cont {
+        padding-bottom: 30px;
+        height: auto;
+    }
+    .sidebar:not(.collapsed) .sidebar-close {
+        display: block;
+    }
     .sidebar {
-        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100dvh;
+        width: 270px;
+        z-index: 1000;
+
+        /* começa fechado */
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
     }
 
-    .sidebar-inner {
-        display: none;
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+
+    .sidebar:not(.collapsed) {
+        transform: translateX(0);
     }
 }
+
 /* MEDIDA DA TELA MENOR QUE 900 */
 
 /* INFOR */
