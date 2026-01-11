@@ -462,8 +462,8 @@ a.btn-madeira-velha-escura {
 
 /* PLAY MADEIRA VELHA */
 .play-madeira-velha {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%; 
   position: relative; 
   cursor: pointer;  
