@@ -13,6 +13,7 @@
 .chat-message {
   display: inline-block;
   width: fit-content;
+  width: 85%;
   max-width: 100%; ;
   padding: 5px 10px;
   border-radius: 5px;
@@ -63,13 +64,7 @@
   background-color: rgba(215, 185, 94, 0.15);
 }
 
-/* MOBILE */
-@media (max-width: 520px) {
-  .chat-message {
-    max-width: 85%;
-    font-size: 13px;
-  }
-}
+
 
 /* INPUT ENVIAR O CHAT */
 .inline-input {
@@ -327,3 +322,13 @@
   color: #fff;
 }
 /* FIM MODAL NIVEL */
+
+
+/* MOBILE */
+@media (max-width: 520px) {
+  .chat-message {
+    width: 85%;
+    max-width: 100%;
+    font-size: 16px;
+  }
+}
