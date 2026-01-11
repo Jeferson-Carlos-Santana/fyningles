@@ -86,7 +86,7 @@ const USER_NAME = document.body.dataset.username || "";
       const timerEl = document.getElementById("timer-aula");
 
       // IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
-      const TEMPO_SILENCIO_ENTRE_PALAVRAS = 3000;
+      const TEMPO_SILENCIO_ENTRE_PALAVRAS = 5000;
       let bufferFala = "";
       let silencioTimeout = null;
       // FIM IMPLEMENTACAO SILENCIO ENTRE PALAVRAS
