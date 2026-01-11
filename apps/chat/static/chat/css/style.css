@@ -288,7 +288,6 @@ body {
 
 /* FIM TEMA DIA E NOITE */
 
-
 .sidebar-close {
   position: absolute;
   top: 0;
@@ -300,16 +299,28 @@ body {
   display: none;
 }
 
-
 /* MEDIDA DA TELA MENOR QUE 900 */
 @media (max-width: 900px) {
+
+     .content-inner {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
     .footer-cont {
-        padding-bottom: 50px;
+        padding-bottom: 20px;
         height: auto;
     }
+
+    .cell-footer{
+        background-color: var(--color-warning);
+        height: 50px;
+    }
+
     .sidebar:not(.collapsed) .sidebar-close {
         display: block;
     }
+
     .sidebar {
         position: fixed;
         top: 0;
@@ -451,4 +462,5 @@ body {
     font-weight: 500;
 }
 /* FIM LOGOUT COMO LINK */
+
 
