@@ -372,7 +372,6 @@
       lastFalandoEl = null;
 
       // LIMPA COMPLETAMENTE O CHAT (CHAVE)
-      //chatArea.innerHTML = "";
       // remove apenas mensagens dinâmicas (feedback, user, system)
       chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());
 
@@ -593,7 +592,7 @@
 
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
-        if (tocando) return;
+        //if (tocando) return;
 
         if (index >= msgs.length) {
           if (timerResetAula) {
@@ -901,7 +900,7 @@
         const d = await r.json(); 
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 1100));
+          await new Promise(r => setTimeout(r, 2000));
           await tocarUm(d.files[0]);
           tocando = false;
         }
@@ -961,7 +960,7 @@
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 1100));
+          await new Promise(r => setTimeout(r, 2000));
           await falarComoAntigo(d.files);
           tocando = false;
 
@@ -1010,7 +1009,7 @@
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 1100));
+          await new Promise(r => setTimeout(r, 2000));
           await tocarUm(d.files[0]);
           tocando = false;
         }

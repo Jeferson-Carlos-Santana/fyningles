@@ -302,7 +302,6 @@ body {
 
 /* MEDIDA DA TELA MENOR QUE 900 */
 @media (max-width: 520px) {
-
      .content-inner {
         padding-left: 0px;
         padding-right: 0px;
