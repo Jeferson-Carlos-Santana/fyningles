@@ -25,19 +25,12 @@
           </div>
           <ul class="menu">  
             {% if request.user.is_superuser %}
-              <li>
-                <a href="/admin/">Administração</a>
-              </li>
-            {% endif %}
-
-            <!-- <p style="color:red">
-              staff={{ request.user.is_staff }} |
-              super={{ request.user.is_superuser }} |
-              auth={{ request.user.is_authenticated }}
-            </p> -->
-          
-            <li><a href="/">Dashboard</a></li>                          
-            <li><a href="/dictionary/">Dicionário</a></li>                   
+              <li><a href="/admin/">Administração</a></li>
+            {% endif %}          
+            <li><a href="/dashboard/">Dashboard</a></li>  
+            {% if request.user.is_superuser %}                        
+            <li><a href="/dictionary/">Dicionário</a></li> 
+            {% endif %}                  
           </ul>
         </div>
         <input type="text" class="lesson-search" placeholder="🔍 Buscar lição">
@@ -98,13 +91,10 @@
         </div>
         
         <div class="inline-input">            
-            <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />
-           
+            <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />           
             <button id="btnEnviar" class="btn-madeira-velha" onclick="enviarMensagem()">Enviar</button>
             <button class="btn-madeira-velha" id="btn-mic" onclick="toggleMic()">🎤</button>    
         </div>
-        
-        <!-- <button id="btn-mic" disabled>🎤 Falar</button> -->
 
         <div class="footer-cont">
           {% comment %} <button class="theme-toggle" aria-label="Trocar tema">🌙 </button> {% endcomment %}
@@ -113,12 +103,12 @@
       </div>
     </main>
   </div>
+
 <!-- MODAL NIVEL -->
 <div id="nivel-modal" class="nivel-modal" style="display:none;">
   <div class="nivel-box">
     <button class="nivel-close" aria-label="Fechar">×</button>
     <h3>Qual nível você se encaixa?</h3>
-
     <label><input type="radio" name="nivel" value="1"> Repetição básica <span class="text-warning-middle">(repete menos vezes a frase)</span>.</label>
     <label><input type="radio" name="nivel" value="2"> Repetição intermediária.</label>
     <label><input type="radio" name="nivel" value="3"> Repetição intensiva <span class="text-warning-middle">(repete a frase mais vezes)</span>.</label>
@@ -129,20 +119,18 @@
   </div>
 </div>
 
-
-
-  <script src="{% static 'chat/js/script.js' %}"></script> 
+<script src="{% static 'chat/js/script.js' %}"></script> 
 
 <script>
   const USER_NAME = "{{ username|escapejs }}";
 
   function getCSRFToken() {
-  return document.querySelector("[name=csrfmiddlewaretoken]").value;
-}
+    return document.querySelector("[name=csrfmiddlewaretoken]").value;
+  }
 
-document.querySelector(".nivel-close").onclick = () => {
-  document.getElementById("nivel-modal").style.display = "none";
-};
+  document.querySelector(".nivel-close").onclick = () => {
+    document.getElementById("nivel-modal").style.display = "none";
+  };
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
@@ -177,7 +165,7 @@ document.querySelector(".nivel-close").onclick = () => {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
         console.warn("SpeechRecognition não suportado neste browser");
-        return; // sai do DOMContentLoaded com segurança
+        return;
       }
       const recognition = new SpeechRecognition(); 
       window.recognition = recognition;
@@ -205,10 +193,6 @@ document.querySelector(".nivel-close").onclick = () => {
       const btnAutoSkip = document.getElementById("btnAutoSkip");
       let autoSkipAtivo = false;
 
-      //PARAR AUDIO NO MEIO
-      //let safetyUnlockTimer = null;
-      //FIM PARAR AUDIO NO MEIO
-
       const TEMPO_BASE = 5000;          // 3s mínimos
       const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
       const TEMPO_MAX = 12000;         // 12s máximo
@@ -224,35 +208,18 @@ document.querySelector(".nivel-close").onclick = () => {
       const timerEl = document.getElementById("timer-aula");
 
       let pontosAndamento = 0;
-      // NOVO — meta diária visual
-      const META_DO_DIA = 1000;
+      const META_DO_DIA = 1000;      
 
-      // CONTROLE DO BOTÃO START (habilita só quando há lição)
+      const lessonId = document.body.dataset.lessonId;
 
-        const lessonId = document.body.dataset.lessonId;
+      // começa desabilitado
+      btnStart.disabled = true;
 
-        // começa desabilitado
-        btnStart.disabled = true;
+      // se estiver em /chat/<id>/, habilita
+      if (lessonId && lessonId !== "") {
+        btnStart.disabled = false;
+      }
 
-        // se estiver em /chat/<id>/, habilita
-        if (lessonId && lessonId !== "") {
-          btnStart.disabled = false;
-        }      
-
-    //PARAR AUDIO NO MEIO
-    // function agendarLiberacaoSegura(maxMs = 15000) {
-    //   clearTimeout(safetyUnlockTimer);
-    //   safetyUnlockTimer = setTimeout(() => {
-    //     console.warn("Liberação de segurança acionada");
-
-    //     tocando = false;
-    //     esperandoResposta = true;
-    //     liberarEntrada();
-    //   }, maxMs);
-    // }
-    //FIM PARAR AUDIO NO MEIO
-
-    
     atualizarPontosFaltam(0);
     atualizarPontosFeitos();
     atualizarPontosTotais();    
@@ -276,7 +243,6 @@ document.querySelector(".nivel-close").onclick = () => {
           const el = document.getElementById("points-feitos");
           if (el) el.textContent = feitos;
 
-          // CORRETO — agora a variável existe
           atualizarPontosFaltam(feitos);
         });
     }
@@ -1067,19 +1033,18 @@ document.querySelector(".nivel-close").onclick = () => {
           tentativas === 0 ? 5 :
           tentativas === 1 ? 3 :
           1;
-
-          // NOVO — soma pontos visuais da lição
+          
           pontosAndamento += pontos;
           atualizarPontosAndamento();
-
-
+          
+          // PONTO MECHIDO SEM TESTAR
+          const LESSON_ID = Number("{{ lesson_id }}");
           salvarProgresso({
             chatId: msgs[index].dataset.id,
-            lessonId: {{ lesson_id }},
+            // lessonId: {{ lesson_id }},
+            lessonId: LESSON_ID,
             points: pontos
-          });
-
-          
+          });          
 
           salvarProgressoTmp({
             chatId: msgs[index].dataset.id,
@@ -1138,7 +1103,8 @@ document.querySelector(".nivel-close").onclick = () => {
       if (tentativas >= MAX_TENTATIVAS) {
         salvarProgresso({
           chatId: msgs[index].dataset.id,
-          lessonId: {{ lesson_id }},
+          // lessonId: {{ lesson_id }},
+          lessonId: LESSON_ID,
           attempts: MAX_TENTATIVAS,
           points: 0
         });

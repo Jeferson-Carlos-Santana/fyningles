@@ -1,8 +1,6 @@
 from django.db import models, transaction
 from django.db.models import Max, F
-
 from django.conf import settings
-
 
 class Chat(models.Model):
     lesson_id = models.IntegerField(verbose_name="Lesson ID")
@@ -143,9 +141,7 @@ class Chat(models.Model):
         db_table = "chats"
         ordering = ["lesson_id", "seq"]
 
-
-# MODELS PROGRESS
-
+# PROGRESS
 class Progress(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -178,7 +174,7 @@ class Progress(models.Model):
     def __str__(self):
         return f"{self.user_id} | lesson {self.lesson_id} | chat {self.chat_id}"
     
-#    CLASS TMP_PROGRESS
+#  TMP_PROGRESS
 class ProgressTmp(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -200,10 +196,8 @@ class ProgressTmp(models.Model):
             models.Index(fields=["user", "chat"]),
             models.Index(fields=["updated_at"]),
         ]
-
-
-
-
+        
+# NIVEL USUARIO
 class UserNivel(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

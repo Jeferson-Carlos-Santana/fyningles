@@ -18,6 +18,7 @@ from datetime import timedelta
 from django.db.models import Sum
 from django.views.decorators.http import require_GET
 from django.views.decorators.http import require_POST
+from django.http import HttpResponseForbidden
 import requests, json, re
 
 # TOTAL DE PONTOS POR DIA
@@ -32,6 +33,7 @@ LESSON_TITLES = {
     3: "Utilidades diárias",
 }
 
+@login_required
 def chat_home(request):
     return render(request, "chat/chat.html", {
         "lesson_id": None,
@@ -42,6 +44,7 @@ def chat_home(request):
         ),
     })
 
+@login_required
 def index(request):
     return render(request, "chat/index.html")
 
@@ -93,6 +96,7 @@ def quebrar_frases(text):
     return [p.strip() for p in partes if p.strip()]  
 
 # CHAMAR O CHAT NO HTML
+@login_required
 def chat(request, lesson_id):
     
     user = request.user
@@ -191,10 +195,7 @@ def chat(request, lesson_id):
 
         if dias_passados >= dias_minimos:
             p.status = 0
-            p.save(update_fields=["status"])
-    # =====================================================
-    # FIM DO NOVO CÓDIGO
-    # =====================================================
+            p.save(update_fields=["status"]) 
     
     # DELETE > 2 dias (aqui, na tabela progress_tmp)
     limite = timezone.now() - timedelta(days=2)
@@ -294,9 +295,6 @@ def tts_line(request):
 
         return JsonResponse({"files": files})
 
-    # =========================
-    # 2) MODO NORMAL (BANCO)
-    # =========================
     line = Chat.objects.get(id=data.get("line_id"))
 
     texto = limpar_html(line.content_pt)
@@ -345,11 +343,11 @@ def tts(request):
     )
     return JsonResponse(r.json())
 
-def lessons(request):
-    return render(request, "chat/lessons.html")
-
 # LISTAR DADOS DO JSON
+@login_required
 def dictionary(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Acesso restrito ao superadmin")
     lang = request.GET.get("lang", "pt")  # padrão pt
     terms = list_terms(lang)
 
@@ -360,7 +358,10 @@ def dictionary(request):
 # FIM LISTAR DADOS DO JSON
 
 # ADICIONAR DADOS NO JSON
+@login_required
 def dictionary_add(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Acesso restrito ao superadmin")
     if request.method != "POST":
         # return redirect("dictionary")
         return redirect(f"/dictionary/?lang={lang}")
@@ -372,12 +373,10 @@ def dictionary_add(request):
 
     if not lang or not term:
         messages.error(request, "Preencha o idioma e a palavra.")
-        # return redirect("dictionary")
         return redirect(f"/dictionary/?lang={lang}")
 
     if term_exists(lang, term):
         messages.error(request, "Esta palavra ou frase já existe.")
-        # return redirect("dictionary")
         return redirect(f"/dictionary/?lang={lang}")
     
     # bloqueia idiomas não-base
@@ -445,14 +444,16 @@ def dictionary_add(request):
         messages.success(request, "Salvo com sucesso em todos os idiomas!")
         return redirect(f"/dictionary/?lang={lang}")
 
-
     # 3) ES/FR/IT: só salva, não traduz
     messages.success(request, "Salvo!")
     return redirect(f"/dictionary/?lang={lang}")
 # FIM ADICIONAR DADOS NO JSON
 
 # APAGAR DADOS NO JSON
+@login_required
 def dictionary_delete(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Acesso restrito ao superadmin")
     if request.method != "POST":
         # return redirect("dictionary")
         return redirect(f"/dictionary/?lang={lang}")
@@ -499,7 +500,6 @@ def dictionary_delete(request):
     # return redirect("dictionary")
     return redirect(f"/dictionary/?lang={lang}")
 # FIM APAGAR DADOS NO JSON
-
 
 # CADASTRAR NA TABELA progress e editar    
 @csrf_exempt
@@ -626,8 +626,7 @@ def save_progress(request):
             for limite, stage in STAGES:
                 if obj.points >= limite and obj.stage < stage:
                     obj.stage = stage
-                    break
-                
+                    break                
 
             # ATUALIZA concluded_at SE O STAGE MUDOU
             if obj.stage != stage_anterior:
@@ -660,17 +659,7 @@ def save_progress(request):
                 dias_minimos = STAGE_DAYS.get(obj.stage)
                 if dias_minimos and obj.concluded_at:
                     dias_passados = (timezone.now().date() - obj.concluded_at.date()).days
-                    obj.status = 1 if dias_passados < dias_minimos else 0
-
-            # if obj.stage in STAGE_DAYS and obj.concluded_at:
-            #     dias_minimos = STAGE_DAYS[obj.stage]
-            #     dias_passados = (timezone.now().date() - obj.concluded_at.date()).days
-
-            #     if dias_passados < dias_minimos:
-            #         obj.status = 1  # frase para / bloqueia
-            #     else:
-            #         obj.status = 0  # frase continua
-            # FIM # REGRA DE TEMPO POR STAGE (STATUS)            
+                    obj.status = 1 if dias_passados < dias_minimos else 0                       
             
             obj.save(update_fields=["points", "updated_at", "stage", "concluded_at", "status"])
 
@@ -717,8 +706,6 @@ def save_progress_tmp(request):
         "ok": True
     })
 
-
-
 # CONTA O TOTAL DOS PONTOS DE CADA USUARIO
 @login_required
 def total_points(request):
@@ -753,8 +740,7 @@ def points_feitos(request):
         "total": total
     })
 
-
-
+# VERIFICA O NIVEL DO USUARIO
 @login_required
 @require_GET
 def user_nivel_get(request):
@@ -769,7 +755,7 @@ def user_nivel_get(request):
             "exists": False
         })
 
-
+# CADASTRA A MODAL DO NIVEL
 @login_required
 @require_POST
 def user_nivel_set(request):
