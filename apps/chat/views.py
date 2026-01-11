@@ -22,7 +22,7 @@ from django.http import HttpResponseForbidden
 import requests, json, re
 
 # TOTAL DE PONTOS POR DIA
-TOTAL_POINTS_DAY = 500
+TOTAL_POINTS_DAY = 5
 
 # DIAS QUE AS FRASES NAO APARECE
 SUSPIRO = 3
