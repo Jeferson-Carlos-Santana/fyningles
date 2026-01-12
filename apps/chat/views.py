@@ -89,11 +89,18 @@ def limpar_visual(text):
 def quebrar_frases(text):
     if not text:
         return []
-    
-    partes = re.split(r'[.:!?]', text)
 
-    # limpa espaços e descarta vazios
-    return [p.strip() for p in partes if p.strip()]  
+    partes = re.findall(r'[^.!?:]+[.!?:]?', text)
+    return [p.strip() for p in partes if p.strip()]
+
+# def quebrar_frases(text):
+#     if not text:
+#         return []
+    
+#     partes = re.split(r'[.:!?]', text)
+
+#     # limpa espaços e descarta vazios
+#     return [p.strip() for p in partes if p.strip()]  
 
 # CHAMAR O CHAT NO HTML
 @login_required
