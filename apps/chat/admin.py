@@ -238,13 +238,37 @@ class ChatAdmin(admin.ModelAdmin):
     from apps.chat.utils.dictionary_writer import add_term, term_exists
 
     # EN → todas as formas
-    ingleses = [en_full, en_abbrev, en_informal]
+    # ingleses = [en_full, en_abbrev, en_informal]
+
+    # for txt in ingleses:
+    #     if txt:
+    #         term = re.sub(r"[.:!?]", "", txt).lower().strip()
+    #         if not term_exists("en", term):
+    #             add_term("en", term)
+    
+    # --- DICIONÁRIO EN (novo / edição com limpeza) ---
+    def clean_term(t: str) -> str:
+        return re.sub(r"[.:!?]", "", t).lower().strip()
+
+    ingleses = []
+
+    # frase completa com OR
+    if " or " in raw_expected.lower():
+        ingleses.append(raw_expected)
+
+    # primeira forma
+    if en_full:
+        ingleses.append(en_full)
+
+    # segunda forma
+    if en_full_M:
+        ingleses.append(en_full_M)
 
     for txt in ingleses:
-        if txt:
-            term = re.sub(r"[.:!?]", "", txt).lower().strip()
-            if not term_exists("en", term):
-                add_term("en", term)
+        term = clean_term(txt)
+        if term and not term_exists("en", term):
+            add_term("en", term)
+
 
     # OUTROS IDIOMAS
     entries = {
@@ -359,13 +383,47 @@ class ChatAdmin(admin.ModelAdmin):
             if not text:
                 continue
 
-            term = re.sub(r"[.:!?]", "", text).lower().strip()
-            if not term:
-                continue
+            # separa por "or" (case-insensitive)
+            parts = re.split(r"\s+or\s+", text, flags=re.IGNORECASE)
 
-            if not term_exists(lang, term):
-                add_term(lang, term)
-    # FIM GRAVA EXPECTEDS NA EDIÇÃO DO DICIONARIO (essa edição é sem apagar os campos)
+            # forma completa com "or" normalizado
+            if len(parts) > 1:
+                full_or = " or ".join(p.strip() for p in parts)
+                candidates = [full_or] + parts
+            else:
+                candidates = parts
+
+            for term_raw in candidates:
+                term = re.sub(r"[.:!?]", "", term_raw).lower().strip()
+                if not term:
+                    continue
+
+                if not term_exists(lang, term):
+                    add_term(lang, term)
+      # FIM GRAVA EXPECTEDS NA EDIÇÃO DO DICIONARIO (essa edição é sem apagar os campos)
+
+    # if change:
+    #     from apps.chat.utils.dictionary_writer import add_term, term_exists
+
+    #     expected_map = {
+    #         "en": obj.expected_en,
+    #         "pt": obj.expected_pt,
+    #         "it": obj.expected_it,
+    #         "fr": obj.expected_fr,
+    #         "es": obj.expected_es,
+    #     }
+
+    #     for lang, text in expected_map.items():
+    #         if not text:
+    #             continue
+
+    #         term = re.sub(r"[.:!?]", "", text).lower().strip()
+    #         if not term:
+    #             continue
+
+    #         if not term_exists(lang, term):
+    #             add_term(lang, term)
+    
     
     # --- REGRA single-mark (segunda inserção) ---
     frase = (obj.expected_en or "").strip()
