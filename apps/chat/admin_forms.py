@@ -5,9 +5,9 @@ class ChatAdminForm(forms.ModelForm):
     
     role = forms.ChoiceField(
         choices=[
-        ("pt-mark", "Setar traduzir para português"),
-        ("single-mark", "Setar não traduzida para potutuguês"),
         ("teacher", "Teacher"),
+        ("pt-mark", "Setar traduzir para português"),
+        ("single-mark", "Setar não traduzida para potutuguês"),        
         ]
     )
 

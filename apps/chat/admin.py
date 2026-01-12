@@ -233,7 +233,6 @@ class ChatAdmin(admin.ModelAdmin):
     # IMPLEMENTACAO 1
     trads = traduz_com_retry(en_full)
     pt, es, fr, it = trads["pt"], trads["es"], trads["fr"], trads["it"]
-
  
     # AQUI GRAVA NO JSON AS VARIAVEIS
     from apps.chat.utils.dictionary_writer import add_term, term_exists
@@ -262,7 +261,6 @@ class ChatAdmin(admin.ModelAdmin):
                 add_term(lang, term)
                 
     # AQUI GRAVA NO JSON AS VARIAVEIS
-
     template_choice = form.cleaned_data.get("template_choice")
 
     if template_choice == "1":
@@ -345,6 +343,30 @@ class ChatAdmin(admin.ModelAdmin):
  
     super().save_model(request, obj, form, change)
     
+    # GRAVA EXPECTEDS NA EDIÇÃO DO DICIONARIO (essa edição é sem apagar os campos)
+    if change:
+        from apps.chat.utils.dictionary_writer import add_term, term_exists
+
+        expected_map = {
+            "en": obj.expected_en,
+            "pt": obj.expected_pt,
+            "it": obj.expected_it,
+            "fr": obj.expected_fr,
+            "es": obj.expected_es,
+        }
+
+        for lang, text in expected_map.items():
+            if not text:
+                continue
+
+            term = re.sub(r"[.:!?]", "", text).lower().strip()
+            if not term:
+                continue
+
+            if not term_exists(lang, term):
+                add_term(lang, term)
+    # FIM GRAVA EXPECTEDS NA EDIÇÃO DO DICIONARIO (essa edição é sem apagar os campos)
+    
     # --- REGRA single-mark (segunda inserção) ---
     frase = (obj.expected_en or "").strip()
 
@@ -358,7 +380,6 @@ class ChatAdmin(admin.ModelAdmin):
         if antigo.role == "teacher":
             antigo.role = "single-mark"
             antigo.save(update_fields=["role"])
-    # --- FIM ---
 
 
   # FRASES COM ABREVIACOES E SEM ABREVIACOES
