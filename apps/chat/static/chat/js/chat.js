@@ -165,7 +165,8 @@ const USER_NAME = document.body.dataset.username || "";
         "payen": "paying",
         "ital": "It'll",
         "leche": "Let's",
-        "letis": "Let's"
+        "letis": "Let's",
+        "hippies": "He pays"
       };
 
     function aplicarCorrecoesVoz(texto) {
@@ -683,6 +684,8 @@ const USER_NAME = document.body.dataset.username || "";
 
         // remove mensagem de fim de aula, se existir
         chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
+        // LIMPA TUDO QUE FOI GERADO NA EXECUÇÃO ANTERIOR
+        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());
 
         index = 0;
         tentativas = 0;
@@ -704,7 +707,6 @@ const USER_NAME = document.body.dataset.username || "";
         // INICIA TIMER
         iniciarTimerVisual();
         agendarResetAula();
-
         mostrarSistema();
       }
 
@@ -713,12 +715,12 @@ const USER_NAME = document.body.dataset.username || "";
 
         const r = await fetch("/user/nivel/");
           const data = await r.json();
-
+          iniciarLicao();
           if (!data.exists) {
             document.getElementById("nivel-modal").style.display = "block";
             return;
           }
-           iniciarLicao();
+           
 
            
  
