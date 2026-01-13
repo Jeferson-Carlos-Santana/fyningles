@@ -458,10 +458,16 @@ const USER_NAME = document.body.dataset.username || "";
             audioPlayer.onerror = null;
 
             audioPlayer.src = audioUrl;
+
+            audioPlayer.oncanplaythrough = () => {
+              audioPlayer.oncanplaythrough = null; // evita repetir
+              audioPlayer.play().catch(resolve);
+            };
+
             audioPlayer.onended = resolve;
             audioPlayer.onerror = resolve;
 
-            audioPlayer.play().catch(resolve);
+            //audioPlayer.play().catch(resolve);
           })
           .catch(() => {
             if (n > 0) return setTimeout(() => tentar(n - 1), delay);
