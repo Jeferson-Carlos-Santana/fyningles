@@ -53,9 +53,10 @@ const USER_NAME = document.body.dataset.username || "";
 
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");
+      const btnStop = document.getElementById("btn-stop");
       const btnMic = document.getElementById("btn-mic");
       const btnEnviar = document.getElementById("btnEnviar");
-
+      btnStop.disabled = true;
       let index = 0;
       let esperandoResposta = false;
       let expectedAtual = "";
@@ -668,8 +669,7 @@ const USER_NAME = document.body.dataset.username || "";
                   abrirMicrofoneComTempo();
                 }, 150);
               }  
-            }
-      
+            }      
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
@@ -694,7 +694,7 @@ const USER_NAME = document.body.dataset.username || "";
       // INCIAR LICAO
       function iniciarLicao() {
         btnStart.disabled = true;
-
+        btnStop.disabled = false;
         // remove mensagem de fim de aula, se existir
         chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
         // LIMPA TUDO QUE FOI GERADO NA EXECUÇÃO ANTERIOR
@@ -723,7 +723,7 @@ const USER_NAME = document.body.dataset.username || "";
         mostrarSistema();
       }
       
-      document.getElementById("btn-stop").onclick = function () {
+      btnStop.onclick = function () {
         location.reload();
       };
 
@@ -734,38 +734,8 @@ const USER_NAME = document.body.dataset.username || "";
           if (!data.exists) {
             document.getElementById("nivel-modal").style.display = "block";
             return;
-          }
-           
-
-           
- 
-        // btnStart.disabled = true;
-        // // remove mensagem de fim de aula, se existir
-        // chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
-
-        // index = 0;
-        // tentativas = 0;
-        // esperandoResposta = false;
-        // expectedAtual = "";
-
-        // pontosAndamento = 0;
-        // atualizarPontosAndamento();
-
-        // lastMsgEl = null;
-        // lastFalandoEl = null;
-
-        // // ESCONDE TODAS AS FRASES BASE
-        // msgs.forEach(m => {
-        //   m.style.display = "none";
-        //   m.classList.remove("falando");
-        // });
-
-        // // INICIA TIMER
-        // iniciarTimerVisual();
-        // agendarResetAula();
-
-        // mostrarSistema();
-      };
+          }        
+        };
 
       // BOTÃO MICROFONE
       btnMic.onclick = function () {
@@ -843,7 +813,6 @@ const USER_NAME = document.body.dataset.username || "";
         }
 
         encerrarMicrofone();
-
         bloquearEntrada(); 
 
         // ===== escreve ALUNO (sempre após a última mensagem) =====
@@ -922,11 +891,8 @@ const USER_NAME = document.body.dataset.username || "";
           pontosAndamento += pontos;
           atualizarPontosAndamento();
           
-          // PONTO MECHIDO SEM TESTAR
-          //const LESSON_ID = Number("{{ lesson_id }}");
           salvarProgresso({
             chatId: msgs[index].dataset.id,
-            // lessonId: {{ lesson_id }},
             lessonId: LESSON_ID,
             points: pontos
           });          
@@ -1034,37 +1000,31 @@ const USER_NAME = document.body.dataset.username || "";
         // pode tentar de novo
         esperandoResposta = true;
         liberarEntrada();        
-      };       
-      
-      
+      };      
+    });    
+
+    document.getElementById("btn-salvar-nivel").onclick = async function () {
+    const nivel = document.querySelector("input[name='nivel']:checked");
+
+    if (!nivel) {
+      alert("Escolha um nível");
+      return;
+    }
+
+    const r = await fetch("/user/nivel/set/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCSRFToken()
+      },
+      body: JSON.stringify({ nivel: nivel.value })
     });
-   
-    
 
-  document.getElementById("btn-salvar-nivel").onclick = async function () {
-  const nivel = document.querySelector("input[name='nivel']:checked");
+    if (!r.ok) {
+      alert("Erro ao salvar nível");
+      return;
+    }
 
-  if (!nivel) {
-    alert("Escolha um nível");
-    return;
-  }
-
-  const r = await fetch("/user/nivel/set/", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-CSRFToken": getCSRFToken()
-  },
-  body: JSON.stringify({ nivel: nivel.value })
-});
-
-
-  if (!r.ok) {
-    alert("Erro ao salvar nível");
-    return;
-  }
-
-  document.getElementById("nivel-modal").style.display = "none";
-
-  iniciarLicao();
+    document.getElementById("nivel-modal").style.display = "none";
+    iniciarLicao();
 };

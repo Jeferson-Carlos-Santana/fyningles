@@ -169,6 +169,20 @@
 #btn-start:disabled:hover {
   background: var(--color-secondary-light);
 }
+
+#btn-stop:disabled {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary);
+  cursor: not-allowed;
+  filter: grayscale(100%);
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+/* remove hover quando desabilitado */
+#btn-stop:disabled:hover {
+  background: var(--color-secondary-light);
+}
 /* FIM BOTÃO START DESABILITADO */
 
 /* TOOLTIP — SOMENTE FRASES QUE EXIGEM RESPOSTA (data-expected) */
