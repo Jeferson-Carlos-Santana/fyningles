@@ -651,13 +651,7 @@ const USER_NAME = document.body.dataset.username || "";
                 }, 150);
               }  
             }
-            
-            //PARAR AUDIO NO MEIO
-            //if (!esperandoResposta && !tocando) {
-              //esperandoResposta = true;
-              //liberarEntrada();
-            //}
-            //FIM PARAR AUDIO NO MEIO
+      
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
@@ -678,7 +672,47 @@ const USER_NAME = document.body.dataset.username || "";
 
         });
       }    
-      
+      // PARAR A LICAO
+      function pararELimpar() {
+        // para mic e entradas
+        encerrarMicrofone();
+        bloquearEntrada();
+
+        // para timers
+        if (timerIntervaloVisual) {
+          clearInterval(timerIntervaloVisual);
+          timerIntervaloVisual = null;
+        }
+        if (timerResetAula) {
+          clearTimeout(timerResetAula);
+          timerResetAula = null;
+        }
+
+        // limpa mensagens dinâmicas
+        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());
+
+        // esconde frases base
+        msgs.forEach(m => {
+          m.style.display = "none";
+          m.classList.remove("falando");
+        });
+
+        // zera estado
+        index = 0;
+        tentativas = 0;
+        esperandoResposta = false;
+        expectedAtual = "";
+        pontosAndamento = 0;
+        atualizarPontosAndamento();
+
+        lastMsgEl = null;
+        lastFalandoEl = null;
+
+        // reset visual do timer
+        if (timerEl) timerEl.textContent = "⏱️ 00:00";
+      }
+
+      // INCIAR LICAO
       function iniciarLicao() {
         btnStart.disabled = true;
 
@@ -709,10 +743,12 @@ const USER_NAME = document.body.dataset.username || "";
         agendarResetAula();
         mostrarSistema();
       }
-
+      
+      document.getElementById("btn-stop").onclick = function () {
+        pararELimpar();
+      };
 
       btnStart.onclick = async function () {
-
         const r = await fetch("/user/nivel/");
           const data = await r.json();
           iniciarLicao();
