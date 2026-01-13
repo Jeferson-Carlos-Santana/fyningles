@@ -674,7 +674,7 @@ const USER_NAME = document.body.dataset.username || "";
       }    
       // PARAR A LICAO
       function stopTotal() {
-        // ===== CORTA VOZ / MIC =====
+        // corta mic
         try { recognition.abort(); } catch (e) {}
         try { recognition.stop(); } catch (e) {}
 
@@ -683,7 +683,7 @@ const USER_NAME = document.body.dataset.username || "";
           micTimeout = null;
         }
 
-        // ===== CORTA ÁUDIO / PROMISES =====
+        // corta áudio
         try {
           audioPlayer.pause();
           audioPlayer.currentTime = 0;
@@ -694,18 +694,17 @@ const USER_NAME = document.body.dataset.username || "";
         filaVoz = Promise.resolve();
         tocando = false;
 
-        // ===== PARA TIMERS =====
+        // corta timers
         if (timerIntervaloVisual) {
           clearInterval(timerIntervaloVisual);
           timerIntervaloVisual = null;
         }
-
         if (timerResetAula) {
           clearTimeout(timerResetAula);
           timerResetAula = null;
         }
 
-        // ===== ZERA ESTADO =====
+        // zera estado
         index = 0;
         tentativas = 0;
         esperandoResposta = false;
@@ -716,24 +715,20 @@ const USER_NAME = document.body.dataset.username || "";
         lastMsgEl = null;
         lastFalandoEl = null;
 
-        // ===== LIMPA TELA =====
-        chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
-        // LIMPA TUDO QUE FOI GERADO NA EXECUÇÃO ANTERIOR
-        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());      
+        // 🔑 LIMPA SÓ O DINÂMICO (NÃO BASE)
+        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());
 
-        // ===== RESET VISUAL =====
+        // reset visual
         if (timerEl) timerEl.textContent = "⏱️ 00:00";
 
         bloquearEntrada();
-        // btnStart.disabled = false;
+        btnStart.disabled = false;
       }
+
 
 
       // INCIAR LICAO
       function iniciarLicao() {
-
-        stopTotal();
-
         btnStart.disabled = true;
 
         // remove mensagem de fim de aula, se existir
