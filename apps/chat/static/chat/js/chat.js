@@ -717,23 +717,21 @@ const USER_NAME = document.body.dataset.username || "";
         lastFalandoEl = null;
 
         // ===== LIMPA TELA =====
-        chatArea.querySelectorAll(".chat-message").forEach(el => el.remove());
-
-        msgs.forEach(m => {
-          m.style.display = "none";
-          m.classList.remove("falando");
-        });
+        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());       
 
         // ===== RESET VISUAL =====
         if (timerEl) timerEl.textContent = "⏱️ 00:00";
 
         bloquearEntrada();
-        btnStart.disabled = false;
+        // btnStart.disabled = false;
       }
 
 
       // INCIAR LICAO
       function iniciarLicao() {
+
+        stopTotal();
+
         btnStart.disabled = true;
 
         // remove mensagem de fim de aula, se existir
