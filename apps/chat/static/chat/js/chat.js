@@ -639,7 +639,7 @@ const USER_NAME = document.body.dataset.username || "";
           if (d.files && d.files.length) { 
             tocando = true;     
 
-            await new Promise(r => setTimeout(r, 50));
+            await new Promise(r => setTimeout(r, 100));
             await falarComoAntigo(d.files); 
             
 // PRELOAD DA PRÓXIMA FRASE
@@ -903,7 +903,7 @@ preload.load();
         const d = await r.json(); 
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 1100));
+          await new Promise(r => setTimeout(r, 100));
           await tocarUm(d.files[0]);
           tocando = false;
         }
@@ -963,7 +963,7 @@ preload.load();
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 1100));
+          await new Promise(r => setTimeout(r, 100));
           await falarComoAntigo(d.files);
           tocando = false;
 
@@ -1012,7 +1012,7 @@ preload.load();
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 1100));
+          await new Promise(r => setTimeout(r, 100));
           await tocarUm(d.files[0]);
           tocando = false;
         }
