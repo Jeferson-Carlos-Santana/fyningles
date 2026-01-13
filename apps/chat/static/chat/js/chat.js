@@ -717,7 +717,9 @@ const USER_NAME = document.body.dataset.username || "";
         lastFalandoEl = null;
 
         // ===== LIMPA TELA =====
-        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());       
+        chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
+        // LIMPA TUDO QUE FOI GERADO NA EXECUÇÃO ANTERIOR
+        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());      
 
         // ===== RESET VISUAL =====
         if (timerEl) timerEl.textContent = "⏱️ 00:00";
