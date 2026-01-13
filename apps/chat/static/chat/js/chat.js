@@ -502,8 +502,7 @@ const USER_NAME = document.body.dataset.username || "";
         .replace(/\bthey[’']?ll\b/gi, "they will")
         .replace(/\bdon[’']?t\b/gi, "do not")
         .replace(/\bdoesn[’']?t\b/gi, "does not")
-        .replace(/\bdidn[’']?t\b/gi, "did not")
-        .replace(/\bcannot\b/gi, "can not")
+        .replace(/\bdidn[’']?t\b/gi, "did not")    
         .replace(/\bwon[’']?t\b/gi, "will not")
         .replace(/\bisn[’']?t\b/gi, "is not")
         .replace(/\baren[’']?t\b/gi, "are not")        
@@ -538,6 +537,8 @@ const USER_NAME = document.body.dataset.username || "";
         .replace(/\bit[’']?ll\b/gi, "it will")
         .replace(/\bgonna\b/gi, "going to")
         .replace(/\blet[’']?s\b/gi, "let us")
+        .replace(/\bcan\s+not\b/gi, "can't")
+        .replace(/\bcannot\b/gi, "can't")
 
          return t;
     }

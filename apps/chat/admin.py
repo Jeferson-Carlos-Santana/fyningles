@@ -162,7 +162,6 @@ class ChatAdmin(admin.ModelAdmin):
     (r"\bDo not\b", "Don't"), (r"\bdo not\b", "don't"),
     (r"\bDoes not\b", "Doesn't"), (r"\bdoes not\b", "doesn't"),
     (r"\bDid not\b", "Didn't"), (r"\bdid not\b", "didn't"),
-    (r"\bCan not\b", "Cannot"), (r"\bcan not\b", "cannot"),
     (r"\bWill not\b", "Won't"), (r"\bwill not\b", "won't"),
     (r"\bIs not\b", "Isn't"), (r"\bis not\b", "isn't"),
     (r"\bAre not\b", "Aren't"), (r"\bare not\b", "aren't"),
@@ -198,6 +197,8 @@ class ChatAdmin(admin.ModelAdmin):
     (r"\bIt will\b", "It'll"), (r"\bit will\b", "it'll"),
     (r"\bGoing to\b", "Gonna"), (r"\bgoing to\b", "gonna"),
     (r"\bLet us\b", "Let's"), (r"\blet us\b", "let's"),
+    (r"\bCan not\b", "Can't"), (r"\bcan not\b", "can't"),
+    (r"\bCannot\b", "Can't"), (r"\bcannot\b", "can't"),
     ]
 
     for regex, repl in reps:
