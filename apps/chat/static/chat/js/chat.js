@@ -639,8 +639,21 @@ const USER_NAME = document.body.dataset.username || "";
           if (d.files && d.files.length) { 
             tocando = true;     
 
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, 50));
             await falarComoAntigo(d.files); 
+            
+// PRELOAD DA PRÓXIMA FRASE
+const nextMsg = msgs[index + 1];
+if (nextMsg) {
+const nextLineId = nextMsg.dataset.id;
+
+// mesma lógica que você já usa em tocarUm()
+const nextUrl = "/media/cache/line_" + nextLineId;
+
+const preload = new Audio(nextUrl);
+preload.preload = "auto";
+preload.load();
+}
 
             tocando = false;
             tocarBeep();
@@ -672,7 +685,7 @@ const USER_NAME = document.body.dataset.username || "";
 
         });
       } 
-      
+
       // INCIAR LICAO
       function iniciarLicao() {
         btnStart.disabled = true;
