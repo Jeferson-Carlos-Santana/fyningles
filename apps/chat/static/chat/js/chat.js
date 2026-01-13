@@ -459,15 +459,10 @@ const USER_NAME = document.body.dataset.username || "";
 
             audioPlayer.src = audioUrl;
 
-            audioPlayer.oncanplaythrough = () => {
-              audioPlayer.oncanplaythrough = null; // evita repetir
-              audioPlayer.play().catch(resolve);
-            };
-
             audioPlayer.onended = resolve;
             audioPlayer.onerror = resolve;
 
-            //audioPlayer.play().catch(resolve);
+            audioPlayer.play().catch(resolve);
           })
           .catch(() => {
             if (n > 0) return setTimeout(() => tentar(n - 1), delay);
@@ -645,12 +640,21 @@ const USER_NAME = document.body.dataset.username || "";
           if (d.files && d.files.length) { 
             tocando = true;     
 
-            await new Promise(r => setTimeout(r, 900));
+            await new Promise(r => setTimeout(r, 100));
             await falarComoAntigo(d.files); 
-            
-// PRELOAD DA PRÓXIMA FRASE
+
+// ===== PRÉ-GERA ÁUDIO DA PRÓXIMA FRASE (SEM TOCAR) =====
 const nextMsg = msgs[index + 1];
 if (nextMsg) {
+  fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ line_id: nextMsg.dataset.id })
+  });
+
+// PRELOAD DA PRÓXIMA FRASE
+
+
 const nextLineId = nextMsg.dataset.id;
 
 // mesma lógica que você já usa em tocarUm()
