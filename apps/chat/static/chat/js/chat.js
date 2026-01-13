@@ -643,27 +643,22 @@ const USER_NAME = document.body.dataset.username || "";
             await new Promise(r => setTimeout(r, 100));
             await falarComoAntigo(d.files); 
 
-// ===== PRÉ-GERA ÁUDIO DA PRÓXIMA FRASE (SEM TOCAR) =====
-const nextMsg = msgs[index + 1];
-if (nextMsg) {
-  fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ line_id: nextMsg.dataset.id })
-  });
+            // ===== PRÉ-GERA ÁUDIO DA PRÓXIMA FRASE (SEM TOCAR) =====
+            const nextMsg = msgs[index + 1];
+            if (nextMsg) {
+              fetch("/tts/line/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ line_id: nextMsg.dataset.id })
+              });
 
-// PRELOAD DA PRÓXIMA FRASE
-
-
-const nextLineId = nextMsg.dataset.id;
-
-// mesma lógica que você já usa em tocarUm()
-const nextUrl = "/media/cache/line_" + nextLineId;
-
-const preload = new Audio(nextUrl);
-preload.preload = "auto";
-preload.load();
-}
+              // PRELOAD DA PRÓXIMA FRASE
+              const nextLineId = nextMsg.dataset.id;
+              const nextUrl = "/media/cache/line_" + nextLineId;
+              const preload = new Audio(nextUrl);
+              preload.preload = "auto";
+              preload.load();
+            }
 
             tocando = false;
             tocarBeep();
@@ -913,7 +908,7 @@ preload.load();
         const d = await r.json(); 
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 900));
+          await new Promise(r => setTimeout(r, 1100));
           await tocarUm(d.files[0]);
           tocando = false;
         }
@@ -973,7 +968,7 @@ preload.load();
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 900));
+          await new Promise(r => setTimeout(r, 1100));
           await falarComoAntigo(d.files);
           tocando = false;
 
@@ -1022,7 +1017,7 @@ preload.load();
         const d = await r.json();
         if (d.files && d.files.length) {
           tocando = true;
-          await new Promise(r => setTimeout(r, 900));
+          await new Promise(r => setTimeout(r, 1100));
           await tocarUm(d.files[0]);
           tocando = false;
         }
