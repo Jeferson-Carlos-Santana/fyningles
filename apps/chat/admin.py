@@ -728,7 +728,7 @@ class ChatAdmin(admin.ModelAdmin):
   # FRASE PARA TRADUZIR O PORTUGUES
   TEMPLATES_CONTENT_3_PT = [
     "Como você diria em inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
-    "Você sabe como dizer isso em inglês? (stp3) <span style='color:blue;'>{pt}</span>",
+    "Você sabe como dizer isso em inglês? (stp1) <span style='color:blue;'>{pt}</span>",
     "Tente dizer em inglês a frase: (stp1) <span style='color:blue;'>{pt}</span>",
     "Consegue traduzir para o inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
     "Como ficaria em inglês esta frase? (stp1) <span style='color:blue;'>{pt}</span>",
