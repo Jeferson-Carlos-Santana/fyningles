@@ -671,62 +671,8 @@ const USER_NAME = document.body.dataset.username || "";
           liberarEntrada();
 
         });
-      }    
-      // PARAR A LICAO
-      function stopTotal() {
-        // corta mic
-        try { recognition.abort(); } catch (e) {}
-        try { recognition.stop(); } catch (e) {}
-
-        if (micTimeout) {
-          clearTimeout(micTimeout);
-          micTimeout = null;
-        }
-
-        // corta áudio
-        try {
-          audioPlayer.pause();
-          audioPlayer.currentTime = 0;
-          audioPlayer.onended = null;
-          audioPlayer.onerror = null;
-        } catch (e) {}
-
-        filaVoz = Promise.resolve();
-        tocando = false;
-
-        // corta timers
-        if (timerIntervaloVisual) {
-          clearInterval(timerIntervaloVisual);
-          timerIntervaloVisual = null;
-        }
-        if (timerResetAula) {
-          clearTimeout(timerResetAula);
-          timerResetAula = null;
-        }
-
-        // zera estado
-        index = 0;
-        tentativas = 0;
-        esperandoResposta = false;
-        expectedAtual = "";
-        pontosAndamento = 0;
-        atualizarPontosAndamento();
-
-        lastMsgEl = null;
-        lastFalandoEl = null;
-
-        // 🔑 LIMPA SÓ O DINÂMICO (NÃO BASE)
-        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());
-
-        // reset visual
-        if (timerEl) timerEl.textContent = "⏱️ 00:00";
-
-        bloquearEntrada();
-        btnStart.disabled = false;
-      }
-
-
-
+      } 
+      
       // INCIAR LICAO
       function iniciarLicao() {
         btnStart.disabled = true;
@@ -759,8 +705,9 @@ const USER_NAME = document.body.dataset.username || "";
         mostrarSistema();
       }
       
-      document.getElementById("btn-stop").onclick = stopTotal;
-
+      document.getElementById("btn-stop").onclick = function () {
+        location.reload();
+      };
 
       btnStart.onclick = async function () {
         const r = await fetch("/user/nivel/");
