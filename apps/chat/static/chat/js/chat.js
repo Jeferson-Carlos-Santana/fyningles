@@ -673,31 +673,39 @@ const USER_NAME = document.body.dataset.username || "";
         });
       }    
       // PARAR A LICAO
-      function pararELimpar() {
-        // para mic e entradas
-        encerrarMicrofone();
-        bloquearEntrada();
+      function stopTotal() {
+        // ===== CORTA VOZ / MIC =====
+        try { recognition.abort(); } catch (e) {}
+        try { recognition.stop(); } catch (e) {}
 
-        // para timers
+        if (micTimeout) {
+          clearTimeout(micTimeout);
+          micTimeout = null;
+        }
+
+        // ===== CORTA ÁUDIO / PROMISES =====
+        try {
+          audioPlayer.pause();
+          audioPlayer.currentTime = 0;
+          audioPlayer.onended = null;
+          audioPlayer.onerror = null;
+        } catch (e) {}
+
+        filaVoz = Promise.resolve();
+        tocando = false;
+
+        // ===== PARA TIMERS =====
         if (timerIntervaloVisual) {
           clearInterval(timerIntervaloVisual);
           timerIntervaloVisual = null;
         }
+
         if (timerResetAula) {
           clearTimeout(timerResetAula);
           timerResetAula = null;
         }
 
-        // limpa mensagens dinâmicas
-        chatArea.querySelectorAll(".chat-message:not(.base)").forEach(el => el.remove());
-
-        // esconde frases base
-        msgs.forEach(m => {
-          m.style.display = "none";
-          m.classList.remove("falando");
-        });
-
-        // zera estado
+        // ===== ZERA ESTADO =====
         index = 0;
         tentativas = 0;
         esperandoResposta = false;
@@ -708,9 +716,21 @@ const USER_NAME = document.body.dataset.username || "";
         lastMsgEl = null;
         lastFalandoEl = null;
 
-        // reset visual do timer
+        // ===== LIMPA TELA =====
+        chatArea.querySelectorAll(".chat-message").forEach(el => el.remove());
+
+        msgs.forEach(m => {
+          m.style.display = "none";
+          m.classList.remove("falando");
+        });
+
+        // ===== RESET VISUAL =====
         if (timerEl) timerEl.textContent = "⏱️ 00:00";
+
+        bloquearEntrada();
+        btnStart.disabled = false;
       }
+
 
       // INCIAR LICAO
       function iniciarLicao() {
@@ -744,9 +764,8 @@ const USER_NAME = document.body.dataset.username || "";
         mostrarSistema();
       }
       
-      document.getElementById("btn-stop").onclick = function () {
-        pararELimpar();
-      };
+      document.getElementById("btn-stop").onclick = stopTotal;
+
 
       btnStart.onclick = async function () {
         const r = await fetch("/user/nivel/");
