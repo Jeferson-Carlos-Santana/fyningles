@@ -167,7 +167,9 @@ const USER_NAME = document.body.dataset.username || "";
         "ital": "It'll",
         "leche": "Let's",
         "letis": "Let's",
-        "hippies": "He pays"
+        "hippies": "He pays",
+        "dylan": "They learn",
+        "dyland": "They learn"
       };
 
     function aplicarCorrecoesVoz(texto) {
@@ -777,6 +779,19 @@ const USER_NAME = document.body.dataset.username || "";
           })
         });
       }
+      
+      function normalizeThey(words, i) {
+        const w = words[i];
+        const next = words[i + 1];
+
+        if (!["day", "dey", "dei"].includes(w)) return w;
+
+        if (["are", "were", "have", "will", "do"].includes(next)) {
+          return "they";
+        }
+
+        return "day";
+      }
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
@@ -824,14 +839,62 @@ const USER_NAME = document.body.dataset.username || "";
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
 
-        const recebido = normEn(textoCorrigido);
 
-        // divide expected_en por OR / or (case-insensitive)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // const recebido = normEn(textoCorrigido);
+
+        // // divide expected_en por OR / or (case-insensitive)
+        // const esperados = (expectedAtual || "")
+        //   .split(/\s+or\s+/i)
+        //   .map(e => normEn(e));
+
+        // const ok = esperados.includes(recebido);
+
+        let recebido = normEn(textoCorrigido);
+
+        // 🔹 NORMALIZA THEY/DAY AQUI
+        let words = recebido.split(" ");
+        if (words.length > 1) {
+          words[0] = normalizeThey(words, 0);
+          recebido = words.join(" ");
+        }
+
+        // divide expected_en por OR / or
         const esperados = (expectedAtual || "")
           .split(/\s+or\s+/i)
           .map(e => normEn(e));
 
         const ok = esperados.includes(recebido);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
