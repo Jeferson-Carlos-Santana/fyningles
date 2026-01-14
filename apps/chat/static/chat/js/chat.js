@@ -813,6 +813,39 @@ const USER_NAME = document.body.dataset.username || "";
         // Substitui apenas "asked" isolado como verbo principal (não seguido de preposição)
         return texto.replace(/\basked\b(?!\s+(to|for|about|if|whether|me|him|her|them)\b)/gi, "ask");
       }
+
+      function normalizeCleanClaimAnywhere(texto) {
+        const tokens = texto
+          .replace(/([.,!?;])/g, ' $1')
+          .trim()
+          .split(/\s+/);
+
+        const result = [];
+        for (let i = 0; i < tokens.length; i++) {
+          const original = tokens[i];
+          const word = original.toLowerCase();
+          const nextToken = tokens[i + 1]?.toLowerCase();
+
+          if ((word === "clean" || word === "cleans") &&
+              ["he","she","it","they","that"].includes(nextToken)) {
+
+            const isCapitalized = original[0] === original[0].toUpperCase();
+            const replacement =
+              word === "cleans" ? "claims" : "claim";
+
+            result.push(isCapitalized
+              ? replacement.charAt(0).toUpperCase() + replacement.slice(1)
+              : replacement
+            );
+            continue;
+          }
+
+          result.push(original);
+        }
+
+        return result.join(" ");
+      }
+
       // ########################################
       // FIM NORMALIZACOES
       // ########################################
@@ -857,20 +890,23 @@ const USER_NAME = document.body.dataset.username || "";
         encerrarMicrofone();
         bloquearEntrada(); 
 
-
+        // COMPARADO
         let recebido = normEn(textoCorrigido);
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
+        recebido = normalizeCleanClaimAnywhere(recebido);
 
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
         user.className = "chat-message user";
         // user.textContent = textoBruto;
         //user.textContent = textoCorrigido;
-
+        
+        // FALADO
         let exibicao = textoCorrigido;
         exibicao = normalizeTheyAnywhere(exibicao);
         exibicao = normalizeAskTense(exibicao, expectedAtual);
+        exibicao = normalizeCleanClaimAnywhere(exibicao);
         user.textContent = exibicao;
 
         (lastMsgEl || msgs[index]).after(user);
