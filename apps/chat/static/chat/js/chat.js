@@ -849,7 +849,7 @@ const USER_NAME = document.body.dataset.username || "";
         const user = document.createElement("div");
         user.className = "chat-message user";
         //user.textContent = textoBruto;
-        user.textContent = textoCorrigido;
+        user.textContent = recebido;
 
 
         (lastMsgEl || msgs[index]).after(user);
