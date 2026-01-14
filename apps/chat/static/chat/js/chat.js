@@ -544,7 +544,7 @@ const USER_NAME = document.body.dataset.username || "";
 
          return t;
     }
-
+    // RETIRA AS ABREVIACOES ACIMA, PARA SER COMPARADO COM O expected_en.
     function normEn(s) {
       let t = (s || "").toLowerCase();
       // normaliza aspas
@@ -780,6 +780,9 @@ const USER_NAME = document.body.dataset.username || "";
         });
       }
       
+      // ########################################
+      // NORMALIZACOES
+      // ########################################
       // FUNCAO NORMALIZAR O THEY
       function normalizeThey(words, i) {
         const w = words[i];
@@ -799,9 +802,20 @@ const USER_NAME = document.body.dataset.username || "";
         for (let i = 0; i < words.length - 1; i++) {
           words[i] = normalizeThey(words, i);
         }
-
         return words.join(" ");
       }
+
+      function normalizeAskTense(texto, expectedEn) {
+        // Se a expected claramente indica passado, não altera
+        const pastIndicators = /\b(asked|was|were|did|had|yesterday|last|ago|before|earlier|previously|already)\b/i;
+        if (pastIndicators.test(expectedEn)) return texto;
+
+        // Substitui apenas "asked" isolado como verbo principal (não seguido de preposição)
+        return texto.replace(/\basked\b(?!\s+(to|for|about|if|whether|me|him|her|them)\b)/gi, "ask");
+      }
+      // ########################################
+      // FIM NORMALIZACOES
+      // ########################################
 
 
       // ===== RESPOSTA DO USUÁRIO =====
@@ -846,6 +860,7 @@ const USER_NAME = document.body.dataset.username || "";
 
         let recebido = normEn(textoCorrigido);
         recebido = normalizeTheyAnywhere(recebido);
+        recebido = normalizeAskTense(recebido, expectedAtual);
 
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
@@ -855,18 +870,6 @@ const USER_NAME = document.body.dataset.username || "";
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
-
-        // const recebido = normEn(textoCorrigido);
-
-        // // divide expected_en por OR / or (case-insensitive)
-        // const esperados = (expectedAtual || "")
-        //   .split(/\s+or\s+/i)
-        //   .map(e => normEn(e));
-
-        // const ok = esperados.includes(recebido);
-
-        
-
 
         // divide expected_en por OR / or
         const esperados = (expectedAtual || "")
