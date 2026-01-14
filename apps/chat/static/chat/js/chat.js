@@ -781,29 +781,17 @@ const USER_NAME = document.body.dataset.username || "";
         });
       }
       
-      // FUNCAO NORMALIZAR O THEY
       function normalizeThey(words, i) {
         const w = words[i];
         const next = words[i + 1];
         // INCLUIR AQUI PALAVRAS SEMELHANTES A THEY
-        if (!["day", "dey", "dei", "tei", "thei"].includes(w)) return w;
+        if (!["day", "dey", "dei"].includes(w)) return w;
         // INCLUIR AQUI A PALAVRA DEPOIS DO THEY
         if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come"].includes(next)) {
           return "they";
         }
         return "day";
       }
-
-      function normalizeTheyAnywhere(texto) {
-        const words = texto.split(" ");
-
-        for (let i = 0; i < words.length - 1; i++) {
-          words[i] = normalizeThey(words, i);
-        }
-
-        return words.join(" ");
-      }
-
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
