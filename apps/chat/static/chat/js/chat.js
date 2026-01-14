@@ -167,18 +167,22 @@ const USER_NAME = document.body.dataset.username || "";
         "ital": "It'll",
         "leche": "Let's",
         "letis": "Let's",
-        "hippies": "He pays"
+        "hippies": "He pays",
+        "dylan": "they learn",
+        "dyland": "they learn",
+        "daylan": "they learn"
       };
 
     function aplicarCorrecoesVoz(texto) {
-      let t = texto;
+      let t = texto.toLowerCase();
       for (const errado in CORRECOES_VOZ) {
         const certo = CORRECOES_VOZ[errado];
-        const re = new RegExp(`\\b${errado}\\b`, "gi");
+        const re = new RegExp(`\\b${errado}\\b`, "g");
         t = t.replace(re, certo);
       }
       return t;
     }
+
 
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
@@ -537,8 +541,7 @@ const USER_NAME = document.body.dataset.username || "";
         .replace(/\bit[’']?ll\b/gi, "it will")
         .replace(/\bgonna\b/gi, "going to")
         .replace(/\blet[’']?s\b/gi, "let us")
-        .replace(/\bcan\s+not\b/gi, "can't")
-        .replace(/\bcannot\b/gi, "can't")
+        .replace(/\bcan[’']?t\b/gi, "can not")
 
          return t;
     }
@@ -777,13 +780,38 @@ const USER_NAME = document.body.dataset.username || "";
           })
         });
       }
+      
+      // FUNCAO NORMALIZAR O THEY
+      function normalizeThey(words, i) {
+        const w = words[i];
+        const next = words[i + 1];
+        // INCLUIR AQUI PALAVRAS SEMELHANTES A THEY
+        if (!["day", "dey", "dei", "tei", "thei"].includes(w)) return w;
+        // INCLUIR AQUI A PALAVRA DEPOIS DO THEY
+        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come"].includes(next)) {
+          return "they";
+        }
+        return "day";
+      }
+
+      function normalizeTheyAnywhere(texto) {
+        const words = texto.split(" ");
+
+        for (let i = 0; i < words.length - 1; i++) {
+          words[i] = normalizeThey(words, i);
+        }
+
+        return words.join(" ");
+      }
+
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
         const textoBruto = e.results[0][0].transcript;        
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
-        const texto = normEn(textoBruto);        
+        //const texto = normEn(textoBruto);
+        const texto = normEn(textoCorrigido);        
 
         if (["next", "skip"].includes(texto)) {
           // corta mic imediatamente
@@ -824,14 +852,57 @@ const USER_NAME = document.body.dataset.username || "";
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
 
-        const recebido = normEn(textoCorrigido);
 
-        // divide expected_en por OR / or (case-insensitive)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // const recebido = normEn(textoCorrigido);
+
+        // // divide expected_en por OR / or (case-insensitive)
+        // const esperados = (expectedAtual || "")
+        //   .split(/\s+or\s+/i)
+        //   .map(e => normEn(e));
+
+        // const ok = esperados.includes(recebido);
+
+        let recebido = normEn(textoCorrigido);
+        recebido = normalizeTheyAnywhere(recebido);
+
+
+        // divide expected_en por OR / or
         const esperados = (expectedAtual || "")
           .split(/\s+or\s+/i)
           .map(e => normEn(e));
 
         const ok = esperados.includes(recebido);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
