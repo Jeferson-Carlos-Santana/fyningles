@@ -866,7 +866,12 @@ const USER_NAME = document.body.dataset.username || "";
         const user = document.createElement("div");
         user.className = "chat-message user";
         // user.textContent = textoBruto;
-        user.textContent = textoCorrigido;
+        //user.textContent = textoCorrigido;
+
+        let exibicao = textoCorrigido;
+        exibicao = normalizeTheyAnywhere(exibicao);
+        exibicao = normalizeAskTense(exibicao, expectedAtual);
+        user.textContent = exibicao;
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
