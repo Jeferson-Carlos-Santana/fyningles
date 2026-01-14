@@ -170,19 +170,21 @@ const USER_NAME = document.body.dataset.username || "";
         "hippies": "He pays",
         "dylan": "They learn",
         "dyland": "They learn",
-        "daylan": "They learn"
+        "daylan": "They learn",
+        "Dylan": "They learn",
+        "Dyland": "They learn",
+        "Daylan": "They learn"
       };
 
     function aplicarCorrecoesVoz(texto) {
-      let t = texto.toLowerCase();
+      let t = texto;
       for (const errado in CORRECOES_VOZ) {
         const certo = CORRECOES_VOZ[errado];
-        const re = new RegExp(`\\b${errado}\\b`, "g");
+        const re = new RegExp(`\\b${errado}\\b`, "gi");
         t = t.replace(re, certo);
       }
       return t;
     }
-
 
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
@@ -541,7 +543,8 @@ const USER_NAME = document.body.dataset.username || "";
         .replace(/\bit[’']?ll\b/gi, "it will")
         .replace(/\bgonna\b/gi, "going to")
         .replace(/\blet[’']?s\b/gi, "let us")
-        .replace(/\bcan[’']?t\b/gi, "can not")
+        .replace(/\bcan\s+not\b/gi, "can't")
+        .replace(/\bcannot\b/gi, "can't")
 
          return t;
     }
@@ -798,8 +801,7 @@ const USER_NAME = document.body.dataset.username || "";
         const textoBruto = e.results[0][0].transcript;        
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
-        //const texto = normEn(textoBruto);
-        const texto = normEn(textoCorrigido);        
+        const texto = normEn(textoBruto);        
 
         if (["next", "skip"].includes(texto)) {
           // corta mic imediatamente
@@ -867,8 +869,13 @@ const USER_NAME = document.body.dataset.username || "";
         // const ok = esperados.includes(recebido);
 
         let recebido = normEn(textoCorrigido);
-        recebido = normalizeTheyAnywhere(recebido);
 
+        // 🔹 NORMALIZA THEY/DAY AQUI
+        let words = recebido.split(" ");
+        if (words.length > 1) {
+          words[0] = normalizeThey(words, 0);
+          recebido = words.join(" ");
+        }
 
         // divide expected_en por OR / or
         const esperados = (expectedAtual || "")
