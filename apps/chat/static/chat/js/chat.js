@@ -168,9 +168,9 @@ const USER_NAME = document.body.dataset.username || "";
         "leche": "Let's",
         "letis": "Let's",
         "hippies": "He pays",
-        "dylan": "they learn",
-        "dyland": "they learn",
-        "daylan": "they learn"
+        "dylan": "They learn",
+        "dyland": "They learn",
+        "daylan": "They learn"
       };
 
     function aplicarCorrecoesVoz(texto) {
