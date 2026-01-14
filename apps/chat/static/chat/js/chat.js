@@ -176,13 +176,12 @@ const USER_NAME = document.body.dataset.username || "";
     function aplicarCorrecoesVoz(texto) {
       let t = texto.toLowerCase();
       for (const errado in CORRECOES_VOZ) {
-        const certo = CORRECOES_VOZ[errado].toLowerCase();
+        const certo = CORRECOES_VOZ[errado];
         const re = new RegExp(`\\b${errado}\\b`, "g");
         t = t.replace(re, certo);
       }
       return t;
     }
-
 
 
     btnAutoSkip.onclick = function () {
@@ -849,8 +848,6 @@ const USER_NAME = document.body.dataset.username || "";
         const user = document.createElement("div");
         user.className = "chat-message user";
         user.textContent = textoBruto;
-
-
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
