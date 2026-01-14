@@ -848,7 +848,7 @@ const USER_NAME = document.body.dataset.username || "";
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
         user.className = "chat-message user";
-        user.textContent = texto;
+        user.textContent = textoBruto;
 
 
 
