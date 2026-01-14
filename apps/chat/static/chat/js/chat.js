@@ -168,20 +168,21 @@ const USER_NAME = document.body.dataset.username || "";
         "leche": "Let's",
         "letis": "Let's",
         "hippies": "He pays",
-        "dylan": "They learn",
-        "dyland": "They learn",
-        "daylan": "They learn"
+        "dylan": "they learn",
+        "dyland": "they learn",
+        "daylan": "they learn"
       };
 
     function aplicarCorrecoesVoz(texto) {
       let t = texto.toLowerCase();
       for (const errado in CORRECOES_VOZ) {
-        const certo = CORRECOES_VOZ[errado];
+        const certo = CORRECOES_VOZ[errado].toLowerCase();
         const re = new RegExp(`\\b${errado}\\b`, "g");
         t = t.replace(re, certo);
       }
       return t;
     }
+
 
 
     btnAutoSkip.onclick = function () {
@@ -847,7 +848,9 @@ const USER_NAME = document.body.dataset.username || "";
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
         user.className = "chat-message user";
-        user.textContent = textoBruto;
+        //user.textContent = textoBruto;
+        user.textContent = textoCorrigido;
+
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
