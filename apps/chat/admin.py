@@ -122,7 +122,10 @@ class ChatAdmin(admin.ModelAdmin):
     "content_fr",
     "content_es",
   )
- 
+  
+  ordering = ("lesson_id", "seq")
+  sortable_by = ()
+  
   # FUNCAO INFORMAL
   def gerar_informal(self, frase: str) -> str:
     reducoes = {
