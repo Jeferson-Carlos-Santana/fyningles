@@ -183,7 +183,6 @@ const USER_NAME = document.body.dataset.username || "";
       return t;
     }
 
-
     btnAutoSkip.onclick = function () {
       autoSkipAtivo = !autoSkipAtivo;
 
@@ -844,6 +843,10 @@ const USER_NAME = document.body.dataset.username || "";
         encerrarMicrofone();
         bloquearEntrada(); 
 
+
+        let recebido = normEn(textoCorrigido);
+        recebido = normalizeTheyAnywhere(recebido);
+
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
         user.className = "chat-message user";
@@ -852,23 +855,6 @@ const USER_NAME = document.body.dataset.username || "";
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // const recebido = normEn(textoCorrigido);
 
@@ -879,8 +865,7 @@ const USER_NAME = document.body.dataset.username || "";
 
         // const ok = esperados.includes(recebido);
 
-        let recebido = normEn(textoCorrigido);
-        recebido = normalizeTheyAnywhere(recebido);
+        
 
 
         // divide expected_en por OR / or
@@ -889,21 +874,6 @@ const USER_NAME = document.body.dataset.username || "";
           .map(e => normEn(e));
 
         const ok = esperados.includes(recebido);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
