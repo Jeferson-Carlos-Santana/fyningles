@@ -123,7 +123,7 @@ class ChatAdmin(admin.ModelAdmin):
     "content_es",
   )
   
-  ordering = ("lesson_id", "seq")
+  ordering = ("lesson_id", "-seq")
   sortable_by = ()
   
   # FUNCAO INFORMAL
