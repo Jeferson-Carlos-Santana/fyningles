@@ -61,7 +61,7 @@ def phrase_progress(request):
         percent = min(int((p.points / limite_por_frase) * 100), 100)
 
         frases.append({
-            "text": limpar_visual(p.chat.content_pt),
+            "text": (p.chat.expected_en or "").strip(),
             "percent": percent,
         })
 
