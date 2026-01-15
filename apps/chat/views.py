@@ -34,6 +34,43 @@ LESSON_TITLES = {
 }
 
 @login_required
+def phrase_progress(request):
+    user = request.user
+
+    # nível do usuário
+    try:
+        nivel = UserNivel.objects.get(user=user).nivel
+    except UserNivel.DoesNotExist:
+        nivel = 1
+
+    limite_por_frase = {
+        1: 150,
+        2: 200,
+        3: 250,
+    }.get(nivel, 150)
+
+    progressos = (
+        Progress.objects
+        .filter(user=user)
+        .select_related("chat")
+        .order_by("-updated_at")
+    )
+
+    frases = []
+    for p in progressos:
+        percent = min(int((p.points / limite_por_frase) * 100), 100)
+
+        frases.append({
+            "text": limpar_visual(p.chat.content_pt),
+            "percent": percent,
+        })
+
+    return render(request, "chat/phrase_progress.html", {
+        "frases": frases
+    })
+
+
+@login_required
 def chat_home(request):
     return render(request, "chat/chat.html", {
         "lesson_id": None,

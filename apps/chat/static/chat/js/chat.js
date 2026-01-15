@@ -170,7 +170,8 @@ const USER_NAME = document.body.dataset.username || "";
         "hippies": "He pays",
         "dylan": "they learn",
         "dyland": "they learn",
-        "daylan": "they learn"
+        "daylan": "they learn",
+        "dayland": "they learn"
       };
 
     function aplicarCorrecoesVoz(texto) {
@@ -487,7 +488,8 @@ const USER_NAME = document.body.dataset.username || "";
 
       return filaVoz;
     }
-
+    
+    // TIRA ABREVIACAO PARA SER COMPARADO COM O expected_en
     function expandContractionsEn(t) {
       return (t || "")
         .replace(/\bi[’']?m\b/gi, "i am")
@@ -566,7 +568,8 @@ const USER_NAME = document.body.dataset.username || "";
       "extraordinário.",     
       "ótimo trabalho.",
       "ótima resposta.",
-      "você falou corretamente."
+      "você falou corretamente.",
+      "você foi ótimo."
     ].map(msg =>
       USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
@@ -578,7 +581,9 @@ const USER_NAME = document.body.dataset.username || "";
       "Vamos tentar novamente.",   
       "Você cometeu um erro, tente novamente.",
       "Errar faz parte, tente de novo.",
-      "Quer tentar outra vez, essa ficou errada."
+      "Quer tentar outra vez, essa ficou errada.",
+      "Ficou errada essa resposta, tente de novo.",
+      "Não acertou, tente novamente."
     ];  
 
     const MSG_AVANCO = [
@@ -586,7 +591,8 @@ const USER_NAME = document.body.dataset.username || "";
       "não tem problema se errou, vamos seguir em frente.",
       "não marcou pontos, mas tudo bem, vamos em frente.",
       "você errou, sem problemas, seguimos em frente.",
-      "não foi dessa vez, vamos tentar a próxima."
+      "não foi dessa vez, vamos tentar a próxima.",
+      "você falhou nessa, passamos para a próxima."
     ].map(msg =>
       USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
@@ -790,7 +796,7 @@ const USER_NAME = document.body.dataset.username || "";
         // INCLUIR AQUI PALAVRAS SEMELHANTES A THEY
         if (!["day", "dey", "dei", "tei", "thei"].includes(w)) return w;
         // INCLUIR AQUI A PALAVRA DEPOIS DO THEY
-        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come"].includes(next)) {
+        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet"].includes(next)) {
           return "they";
         }
         return "day";

@@ -92,7 +92,6 @@ class ChatAdmin(admin.ModelAdmin):
     "expected_it",
     "expected_fr",
     "expected_es",
-    "status",
     "created_at",
   )
   list_editable = ("status", "auto", "end", "status_point")
@@ -202,7 +201,6 @@ class ChatAdmin(admin.ModelAdmin):
     (r"\bGoing to\b", "Gonna"), (r"\bgoing to\b", "gonna"),
     (r"\bLet us\b", "Let's"), (r"\blet us\b", "let's"),
     (r"\bCan not\b", "Can't"), (r"\bcan not\b", "can't"),
-    (r"\bCannot\b", "Can't"), (r"\bcannot\b", "can't"),
     ]
 
     for regex, repl in reps:
