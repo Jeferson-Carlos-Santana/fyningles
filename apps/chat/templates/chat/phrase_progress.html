@@ -35,21 +35,21 @@
 
                       <div class="phrases-grid">
 
-                          {% for f in frases %}
-                          <!-- <div class="phrase-item"> -->
-                            <div class="phrase-item" data-text="{{ f.text|lower }}">
-                              <div class="phrase-body">
-                                  <div class="phrase-text">{{ f.text }}</div>
-                                  
-                                  <div class="phrase-progress">
-                                      <div class="phrase-progress-bar">
-                                          <progress class="phrase-progress-fill" value="{{ f.percent }}" max="100"></progress>
+                        {% for f in frases %}
+                        <div class="phrase-item" data-text="{{ f.text|lower }}">
+                            <div class="phrase-body">
+                                <div class="phrase-text">{{ f.text }}</div>
 
-                                      </div>
-                                      <div class="phrase-progress-label">{{ f.percent }}%</div>
-                                  </div>
-                              </div>
-                          </div>
+                                <div class="phrase-progress">
+                                    <div class="phrase-progress-bar">
+                                        <progress class="phrase-progress-fill"
+                                                value="{{ f.percent }}"
+                                                max="100"></progress>
+                                    </div>
+                                    <div class="phrase-progress-label">{{ f.percent }}%</div>
+                                </div>
+                            </div>
+                        </div>
                           {% endfor %}
                       </div>
 
