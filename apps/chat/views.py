@@ -40,7 +40,7 @@ def phrase_completed(request):
 
     progressos = (
         Progress.objects
-        .filter(user=user, stage__gte=1)
+        .filter(user=user, stage__gte=10)
         .select_related("chat")
         .order_by("-updated_at")
     )
@@ -57,7 +57,6 @@ def phrase_completed(request):
         "frases": frases
     })
 # FIM FRASES CONCLUIDAS
-
 
 # FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 @login_required

@@ -25,9 +25,9 @@
         <div class="bar-1">          
           <div class="infor" style="padding: 5px;">Olá, {{ request.user.username }}!</div>
           <div class="info-lesson">
-          <div class="infor">Pontos acumulados: <span class="text-warning-middle" id="total-points">0</span></div>
-          <div class="infor">Pontos que faltam: <span class="text-warning-middle" id="points-faltam">0</span></div>
-          <div class="infor">Pontos feitos: <span class="text-warning-middle" id="points-feitos">0</span></div>
+          <div class="infor">Pontos acumulados: <span class="text-warning-light" id="total-points">0</span></div>
+          <div class="infor">Pontos que faltam: <span class="text-warning-light" id="points-faltam">0</span></div>
+          <div class="infor">Pontos feitos: <span class="text-warning-light" id="points-feitos">0</span></div>
           </div>
           <ul class="menu">  
             {% if request.user.is_superuser %}
@@ -79,11 +79,11 @@
             <span id="timer-aula" style="
               margin-left: 8px;
               font-weight: bold;
-              color: #ffb300;
+              color: #ffd480;
             ">
               ⏱️ 00:00
             </span>
-            Pts: <span class="text-success-middle" id="points-andamento">0</span>
+            Pts: <span class="text-warning-light" id="points-andamento">0</span>
         </div>
 
         <div class="chat-area">

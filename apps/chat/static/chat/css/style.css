@@ -465,7 +465,6 @@ body {
 
 
 /* CARDS */
-
 .cards-grid {
     display: grid;
     width: 100%;
@@ -491,7 +490,7 @@ body {
 .card-header h3 {
     font-size: 14px;
     font-weight: 600;
-    color: var(--color-white);
+    color: var(--color-warning-light);
     line-height: 1.2;
 }
 
@@ -512,24 +511,7 @@ body {
     display: flex;
     justify-content: flex-end;
 }
-
-.card-btn {
-    background: var(--color-warning);
-    color: var(--color-black);
-    border: none;
-    padding: 4px 9px;
-    font-size: 11px;
-    cursor: pointer;
-     text-decoration: none;
-    display: inline-block;
-}
-
-.card-btn:hover {
-    background: var(--color-warning-middle);
-}
-
 /* FIM CARDS */
-
 
 
 @media (min-width: 700px) {
