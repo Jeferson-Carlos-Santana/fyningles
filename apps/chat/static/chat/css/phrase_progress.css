@@ -78,6 +78,7 @@
 .phrase-search {
     width: 100%;
     margin-bottom: 10px;
+    margin-top: 10px;
     padding: 10px 12px;
 
     background: var(--color-sidebar);
