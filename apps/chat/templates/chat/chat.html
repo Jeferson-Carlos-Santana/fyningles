@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="{% static 'chat/css/others.css' %}">    
 </head>
 <body data-lesson-id="{{ lesson_id|default:'' }}" data-username="{{ username|escapejs }}">
-  <!-- <body data-lesson-id="{{ lesson_id|default:'' }}"> -->
 
   <div class="layout">
     <nav class="sidebar">
@@ -23,19 +22,19 @@
           ✕
         </div>
         <div class="bar-1">          
-          <div class="infor" style="padding: 5px;">Olá, {{ request.user.username }}!</div>
+          <div class="infor user-session"><img src="{% static 'chat/img/user-y.png' %}" alt="Menu" width="15"> Olá, {{ request.user.username }}!</div>
           <div class="info-lesson">
-          <div class="infor">Pontos acumulados: <span class="text-warning-light" id="total-points">0</span></div>
-          <div class="infor">Pontos que faltam: <span class="text-warning-light" id="points-faltam">0</span></div>
-          <div class="infor">Pontos feitos: <span class="text-warning-light" id="points-feitos">0</span></div>
+          <div class="infor"><img src="{% static 'chat/img/flag-v.png' %}" alt="Menu" width="15"> Pontos acumulados: <span class="text-warning-light" id="total-points">0</span></div>
+          <div class="infor"><img src="{% static 'chat/img/flag.png' %}" alt="Menu" width="15"> Pontos que faltam: <span class="text-warning-light" id="points-faltam">0</span></div>
+          <div class="infor"><img src="{% static 'chat/img/flag-y.png' %}" alt="Menu" width="15"> Pontos feitos: <span class="text-warning-light" id="points-feitos">0</span></div>
           </div>
           <ul class="menu">  
             {% if request.user.is_superuser %}
-              <li><a href="/admin/">Administração</a></li>
+            <li><a href="/admin/"><img src="{% static 'chat/img/lock.png' %}" alt="Menu" width="15"> Administração</a></li>
             {% endif %}          
-            <li><a href="/dashboard/">Dashboard</a></li>  
+            <li><a href="/dashboard/"><img src="{% static 'chat/img/dashboard.png' %}" alt="Menu" width="15"> Dashboard</a></li>  
             {% if request.user.is_superuser %}                        
-            <li><a href="/dictionary/">Dicionário</a></li> 
+            <li><a href="/dictionary/"><img src="{% static 'chat/img/book.png' %}" alt="Menu" width="15"> Dicionário</a></li> 
             {% endif %}                  
           </ul>
         </div>
@@ -52,7 +51,7 @@
             <li>
               <form method="post" action="/admin/logout/">
                 {% csrf_token %}
-                <button type="submit">Sair</button>
+                <button class="user-session" type="submit">Sair</button>
                </form>
             </li>
           </ul>
@@ -66,7 +65,7 @@
         <div class="tittle-cont">
           <div class="aula">                    
             <button class="menu-toggle" aria-label="Abrir menu">
-              <img src="{% static 'chat/img/menu.png' %}" alt="Menu">
+              <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
             </button> 
             chat : {{ lesson_title }}           
           </div>                                  

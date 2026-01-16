@@ -180,9 +180,9 @@ body {
     font-size: 12px;
     background-color: var(--color-tittle-footer);
     color: var(--color-font-tittle-footer);
-    height: 30px;    
+    height: 43px;    
     margin: 0 -4px -5px -4px;
-    
+    text-align: center;
 }
 /* FIM FOOTER CONT */
 
@@ -195,17 +195,25 @@ body {
 
 .menu li a {
     display: block;
-    padding: 5px;
+    padding: 10px;
     text-decoration: none;
     color: var(--color-white);    
     align-items: center;
     background: var(--color-li);
     margin-bottom: 3px;
+    font-size: 16px;
 }
 
 .menu li a:hover {
     background: var(--color-li-hover);
     font-weight: 500;
+}
+
+.user-session{
+    padding: 10px 8px !important;
+    background: var(--color-white) !important;
+    color: var(--color-warning) !important;
+    font-weight: 700 !important;
 }
 /* FIM MENU */
 
@@ -291,13 +299,14 @@ body {
 
 .sidebar-close {
   position: absolute;
-  top: 0;
+  top: 2;
   right: 8px;
-  font-size: 22px;
+  font-size: 24px;
   cursor: pointer;
-  color: #fff;
+  color: var(--color-sidebar);
   z-index: 1100;
   display: none;
+  font-weight: 700;
 }
 
 /* MEDIDA DA TELA MENOR QUE 900 */
@@ -488,7 +497,7 @@ body {
 }
 
 .card-header h3 {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--color-warning-light);
     line-height: 1.2;
@@ -500,7 +509,7 @@ body {
 }
 
 .card-body p {
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.4;
     color: var(--color-secondary-light);
 }
