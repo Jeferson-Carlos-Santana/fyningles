@@ -641,7 +641,3 @@ body {
 /* ===================== */
 /*    FIM RESPONSIVO     */
 /* ===================== */
-
-.phrase-progress-fill {
-  width: calc(var(--percent) * 1%);
-}
