@@ -25,10 +25,10 @@
                     </div>
 
                     <div class="content-cont">
-                        <input type="text" class="phrase-search" id="phraseSearch" placeholder="Buscar frase...">
+                        
 
                         <div class="phrases-grid">
-
+                        <input type="text" class="phrase-search" id="phraseSearch" placeholder="Buscar frase...">
                         {% for f in frases %}
                         <div class="phrase-item" data-text="{{ f.text|lower }}">
                             <div class="phrase-body">

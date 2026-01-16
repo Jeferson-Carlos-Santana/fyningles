@@ -77,8 +77,8 @@
 /* BUSCA */
 .phrase-search {
     width: 100%;
-    margin-bottom: 10px;
-    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
     padding: 10px 12px;
 
     background: var(--color-sidebar);
