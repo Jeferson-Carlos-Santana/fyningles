@@ -66,4 +66,10 @@ searchInput.addEventListener("input", () => {
   }, 5000);
 // FIM TEMPO DA MENSAGEM DE SUCESSO SUMIR
 
+
+
+document.querySelectorAll(".phrase-progress-fill").forEach(el => {
+  el.style.width = el.dataset.percent + "%";
+});
+
 });

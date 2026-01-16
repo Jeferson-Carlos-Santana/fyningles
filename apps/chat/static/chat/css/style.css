@@ -643,5 +643,5 @@ body {
 /* ===================== */
 
 .phrase-progress-fill {
-  width: 0;
+  width: calc(var(--percent) * 1%);
 }
