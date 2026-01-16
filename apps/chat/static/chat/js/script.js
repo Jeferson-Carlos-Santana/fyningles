@@ -66,19 +66,4 @@ searchInput.addEventListener("input", () => {
 // FIM TEMPO DA MENSAGEM DE SUCESSO SUMIR
 
 
-// BUSCA DAS FRASES EM ANDAMENTO
- // BUSCA DAS FRASES EM ANDAMENTO
-const input = document.getElementById("phraseSearch");
-
-if (input) {
-  input.addEventListener("input", function () {
-    const q = this.value.toLowerCase();
-    document.querySelectorAll(".phrase-item").forEach(item => {
-      const text = item.dataset.text || "";
-      item.style.display = text.includes(q) ? "" : "none";
-    });
-  });
-}
-
-
 });
