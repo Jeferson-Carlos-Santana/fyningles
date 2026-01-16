@@ -67,9 +67,10 @@ searchInput.addEventListener("input", () => {
 
 
 // BUSCA DAS FRASES EM ANDAMENTO
- const input = document.getElementById("phraseSearch");
-  if (!input) return;
+ // BUSCA DAS FRASES EM ANDAMENTO
+const input = document.getElementById("phraseSearch");
 
+if (input) {
   input.addEventListener("input", function () {
     const q = this.value.toLowerCase();
     document.querySelectorAll(".phrase-item").forEach(item => {
@@ -77,5 +78,7 @@ searchInput.addEventListener("input", () => {
       item.style.display = text.includes(q) ? "" : "none";
     });
   });
+}
+
 
 });
