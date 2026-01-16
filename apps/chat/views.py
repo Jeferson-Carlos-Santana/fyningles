@@ -68,6 +68,7 @@ def phrase_progress(request):
 
         frases.append({
             "text": (p.chat.expected_en or "").strip(),
+            "text_pt": (p.chat.expected_pt or "").strip(),
             "percent": percent,
         })
     frases.sort(key=lambda f: f["percent"], reverse=True)

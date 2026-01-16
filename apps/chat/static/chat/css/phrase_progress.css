@@ -25,6 +25,12 @@
     line-height: 1.4;
 }
 
+.phrase-text-pt {
+    font-size: 14px;
+    color: var(--color-secondary-light);
+}
+
+
 .phrase-progress {
     display: flex;
     align-items: center;
