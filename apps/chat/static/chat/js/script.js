@@ -17,8 +17,7 @@ document.addEventListener("DOMContentLoaded", () => { // ABRE E FECHA O MENU LAT
       sidebar.classList.add("collapsed");
     } else {
       sidebar.classList.remove("collapsed");
-    }
-    
+    }    
 // FIM ABRE E FECHA O MENU LATERAL
 
 // BUSCA LICOES NO MENU LATERAL
@@ -65,14 +64,4 @@ searchInput.addEventListener("input", () => {
   }, 5000);
 // FIM TEMPO DA MENSAGEM DE SUCESSO SUMIR
 
-const input = document.getElementById("phraseSearch");
-                if (!input) return;
-
-                input.addEventListener("input", function () {
-                    const q = this.value.toLowerCase();
-                    document.querySelectorAll(".phrase-item").forEach(item => {
-                    const text = item.dataset.text || "";
-                    item.style.display = text.includes(q) ? "" : "none";
-                    });
-                });
 });
