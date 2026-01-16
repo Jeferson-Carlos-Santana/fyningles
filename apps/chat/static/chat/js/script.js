@@ -67,11 +67,15 @@ searchInput.addEventListener("input", () => {
 
 
 // BUSCA DAS FRASES EM ANDAMENTO
-document.getElementById("phraseSearch").addEventListener("input", function () {
-  const q = this.value.toLowerCase();
-  document.querySelectorAll(".phrase-item").forEach(item => {
-    item.style.display = item.dataset.text.includes(q) ? "" : "none";
+ const input = document.getElementById("phraseSearch");
+  if (!input) return;
+
+  input.addEventListener("input", function () {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll(".phrase-item").forEach(item => {
+      const text = item.dataset.text || "";
+      item.style.display = text.includes(q) ? "" : "none";
+    });
   });
-})
 
 });
