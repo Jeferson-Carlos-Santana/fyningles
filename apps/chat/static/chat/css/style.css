@@ -463,9 +463,8 @@ body {
 /* FIM LOGOUT COMO LINK */
 
 
-/* ===================== */
-/*        CARDS          */
-/* ===================== */
+
+/* CARDS */
 
 .cards-grid {
     display: grid;
@@ -528,13 +527,10 @@ body {
 .card-btn:hover {
     background: var(--color-warning-middle);
 }
-/* ===================== */
-/*        FIM CARDS      */
-/* ===================== */
 
-/* ================================= */
-/*  FRASES EM ANDAMENTO (ISOLADO)    */
-/* ================================= */
+/* FIM CARDS */
+
+/*  FRASES EM ANDAMENTO */
 .phrases-grid {
     display: grid;
     width: 100%;
@@ -601,7 +597,6 @@ body {
     );
 }
 
-
 .phrase-progress-label {
     font-size: 11px;
     color: var(--color-secondary-light);
@@ -609,13 +604,11 @@ body {
     text-align: right;
 }
 
-/* ================================= */
-/* FIM FRASES EM ANDAMENTO (ISOLADO) */
-/* ================================= */
+/* FIM FRASES EM ANDAMENTO */
 
-/* ===================== */
+
+
 /*      RESPONSIVO       */
-/* ===================== */
 
 @media (min-width: 450px) {
     .cards-grid {
@@ -656,7 +649,4 @@ body {
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
-
-/* ===================== */
 /*    FIM RESPONSIVO     */
-/* ===================== */

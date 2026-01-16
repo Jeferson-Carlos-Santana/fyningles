@@ -33,6 +33,11 @@ LESSON_TITLES = {
     3: "Utilidades diárias",
 }
 
+@login_required
+def phrase_completed(request):
+    return render(request, "chat/phrase_completed.html")
+
+
 # FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 @login_required
 def phrase_progress(request):

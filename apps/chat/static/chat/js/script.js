@@ -7,18 +7,17 @@ document.addEventListener("DOMContentLoaded", () => { // ABRE E FECHA O MENU LAT
         sidebar.classList.toggle("collapsed");
     });
 
-const closeBtn = document.querySelector(".sidebar-close");
+    const closeBtn = document.querySelector(".sidebar-close");
 
-closeBtn.addEventListener("click", () => {
-  sidebar.classList.add("collapsed");
-});
+    closeBtn.addEventListener("click", () => {
+      sidebar.classList.add("collapsed");
+    });
 
-if (window.innerWidth <= 900) {
-  sidebar.classList.add("collapsed");
-} else {
-  sidebar.classList.remove("collapsed");
-}
-
+    if (window.innerWidth <= 900) {
+      sidebar.classList.add("collapsed");
+    } else {
+      sidebar.classList.remove("collapsed");
+    }
     
 // FIM ABRE E FECHA O MENU LATERAL
 
@@ -65,5 +64,14 @@ searchInput.addEventListener("input", () => {
     });
   }, 5000);
 // FIM TEMPO DA MENSAGEM DE SUCESSO SUMIR
+
+
+// BUSCA DAS FRASES EM ANDAMENTO
+document.getElementById("phraseSearch").addEventListener("input", function () {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll(".phrase-item").forEach(item => {
+    item.style.display = item.dataset.text.includes(q) ? "" : "none";
+  });
+})
 
 });
