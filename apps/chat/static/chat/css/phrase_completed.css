@@ -30,57 +30,20 @@
     color: var(--color-secondary-light);
 }
 
-.phrase-progress {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.phrase-completed {
+    margin-top: 4px;
 }
 
-.phrase-progress-bar {
-    flex: 1;
-    height: 8px;
-    background: var(--color-li-hover);
-    overflow: hidden;
+.phrase-completed-label {
+    font-size: 12px;
+    color: var(--color-success-light);
+    font-weight: 600;
 }
 
-.phrase-progress-fill {
-    width: 100%;
-    height: 100%;
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-.phrase-progress-fill::-webkit-progress-bar {
-    background: transparent;
-}
-
-.phrase-progress-fill::-webkit-progress-value {
-    background: linear-gradient(
-        90deg,
-        var(--color-warning),
-        var(--color-warning-middle)
-    );
-}
-
-.phrase-progress-fill::-moz-progress-bar {
-    background: linear-gradient(
-        90deg,
-        var(--color-warning),
-        var(--color-warning-middle)
-    );
-}
-
-.phrase-progress-label {
-    font-size: 11px;
-    color: var(--color-secondary-light);
-    min-width: 36px;
-    text-align: right;
-}
 
 /* FIM FRASES EM ANDAMENTO */
 
 /* BUSCA */
-
 
 .phrase-search {
     width: 100%;

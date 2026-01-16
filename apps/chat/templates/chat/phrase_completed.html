@@ -7,7 +7,7 @@
         <meta charset="utf-8">
         <title>chat</title>
         <link rel="stylesheet" href="{% static 'chat/css/style.css' %}">
-        <link rel="stylesheet" href="{% static 'chat/css/chat.css' %}">
+        <link rel="stylesheet" href="{% static 'chat/css/phrase_completed.css' %}">
         <link rel="stylesheet" href="{% static 'chat/css/btn.css' %}">
         <link rel="stylesheet" href="{% static 'chat/css/others.css' %}">    
     </head>
@@ -23,24 +23,21 @@
                             Frases em andamento.
                         </div>                        
                     </div>
+                    <div class="content-cont">                        
 
-                    <div class="content-cont">
+                        <div class="phrases-grid">
+                        <input type="text" class="phrase-search" id="phraseSearch" placeholder="Buscar frase...">
+                        {% for f in frases %}
+                        <div class="phrase-item" data-text="{{ f.text|lower }}">
+                            <div class="phrase-body">
+                                <div class="phrase-text">{{ f.text }}</div>
+                                <div class="phrase-text phrase-text-pt">{{ f.text_pt }}</div>
 
-                      <div class="phrases-grid">
-
-                          {% for f in frases %}
-                          <div class="phrase-item">
-                              <div class="phrase-body">
-                                  <div class="phrase-text">{{ f.text }}</div>
-                                  <div class="phrase-progress">
-                                      <div class="phrase-progress-bar">
-                                          <progress class="phrase-progress-fill" value="{{ f.percent }}" max="100"></progress>
-
-                                      </div>
-                                      <div class="phrase-progress-label">{{ f.percent }}%</div>
-                                  </div>
-                              </div>
-                          </div>
+                                <div class="phrase-completed-label">
+                                    Concluída
+                                </div>
+                            </div>
+                        </div>
                           {% endfor %}
                       </div>
 
@@ -56,6 +53,6 @@
             </main>
         </div>
         <script src="{% static 'chat/js/script.js' %}"></script>
-        <script src="{% static 'chat/js/chat.js' %}"></script>
+        <script src="{% static 'chat/js/phrase_completed.js' %}"></script>  
     </body>
 </html>

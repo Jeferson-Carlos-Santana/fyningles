@@ -33,9 +33,30 @@ LESSON_TITLES = {
     3: "Utilidades diárias",
 }
 
+# FRASES CONCLUIDAS
 @login_required
 def phrase_completed(request):
-    return render(request, "chat/phrase_completed.html")
+    user = request.user
+
+    progressos = (
+        Progress.objects
+        .filter(user=user, stage__gte=2)
+        .select_related("chat")
+        .order_by("-updated_at")
+    )
+
+    frases = []
+    for p in progressos:
+        frases.append({
+            "text": (p.chat.expected_en or "").strip(),
+            "text_pt": (p.chat.expected_pt or "").strip(),
+            "stage": p.stage,
+        })
+
+    return render(request, "chat/phrase_completed.html", {
+        "frases": frases
+    })
+# FIM FRASES CONCLUIDAS
 
 
 # FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
