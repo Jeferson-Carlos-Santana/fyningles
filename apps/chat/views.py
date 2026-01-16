@@ -70,7 +70,7 @@ def phrase_progress(request):
             "text": (p.chat.expected_en or "").strip(),
             "percent": percent,
         })
-
+    frases.sort(key=lambda f: f["percent"], reverse=True)
     return render(request, "chat/phrase_progress.html", {
         "frases": frases
     })
