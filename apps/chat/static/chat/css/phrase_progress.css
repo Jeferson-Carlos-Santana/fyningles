@@ -80,6 +80,7 @@
 .phrase-search {
     width: 100%;
     grid-column: 1 / 2;
+    justify-self: start;
     margin-bottom: 5px;
     margin-top: 5px;
     padding: 10px 12px;
