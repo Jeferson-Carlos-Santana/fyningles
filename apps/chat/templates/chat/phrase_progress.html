@@ -26,20 +26,21 @@
 
                     <div class="content-cont">
                         <input
-  type="text"
-  id="phraseSearch"
-  placeholder="Buscar frase..."
-  style="width:100%; margin-bottom:10px;"
->
+                        type="text"
+                        id="phraseSearch"
+                        placeholder="Buscar frase..."
+                        style="width:100%; margin-bottom:10px;"
+                        >
 
 
                       <div class="phrases-grid">
 
                           {% for f in frases %}
-                          <div class="phrase-item">
+                          <!-- <div class="phrase-item"> -->
+                            <div class="phrase-item" data-text="{{ f.text|lower }}"></div>
                               <div class="phrase-body">
-                                  <!-- <div class="phrase-text">{{ f.text }}</div> -->
-                                  <div class="phrase-item" data-text="{{ f.text|lower }}"></div>
+                                  <div class="phrase-text">{{ f.text }}</div>
+                                  
                                   <div class="phrase-progress">
                                       <div class="phrase-progress-bar">
                                           <progress class="phrase-progress-fill" value="{{ f.percent }}" max="100"></progress>
