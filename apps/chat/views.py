@@ -40,7 +40,7 @@ def phrase_completed(request):
 
     progressos = (
         Progress.objects
-        .filter(user=user, stage__gte=2)
+        .filter(user=user, stage__gte=1)
         .select_related("chat")
         .order_by("-updated_at")
     )
