@@ -75,8 +75,11 @@
 /* FIM FRASES EM ANDAMENTO */
 
 /* BUSCA */
+
+
 .phrase-search {
     width: 100%;
+    grid-column: 1 / 2;
     margin-bottom: 5px;
     margin-top: 5px;
     padding: 10px 12px;
