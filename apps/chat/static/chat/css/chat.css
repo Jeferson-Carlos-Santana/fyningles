@@ -74,8 +74,9 @@
 
 .inline-input input[type="text"] {
   flex: 1;
+  height: 50px;
   padding: 10px;
-  font-size: 16px;
+  font-size: 20px;
   border-radius: 5px;
   border: 1px solid var(--color-secondary-light);
 }
@@ -86,13 +87,14 @@
 }
 
 #btnEnviar{
-    font-size: 14px;
-    height: 40px;
+    font-size: 17px;
+    height: 50px;
     margin-left: 3px;
 }
 #btn-mic{
-   height: 40px;
+   height: 50px;
    margin-left: 3px;
+   font-size: 25px;
 }
 
 .painel-master {  
@@ -102,9 +104,22 @@
   padding: 5px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: nowrap;
+  height: 60px;
 }
+
+.tempontos {
+    background-color: var(--color-black);
+    padding: 1px 8px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* ou center */
+    gap: 4px;
+}
+
+
 
 .mic-ready { background: var(--color-success); }
 .mic-disabled { background: var(--color-secondary); opacity: .4; }
@@ -117,8 +132,8 @@
 /* BOTAO AUTOCLICK */
 #btnAutoMic {
   padding: 8px 6px;
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: 10px;
+  font-size: 16px;
   cursor: pointer;
   border: none;
 }
@@ -136,8 +151,8 @@
 /* AUTO SKIP  */
 #btnAutoSkip {
   padding: 8px 6px;
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: 10px;
+  font-size: 16px;
   cursor: pointer;
   border: none;
 }

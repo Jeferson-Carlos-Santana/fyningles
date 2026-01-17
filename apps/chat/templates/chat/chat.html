@@ -51,7 +51,7 @@
 
     <main class="content">
       <div class="content-inner">
-
+        
         <div class="tittle-cont">
             <button class="menu-toggle" aria-label="Abrir menu">
               <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
@@ -69,14 +69,15 @@
             <button class="stop-madeira-velha" id="btn-stop" title="Parar lição."></button>
             <button id="btnAutoSkip" class="auto-off" title="Avança para próxima frase quando fecha o microfone.">SKIP: OFF</button>
             <button id="btnAutoMic" class="auto-off" title="Ativar o microfone automáticamente.">MIC: OFF</button> 
-            <span id="timer-aula" style="
-              margin-left: 8px;
+            <div class="tempontos">
+             <div id="timer-aula" style="
               font-weight: bold;
               color: #ffd480;
             ">
-              ⏱️ 00:00
-            </span>
-            Pts: <span class="text-warning-light" id="points-andamento">0</span>
+             ⏱️ 00:00
+            </div>
+            <div><img src="{% static 'chat/img/point.png' %}" alt="Sair" width="20"> <span class="text-warning-light" id="points-andamento">0</span></div>
+            </div>
         </div>
 
         <div class="chat-area">

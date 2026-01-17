@@ -19,9 +19,7 @@
                     ✕
                     </div>
                     <div class="bar-1">          
-                        <div class="infor" style="padding: 5px;">
-                           <img src="{% static 'chat/img/user.png' %}" alt="Menu" width="15"> Olá, {{ request.user.username }}!
-                        </div>                     
+                        <div class="infor user-session"><img src="{% static 'chat/img/user-y.png' %}" alt="Menu" width="15"> Olá, {{ request.user.username }}!</div>                    
                         <ul class="menu">  
                             {% if request.user.is_superuser %}
                             <li><a href="/admin/"><img src="{% static 'chat/img/lock.png' %}" alt="Menu" width="15"> Administração</a></li>
@@ -34,29 +32,23 @@
                     </div>                        
                     <div class="bar-2">                        
                     <!-- CONTEUDO DAS LICOES -->
-                    </div>
-                    <div class="logout">
-                        <ul class="menu"> 
-                            <li>
-                            <form method="post" action="/admin/logout/">
-                                {% csrf_token %}
-                                <button type="submit">Sair</button>
-                            </form>
-                            </li>
-                        </ul>
-                    </div>
+                    </div>                   
                 </div>
             </nav>
 
             <main class="content">
                 <div class="content-inner">
                     <div class="tittle-cont">
-                        <div class="aula">                    
-                            <button class="menu-toggle" aria-label="Abrir menu">
-                                <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
-                            </button> 
-                            Dashboard
-                        </div>                        
+                        <button class="menu-toggle" aria-label="Abrir menu">
+                        <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
+                        </button> 
+                        <span>Dashboard</span>    
+                        <form method="post" action="/admin/logout/" class="logout-form">
+                        {% csrf_token %}
+                        <button class="btn-sair" type="submit" aria-label="Sair">
+                            <img src="{% static 'chat/img/log-out.png' %}" alt="Sair" width="41">
+                        </button>
+                        </form>
                     </div>
                     <div class="content-cont">
 
