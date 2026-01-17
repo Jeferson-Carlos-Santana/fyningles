@@ -284,6 +284,7 @@ class ChatAdmin(admin.ModelAdmin):
     for lang, text in entries.items():
         if text:
             term = re.sub(r"[.:!?]", "", text).lower().strip()
+            term = re.sub(r"\s*\((a|as|o|os)\)", "", term, flags=re.IGNORECASE).strip()
             if not term_exists(lang, term):
                 add_term(lang, term)
                 

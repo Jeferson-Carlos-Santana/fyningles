@@ -817,7 +817,7 @@ def user_nivel_get(request):
             "exists": False
         })
 
-# CADASTRA A MODAL DO NIVEL
+# CADASTRA USANDO A MODAL DO NIVEL
 @login_required
 @require_POST
 def user_nivel_set(request):

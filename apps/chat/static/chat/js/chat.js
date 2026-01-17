@@ -172,7 +172,9 @@ const USER_NAME = document.body.dataset.username || "";
         "dyland": "they learn",
         "daylan": "they learn",
         "dayland": "they learn",
-        "okay": "ok"
+        "okay": "ok",
+        "sims": "seems",
+        "olivia": "i leave"
       };
 
     function aplicarCorrecoesVoz(texto) {
@@ -797,7 +799,7 @@ const USER_NAME = document.body.dataset.username || "";
         // INCLUIR AQUI PALAVRAS SEMELHANTES A THEY
         if (!["day", "dey", "dei", "tei", "thei"].includes(w)) return w;
         // INCLUIR AQUI A PALAVRA DEPOIS DO THEY
-        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can"].includes(next)) {
+        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can", "understand", "worked"].includes(next)) {
           return "they";
         }
         return "day";

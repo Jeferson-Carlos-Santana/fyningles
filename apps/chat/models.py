@@ -99,7 +99,6 @@ class Chat(models.Model):
 
                 # mantém exatamente o seq informado
                 self.seq = seq_novo
-
             
             # CASO 2: mesma lição, mudou seq            
             else:
