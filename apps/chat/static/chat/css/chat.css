@@ -70,6 +70,12 @@
   width: 100%;
   margin-top: 2px;
   padding: 2px;
+  overflow: hidden; /* impede escapar */
+}
+
+.inline-input input {
+  flex: 1 1 auto;     /* pode encolher */
+  min-width: 0;       /* ESSENCIAL em mobile */
 }
 
 .inline-input input[type="text"] {
