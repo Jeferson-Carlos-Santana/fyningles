@@ -1,6 +1,3 @@
-
-raise RuntimeError("ADMIN.PY ATUALIZADO - TESTE")
-
 from django.contrib import admin
 from .models import Chat
 import random, re
