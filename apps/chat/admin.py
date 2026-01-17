@@ -404,30 +404,7 @@ class ChatAdmin(admin.ModelAdmin):
 
                 if not term_exists(lang, term):
                     add_term(lang, term)
-      # FIM GRAVA EXPECTEDS NA EDIÇÃO DO DICIONARIO (essa edição é sem apagar os campos)
-
-    # if change:
-    #     from apps.chat.utils.dictionary_writer import add_term, term_exists
-
-    #     expected_map = {
-    #         "en": obj.expected_en,
-    #         "pt": obj.expected_pt,
-    #         "it": obj.expected_it,
-    #         "fr": obj.expected_fr,
-    #         "es": obj.expected_es,
-    #     }
-
-    #     for lang, text in expected_map.items():
-    #         if not text:
-    #             continue
-
-    #         term = re.sub(r"[.:!?]", "", text).lower().strip()
-    #         if not term:
-    #             continue
-
-    #         if not term_exists(lang, term):
-    #             add_term(lang, term)
-    
+    # FIM GRAVA EXPECTEDS NA EDIÇÃO DO DICIONARIO (essa edição é sem apagar os campos)    
     
     # --- REGRA single-mark (segunda inserção) ---
     frase = (obj.expected_en or "").strip()
