@@ -125,8 +125,7 @@ body {
 .content-inner {
     background: var(--color-sidebar);
     color: var(--color-white);
-    padding: 5px;
-    margin: 0px 5px 0px 5px;
+    margin: 0px 5px;
     flex: 1;    
     display: flex;
     flex-direction: column;
@@ -137,23 +136,30 @@ body {
 
 /* TITTLE CONT */
 .tittle-cont {
+    display: flex;   
+    align-items: center;
     flex-shrink: 0;
     height: 43px;
-    padding: 5px 0px 5px 10px;
+    padding: 0px 5px 0px 5px;
     background-color: var(--color-tittle-footer);
     color: var(--color-font-tittle-footer);
     font-weight: bold;
-    margin: -5px -4px 0px -4px;    
+    font-size: 18px;
+    gap: 8px;
+    margin: 0px; 
 }
 /* FIM TITTLE CONT */
+
+.btn-sair{
+    border: 0;
+    background-color: var(--color-tittle-footer);
+}
 
 /* CONTENT CONT */
 .content-cont {
     flex: 1; 
     min-height: 0;     
-    overflow-y: auto; 
-    padding-right: 4px; 
-    
+    overflow-y: auto;    
 }
 
 .content-cont::-webkit-scrollbar {
@@ -175,13 +181,12 @@ body {
 
 /* FOOTER CONT */
 .footer-cont {    
-    padding: 6px 8px;
+    padding: 3px 3px;
     flex-shrink: 0;
     font-size: 12px;
     background-color: var(--color-tittle-footer);
     color: var(--color-font-tittle-footer);
-    height: 43px;    
-    margin: 0 -4px -5px -4px;
+    margin: 0;
     text-align: center;
 }
 /* FIM FOOTER CONT */
@@ -201,7 +206,7 @@ body {
     align-items: center;
     background: var(--color-li);
     margin-bottom: 3px;
-    font-size: 16px;
+    font-size: 17px;
 }
 
 .menu li a:hover {
@@ -210,10 +215,15 @@ body {
 }
 
 .user-session{
-    padding: 10px 8px !important;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    padding: 8px !important;
     background: var(--color-white) !important;
     color: var(--color-warning) !important;
     font-weight: 700 !important;
+    font-size: 18px;
+    gap: 8px;
 }
 /* FIM MENU */
 
@@ -253,12 +263,6 @@ body {
 }
 /* FIM MENU-TOGGLE */
 
-.aula {
-    display: flex;
-    gap: 8px;
-    font-size: 20px;
-}
-
 /* INPUT BUSCA DO MENU LATERAL */
 .lesson-search {
     width: 100%;
@@ -267,7 +271,7 @@ body {
     color: var(--color-white);
     border: 1px solid var(--color-li-hover);
     border-radius: 0;
-    font-size: 13px;
+    font-size: 17px;
     outline: none;
     margin-bottom: 3px;    
 }
@@ -400,7 +404,7 @@ body {
 
   background: var(--color-li);
   border: 1px solid var(--color-li-hover);
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .content-cont ul li:hover {
@@ -411,7 +415,7 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 /* LINHA ÚNICA: label + input + botão */
@@ -425,12 +429,12 @@ body {
 
 /* INPUT INSERIMENTO DICIONARIO */
 #dict-form #term {
-  flex: 1; /* 🔑 ocupa todo o espaço disponível */
+  flex: 1; 
   padding: 6px 8px;
   background: var(--color-li);
   color: var(--color-white);
   border: 1px solid var(--color-li-hover);
-  font-size: 13px;
+  font-size: 17px;
   outline: none;
 }
 
@@ -445,31 +449,6 @@ body {
   background: var(--color-li-hover);
 }
 /* FIM INPUT INSERIMENTO DICIONARIO */ 
-
-/* LOGOUT COMO LINK */
-.logout ul.menu li form {
-    margin: 0;
-}
-
-.logout ul.menu li form button {
-    all: unset; 
-    display: block;
-    width: 100%;
-    padding: 5px;
-
-    background: var(--color-li);
-    color: var(--color-white);
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    text-align: left;
-}
-
-.logout ul.menu li form button:hover {
-    background: var(--color-li-hover);
-    font-weight: 500;
-}
-/* FIM LOGOUT COMO LINK */
 
 /* CARDS */
 .cards-grid {

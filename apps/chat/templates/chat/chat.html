@@ -43,17 +43,7 @@
           <ul class="menu lessons">                            
             <li><a href="/chat/1/">📋 Usando verbos</a></li>
             <li><a href="/chat/2/">📋 Expressões populares</a></li>
-            <li><a href="/chat/3/">📋 Utilidades diárias</a></li>                
-          </ul>
-        </div>
-        <div class="logout">
-          <ul class="menu"> 
-            <li>
-              <form method="post" action="/admin/logout/">
-                {% csrf_token %}
-                <button class="user-session" type="submit">Sair</button>
-               </form>
-            </li>
+            <li><a href="/chat/3/">📋 Utilidades diárias</a></li>            
           </ul>
         </div>
       </div>
@@ -63,12 +53,16 @@
       <div class="content-inner">
 
         <div class="tittle-cont">
-          <div class="aula">                    
             <button class="menu-toggle" aria-label="Abrir menu">
               <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
             </button> 
-            chat : {{ lesson_title }}           
-          </div>                                  
+            <span>Chat : {{ lesson_title }}</span>    
+            <form method="post" action="/admin/logout/" class="logout-form">
+              {% csrf_token %}
+              <button class="btn-sair" type="submit" aria-label="Sair">
+                <img src="{% static 'chat/img/log-out.png' %}" alt="Sair" width="41">
+              </button>
+            </form>
         </div>
         <div class="painel-master">
             <button class="play-madeira-velha" id="btn-start" title="Iniciar lição." disabled></button>
@@ -96,7 +90,7 @@
             {{ line.content_pt|safe }}
           </div>
           {% endfor %}
-        </div>
+        </div> 
         
         <div class="inline-input">            
             <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />           

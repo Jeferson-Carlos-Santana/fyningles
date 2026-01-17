@@ -334,6 +334,10 @@
 }
 /* FIM MODAL NIVEL */
 
+.logout-form {
+  margin-left: auto; 
+}
+
 
 /* MOBILE */
 @media (max-width: 520px) {
