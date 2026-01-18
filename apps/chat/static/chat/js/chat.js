@@ -6,9 +6,14 @@ const USER_NAME = document.body.dataset.username || "";
     return document.querySelector("[name=csrfmiddlewaretoken]").value;
   }
 
-  document.querySelector(".nivel-close").onclick = () => {
-    document.getElementById("nivel-modal").style.display = "none";
-  };
+  const nivelClose = document.querySelector(".nivel-close");
+
+  if (nivelClose) {
+    nivelClose.onclick = () => {
+      document.getElementById("nivel-modal").style.display = "none";
+    };
+  }
+
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
@@ -92,7 +97,9 @@ const USER_NAME = document.body.dataset.username || "";
       const lessonId = document.body.dataset.lessonId;
 
       // começa desabilitado
-      btnStart.disabled = true;
+      if (btnStart) {
+        btnStart.disabled = true;
+      }
 
       // se estiver em /chat/<id>/, habilita
       if (lessonId && lessonId !== "") {
@@ -189,34 +196,38 @@ const USER_NAME = document.body.dataset.username || "";
       }
       return t;
     }
+    
+    if (btnAutoSkip) {
+      btnAutoSkip.onclick = function () {
+        autoSkipAtivo = !autoSkipAtivo;
 
-    btnAutoSkip.onclick = function () {
-      autoSkipAtivo = !autoSkipAtivo;
+        if (autoSkipAtivo) {
+          btnAutoSkip.classList.remove("auto-off");
+          btnAutoSkip.classList.add("auto-on");
+          btnAutoSkip.innerHTML = "SKIP<br>ON";
+        } else {
+          btnAutoSkip.classList.remove("auto-on");
+          btnAutoSkip.classList.add("auto-off");
+          btnAutoSkip.innerHTML = "SKIP<br>OFF";
+        }
+      };
+    }
+    
+    if (btnAutoMic) {
+      btnAutoMic.onclick = function () {
+        autoMicAtivo = !autoMicAtivo;
 
-      if (autoSkipAtivo) {
-        btnAutoSkip.classList.remove("auto-off");
-        btnAutoSkip.classList.add("auto-on");
-        btnAutoSkip.innerHTML = "SKIP<br>ON";
-      } else {
-        btnAutoSkip.classList.remove("auto-on");
-        btnAutoSkip.classList.add("auto-off");
-        btnAutoSkip.innerHTML = "SKIP<br>OFF";
-      }
-    };
-
-    btnAutoMic.onclick = function () {
-      autoMicAtivo = !autoMicAtivo;
-
-      if (autoMicAtivo) {
-        btnAutoMic.classList.remove("auto-off");
-        btnAutoMic.classList.add("auto-on");
-        btnAutoMic.innerHTML = "MIC<br>ON";
-      } else {
-        btnAutoMic.classList.remove("auto-on");
-        btnAutoMic.classList.add("auto-off");
-        btnAutoMic.innerHTML = "MIC<br>OFF";
-      }
-    };
+        if (autoMicAtivo) {
+          btnAutoMic.classList.remove("auto-off");
+          btnAutoMic.classList.add("auto-on");
+          btnAutoMic.innerHTML = "MIC<br>ON";
+        } else {
+          btnAutoMic.classList.remove("auto-on");
+          btnAutoMic.classList.add("auto-off");
+          btnAutoMic.innerHTML = "MIC<br>OFF";
+        }
+      };
+    }
 
     function tocarBeep() {
       beepPlayer.currentTime = 0;
@@ -292,15 +303,21 @@ const USER_NAME = document.body.dataset.username || "";
     }
 
     function bloquearEntrada() {
-      btnMic.disabled = true;
-      btnEnviar.disabled = true;
-
-      btnMic.textContent = "🔇";
-      btnMic.classList.remove("mic-ready");
-      btnMic.classList.add("mic-disabled");
-
-      btnEnviar.classList.remove("btn-ready");
-      btnEnviar.classList.add("btn-disabled");
+      if(btnMic){
+        btnMic.disabled = true;
+      }
+      if(btnEnviar){
+        btnEnviar.disabled = true;
+      }
+      if (btnMic) {
+        btnMic.textContent = "🔇";
+        btnMic.classList.remove("mic-ready");
+        btnMic.classList.add("mic-disabled");
+      }
+      if (btnEnviar) {
+        btnEnviar.classList.remove("btn-ready");
+        btnEnviar.classList.add("btn-disabled");
+      }      
     }
 
     function liberarEntrada() {
@@ -737,34 +754,37 @@ const USER_NAME = document.body.dataset.username || "";
         mostrarSistema();
       }      
       
-      btnStart.onclick = async function () {
-        // SE ESTIVER EM STOP → PARAR (refresh)
-        if (btnStart.classList.contains("stop-madeira-velha")) {
-          location.reload();
-          return;
-        }
+      if (btnStart) {
+        btnStart.onclick = async function () {
+          // SE ESTIVER EM STOP → PARAR (refresh)
+          if (btnStart.classList.contains("stop-madeira-velha")) {
+            location.reload();
+            return;
+          }
 
-        // SE ESTIVER EM START → INICIAR (sem refresh)
-        const r = await fetch("/user/nivel/");
-        const data = await r.json();
+          // SE ESTIVER EM START → INICIAR (sem refresh)
+          const r = await fetch("/user/nivel/");
+          const data = await r.json();
+              
 
-        if (!data.exists) {
-          document.getElementById("nivel-modal").style.display = "block";
-          return;
-        }
+          if (!data.exists) {
+            document.getElementById("nivel-modal").style.display = "block";
+            return;
+          }
 
-        btnStart.classList.remove("play-madeira-velha");
-        btnStart.classList.add("stop-madeira-velha");
+          btnStart.classList.remove("play-madeira-velha");
+          btnStart.classList.add("stop-madeira-velha");
 
-        iniciarLicao();
+          iniciarLicao();
+        }  
       };
-
-
 
       // BOTÃO MICROFONE
-      btnMic.onclick = function () {
-        abrirMicrofoneComTempo();
-      };
+      if (btnMic) {
+        btnMic.onclick = function () {
+          abrirMicrofoneComTempo();
+        };
+      }      
 
       // RESPOSTA DO USUÁRIO
       // ===== escreve avaliação do professor =====
@@ -1076,30 +1096,34 @@ const USER_NAME = document.body.dataset.username || "";
         liberarEntrada();        
       };      
     });    
+    
+    const btnSalvarNivel = document.getElementById("btn-salvar-nivel");
+    if (btnSalvarNivel) {
+      btnSalvarNivel.onclick = async function () {
+        // document.getElementById("btn-salvar-nivel").onclick = async function () {
+        const nivel = document.querySelector("input[name='nivel']:checked");
 
-    document.getElementById("btn-salvar-nivel").onclick = async function () {
-    const nivel = document.querySelector("input[name='nivel']:checked");
+        if (!nivel) {
+          alert("Escolha um nível");
+          return;
+        }
 
-    if (!nivel) {
-      alert("Escolha um nível");
-      return;
+        const r = await fetch("/user/nivel/set/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()
+          },
+          body: JSON.stringify({ nivel: nivel.value })
+        });
+
+        if (!r.ok) {
+          alert("Erro ao salvar nível");
+          return;
+        }
+
+        document.getElementById("nivel-modal").style.display = "none";
+        iniciarLicao();
+        location.reload();
+      };
     }
-
-    const r = await fetch("/user/nivel/set/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCSRFToken()
-      },
-      body: JSON.stringify({ nivel: nivel.value })
-    });
-
-    if (!r.ok) {
-      alert("Erro ao salvar nível");
-      return;
-    }
-
-    document.getElementById("nivel-modal").style.display = "none";
-    iniciarLicao();
-    location.reload();
-};

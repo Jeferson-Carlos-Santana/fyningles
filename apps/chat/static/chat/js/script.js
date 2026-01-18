@@ -20,16 +20,44 @@ document.addEventListener("DOMContentLoaded", () => { // ABRE E FECHA O MENU LAT
     }    
 // FIM ABRE E FECHA O MENU LATERAL
 
+// CLICAR FORA DO MENU OU NOS LINKS DO MENU PRA FECHAR
+document.addEventListener("click", (e) => {
+  // só fecha se o menu estiver ABERTO (ou seja: NÃO está collapsed)
+  if (sidebar.classList.contains("collapsed")) return;
+
+  // se clicou dentro da sidebar ou no botão toggle, não fecha
+  if (sidebar.contains(e.target) || toggle.contains(e.target)) return;
+
+  // clicou fora → fecha
+  sidebar.classList.add("collapsed");
+});
+
+// CLICAR FORA DO MENU OU NOS LINKS DO MENU PRA FECHAR
+
 // BUSCA LICOES NO MENU LATERAL
+// const searchInput = document.querySelector(".lesson-search");
+// const lessonItems = document.querySelectorAll(".lessons li");
+// searchInput.addEventListener("input", () => {
+//     const value = searchInput.value.toLowerCase();
+//     lessonItems.forEach(li => {
+//         const text = li.innerText.toLowerCase();
+//         li.style.display = text.includes(value) ? "block" : "none";
+//     });
+// });
 const searchInput = document.querySelector(".lesson-search");
 const lessonItems = document.querySelectorAll(".lessons li");
-searchInput.addEventListener("input", () => {
+
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
     const value = searchInput.value.toLowerCase();
+
     lessonItems.forEach(li => {
-        const text = li.innerText.toLowerCase();
-        li.style.display = text.includes(value) ? "block" : "none";
+      const text = li.innerText.toLowerCase();
+      li.style.display = text.includes(value) ? "block" : "none";
     });
-});
+  });
+}
+
 // FIM BUSCA LICOES NO MENU LATERAL
 
 // TEMPO DA MENSAGEM DE SUCESSO SUMIR
