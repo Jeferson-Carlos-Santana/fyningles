@@ -53,10 +53,10 @@ const USER_NAME = document.body.dataset.username || "";
 
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");
-      const btnStop = document.getElementById("btn-stop");
+      // const btnStop = document.getElementById("btn-stop");
       const btnMic = document.getElementById("btn-mic");
       const btnEnviar = document.getElementById("btnEnviar");
-      btnStop.disabled = true;
+      // btnStop.disabled = true;
       let index = 0;
       let esperandoResposta = false;
       let expectedAtual = "";
@@ -174,7 +174,10 @@ const USER_NAME = document.body.dataset.username || "";
         "dayland": "they learn",
         "okay": "ok",
         "sims": "seems",
-        "olivia": "i leave"
+        "olivia": "i leave",
+        "reuse": "we use",
+        "uday": "will they",
+        "udai": "will they"
       };
 
     function aplicarCorrecoesVoz(texto) {
@@ -705,8 +708,7 @@ const USER_NAME = document.body.dataset.username || "";
 
       // INCIAR LICAO
       function iniciarLicao() {
-        btnStart.disabled = true;
-        btnStop.disabled = false;
+        // btnStart.disabled = true;
         // remove mensagem de fim de aula, se existir
         chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
         // LIMPA TUDO QUE FOI GERADO NA EXECUÇÃO ANTERIOR
@@ -733,21 +735,31 @@ const USER_NAME = document.body.dataset.username || "";
         iniciarTimerVisual();
         agendarResetAula();
         mostrarSistema();
-      }
+      }      
       
-      btnStop.onclick = function () {
-        location.reload();
+      btnStart.onclick = async function () {
+        // SE ESTIVER EM STOP → PARAR (refresh)
+        if (btnStart.classList.contains("stop-madeira-velha")) {
+          location.reload();
+          return;
+        }
+
+        // SE ESTIVER EM START → INICIAR (sem refresh)
+        const r = await fetch("/user/nivel/");
+        const data = await r.json();
+
+        if (!data.exists) {
+          document.getElementById("nivel-modal").style.display = "block";
+          return;
+        }
+
+        btnStart.classList.remove("play-madeira-velha");
+        btnStart.classList.add("stop-madeira-velha");
+
+        iniciarLicao();
       };
 
-      btnStart.onclick = async function () {
-        const r = await fetch("/user/nivel/");
-          const data = await r.json();
-          iniciarLicao();
-          if (!data.exists) {
-            document.getElementById("nivel-modal").style.display = "block";
-            return;
-          }        
-        };
+
 
       // BOTÃO MICROFONE
       btnMic.onclick = function () {
@@ -799,7 +811,7 @@ const USER_NAME = document.body.dataset.username || "";
         // INCLUIR AQUI PALAVRAS SEMELHANTES A THEY
         if (!["day", "dey", "dei", "tei", "thei"].includes(w)) return w;
         // INCLUIR AQUI A PALAVRA DEPOIS DO THEY
-        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can", "understand", "worked"].includes(next)) {
+        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can", "understand", "worked", "help", "ask", "come", "be"].includes(next)) {
           return "they";
         }
         return "day";
@@ -1089,4 +1101,5 @@ const USER_NAME = document.body.dataset.username || "";
 
     document.getElementById("nivel-modal").style.display = "none";
     iniciarLicao();
+    location.reload();
 };
