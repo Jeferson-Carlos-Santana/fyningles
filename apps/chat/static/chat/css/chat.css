@@ -116,7 +116,7 @@
 }
 
 .tempontos {
-    background-color: var(--color-black);
+    background-color: var(--color-li-hover);
     padding: 1px 8px;
     border-radius: 10px;
     display: flex;
@@ -126,7 +126,7 @@
 }
 
 .play-m {
-    background-color: var(--color-black);
+    background-color: var(--color-li-hover);
     padding: 3px 3px;
     border-radius: 10px;
     display: flex;
@@ -157,7 +157,7 @@
 }
 
 .auto-off {
-  background: var(--color-secondary);
+  background: var(--color-li-hover);
   color: #fff;
 }
 
@@ -182,7 +182,7 @@
 }
 
 .auto-off {
-  background: var(--color-secondary);
+  background: var(--color-li-hover);
   color: var(--color-white);
 }
 
