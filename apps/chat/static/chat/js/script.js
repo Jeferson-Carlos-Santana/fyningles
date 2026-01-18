@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => { // ABRE E FECHA O MENU LAT
 
 // CLICAR FORA DO MENU OU NOS LINKS DO MENU PRA FECHAR
 document.addEventListener("click", (e) => {
+
+  if (window.innerWidth > 520) return;
   // só fecha se o menu estiver ABERTO (ou seja: NÃO está collapsed)
   if (sidebar.classList.contains("collapsed")) return;
 

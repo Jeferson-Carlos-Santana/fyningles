@@ -831,7 +831,7 @@ const USER_NAME = document.body.dataset.username || "";
         // INCLUIR AQUI PALAVRAS SEMELHANTES A THEY
         if (!["day", "dey", "dei", "tei", "thei"].includes(w)) return w;
         // INCLUIR AQUI A PALAVRA DEPOIS DO THEY
-        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can", "understand", "worked", "help", "ask", "come", "be"].includes(next)) {
+        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can", "understand", "worked", "help", "ask", "come", "be", "heard"].includes(next)) {
           return "they";
         }
         return "day";
