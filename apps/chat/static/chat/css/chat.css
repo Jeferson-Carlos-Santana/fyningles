@@ -71,6 +71,9 @@
   margin-top: 2px;
   padding: 2px;
   overflow: hidden; /* impede escapar */
+  flex-shrink: 0;   /*ESSENCIAL (o que o footer fazia) */
+  box-sizing: border-box;
+  height: auto;
 }
 
 .inline-input input {
