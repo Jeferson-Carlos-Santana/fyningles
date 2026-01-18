@@ -113,11 +113,18 @@
   gap: 6px;
   flex-wrap: nowrap;
   height: 60px;
+  overflow: hidden; /* impede escapar */
+  max-width: 100%; /* impede escapar */
+  box-sizing: border-box; /* impede escapar */
+}
+
+.painel-master > * {
+  min-width: 0;
 }
 
 .tempontos {
-    background-color: var(--color-li-hover);
-    padding: 1px 8px;
+    background-color: var(--color-base-btn);
+    padding: 1px 6px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -126,7 +133,7 @@
 }
 
 .play-m {
-    background-color: var(--color-li-hover);
+    background-color: var(--color-base-btn);
     padding: 3px 3px;
     border-radius: 10px;
     display: flex;
@@ -156,16 +163,6 @@
   line-height: 1.2;
 }
 
-.auto-off {
-  background: var(--color-li-hover);
-  color: #fff;
-}
-
-.auto-on {
-  background: var(--color-success-light);
-  color: var(--color-black);
-}
-
 /* AUTO SKIP  */
 #btnAutoSkip {
   width: 55px;
@@ -181,9 +178,15 @@
   line-height: 1.2;
 }
 
+.auto-on {
+  background: var(--color-success-light);
+  color: var(--color-black);
+}
+
 .auto-off {
-  background: var(--color-li-hover);
-  color: var(--color-white);
+  background: var(--color-base-btn);
+  color: var(--color-sidebar);
+  font-weight: 700;
 }
 
 .auto-on {

@@ -63,6 +63,11 @@
     color:var(--color-danger-light);
     font-weight: 700;
 }
+
+.text-sidebar{
+    color:var(--color-sidebar);
+    font-weight: 700;
+}
 /* FIM CORES DE TEXTO */
 
 /* MENSAGENS ALERTAS */

@@ -71,13 +71,12 @@
             <button id="btnAutoSkip" class="auto-off" title="Avança para próxima frase quando fecha o microfone.">SKIP<br>OFF</button>
             <button id="btnAutoMic" class="auto-off" title="Ativar o microfone automáticamente.">MIC<br>OFF</button> 
             <div class="tempontos">
-             <div id="timer-aula" style="
-              font-weight: bold;
-              color: #ffd480;
-            ">
-             ⏱️ 00:00
-            </div>
-            <div><img src="{% static 'chat/img/point.png' %}" alt="Sair" width="20"> <span class="text-warning-light" id="points-andamento">0</span></div>
+             <div id="timer-aula" class="text-sidebar">
+              ⏱️ 00:00
+              </div>
+              <div>
+                <img src="{% static 'chat/img/point.png' %}" alt="Sair" width="20"> <span class="text-sidebar" id="points-andamento">0</span>
+              </div>
             </div>
         </div>
 

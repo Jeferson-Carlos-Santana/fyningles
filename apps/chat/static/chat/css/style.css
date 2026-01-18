@@ -22,7 +22,8 @@
 
     --color-sidebar: rgba(28, 37, 51, 0.95);
     --color-li: #243042;
-    --color-li-hover: #2d3b52;   
+    --color-li-hover: #2d3b52; 
+    --color-base-btn: #8B7360;  
     
 }
 
@@ -326,8 +327,8 @@ body {
     }
 
     .cell-footer{
-        background-color: var(--color-warning);
-        height: 50px;
+        background-color: var(--color-white);
+        height: 70px;
     }
 
     .sidebar:not(.collapsed) .sidebar-close {
