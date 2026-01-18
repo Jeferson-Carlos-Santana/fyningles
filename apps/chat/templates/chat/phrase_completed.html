@@ -18,14 +18,18 @@
     <body>
         <div class="layout">
             <main class="content">
-                <div class="content-inner">
+                <div class="content-inner">                    
                     <div class="tittle-cont">
-                        <div class="aula">                    
-                            <a href="{% url 'dashboard' %}" class="menu-toggle" aria-label="Voltar ao dashboard">
+                         <a href="{% url 'dashboard' %}" class="menu-toggle" aria-label="Voltar ao dashboard">
                                 <img src="{% static 'chat/img/back.png' %}" alt="Menu">
                             </a> 
-                            Frases em andamento.
-                        </div>                        
+                        <span>Frases em concluídas</span>    
+                        <form method="post" action="/admin/logout/" class="logout-form">
+                            {% csrf_token %}
+                            <button class="btn-sair" type="submit" aria-label="Sair">
+                                <img src="{% static 'chat/img/log-out.png' %}" alt="Sair" width="41">
+                            </button>
+                        </form>
                     </div>
                     <div class="content-cont">                        
 
@@ -36,7 +40,6 @@
                             <div class="phrase-body">
                                 <div class="phrase-text">{{ f.text }}</div>
                                 <div class="phrase-text phrase-text-pt">{{ f.text_pt }}</div>
-
                                 <div class="phrase-completed-label">
                                     Concluída
                                 </div>
@@ -49,10 +52,7 @@
                     
                     <div class="footer-cont">
                          <i><strong>© 2026 - JPM-development - All rights reserved - Engineering & Technology</strong><i>                        
-                    </div> 
-                    <div class="cell-footer">
-
-                    </div>                  
+                    </div>                 
                 </div>
             </main>
         </div>

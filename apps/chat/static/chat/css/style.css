@@ -54,8 +54,6 @@ body {
   height: 100dvh;
   height: 100svh;
 }
-
-
 /*FIM LAYOUT */
 
 /*SIDEBAR */
@@ -157,6 +155,11 @@ body {
 .btn-sair{
     border: 0;
     background-color: var(--color-tittle-footer);
+}
+
+/* COLOCA O LOG OUT NA DIREITA */
+.logout-form {
+  margin-left: auto; 
 }
 
 /* CONTENT CONT */
@@ -291,19 +294,6 @@ body {
     background: var(--color-li-hover);
 }
 /*FIM INPUT BUSCA DO MENU LATERAL */
-
-/* TEMA DIA E NOITE */
-.theme-toggle {
-    margin-left: auto;
-    background: var(--color-sidebar);    
-    border-radius: 50%;
-    padding: 2px;
-    cursor: pointer;
-    font-size: 10px;
-    color: var(--color-white);
-}
-
-/* FIM TEMA DIA E NOITE */
 
 .sidebar-close {
   position: absolute;
