@@ -65,15 +65,17 @@
 
 /* INPUT ENVIAR O CHAT */
 .inline-input {
+  position: fixed;
   display: flex;
   align-items: center;
   width: 100%;
   margin-top: 2px;
   padding: 2px;
-  overflow: hidden; /* impede escapar */
-  flex-shrink: 0;   /*ESSENCIAL (o que o footer fazia) */
+  overflow: hidden;
+  flex-shrink: 0;
   box-sizing: border-box;
   height: auto;
+  z-index: 500;
 }
 
 .inline-input input {
