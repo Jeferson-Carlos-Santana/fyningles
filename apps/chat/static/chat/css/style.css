@@ -328,11 +328,6 @@ body {
         height: auto;
     }
 
-    .cell-footer{
-        background-color: var(--color-white);
-        height: 0px;
-    }
-
     .sidebar:not(.collapsed) .sidebar-close {
         display: block;
     }
