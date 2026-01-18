@@ -50,9 +50,11 @@ body {
 
 /* LAYOUT */
 .layout {
-    display: flex;
-    height: calc(100vh - 0px);
+  display: flex;
+  min-height: 100svh;
+  min-height: 100dvh;
 }
+
 /*FIM LAYOUT */
 
 /*SIDEBAR */
