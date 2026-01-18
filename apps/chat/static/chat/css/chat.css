@@ -105,8 +105,8 @@
 
 .painel-master {  
   justify-content: center;
-  margin: 0 -4px 0 -4px;
-  background-color: var(--color-sidebar);
+  margin: 5px 0;
+  background-color: var(--color-white);
   padding: 5px;
   display: flex;
   align-items: center;

@@ -328,7 +328,7 @@ body {
 
     .cell-footer{
         background-color: var(--color-white);
-        height: 70px;
+        height: 0px;
     }
 
     .sidebar:not(.collapsed) .sidebar-close {
