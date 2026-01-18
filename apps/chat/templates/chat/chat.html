@@ -65,10 +65,11 @@
             </form>
         </div>
         <div class="painel-master">
+            <div class="play-m"> 
             <button class="play-madeira-velha" id="btn-start" title="Iniciar lição." disabled></button>
-            <!-- <button class="stop-madeira-velha" id="btn-stop" title="Parar lição."></button> -->
-            <button id="btnAutoSkip" class="auto-off" title="Avança para próxima frase quando fecha o microfone.">SKIP: OFF</button>
-            <button id="btnAutoMic" class="auto-off" title="Ativar o microfone automáticamente.">MIC: OFF</button> 
+            </div>
+            <button id="btnAutoSkip" class="auto-off" title="Avança para próxima frase quando fecha o microfone.">SKIP<br>OFF</button>
+            <button id="btnAutoMic" class="auto-off" title="Ativar o microfone automáticamente.">MIC<br>OFF</button> 
             <div class="tempontos">
              <div id="timer-aula" style="
               font-weight: bold;
@@ -95,7 +96,7 @@
         
         <div class="inline-input">            
             <input type="text" id="mensagem" placeholder="Digite sua resposta em inglês." oncopy="return false" onpaste="return false" oncut="return false" autocomplete="off" />           
-            <button id="btnEnviar" class="btn-madeira-velha" onclick="enviarMensagem()">Enviar</button>
+            <button id="btnEnviar" class="btn-madeira-velha" onclick="enviarMensagem()"><img src="{% static 'chat/img/send.png' %}" alt="Sair" width="30"></button>
             <button class="btn-madeira-velha" id="btn-mic" onclick="toggleMic()">🎤</button>    
         </div>
 

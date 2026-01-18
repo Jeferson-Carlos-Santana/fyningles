@@ -60,7 +60,7 @@
 }
 
 .info-lesson{
-  background-color: rgba(215, 185, 94, 0.15);
+  background-color: var(--color-sidebar);
 }
 
 /* INPUT ENVIAR O CHAT */
@@ -106,7 +106,7 @@
 .painel-master {  
   justify-content: center;
   margin: 0 -4px 0 -4px;
-  background-color: rgba(215, 185, 94, 0.15);
+  background-color: var(--color-sidebar);
   padding: 5px;
   display: flex;
   align-items: center;
@@ -125,7 +125,13 @@
     gap: 4px;
 }
 
-
+.play-m {
+    background-color: var(--color-black);
+    padding: 3px 3px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
 
 .mic-ready { background: var(--color-success); }
 .mic-disabled { background: var(--color-secondary); opacity: .4; }
@@ -137,11 +143,17 @@
 
 /* BOTAO AUTOCLICK */
 #btnAutoMic {
-  padding: 8px 6px;
+  width: 55px;
+  padding: 8px 8px;
   border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
   border: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
 }
 
 .auto-off {
@@ -156,11 +168,17 @@
 
 /* AUTO SKIP  */
 #btnAutoSkip {
-  padding: 8px 6px;
+  width: 55px;
+  padding: 8px 8px;
   border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
   border: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
 }
 
 .auto-off {

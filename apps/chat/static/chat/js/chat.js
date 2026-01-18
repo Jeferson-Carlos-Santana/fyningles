@@ -196,11 +196,11 @@ const USER_NAME = document.body.dataset.username || "";
       if (autoSkipAtivo) {
         btnAutoSkip.classList.remove("auto-off");
         btnAutoSkip.classList.add("auto-on");
-        btnAutoSkip.textContent = "SKIP: ON";
+        btnAutoSkip.innerHTML = "SKIP<br>ON";
       } else {
         btnAutoSkip.classList.remove("auto-on");
         btnAutoSkip.classList.add("auto-off");
-        btnAutoSkip.textContent = "SKIP: OFF";
+        btnAutoSkip.innerHTML = "SKIP<br>OFF";
       }
     };
 
@@ -210,11 +210,11 @@ const USER_NAME = document.body.dataset.username || "";
       if (autoMicAtivo) {
         btnAutoMic.classList.remove("auto-off");
         btnAutoMic.classList.add("auto-on");
-        btnAutoMic.textContent = "MIC: ON";
+        btnAutoMic.innerHTML = "MIC<br>ON";
       } else {
         btnAutoMic.classList.remove("auto-on");
         btnAutoMic.classList.add("auto-off");
-        btnAutoMic.textContent = "MIC: OFF";
+        btnAutoMic.innerHTML = "MIC<br>OFF";
       }
     };
 
