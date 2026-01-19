@@ -247,6 +247,7 @@ const USER_NAME = document.body.dataset.username || "";
     }
 
     function abrirMicrofoneComTempo() {
+      if (FLAG !== 1) return;
       if (btnMic.disabled) return;
 
       // visual de gravando
@@ -638,8 +639,11 @@ const USER_NAME = document.body.dataset.username || "";
           professorLock = false;
           return;
         }
+
+        FLAG = -1;
         
         if (tocando) {
+          FLAG = 0;
           professorLock = false;
           return;
         }
@@ -655,6 +659,7 @@ const USER_NAME = document.body.dataset.username || "";
           // NOVO — fim da lição, zera pontos visuais
           pontosAndamento = 0;
           atualizarPontosAndamento();
+          FLAG = 0;
           professorLock = false
           return;
         }
@@ -722,11 +727,13 @@ const USER_NAME = document.body.dataset.username || "";
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
             bloquearEntrada(); 
+            FLAG = 0;
             index++;
             return;
           }
 
           if (auto === 1) {
+            FLAG = 0;
             index++;
             return mostrarSistema();
           }
