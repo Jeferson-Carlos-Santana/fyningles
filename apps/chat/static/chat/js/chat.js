@@ -630,14 +630,22 @@ const USER_NAME = document.body.dataset.username || "";
 
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
-      if (professorLock) return;
+
+        msEnter++;
+        console.log("mostrarSistema enter:", msEnter, "index:", index);
+        
+        if (professorLock) return;
         professorLock = true;
 
         if (FLAG !== 0) {
           professorLock = false;
           return;
         }
-        if (tocando) return;        
+        
+        if (tocando) {
+          professorLock = false;
+          return;
+        }
 
         if (index >= msgs.length) {
           if (timerResetAula) {
