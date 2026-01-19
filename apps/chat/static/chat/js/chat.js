@@ -631,7 +631,6 @@ const USER_NAME = document.body.dataset.username || "";
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
 
-
         if (professorLock) return;
         professorLock = true;
 
@@ -656,7 +655,7 @@ const USER_NAME = document.body.dataset.username || "";
           // NOVO — fim da lição, zera pontos visuais
           pontosAndamento = 0;
           atualizarPontosAndamento();
-
+          professorLock = false
           return;
         }
 
@@ -685,7 +684,7 @@ const USER_NAME = document.body.dataset.username || "";
 
         .then(r => r.json())
         .then(async d => {
-
+          try {
           if (d.files && d.files.length) { 
             tocando = true;     
 
@@ -712,7 +711,6 @@ const USER_NAME = document.body.dataset.username || "";
             tocando = false;
             tocarBeep();
             FLAG = 1;
-            professorLock = false;
 
             if (autoMicAtivo) {
               setTimeout(() => {
@@ -724,13 +722,11 @@ const USER_NAME = document.body.dataset.username || "";
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
             bloquearEntrada(); 
-            professorLock = false;
             index++;
             return;
           }
 
           if (auto === 1) {
-            professorLock = false;
             index++;
             return mostrarSistema();
           }
@@ -739,10 +735,12 @@ const USER_NAME = document.body.dataset.username || "";
           expectedAtual = msg.dataset.expected || "";
           tentativas = 0;
           liberarEntrada();
-
+          } finally {
+            professorLock = false;
+          }
         });
       } 
-
+ 
       // INCIAR LICAO
       function iniciarLicao() {
         FLAG = 0;
