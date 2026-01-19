@@ -96,6 +96,8 @@ const USER_NAME = document.body.dataset.username || "";
 
       const lessonId = document.body.dataset.lessonId;
 
+      let FLAG = 0;
+
       // começa desabilitado
       if (btnStart) {
         btnStart.disabled = true;
@@ -627,7 +629,8 @@ const USER_NAME = document.body.dataset.username || "";
 
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
-        if (tocando) return;
+        if (FLAG !== 0) return;
+        if (tocando) return;        
 
         if (index >= msgs.length) {
           if (timerResetAula) {
@@ -695,6 +698,7 @@ const USER_NAME = document.body.dataset.username || "";
 
             tocando = false;
             tocarBeep();
+            FLAG = 1;
 
             if (autoMicAtivo) {
               setTimeout(() => {
@@ -725,6 +729,7 @@ const USER_NAME = document.body.dataset.username || "";
 
       // INCIAR LICAO
       function iniciarLicao() {
+        FLAG = 0;
         // btnStart.disabled = true;
         // remove mensagem de fim de aula, se existir
         chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
@@ -862,6 +867,7 @@ const USER_NAME = document.body.dataset.username || "";
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
+        if (FLAG !== 1) return;
         const textoBruto = e.results[0][0].transcript;        
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
@@ -893,6 +899,8 @@ const USER_NAME = document.body.dataset.username || "";
             mostrarSistema();
           }, 150);
 
+          FLAG = 0;
+
           return;
         }
 
@@ -907,8 +915,6 @@ const USER_NAME = document.body.dataset.username || "";
         // ===== escreve ALUNO (sempre após a última mensagem) =====
         const user = document.createElement("div");
         user.className = "chat-message user";
-        // user.textContent = textoBruto;
-        //user.textContent = textoCorrigido;
         
         // FALADO
         let exibicao = textoCorrigido;
@@ -960,8 +966,11 @@ const USER_NAME = document.body.dataset.username || "";
         const LESSON_ID = Number(document.body.dataset.lessonId);
         // ===== decisão de fluxo =====
         if (ok) {
+          FLAG = 2;
           if (prof) prof.classList.add("correto");
           if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
+
+          if (FLAG !== 2) return;
           const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1010,6 +1019,8 @@ const USER_NAME = document.body.dataset.username || "";
             mostrarSistema();
           }, 150);
           return;
+
+          FLAG = 0;
         }
 
         // errou
@@ -1018,7 +1029,7 @@ const USER_NAME = document.body.dataset.username || "";
         if (prof) setTimeout(() => prof.classList.remove("errado"), 7000);
 
       if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
-      // ===== fala AVALIAÇÃO (bloqueante) =====
+        if (FLAG !== 1) return;
         const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1046,9 +1057,9 @@ const USER_NAME = document.body.dataset.username || "";
       }
 
       if (tentativas >= MAX_TENTATIVAS) {
+        if (FLAG !== 1) return;
         salvarProgresso({
           chatId: msgs[index].dataset.id,
-          // lessonId: {{ lesson_id }},
           lessonId: LESSON_ID,
           attempts: MAX_TENTATIVAS,
           points: 0
@@ -1083,6 +1094,7 @@ const USER_NAME = document.body.dataset.username || "";
         }
 
         // reseta e avança
+        FLAG = 0;
         esperandoResposta = false;
         expectedAtual = "";
         tentativas = 0;
