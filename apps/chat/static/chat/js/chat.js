@@ -631,9 +631,7 @@ const USER_NAME = document.body.dataset.username || "";
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
 
-        msEnter++;
-        console.log("mostrarSistema enter:", msEnter, "index:", index);
-        
+
         if (professorLock) return;
         professorLock = true;
 
