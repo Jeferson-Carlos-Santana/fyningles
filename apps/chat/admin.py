@@ -123,7 +123,7 @@ class ChatAdmin(admin.ModelAdmin):
   
   ordering = ("lesson_id", "-seq")
   sortable_by = ()
-  list_per_page = 5000
+  list_per_page = 500
   
   # FUNCAO INFORMAL
   def gerar_informal(self, frase: str) -> str:
