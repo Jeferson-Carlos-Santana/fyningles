@@ -1008,7 +1008,9 @@ const USER_NAME = document.body.dataset.username || "";
           atualizarPontosTotais();
           
           atualizarPontosFeitos();
-
+          
+          FLAG = 0;
+          
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
@@ -1018,9 +1020,7 @@ const USER_NAME = document.body.dataset.username || "";
             lastMsgEl = null;
             mostrarSistema();
           }, 150);
-          return;
-
-          FLAG = 0;
+          return;          
         }
 
         // errou
