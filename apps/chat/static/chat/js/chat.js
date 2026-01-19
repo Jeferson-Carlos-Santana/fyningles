@@ -97,6 +97,7 @@ const USER_NAME = document.body.dataset.username || "";
       const lessonId = document.body.dataset.lessonId;
 
       let FLAG = 0;
+      let professorLock = false;
 
       // começa desabilitado
       if (btnStart) {
@@ -629,7 +630,13 @@ const USER_NAME = document.body.dataset.username || "";
 
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {
-        if (FLAG !== 0) return;
+      if (professorLock) return;
+        professorLock = true;
+
+        if (FLAG !== 0) {
+          professorLock = false;
+          return;
+        }
         if (tocando) return;        
 
         if (index >= msgs.length) {
@@ -699,6 +706,7 @@ const USER_NAME = document.body.dataset.username || "";
             tocando = false;
             tocarBeep();
             FLAG = 1;
+            professorLock = false;
 
             if (autoMicAtivo) {
               setTimeout(() => {
@@ -710,11 +718,13 @@ const USER_NAME = document.body.dataset.username || "";
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
             bloquearEntrada(); 
+            professorLock = false;
             index++;
             return;
           }
 
           if (auto === 1) {
+            professorLock = false;
             index++;
             return mostrarSistema();
           }
@@ -1010,7 +1020,7 @@ const USER_NAME = document.body.dataset.username || "";
           atualizarPontosFeitos();
           
           FLAG = 0;
-          
+
           esperandoResposta = false;
           expectedAtual = "";
           tentativas = 0;
