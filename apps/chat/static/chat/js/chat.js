@@ -100,6 +100,12 @@ const USER_NAME = document.body.dataset.username || "";
       let professorLock = false;
       let execAtiva = false;
 
+      let offlinePause = false;
+
+      
+
+
+
       // começa desabilitado
       if (btnStart) {
         btnStart.disabled = true;
@@ -778,7 +784,7 @@ const USER_NAME = document.body.dataset.username || "";
 
       // MOSTRA FRASE + FALA   
       function mostrarSistema() {        
-
+        if (offlinePause) return;
         if (execAtiva) return;
           execAtiva = true;
 
@@ -843,8 +849,25 @@ const USER_NAME = document.body.dataset.username || "";
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ line_id: lineId })
         })
+        
+        .then(r => {
+          if (!r.ok) {
+            
+            offlinePause = true;
 
-        .then(r => r.json())
+            FLAG = 0;
+            tocando = false;
+            esperandoResposta = false;
+
+            bloquearEntrada();
+
+            // encerra silenciosamente este ciclo
+            throw new Error("offline");
+          }
+          return r.json();
+        })
+
+        // .then(r => r.json())
         .then(async d => {
           try {
           if (d.files && d.files.length) { 
@@ -904,6 +927,58 @@ const USER_NAME = document.body.dataset.username || "";
         });
       } 
  
+
+
+
+
+
+
+
+    window.addEventListener("offline", () => {
+        offlinePause = true;
+
+        // pausa tudo
+        try { recognition.stop(); } catch(e) {}
+        try { audioPlayer.pause(); audioPlayer.currentTime = 0; } catch(e) {}
+
+        tocando = false;
+        esperandoResposta = false;
+        FLAG = 0;
+
+        bloquearEntrada();
+
+        const aviso = document.createElement("div");
+        aviso.className = "chat-message system";
+        aviso.textContent = "Sem conexão. Aguardando internet...";
+        chatArea.appendChild(aviso);
+        scrollChatToBottom();
+      });
+
+      window.addEventListener("online", () => {
+        if (!offlinePause) return;
+
+        offlinePause = false;
+
+        // remove aviso
+        chatArea.querySelectorAll(".chat-message.system")
+          .forEach(el => {
+            if (el.textContent.includes("Sem conexão")) el.remove();
+          });
+
+        mostrarSistema();
+      });
+
+
+
+
+
+
+
+
+
+
+
+
       // INCIAR LICAO
       function iniciarLicao() {
         FLAG = 0;
