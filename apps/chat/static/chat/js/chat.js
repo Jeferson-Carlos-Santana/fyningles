@@ -921,9 +921,7 @@ const USER_NAME = document.body.dataset.username || "";
               preload.load();
             }
 
-            tocando = false;
-
-            
+            tocando = false;            
 
             if (auto === 1) {
               FLAG = 0;   
@@ -953,7 +951,8 @@ const USER_NAME = document.body.dataset.username || "";
           }
 
           if (auto === 1) {            
-            index++;            
+            index++;
+            setTimeout(() => mostrarSistema(), 0);            
             return mostrarSistema();
           }
 
