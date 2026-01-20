@@ -942,7 +942,7 @@ const USER_NAME = document.body.dataset.username || "";
               //       abrirMicrofoneComTempo();
               //     }, 150);
               //   }  
-              // }      
+            }      
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
