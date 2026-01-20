@@ -932,16 +932,8 @@ const USER_NAME = document.body.dataset.username || "";
                 setTimeout(() => abrirMicrofoneComTempo(), 150);
               }
             }
-
-              // tocarBeep();
-              // FLAG = 1;
-
-              // if (autoMicAtivo) {
-              //   setTimeout(() => {
-              //       abrirMicrofoneComTempo();
-              //     }, 150);
-              //   }  
-            }      
+            
+          }      
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {

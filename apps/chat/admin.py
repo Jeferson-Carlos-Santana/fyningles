@@ -314,6 +314,11 @@ class ChatAdmin(admin.ModelAdmin):
         templates_es = self.TEMPLATES_CONTENT_5_ES
         templates_fr = self.TEMPLATES_CONTENT_5_FR
         templates_it = self.TEMPLATES_CONTENT_5_IT
+    elif template_choice == "6":
+        templates_pt = self.TEMPLATES_CONTENT_6_PT
+        templates_es = self.TEMPLATES_CONTENT_6_ES
+        templates_fr = self.TEMPLATES_CONTENT_6_FR
+        templates_it = self.TEMPLATES_CONTENT_6_IT
     else:
         # fallback seguro
         templates_pt = self.TEMPLATES_CONTENT_1_PT
@@ -1119,4 +1124,17 @@ class ChatAdmin(admin.ModelAdmin):
 
     "Frase en español: <span style='color:blue;'>{es}</span> Intenta repetir en inglés: "
     "<span style='color:red;'>{en_full}</span> o también puede ser (stp1) <span style='color:red;'>{en_full_M}</span>"
+  ]
+  
+  TEMPLATES_CONTENT_6_PT = [
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span>"
+  ]
+  TEMPLATES_CONTENT_6_ES = [
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span>"
+  ]
+  TEMPLATES_CONTENT_6_FR = [
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span>"
+  ]
+  TEMPLATES_CONTENT_6_IT = [
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span>"
   ]
