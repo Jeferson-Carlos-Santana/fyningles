@@ -283,8 +283,9 @@ const USER_NAME = document.body.dataset.username || "";
             esperandoResposta = false;
             expectedAtual = "";
             tentativas = 0;
-
+            
             setTimeout(() => {
+              FLAG = 0;
               index++;
               lastMsgEl = null;
               mostrarSistema();
