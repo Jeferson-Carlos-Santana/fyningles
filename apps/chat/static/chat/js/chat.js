@@ -767,12 +767,40 @@ const USER_NAME = document.body.dataset.username || "";
     ];  
 
     const MSG_AVANCO = [
-      "você errou, mas tudo bem, vamos continuar.",
-      "não tem problema se errou, vamos seguir em frente.",
-      "não marcou pontos, mas tudo bem, vamos em frente.",
-      "você errou, sem problemas, seguimos em frente.",
-      "não foi dessa vez, vamos tentar a próxima.",
-      "você falhou nessa, passamos para a próxima."
+      "não marcou pontos, continuamos.",
+      "não foi dessa vez, continuamos.",
+      "você falhou nessa, continuamos.",      
+      "não marcou pontos, seguimos.",
+      "não foi dessa vez, seguimos.",
+      "você falhou nessa, seguimos.",
+      "você errou, vamos continuar.",
+      "você falhou, vamos continuar.",
+      "você errou, vamos seguir.",
+      "você falhou, vamos seguir.",    
+      "você falhou, seguimos em frente.",
+      "você errou, seguimos em frente.",
+      "você errou, seguimos à próxima.",
+      "você falhou, passamos à próxima.",
+      "você errou, seguimos avante.",
+      "você falhou, seguimos avante.",
+      "você errou, continuamos então.",
+      "você falhou, continuamos então.",
+      "você falhou, vamos à próxima.",
+      "você errou, vamos à próxima.",      
+      "Está errada, continuamos então.",
+      "Está errada, próxima então.",
+      "você falhou, passamos à seguinte.",
+      "você errou, vamos à seguinte.",
+      "não deu certo, continuamos.",
+      "não acertou, continuamos.",
+      "você falhou, continuamos.",
+      "Está errada, seguimos.",
+      "você errou, seguimos.",
+      "você errou, continuamos.",
+      "você falhou, seguimos.",      
+      "Está errada, continuamos.",     
+      "Está errada, seguimos então.",
+      "Não deu certo, seguimos."     
     ].map(msg =>
       USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
@@ -912,7 +940,8 @@ const USER_NAME = document.body.dataset.username || "";
           }
 
           if (auto === 1) {
-            index++;
+            FLAG = 0;
+            index++;            
             return mostrarSistema();
           }
 
@@ -926,14 +955,8 @@ const USER_NAME = document.body.dataset.username || "";
           }
         });
       } 
- 
 
-
-
-
-
-
-
+    // SEM INTERNET
     window.addEventListener("offline", () => {
         offlinePause = true;
 
@@ -967,16 +990,7 @@ const USER_NAME = document.body.dataset.username || "";
 
         mostrarSistema();
       });
-
-
-
-
-
-
-
-
-
-
+      // FIM SEM INTERNET
 
 
       // INCIAR LICAO
