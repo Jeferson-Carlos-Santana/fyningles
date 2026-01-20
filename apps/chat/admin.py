@@ -319,6 +319,11 @@ class ChatAdmin(admin.ModelAdmin):
         templates_es = self.TEMPLATES_CONTENT_6_ES
         templates_fr = self.TEMPLATES_CONTENT_6_FR
         templates_it = self.TEMPLATES_CONTENT_6_IT
+    elif template_choice == "7":
+        templates_pt = self.TEMPLATES_CONTENT_7_PT
+        templates_es = self.TEMPLATES_CONTENT_7_ES
+        templates_fr = self.TEMPLATES_CONTENT_7_FR
+        templates_it = self.TEMPLATES_CONTENT_7_IT
     else:
         # fallback seguro
         templates_pt = self.TEMPLATES_CONTENT_1_PT
@@ -1137,4 +1142,17 @@ class ChatAdmin(admin.ModelAdmin):
   ]
   TEMPLATES_CONTENT_6_IT = [
     "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span>"
+  ]
+
+  TEMPLATES_CONTENT_7_PT = [
+    "<span style='color:blue;'>{pt}</span>"
+  ]
+  TEMPLATES_CONTENT_7_ES = [
+    "<span style='color:blue;'>{es}</span>"
+  ]
+  TEMPLATES_CONTENT_7_FR = [
+    "<span style='color:blue;'>{fr}</span>"
+  ]
+  TEMPLATES_CONTENT_7_IT = [
+    "<span style='color:blue;'>{it}</span>"
   ]

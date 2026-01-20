@@ -14,10 +14,11 @@ class ChatAdminForm(forms.ModelForm):
     TEMPLATE_CHOICES = [
         ("1", "Frase com abreviação e sem abreviação."),
         ("2", "Frase sem abreviação."),
-        ("3", "Frase em português para traduzir para o inglês."),
+        ("3", "Frase em português."),
         ("4", "Frase sem abreviação e informal"),
         ("5", "Frase com 2 traducões. Ex: He's home. or He's at home."),
         ("6", "Verbos - Português e inglês."),
+        ("7", "Verbos - Português."),
     ]
 
     template_choice = forms.ChoiceField(
