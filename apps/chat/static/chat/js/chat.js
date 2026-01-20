@@ -98,6 +98,7 @@ const USER_NAME = document.body.dataset.username || "";
 
       let FLAG = 0;
       let professorLock = false;
+      let execAtiva = false;
 
       // começa desabilitado
       if (btnStart) {
@@ -590,24 +591,20 @@ const USER_NAME = document.body.dataset.username || "";
     }
 
     const FEEDBACK_OK = [
-      "ótimo desempenho hoje.",
+      "ótimo desempenho nessa.",
       "rápido e claro.",
-      "ótimo acerto hoje.",
+      "ótimo acerto nessa.",
       "nítida resposta.",
       "ágil resposta.",
       "fantástico.",
-      "ótima resposta agora.",
-      "ótimo avanço agora.",
       "ágil e preciso.",
-      "ótimo trabalho hoje.",
+      "ótimo trabalho nessa.",
       "ótimo desempenho.",
-      "ótimo foco hoje.",
+      "ótimo foco nessa.",
       "você falou corretamente.",
-      "éxito total agora.",
       "rápido acerto.",
-      "ótima execução hoje.",
+      "ótima execução nessa.",
       "útil e claro.",
-      "ótimo desempenho agora.",
       "ótima execução.",
       "única e excelente.",
       "ótima expressão.",
@@ -615,46 +612,44 @@ const USER_NAME = document.body.dataset.username || "";
       "ótima pronúncia.",
       "ótimo trabalho.",
       "ótimo foco.",
-      "ótima leitura hoje.",
+      "ótima leitura nessa.",
       "sólido e claro.",
       "ótima resposta.",
       "ótimo, bem claro.",
       "básico perfeito.",
       "rápida e perfeita.",
-      "ótima pronúncia hoje.",
+      "ótima pronúncia nessa.",
       "única e perfeita.",
       "nítida pronúncia.",
       "sólido progresso.",
-      "ótima melhora hoje.",
+      "ótima melhora nessa.",
       "ótima fluência.",
-      "ótima fluência hoje.",
-      "ótima resposta hoje.",
-      "ótima pronúncia agora.",
+      "ótima fluência nessa.",
+      "ótima resposta nessa.",
       "ótimo, bom ritmo.",
       "ágil e firme.",
       "rápido e correto.",
       "ótima melhora.",
       "admirável expressão.",
       "útil e correto.",
-      "ótimo progresso hoje.",
+      "ótimo progresso nessa.",
       "ótimo, bem feito.",
       "sólido e correto.",
       "ágil progresso.",
       "extraordinária resposta.",
       "ágil e direto.",
-      "ótimo ritmo hoje.",
-      "éxito total hoje.",
+      "ótimo ritmo nessa.",
+      "éxito total nessa.",
       "éxito total.",
       "ótima clareza.",
       "útil progresso.",
       "ótimo, siga assim.",
       "ágil e perfeita.",
       "ágil e excelente.",
-      "ótimo ritmo agora.",
       "incrível expressão.",
-      "ótima entonação hoje.",
+      "ótima entonação nessa.",
       "admirável trabalho.",
-      "ótimo controle hoje.",
+      "ótimo controle nessa.",
       "ágil e certeiro.",
       "ótimo, vá em frente.",
       "incrível trabalho.",
@@ -665,10 +660,9 @@ const USER_NAME = document.body.dataset.username || "";
       "sólida resposta.",
       "ágil e correto.",
       "útil e rápido.",
-      "ótima dicção hoje.",
+      "ótima dicção nessa.",
       "ágil e consistente.",
       "fantástica resposta.",
-      "ótimo resultado agora.",
       "ágil execução.",
       "ágil e limpo.",
       "ágil e eficaz.",
@@ -679,23 +673,21 @@ const USER_NAME = document.body.dataset.username || "";
       "rápido e preciso.",
       "útil resposta.",
       "único e perfeito.",
-      "ótimo acerto agora.",
       "ótima evolução.",
-      "ótimo resultado hoje.",
+      "ótimo resultado nessa.",
       "ágil e confiante.",
-      "ótima clareza hoje.",
-      "ótima expressão hoje.",
+      "ótima clareza nessa.",
+      "ótima expressão nessa.",
       "ótimo resultado.",
       "ótimo avanço.",
       "ágil e seguro.",
       "nítido e claro.",
       "extraordinário.",
       "útil expressão.",
-      "ótima evolução hoje.",
+      "ótima evolução nessa.",
       "você respondeu corretamente.",
-      "ótimo avanço hoje.",
+      "ótimo avanço nessa.",
       "útil e preciso.",
-      "ótimo progresso agora.",
       "fantástico trabalho.",
       "nítido e correto.",
       "admirável resposta.",
@@ -705,60 +697,66 @@ const USER_NAME = document.body.dataset.username || "";
       "ágil e claro.",
       "você acertou.",
       "incrível resposta.",
-      "ótima fala hoje."
+      "ótima fala nessa."
     ].map(msg =>
       USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
 
     const FEEDBACK_ERR = [  
-      "Essa ficou errada, tente novamente.",    
-      "Quase lá, tente novamente.",     
-      "Não está bem certo, tente de novo.",   
+      "Essa ficou errada.",        
+      "Não está bem certo.",   
       "Vamos tentar novamente.",   
-      "Você cometeu um erro, tente novamente.",
-      "Errar faz parte, tente de novo.",
-      "Quer tentar outra vez, essa ficou errada.",
-      "Ficou errada essa resposta, tente de novo.",
-      "Não acertou, tente novamente.",   
-      "Essa não está correta, tente novamente.",
-      "Quase acertou, mas tente de novo.",
+      "Você cometeu um erro.",
+      "Errar faz parte.",
+      "Quer tentar outra vez?",
+      "Não acertou.",   
+      "Essa não está correta.",
+      "Quase acertou.",
       "Pode tentar outra vez?",
-      "Não foi dessa vez, vamos novamente.",
-      "Erro pequeno, tente mais uma vez.",
-      "Essa resposta não está certa, repita.",
-      "Não está perfeito ainda, tente novamente.",
-      "Cometeu um errinho, vamos de novo.",
-      "Tente mais uma vez, por favor.",
-      "Não acertou ainda, repita a tentativa.",
-      "Essa ficou incorreta, tente outra vez.",
-      "Vamos tentar de novo, sem problema.",
-      "Errinho básico, pode tentar novamente.",
-      "Não está certo, tente mais uma.",
-      "Quase, mas não exatamente, repita.",
+      "Não foi dessa vez.",
+      "Erro pequeno.",
+      "Cometeu um errinho.",
+      "Tente mais uma vez.",
+      "Não acertou essa.",
+      "Essa ficou incorreta.",
+      "Vamos tentar de novo.",
+      "Errinho básico.",
+      "Não está certo.",
       "Pode tentar novamente?",
-      "Essa não foi a certa, vamos tentar de novo.",
-      "Você errou um pouquinho, tente outra vez.",
-      "Não foi bem certo, repita por favor.",
-      "Errar é normal, tente novamente.",
-      "Essa resposta ficou errada, tente de novo.",
-      "Não acertou dessa vez, vamos mais uma.",
-      "Tente outra vez, você consegue.",
-      "Não está correto ainda, repita.",
-      "Cometeu um erro, mas tente de novo.",
-      "Essa não foi a resposta certa, tente novamente.",
-      "Vamos tentar mais uma vez?",
-      "Não foi perfeito, pode repetir?",
-      "Errou um detalhe, tente novamente.",
-      "Quase lá, mas tente mais uma vez.",
-      "Essa ficou errada, repita a tentativa.",
-      "Não está bem certo, vamos de novo.",
-      "Tente novamente, está quase.",
-      "Você pode tentar de novo?",
-      "Não acertou, mas tente outra vez.",
-      "Errinho simples, vamos tentar novamente.",
-      "Pode tentar mais uma vez?",
-      "Não foi dessa vez, repita por favor.",
-      "Essa não está correta ainda, tente de novo."
+      "Essa não foi a certa.",
+      "Errar é normal.",
+      "Não acertou dessa vez.",
+      "Não está correto.",
+      "Falhou!",
+      "Cometeu um erro.",
+      "Cometeu uma falha.",
+      "Errou um detalhe.",
+      "Errinho simples.",
+      "Essa não acertou.",
+      "Essa deu errado.",
+      "Deu errado.",
+      "Deu errado essa.",
+      "Resposta incorreta.",
+      "Essa errou.",
+      "Errou essa.",
+      "Errou!",
+      "Não deu certo.",
+      "Essa ficou ruim.",
+      "Não funcionou.",
+      "Essa foi errada.",
+      "Essa saiu errada.",
+      "Resposta falha.",
+      "Essa não deu certo.",
+      "Tentativa errada.",
+      "Essa tropeçou.",
+      "Não valeu.",
+      "Essa falhou.",
+      "Essa não funcionou.",
+      "Tentativa falha.",
+      "Não foi boa.",
+      "Tudo bem errar.",
+      "Tudo bem falhar.",
+      "Falhar faz parte."      
     ];  
 
     const MSG_AVANCO = [
@@ -778,21 +776,31 @@ const USER_NAME = document.body.dataset.username || "";
       bloquearEntrada();      
 
       // MOSTRA FRASE + FALA   
-      function mostrarSistema() {
+      function mostrarSistema() {        
 
-        if (professorLock) return;
+        if (execAtiva) return;
+          execAtiva = true;
+
+        if (professorLock) {
+          execAtiva = false;
+          return;
+        }
         professorLock = true;
+
+        const unlock = () => {
+          execAtiva = false;
+          professorLock = false;
+        };
 
         if (FLAG !== 0) {
           professorLock = false;
+          unlock();
           return;
-        }
-
-        FLAG = -1;
+        }      
         
-        if (tocando) {
-          FLAG = 0;
+        if (tocando) { 
           professorLock = false;
+          unlock();
           return;
         }
 
@@ -804,11 +812,11 @@ const USER_NAME = document.body.dataset.username || "";
           bloquearEntrada();
           btnStart.disabled = false;
 
-          // NOVO — fim da lição, zera pontos visuais
+          // fim da lição, zera pontos visuais
           pontosAndamento = 0;
           atualizarPontosAndamento();
-          FLAG = 0;
-          professorLock = false
+          professorLock = false;
+          unlock();
           return;
         }
 
@@ -875,13 +883,11 @@ const USER_NAME = document.body.dataset.username || "";
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
             bloquearEntrada(); 
-            FLAG = 0;
             index++;
             return;
           }
 
           if (auto === 1) {
-            FLAG = 0;
             index++;
             return mostrarSistema();
           }
@@ -892,6 +898,7 @@ const USER_NAME = document.body.dataset.username || "";
           liberarEntrada();
           } finally {
             professorLock = false;
+            unlock();
           }
         });
       } 
