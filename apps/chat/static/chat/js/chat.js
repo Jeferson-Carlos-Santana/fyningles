@@ -923,11 +923,12 @@ const USER_NAME = document.body.dataset.username || "";
 
             tocando = false;
 
-            tocarBeep();
+            
 
             if (auto === 1) {
               FLAG = 0;   
             } else {
+              tocarBeep();
               FLAG = 1;  
               if (autoMicAtivo) {
                 setTimeout(() => abrirMicrofoneComTempo(), 150);
