@@ -922,15 +922,27 @@ const USER_NAME = document.body.dataset.username || "";
             }
 
             tocando = false;
-            tocarBeep();
-            FLAG = 1;
 
-            if (autoMicAtivo) {
-              setTimeout(() => {
-                  abrirMicrofoneComTempo();
-                }, 150);
-              }  
-            }      
+            tocarBeep();
+
+            if (auto === 1) {
+              FLAG = 0;   
+            } else {
+              FLAG = 1;  
+              if (autoMicAtivo) {
+                setTimeout(() => abrirMicrofoneComTempo(), 150);
+              }
+            }
+
+              // tocarBeep();
+              // FLAG = 1;
+
+              // if (autoMicAtivo) {
+              //   setTimeout(() => {
+              //       abrirMicrofoneComTempo();
+              //     }, 150);
+              //   }  
+              // }      
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
@@ -939,8 +951,7 @@ const USER_NAME = document.body.dataset.username || "";
             return;
           }
 
-          if (auto === 1) {
-            FLAG = 0;
+          if (auto === 1) {            
             index++;            
             return mostrarSistema();
           }
