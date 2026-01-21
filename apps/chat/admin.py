@@ -1165,14 +1165,14 @@ class ChatAdmin(admin.ModelAdmin):
   ]
   
   TEMPLATES_CONTENT_8_PT = [
-    "Vamos conjugar o verbo no: <span style='color:blue;'>{pt}</span> - <span style='color:red;'>{en_full}</span>"
+    "Vamos conjugar o verbo no: <span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_IT = [
-    "Coniughiamo il verbo in: <span style='color:blue;'>{it}</span> - <span style='color:red;'>{en_full}</span>"
+    "Coniughiamo il verbo in: <span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_FR = [
-    "Conjuguons le verbe en : <span style='color:blue;'>{fr}</span> - <span style='color:red;'>{en_full}</span>"
+    "Conjuguons le verbe en : <span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_ES = [
-    "Vamos a conjugar el verbo en: <span style='color:blue;'>{es}</span> - <span style='color:red;'>{en_full}</span>"
+    "Vamos a conjugar el verbo en: <span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span>"
   ]
