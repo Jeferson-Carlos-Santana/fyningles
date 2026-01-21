@@ -43,7 +43,8 @@ class ChatAdminForm(forms.ModelForm):
             qs = qs.exclude(pk=self.instance.pk)
 
         # permite até 2 iguais
-        if qs.count() >= 2:
+        limite = 4 if self.cleaned_data.get("lesson_id") == 2 else 2
+        if qs.count() >= limite:
             raise forms.ValidationError(
                 "Já existem dois registros com esse expected_en. Não é permitido cadastrar um terceiro."
             )
