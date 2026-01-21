@@ -463,7 +463,7 @@ class ChatAdmin(admin.ModelAdmin):
     
     limite = 4 if obj.lesson_id == 2 else 2
 
-    if qs.count() == limite:
+    if qs.count() >= limite:
         antigo = qs.first()
         if antigo.role == "teacher":
             antigo.role = "single-mark"
