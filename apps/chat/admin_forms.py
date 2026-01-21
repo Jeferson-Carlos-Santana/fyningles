@@ -24,7 +24,7 @@ class ChatAdminForm(forms.ModelForm):
         ("10", "🟢 Verbo no futuro com ajuda."),        
         ("11", "🟢 Verbo no presente sem ajuda."),
         ("12", "🟢 Verbo no passado sem ajuda."),
-        ("13", "🟢 Verbo no futuro com ajuda."),
+        ("13", "🟢 Verbo no futuro sem ajuda."),
     ]
 
     template_choice = forms.ChoiceField(

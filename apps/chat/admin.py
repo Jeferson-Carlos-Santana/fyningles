@@ -1255,14 +1255,14 @@ class ChatAdmin(admin.ModelAdmin):
   ]
   
   TEMPLATES_CONTENT_13_PT = [
-    "Agora vamos conjugar o verbo no futuro sem mostrar o inglês: <span style='color:blue;'>{pt}</span>"
+    "Agora vamos conjugar o verbo no futuro sem mostrar o inglês: <span style='color:red;'>{en_full}</span>"
   ]  
   TEMPLATES_CONTENT_13_ES = [
-    "Ahora vamos conjugar el verbo en el futuro sin mostrar el inglés: <span style='color:blue;'>{es}</span>"
+    "Ahora vamos conjugar el verbo en el futuro sin mostrar el inglés: <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_13_FR = [
-    "Maintenant, conjuguons le verbe au futur sans montrer l'anglais : <span style='color:blue;'>{fr}</span>"
+    "Maintenant, conjuguons le verbe au futur sans montrer l'anglais : <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_13_IT = [
-    "Ora coniughiamo il verbo al futuro senza mostrare l'inglese: <span style='color:blue;'>{it}</span>"
+    "Ora coniughiamo il verbo al futuro senza mostrare l'inglese: <span style='color:red;'>{en_full}</span>"
   ]
