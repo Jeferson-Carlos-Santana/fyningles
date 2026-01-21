@@ -330,32 +330,7 @@ class ChatAdmin(admin.ModelAdmin):
         templates_pt = self.TEMPLATES_CONTENT_8_PT
         templates_es = self.TEMPLATES_CONTENT_8_ES
         templates_fr = self.TEMPLATES_CONTENT_8_FR
-        templates_it = self.TEMPLATES_CONTENT_8_IT
-    elif template_choice == "9":
-        templates_pt = self.TEMPLATES_CONTENT_9_PT
-        templates_es = self.TEMPLATES_CONTENT_9_ES
-        templates_fr = self.TEMPLATES_CONTENT_9_FR
-        templates_it = self.TEMPLATES_CONTENT_9_IT
-    elif template_choice == "10":
-        templates_pt = self.TEMPLATES_CONTENT_10_PT
-        templates_es = self.TEMPLATES_CONTENT_10_ES
-        templates_fr = self.TEMPLATES_CONTENT_10_FR
-        templates_it = self.TEMPLATES_CONTENT_10_IT
-    elif template_choice == "11":
-        templates_pt = self.TEMPLATES_CONTENT_11_PT
-        templates_es = self.TEMPLATES_CONTENT_11_ES
-        templates_fr = self.TEMPLATES_CONTENT_11_FR
-        templates_it = self.TEMPLATES_CONTENT_11_IT
-    elif template_choice == "12":
-          templates_pt = self.TEMPLATES_CONTENT_12_PT
-          templates_es = self.TEMPLATES_CONTENT_12_ES
-          templates_fr = self.TEMPLATES_CONTENT_12_FR
-          templates_it = self.TEMPLATES_CONTENT_12_IT
-    elif template_choice == "13":
-          templates_pt = self.TEMPLATES_CONTENT_13_PT
-          templates_es = self.TEMPLATES_CONTENT_13_ES
-          templates_fr = self.TEMPLATES_CONTENT_13_FR
-          templates_it = self.TEMPLATES_CONTENT_13_IT
+        templates_it = self.TEMPLATES_CONTENT_8_IT    
     else:
         # fallback seguro
         templates_pt = self.TEMPLATES_CONTENT_1_PT
@@ -1190,79 +1165,14 @@ class ChatAdmin(admin.ModelAdmin):
   ]
   
   TEMPLATES_CONTENT_8_PT = [
-    "Vamos conjugar o verbo no presente: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_8_ES = [
-    "Vamos a conjugar el verbo en presente: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_8_FR = [
-    "Conjuguons le verbe au présent : <span style='color:red;'>{en_full}</span>"
+    "Vamos conjugar o verbo no: <span style='color:blue;'>{pt}</span> - <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_IT = [
-    "Coniughiamo il verbo al presente: <span style='color:red;'>{en_full}</span>"
+    "Coniughiamo il verbo in: <span style='color:blue;'>{it}</span> - <span style='color:red;'>{en_full}</span>"
   ]
-
-  TEMPLATES_CONTENT_9_PT = [
-    "Vamos conjugar o verbo no passado: <span style='color:red;'>{en_full}</span>"
+  TEMPLATES_CONTENT_8_FR = [
+    "Conjuguons le verbe en : <span style='color:blue;'>{fr}</span> - <span style='color:red;'>{en_full}</span>"
   ]
-  TEMPLATES_CONTENT_9_ES = [
-    "Vamos a conjugar el verbo en pasado: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_9_FR = [
-    "Conjuguons le verbe au passé : <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_9_IT = [
-    "Coniughiamo il verbo al passato: <span style='color:red;'>{en_full}</span>"
-  ]
-  
-  TEMPLATES_CONTENT_10_PT = [
-    "Vamos conjugar o verbo no futuro: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_10_ES = [
-    "Vamos a conjugar el verbo en futuro: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_10_FR = [
-    "Conjuguons le verbe au futur : <span style='color:red;'>{en_full}</span>"
-  ] 
-  TEMPLATES_CONTENT_10_IT = [
-    "Coniughiamo il verbo al futuro: <span style='color:red;'>{en_full}</span>"
-  ]
-
-  TEMPLATES_CONTENT_11_PT = [
-    "Agora vamos conjugar o verbo no presente sem mostrar o inglês: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_11_ES = [
-    "Ahora vamos a conjugar el verbo en presente sin mostrar el inglés: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_11_FR = [
-    "Maintenant, conjuguons le verbe au présent sans montrer l'anglais : <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_11_IT = [
-    "Ora coniughiamo il verbo al presente senza mostrare l'inglese: <span style='color:red;'>{en_full}</span>"
-  ]
-  
-  TEMPLATES_CONTENT_12_PT = [
-    "Agora vamos conjugar o verbo no passado sem mostrar o inglês: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_12_ES = [
-    "Ahora vamos a conjugar el verbo en pasado sin mostrar el inglés: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_12_FR = [
-    "Maintenant, conjuguons le verbe au passé sans montrer l'anglais : <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_12_IT = [
-    "Ora coniughiamo il verbo al passato senza mostrare l'inglese: <span style='color:red;'>{en_full}</span>"
-  ]
-  
-  TEMPLATES_CONTENT_13_PT = [
-    "Agora vamos conjugar o verbo no futuro sem mostrar o inglês: <span style='color:red;'>{en_full}</span>"
-  ]  
-  TEMPLATES_CONTENT_13_ES = [
-    "Ahora vamos conjugar el verbo en el futuro sin mostrar el inglés: <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_13_FR = [
-    "Maintenant, conjuguons le verbe au futur sans montrer l'anglais : <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_13_IT = [
-    "Ora coniughiamo il verbo al futuro senza mostrare l'inglese: <span style='color:red;'>{en_full}</span>"
+  TEMPLATES_CONTENT_8_ES = [
+    "Vamos a conjugar el verbo en: <span style='color:blue;'>{es}</span> - <span style='color:red;'>{en_full}</span>"
   ]
