@@ -38,6 +38,8 @@ class ChatAdmin(admin.ModelAdmin):
         color = "pink"
     elif obj.role == "single-mark":
         color = "#00ff80"
+    elif obj.role == "teacher":
+        color = "transparent"
     else:
         return obj.seq
 
