@@ -455,11 +455,20 @@ class ChatAdmin(admin.ModelAdmin):
         expected_en__iexact=frase
     ).order_by("id")
 
-    if qs.count() == 2:
+    # if qs.count() == 2:
+    #     antigo = qs.first()
+    #     if antigo.role == "teacher":
+    #         antigo.role = "single-mark"
+    #         antigo.save(update_fields=["role"])
+    
+    limite = 4 if obj.lesson_id == 2 else 2
+
+    if qs.count() == limite:
         antigo = qs.first()
         if antigo.role == "teacher":
             antigo.role = "single-mark"
             antigo.save(update_fields=["role"])
+
 
 
   # FRASES COM ABREVIACOES E SEM ABREVIACOES
