@@ -16,9 +16,15 @@ class ChatAdminForm(forms.ModelForm):
         ("2", "Frase sem abreviação."),
         ("3", "Frase em português."),
         ("4", "Frase sem abreviação e informal"),
-        ("5", "Frase com 2 traducões. Ex: He's home. or He's at home."),
-        ("6", "Verbos - Português e inglês."),
-        ("7", "Verbos - Português."),
+        ("5", "Frase com 2 traducões. Ex: He's home. or He's at home."),        
+        ("6", "🟢 Verbos - Português e inglês."),
+        ("7", "🟢 Verbos - Português."),        
+        ("8", "🟢 Verbo no presente com ajuda."),
+        ("9", "🟢 Verbo no passado com ajuda."),
+        ("10", "🟢 Verbo no futuro com ajuda."),        
+        ("11", "🟢 Verbo no presente sem ajuda."),
+        ("12", "🟢 Verbo no passado sem ajuda."),
+        ("13", "🟢 Verbo no futuro com ajuda."),
     ]
 
     template_choice = forms.ChoiceField(
