@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 50000
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
