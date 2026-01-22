@@ -327,12 +327,7 @@ class ChatAdmin(admin.ModelAdmin):
         templates_pt = self.TEMPLATES_CONTENT_7_PT
         templates_es = self.TEMPLATES_CONTENT_7_ES
         templates_fr = self.TEMPLATES_CONTENT_7_FR
-        templates_it = self.TEMPLATES_CONTENT_7_IT
-    elif template_choice == "8":
-        templates_pt = self.TEMPLATES_CONTENT_8_PT
-        templates_es = self.TEMPLATES_CONTENT_8_ES
-        templates_fr = self.TEMPLATES_CONTENT_8_FR
-        templates_it = self.TEMPLATES_CONTENT_8_IT    
+        templates_it = self.TEMPLATES_CONTENT_7_IT  
     else:
         # fallback seguro
         templates_pt = self.TEMPLATES_CONTENT_1_PT
@@ -1141,40 +1136,75 @@ class ChatAdmin(admin.ModelAdmin):
   ]
   
   TEMPLATES_CONTENT_6_PT = [
-    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span>"
-  ]
-  TEMPLATES_CONTENT_6_ES = [
-    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span>"
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span> Agora repita.",
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span> Pode repetir.",
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span> Agora fale você.",
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span> Fale em inglês.",
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span> Diga em inglês.",
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span> Sua vez, pode repetir.",
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span> Agora você, repita."  
   ]
   TEMPLATES_CONTENT_6_FR = [
-    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span>"
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span> Répétez maintenant.",
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span> Vous pouvez répéter.",
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span> À vous de parler.",
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span> Parlez en anglais.",
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span> Dites-le en anglais.",
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span> À votre tour, répétez.",
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span> Maintenant, répétez."
+  ]
+  TEMPLATES_CONTENT_6_ES = [
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span> Ahora repite.",
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span> Puedes repetir.",
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span> Ahora habla tú.",
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span> Habla en inglés.",
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span> Dilo en inglés.",
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span> Tu turno, repite.",
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span> Ahora tú, repite."
   ]
   TEMPLATES_CONTENT_6_IT = [
-    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span>"
-  ]
-
-  TEMPLATES_CONTENT_7_PT = [
-    "<span style='color:blue;'>{pt}</span>"
-  ]
-  TEMPLATES_CONTENT_7_ES = [
-    "<span style='color:blue;'>{es}</span>"
-  ]
-  TEMPLATES_CONTENT_7_FR = [
-    "<span style='color:blue;'>{fr}</span>"
-  ]
-  TEMPLATES_CONTENT_7_IT = [
-    "<span style='color:blue;'>{it}</span>"
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span> Ora ripeti.",
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span> Puoi ripetere.",
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span> Ora parla tu.",
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span> Parla in inglese.",
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span> Dillo in inglese.",
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span> Tocca a te, ripeti.",
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span> Ora tu, ripeti."
   ]
   
-  TEMPLATES_CONTENT_8_PT = [
-    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span>"
+  TEMPLATES_CONTENT_7_PT = [
+    "<span style='color:blue;'>{pt}</span> Agora repita.",
+    "<span style='color:blue;'>{pt}</span> Pode repetir.",
+    "<span style='color:blue;'>{pt}</span> Agora fale você.",
+    "<span style='color:blue;'>{pt}</span> Fale em inglês.",
+    "<span style='color:blue;'>{pt}</span> Diga em inglês.",
+    "<span style='color:blue;'>{pt}</span> Sua vez, pode repetir.",
+    "<span style='color:blue;'>{pt}</span> Agora você, repita."
   ]
-  TEMPLATES_CONTENT_8_IT = [
-    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span>"
+  TEMPLATES_CONTENT_7_FR = [
+    "<span style='color:blue;'>{fr}</span> Répétez maintenant.",
+    "<span style='color:blue;'>{fr}</span> Vous pouvez répéter.",
+    "<span style='color:blue;'>{fr}</span> À vous de parler.",
+    "<span style='color:blue;'>{fr}</span> Parlez en anglais.",
+    "<span style='color:blue;'>{fr}</span> Dites-le en anglais.",
+    "<span style='color:blue;'>{fr}</span> À votre tour, répétez.",
+    "<span style='color:blue;'>{fr}</span> Maintenant, répétez."
   ]
-  TEMPLATES_CONTENT_8_FR = [
-    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span>"
+  TEMPLATES_CONTENT_7_ES = [
+    "<span style='color:blue;'>{es}</span> Ahora repite.",
+    "<span style='color:blue;'>{es}</span> Puedes repetir.",
+    "<span style='color:blue;'>{es}</span> Ahora habla tú.",
+    "<span style='color:blue;'>{es}</span> Habla en inglés.",
+    "<span style='color:blue;'>{es}</span> Dilo en inglés.",
+    "<span style='color:blue;'>{es}</span> Tu turno, repite.",
+    "<span style='color:blue;'>{es}</span> Ahora tú, repite."
   ]
-  TEMPLATES_CONTENT_8_ES = [
-    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span>"
+  TEMPLATES_CONTENT_7_IT = [
+    "<span style='color:blue;'>{it}</span> Ora ripeti.",
+    "<span style='color:blue;'>{it}</span> Puoi ripetere.",
+    "<span style='color:blue;'>{it}</span> Ora parla tu.",
+    "<span style='color:blue;'>{it}</span> Parla in inglese.",
+    "<span style='color:blue;'>{it}</span> Dillo in inglese.",
+    "<span style='color:blue;'>{it}</span> Tocca a te, ripeti.",
+    "<span style='color:blue;'>{it}</span> Ora tu, ripeti."
   ]

@@ -28,8 +28,8 @@ TOTAL_POINTS_DAY = 5
 SUSPIRO = 3
 
 LESSON_TITLES = {
-    1: "Usando verbos",
-    2: "Expressões populares",
+    1: "Frases",
+    2: "Presente simples (to have)",
     3: "Utilidades diárias",
 }
 

@@ -19,7 +19,6 @@ class ChatAdminForm(forms.ModelForm):
         ("5", "Frase com 2 traducões. Ex: He's home. or He's at home."),        
         ("6", "🟢 Verbos - Português e inglês."),
         ("7", "🟢 Verbos - Português."),        
-        ("8", "🟢 Titúlo da conjugação do verbo."),
     ]
 
     template_choice = forms.ChoiceField(
