@@ -110,6 +110,8 @@ class ChatAdmin(admin.ModelAdmin):
         marcar_status_ativo,
         marcar_status_inativo,
     ]
+  
+  list_filter = ("lesson_id",)
  
   search_fields = (
     "expected_en",
