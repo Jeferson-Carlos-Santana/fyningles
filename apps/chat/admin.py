@@ -1165,14 +1165,14 @@ class ChatAdmin(admin.ModelAdmin):
   ]
   
   TEMPLATES_CONTENT_8_PT = [
-    "Vamos conjugar o: <span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span>"
+    "Vamos conjugar (stp1) o: <span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_IT = [
-    "Coniughiamo il: <span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span>"
+    "Coniughiamo (stp1) il: <span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_FR = [
-    "Conjuguons le: <span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span>"
+    "Conjuguons (stp1) le: <span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_ES = [
-    "Vamos a conjugar el: <span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span>"
+    "Vamos a conjugar (stp1) el: <span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span>"
   ]
