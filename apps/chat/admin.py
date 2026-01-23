@@ -82,8 +82,6 @@ class ChatAdmin(admin.ModelAdmin):
   list_display = (
     "Sequencia",
     "lesson_id",    
-    "role",
-    "lang",
     "status",
     "auto",
     "end",
@@ -93,6 +91,8 @@ class ChatAdmin(admin.ModelAdmin):
     "expected_it",
     "expected_fr",
     "expected_es",
+    "role",
+    "lang",
     "created_at",
   )
   list_editable = ("status", "auto", "end", "status_point")
