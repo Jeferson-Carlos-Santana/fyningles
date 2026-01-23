@@ -30,7 +30,7 @@ SUSPIRO = 3
 LESSON_TITLES = {
     1: "Frases",
     2: "Presente simples (to have)",
-    3: "Utilidades diárias",
+    3: "Presente contínuo (to have)",
 }
 
 # FRASES CONCLUIDAS
