@@ -58,7 +58,7 @@
             <button class="menu-toggle" aria-label="Abrir menu">
               <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
             </button> 
-            <span>Chat : {{ lesson_title }}</span>    
+            <span>{{ lesson_title }}</span>    
             <form method="post" action="/admin/logout/" class="logout-form">
               {% csrf_token %}
               <button class="btn-sair" type="submit" aria-label="Sair">
