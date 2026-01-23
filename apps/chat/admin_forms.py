@@ -36,15 +36,38 @@ class ChatAdminForm(forms.ModelForm):
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
 
-        # permite até 2 iguais
-        limite = 4 if self.cleaned_data.get("lesson_id") == 2 else 2
+        # cada licao limita a quantidade de inserimento 
+        # limite = 4 if self.cleaned_data.get("lesson_id") == 2 else 2
+        # if qs.count() >= limite:
+        #     raise forms.ValidationError(
+        #         "Já existem dois registros com esse expected_en. Não é permitido cadastrar um terceiro."
+        #     )
+
+        # return expected
+        
+        LIMITES_POR_LESSON = {
+            1: 2,
+            2: 4,
+            3: 4,
+            4: 2,
+            5: 2,
+            6: 2,
+            7: 2,
+            8: 2,
+            9: 2,
+            10: 2,
+        }
+
+        lesson_id = self.cleaned_data.get("lesson_id")
+        limite = LIMITES_POR_LESSON[lesson_id]
+
         if qs.count() >= limite:
             raise forms.ValidationError(
-                "Já existem dois registros com esse expected_en. Não é permitido cadastrar um terceiro."
+                f"Limite de {limite} registros para esta lição."
             )
 
         return expected
-
+    
     class Meta:
         model = Chat
         fields = "__all__"
