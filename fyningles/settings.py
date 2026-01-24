@@ -26,7 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+#EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+
 DEFAULT_FROM_EMAIL = "no-reply@seusite.com"
 
 EMAIL_HOST = "smtp.gmail.com"
