@@ -80,6 +80,16 @@ def resend_activation(request):
     if request.method == "POST":
         email = request.POST.get("email")
         user = User.objects.filter(email=email).first()
+        
+        if not user:
+            return render(request, "chat/resend_activation.html", {
+                "error": "E-mail não encontrado."
+            })
+
+        if user.is_active:
+            return render(request, "chat/resend_activation.html", {
+                "error": "Esta conta já está ativada."
+            })
 
         if user and not user.is_active:
             uid = urlsafe_base64_encode(force_bytes(user.pk))
