@@ -143,18 +143,16 @@ def activate_account(request, uidb64, token):
     #         return super().form_valid(form)
     
 class ActiveOnlyPasswordResetView(PasswordResetView):
-    def post(self, request, *args, **kwargs):
-        email = request.POST.get("email")
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
         user = User.objects.filter(email=email).first()
 
         if user and not user.is_active:
-            return self.render_to_response(
-                self.get_context_data(
-                    error="Conta não ativada. Reenvie o e-mail de ativação."
-                )
-            )
+            form.add_error("email", "Conta não ativada. Reenvie o e-mail de ativação.")
+            return self.form_invalid(form)
 
-        return super().post(request, *args, **kwargs)
+        return super().form_valid(form)
+
 
 
 
