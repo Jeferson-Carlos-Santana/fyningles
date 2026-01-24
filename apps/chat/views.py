@@ -31,6 +31,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
 
+
+from django.contrib.auth.views import PasswordResetConfirmView
+
 from django.contrib.auth.views import PasswordResetView
 
 
@@ -142,6 +145,17 @@ class ActiveOnlyPasswordResetView(PasswordResetView):
             ))
         return super().form_valid(form)
 
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+
+        # token inválido ou já usado
+        if hasattr(self, "validlink") and not self.validlink:
+            return redirect("login")
+
+        return response
 
 
 def register_user(request):

@@ -41,12 +41,13 @@ urlpatterns += [
         name="password_reset_done",
     ),
     path(
-        "reset/<uidb64>/<token>/",
-        auth_views.PasswordResetConfirmView.as_view(
-            template_name="chat/password_reset_confirm.html"
+            "reset/<uidb64>/<token>/",
+            views.CustomPasswordResetConfirmView.as_view(
+                template_name="chat/password_reset_confirm.html"
+            ),
+            name="password_reset_confirm",
         ),
-        name="password_reset_confirm",
-    ),
+
     path(
         "reset/done/",
         auth_views.PasswordResetCompleteView.as_view(
