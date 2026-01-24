@@ -1,8 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from .utils.dictionary_writer import add_term, term_exists, delete_term, list_terms
 from deep_translator import GoogleTranslator
-from django.shortcuts import redirect
 from django.contrib import messages
 from langdetect import detect, LangDetectException
 from apps.chat.services.language_detector import detectar_idioma
@@ -19,6 +18,11 @@ from django.db.models import Sum
 from django.views.decorators.http import require_GET
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseForbidden
+
+from django.contrib.auth.forms import UserCreationForm
+from .forms_register_user import RegisterUserForm
+
+
 import requests, json, re
 
 # TOTAL DE PONTOS POR DIA
@@ -57,6 +61,33 @@ def phrase_completed(request):
         "frases": frases
     })
 # FIM FRASES CONCLUIDAS
+
+
+
+
+
+
+
+def register_user(request):
+    if request.method == "POST":
+        form = RegisterUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")
+    else:
+        form = RegisterUserForm()
+
+    return render(request, "chat/register_user.html", {
+        "form": form
+    })
+
+
+
+    
+    
+    
+    
+
 
 # FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 @login_required

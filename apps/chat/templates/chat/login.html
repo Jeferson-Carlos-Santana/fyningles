@@ -24,28 +24,30 @@
 
       <section class="login-body">
         <form method="post" class="login-form">
-          {% csrf_token %}
+        {% csrf_token %}
 
-          {% if form.non_field_errors %}
-          <div class="login-error">
-            {{ form.non_field_errors }}
-          </div>
-          {% endif %}
+        {% for error in form.non_field_errors %}
+          <div class="login-error">{{ error|striptags }}</div>
+        {% endfor %}
 
-          <div class="login-field">
-            {{ form.username.label_tag }}
-            {{ form.username }}
-          </div>
+        <div class="login-field">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+        </div>
 
-          <div class="login-field">
-            {{ form.password.label_tag }}
-            {{ form.password }}
-          </div>
+        <div class="login-field">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+        </div>
 
-          <button type="submit" class="login-button">
-            Entrar
-          </button>
-        </form>
+        <button type="submit" class="login-button">
+          Entrar
+        </button>
+      </form>
+
+        <div class="login-register-link"> 
+          Se não tem conta clique aqui:<a href="{% url 'register' %}">Cadastre-se</a>    
+        </div>
       </section>
 
       <footer class="login-footer">

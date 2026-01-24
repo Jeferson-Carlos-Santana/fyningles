@@ -3,6 +3,7 @@ from .views import index, chat, chat_home, dictionary, dictionary_add, dictionar
 from . import views
 urlpatterns = [
     path("", index, name="login"),
+    path("register/", views.register_user, name="register"), 
     path("dashboard/", index, name="dashboard"),
     path("chat/", chat_home, name="chat"),
     path("chat/<int:lesson_id>/", chat, name="chatId"),
