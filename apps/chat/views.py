@@ -31,6 +31,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
 
+from django.contrib.auth.views import PasswordResetView
+
+
 
 
 import requests, json, re
@@ -126,6 +129,18 @@ def activate_account(request, uidb64, token):
 
     return HttpResponse("Link de ativação inválido ou expirado.")
 
+
+
+class ActiveOnlyPasswordResetView(PasswordResetView):
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+        user = User.objects.filter(email=email).first()
+        if user and not user.is_active:
+            return self.render_to_response(self.get_context_data(
+                form=form,
+                error="Conta não ativada. Reenvie o e-mail de ativação."
+            ))
+        return super().form_valid(form)
 
 
 

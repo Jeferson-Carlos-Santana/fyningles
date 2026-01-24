@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from .views import index, chat, chat_home, dictionary, dictionary_add, dictionary_delete, tts, tts_line
 from . import views
 urlpatterns = [
@@ -22,5 +23,35 @@ urlpatterns = [
     path("phrases/completed/", views.phrase_completed, name="phrase_completed"),
     path("activate/<uidb64>/<token>/", views.activate_account, name="activate"),
     path("resend-activation/", views.resend_activation, name="resend_activation"),
+]
 
+urlpatterns += [
+    path(
+        "password-reset/",
+        auth_views.PasswordResetView.as_view(
+            template_name="chat/password_reset.html"
+        ),
+        name="password_reset",
+    ),
+    path(
+        "password-reset/done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="chat/password_reset_done.html"
+        ),
+        name="password_reset_done",
+    ),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="chat/password_reset_confirm.html"
+        ),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset/done/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="chat/password_reset_complete.html"
+        ),
+        name="password_reset_complete",
+    ),
 ]

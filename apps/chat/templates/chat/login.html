@@ -46,13 +46,17 @@
       </form>
 
         <div class="login-register-link"> 
-          Se não tem conta clique aqui:<a href="{% url 'register' %}">Cadastre-se</a>    
+          Clique para se cadastrar<a href="{% url 'register' %}">AQUI</a>    
         </div>
         <div class="login-register-link">
-          <a href="{% url 'resend_activation' %}">
-            Conta não ativada? Reenviar e-mail
+          Conta não ativada reenvie o e-mail<a href="{% url 'resend_activation' %}">AQUI</a>
+        </div>
+        <div class="login-register-link">
+          <a href="{% url 'password_reset' %}">
+            Esqueceu a senha?
           </a>
         </div>
+
 
       </section>
 
