@@ -1,6 +1,59 @@
-<form method="post">
-  {% csrf_token %}
-  <label>E-mail</label>
-  <input type="email" name="email" required>
-  <button type="submit">Reenviar ativação</button>
-</form>
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta charset="utf-8">
+  <title>Reenviar ativação</title>
+  <link rel="stylesheet" href="{% static 'chat/css/login.css' %}">
+</head>
+<body>
+
+<div class="layout">
+
+  <main class="login-main">
+    <div class="login-card">
+
+      <header class="login-header">
+        <h1>Reenviar ativação</h1>
+      </header>
+
+      <section class="login-body">
+        <form method="post" class="login-form" novalidate>
+          {% csrf_token %}
+
+          {% if error %}
+            <div class="login-error">{{ error }}</div>
+          {% endif %}
+
+          <div class="login-field">
+            <label for="email">E-mail</label>
+            <input type="email" name="email" id="email" required>
+          </div>
+
+          <button type="submit" class="login-button">
+            Reenviar e-mail
+          </button>
+        </form>
+
+        <div class="login-register-link">
+          <a href="{% url 'login' %}">Voltar para o login</a>
+        </div>
+
+      </section>
+
+      <footer class="login-footer">
+        <strong>© 2026 - JPM-development</strong>
+      </footer>
+
+    </div>
+  </main>
+
+</div>
+
+</body>
+</html>
