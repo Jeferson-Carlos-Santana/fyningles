@@ -20,22 +20,14 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from .forms_register_user import RegisterUserForm
-
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
-
-
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
-
 from django.contrib.auth.views import PasswordResetView
-
-
-
-
 import requests, json, re
 
 # TOTAL DE PONTOS POR DIA
@@ -75,10 +67,6 @@ def phrase_completed(request):
     })
 # FIM FRASES CONCLUIDAS
 
-
-
-
-
 def resend_activation(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -112,9 +100,6 @@ def resend_activation(request):
 
     return render(request, "chat/resend_activation.html")
 
-
-
-
 def activate_account(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -129,8 +114,6 @@ def activate_account(request, uidb64, token):
 
     return HttpResponse("Link de ativação inválido ou expirado.")
 
-
-
 class ActiveOnlyPasswordResetView(PasswordResetView):
     def form_valid(self, form):
         email = form.cleaned_data["email"]
@@ -141,19 +124,6 @@ class ActiveOnlyPasswordResetView(PasswordResetView):
             return self.form_invalid(form)
 
         return super().form_valid(form)
-    
-
-# class ActiveOnlyPasswordResetView(PasswordResetView):
-#     def form_valid(self, form):
-#         email = form.cleaned_data["email"]
-#         user = User.objects.filter(email=email).first()
-
-#         if user and not user.is_active:
-#             form.add_error("email", "Conta não ativada. Reenvie o e-mail de ativação.")
-#             return self.form_invalid(form) 
-
-#         return super().form_valid(form)
-
 
 def register_user(request):
     if request.method == "POST":
@@ -184,14 +154,7 @@ def register_user(request):
 
     return render(request, "chat/register_user.html", {
         "form": form
-    })
-
-
-
-    
-    
-    
-    
+    })    
 
 
 # FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
