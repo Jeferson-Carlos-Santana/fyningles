@@ -48,6 +48,12 @@
         <div class="login-register-link"> 
           Se não tem conta clique aqui:<a href="{% url 'register' %}">Cadastre-se</a>    
         </div>
+        <div class="login-register-link">
+          <a href="{% url 'resend_activation' %}">
+            Conta não ativada? Reenviar e-mail
+          </a>
+        </div>
+
       </section>
 
       <footer class="login-footer">

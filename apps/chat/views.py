@@ -26,12 +26,11 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 
 
-
-
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
+
 
 
 import requests, json, re
@@ -72,6 +71,34 @@ def phrase_completed(request):
         "frases": frases
     })
 # FIM FRASES CONCLUIDAS
+
+
+
+
+
+def resend_activation(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        user = User.objects.filter(email=email).first()
+
+        if user and not user.is_active:
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            activation_link = request.build_absolute_uri(
+                reverse("activate", kwargs={"uidb64": uid, "token": token})
+            )
+
+            send_mail(
+                "Reenvio de ativação",
+                f"Clique no link para ativar sua conta:\n{activation_link}",
+                None,
+                [user.email],
+            )
+
+        return redirect("login")
+
+    return render(request, "chat/resend_activation.html")
+
 
 
 
