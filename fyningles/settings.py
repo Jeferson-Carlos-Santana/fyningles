@@ -29,6 +29,14 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@seusite.com"
 
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "jefersoncarlossantana@gmail.com"
+EMAIL_HOST_PASSWORD = "obna dvdu gidg hyud"
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
