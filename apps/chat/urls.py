@@ -41,6 +41,7 @@ urlpatterns += [
         name="password_reset",
     ),
 
+
     path(
         "password-reset/done/",
         auth_views.PasswordResetDoneView.as_view(

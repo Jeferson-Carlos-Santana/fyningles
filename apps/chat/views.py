@@ -135,11 +135,11 @@ class ActiveOnlyPasswordResetView(PasswordResetView):
     def form_valid(self, form):
         email = form.cleaned_data["email"]
         user = User.objects.filter(email=email).first()
+
         if user and not user.is_active:
-            return self.render_to_response(self.get_context_data(
-                form=form,
-                error="Conta não ativada. Reenvie o e-mail de ativação."
-            ))
+            form.add_error("email", "Conta não ativada. Reenvie o e-mail de ativação.")
+            return self.form_invalid(form)
+
         return super().form_valid(form)
     
 
