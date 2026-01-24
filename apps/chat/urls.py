@@ -20,4 +20,6 @@ urlpatterns = [
     path("user/nivel/set/", views.user_nivel_set, name="user_nivel_set"),
     path("phrases/progress/", views.phrase_progress, name="phrase_progress"),
     path("phrases/completed/", views.phrase_completed, name="phrase_completed"),
+    path("activate/<uidb64>/<token>/", views.activate_account, name="activate"),
+
 ]

@@ -18,9 +18,20 @@ from django.db.models import Sum
 from django.views.decorators.http import require_GET
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseForbidden
-
 from django.contrib.auth.forms import UserCreationForm
 from .forms_register_user import RegisterUserForm
+
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+
+
+
+
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.urls import reverse
 
 
 import requests, json, re
@@ -64,6 +75,19 @@ def phrase_completed(request):
 
 
 
+def activate_account(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (User.DoesNotExist, ValueError, TypeError):
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return redirect("login")
+
+    return HttpResponse("Link de ativação inválido ou expirado.")
 
 
 
@@ -72,8 +96,26 @@ def register_user(request):
     if request.method == "POST":
         form = RegisterUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect("login")
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+
+            activation_link = request.build_absolute_uri(
+                reverse("activate", kwargs={"uidb64": uid, "token": token})
+            )
+
+            send_mail(
+                "Ative sua conta",
+                f"Clique no link para ativar sua conta:\n{activation_link}",
+                None,
+                [user.email],
+            )
+
+            return redirect("login")            
+            
     else:
         form = RegisterUserForm()
 

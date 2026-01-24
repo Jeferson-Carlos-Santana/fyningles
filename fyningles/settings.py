@@ -26,6 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@seusite.com"
+
+
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 # SECURITY WARNING: don't run with debug turned on in production!
