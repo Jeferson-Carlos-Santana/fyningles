@@ -796,22 +796,22 @@ const USER_NAME = document.body.dataset.username || "";
       "você falhou, continuamos então.",
       "você falhou, vamos à próxima.",
       "você errou, vamos à próxima.",      
-      "Está errada, continuamos então.",
-      "Está errada, próxima então.",
+      "está errada, continuamos então.",
+      "está errada, próxima então.",
       "você falhou, passamos à seguinte.",
       "você errou, vamos à seguinte.",
       "não deu certo, continuamos.",
       "não acertou, continuamos.",
       "você falhou, continuamos.",
-      "Está errada, seguimos.",
+      "está errada, seguimos.",
       "você errou, seguimos.",
       "você errou, continuamos.",
       "você falhou, seguimos.",      
-      "Está errada, continuamos.",     
-      "Está errada, seguimos então.",
-      "Não deu certo, seguimos."     
+      "está errada, continuamos.",     
+      "está errada, seguimos então.",
+      "não deu certo, seguimos."     
     ].map(msg =>
-      USER_NAME ? `${USER_NAME}, ${msg}` : msg
+      USER_NAME ? `${USER_NAME} (stp1) ${msg}` : msg
     );
 
       // ESCONDE TODAS
