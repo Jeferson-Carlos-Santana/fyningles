@@ -205,6 +205,9 @@ class UserNivel(models.Model):
     )
 
     nivel = models.PositiveSmallIntegerField(default=0)  # 0, 1, 2, 3
+    
+    last_activation_sent_at = models.DateTimeField(null=True, blank=True)
+    last_password_reset_sent_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "user_nivel"

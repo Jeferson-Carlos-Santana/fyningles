@@ -199,6 +199,12 @@ const USER_NAME = document.body.dataset.username || "";
         "giveaway": "give way",
         "daycare": "take care",
         "itchy": "it",
+        "galway": "go away",
+        "weezer": "we've",
+        "norris": "no worries",
+        "itihas": "it has",
+        "itihaas": "it has",
+        "does to": "does it",
         "alright": "all right"
       };
 
