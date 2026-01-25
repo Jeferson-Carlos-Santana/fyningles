@@ -59,7 +59,7 @@
               <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
             </button> 
             <span>{{ lesson_title }}</span>    
-            <form method="post" action="/admin/logout/" class="logout-form">
+            <form method="post" action="/logout/" class="logout-form">
               {% csrf_token %}
               <button class="btn-sair" type="submit" aria-label="Sair">
                 <img src="{% static 'chat/img/log-out.png' %}" alt="Sair" width="41">

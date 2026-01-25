@@ -1,9 +1,11 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView
 from .views import index, chat, chat_home, dictionary, dictionary_add, dictionary_delete, tts, tts_line
 from . import views
 urlpatterns = [
     path("", index, name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path("register/", views.register_user, name="register"), 
     path("dashboard/", index, name="dashboard"),
     path("chat/", chat_home, name="chat"),
