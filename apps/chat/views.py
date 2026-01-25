@@ -117,7 +117,8 @@ def resend_activation(request):
                 "error": "Esta conta já está ativada."
             })
 
-        nivel = user.nivel
+        # nivel = user.nivel
+        nivel, _ = UserNivel.objects.get_or_create(user=user)
         now = timezone.now()
 
         # RATE LIMIT — 15 minutos
@@ -184,7 +185,8 @@ class ActiveOnlyPasswordResetView(PasswordResetView):
             return self.form_invalid(form)
 
         if user:
-            nivel = user.nivel
+            # nivel = user.nivel
+            nivel, _ = UserNivel.objects.get_or_create(user=user)
             now = timezone.now()
 
             # RATE LIMIT — 15 minutos
