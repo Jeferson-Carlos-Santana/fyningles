@@ -67,11 +67,46 @@ def phrase_completed(request):
     })
 # FIM FRASES CONCLUIDAS
 
+# def resend_activation(request):
+#     if request.method == "POST":
+#         email = request.POST.get("email")
+#         user = User.objects.filter(email=email).first()
+        
+#         if not user:
+#             return render(request, "chat/resend_activation.html", {
+#                 "error": "E-mail não encontrado."
+#             })
+
+#         if user.is_active:
+#             return render(request, "chat/resend_activation.html", {
+#                 "error": "Esta conta já está ativada."
+#             })
+
+#         if user and not user.is_active:
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             token = default_token_generator.make_token(user)
+#             activation_link = request.build_absolute_uri(
+#                 reverse("activate", kwargs={"uidb64": uid, "token": token})
+#             )
+
+#             send_mail(
+#                 "Reenvio de ativação",
+#                 f"Clique no link para ativar sua conta:\n{activation_link}",
+#                 None,
+#                 [user.email],
+#             )
+
+#         return redirect("login")
+
+#     return render(request, "chat/resend_activation.html")
+
+
+
 def resend_activation(request):
     if request.method == "POST":
         email = request.POST.get("email")
         user = User.objects.filter(email=email).first()
-        
+
         if not user:
             return render(request, "chat/resend_activation.html", {
                 "error": "E-mail não encontrado."
@@ -82,23 +117,35 @@ def resend_activation(request):
                 "error": "Esta conta já está ativada."
             })
 
-        if user and not user.is_active:
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = default_token_generator.make_token(user)
-            activation_link = request.build_absolute_uri(
-                reverse("activate", kwargs={"uidb64": uid, "token": token})
-            )
+        nivel = user.nivel
+        now = timezone.now()
 
-            send_mail(
-                "Reenvio de ativação",
-                f"Clique no link para ativar sua conta:\n{activation_link}",
-                None,
-                [user.email],
-            )
+        # RATE LIMIT — 15 minutos
+        if nivel.last_activation_sent_at and now - nivel.last_activation_sent_at < timedelta(minutes=15):
+            return render(request, "chat/resend_activation.html", {
+                "error": "Aguarde alguns minutos antes de reenviar o e-mail."
+            })
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        activation_link = request.build_absolute_uri(
+            reverse("activate", kwargs={"uidb64": uid, "token": token})
+        )
+
+        send_mail(
+            "Reenvio de ativação",
+            f"Clique no link para ativar sua conta:\n{activation_link}",
+            None,
+            [user.email],
+        )
+
+        nivel.last_activation_sent_at = now
+        nivel.save(update_fields=["last_activation_sent_at"])
 
         return redirect("login")
 
     return render(request, "chat/resend_activation.html")
+
 
 def activate_account(request, uidb64, token):
     try:
@@ -114,6 +161,19 @@ def activate_account(request, uidb64, token):
 
     return HttpResponse("Link de ativação inválido ou expirado.")
 
+# class ActiveOnlyPasswordResetView(PasswordResetView):
+#     def form_valid(self, form):
+#         email = form.cleaned_data["email"]
+#         user = User.objects.filter(email=email).first()
+
+#         if user and not user.is_active:
+#             form.add_error("email", "Conta não ativada. Reenvie o e-mail de ativação.")
+#             return self.form_invalid(form)
+
+#         return super().form_valid(form)
+
+
+
 class ActiveOnlyPasswordResetView(PasswordResetView):
     def form_valid(self, form):
         email = form.cleaned_data["email"]
@@ -123,7 +183,24 @@ class ActiveOnlyPasswordResetView(PasswordResetView):
             form.add_error("email", "Conta não ativada. Reenvie o e-mail de ativação.")
             return self.form_invalid(form)
 
+        if user:
+            nivel = user.nivel
+            now = timezone.now()
+
+            # RATE LIMIT — 15 minutos
+            if (
+                nivel.last_password_reset_sent_at
+                and now - nivel.last_password_reset_sent_at < timedelta(minutes=15)
+            ):
+                form.add_error("email", "Aguarde alguns minutos antes de tentar novamente.")
+                return self.form_invalid(form)
+
+            # marca envio
+            nivel.last_password_reset_sent_at = now
+            nivel.save(update_fields=["last_password_reset_sent_at"])
+
         return super().form_valid(form)
+
 
 def register_user(request):
     if request.method == "POST":
