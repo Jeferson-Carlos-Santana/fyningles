@@ -44,20 +44,16 @@
           Entrar
         </button>
       </form>
-
+        
+        <div class="login-register-link">
+          Esqueceu a senha clique<a href="{% url 'password_reset' %}">AQUI.</a>
+        </div>
         <div class="login-register-link"> 
-          Clique para se cadastrar<a href="{% url 'register' %}">AQUI</a>    
+          Clique para se cadastrar<a href="{% url 'register' %}">AQUI.</a>    
         </div>
         <div class="login-register-link">
-          Conta não ativada reenvie o e-mail<a href="{% url 'resend_activation' %}">AQUI</a>
+          Ativar conta clique<a href="{% url 'resend_activation' %}">AQUI.</a>
         </div>
-        <div class="login-register-link">
-          <a href="{% url 'password_reset' %}">
-            Esqueceu a senha?
-          </a>
-        </div>
-
-
       </section>
 
       <footer class="login-footer">

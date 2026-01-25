@@ -43,7 +43,7 @@ body{
   position: relative;
   width: 100%;
   max-width: 360px;
-  min-height: 340px;
+  min-height: 290px;
   background: var(--color-secondary);
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0,0,0,.4);
@@ -136,6 +136,7 @@ body{
 }
 
 .login-register-link{
+  /* text-align: center; */
   margin-top: 10px;
   color: var(--color-warning-light);
 }
@@ -143,4 +144,6 @@ body{
   text-decoration: none;
   margin-left: 5px;
   color: var(--color-white);
+  
 }
+
