@@ -38,26 +38,6 @@ const USER_NAME = document.body.dataset.username || "";
         el.textContent = Number(data.total || 0).toLocaleString("pt-BR");
       });
   }
-
-const trocas = {
-  "(stp0)": ",",
-  "(stp1)": ".",
-  "(stp2)": "—",
-  "(stp3)": "— —",
-  "(a)": "",
-  "(as)": ""
-};
-
-function textoParaFala(t) {
-  for (const k in trocas) t = t.split(k).join(trocas[k]);
-  return t;
-}
-
-function textoParaTela(t) {
-  return t.replace(/\(stp\d\)/g, "").replace(/\(a\)|\(as\)/g, "").trim();
-}
-
-
   
   document.addEventListener("DOMContentLoaded", function () {   
      
@@ -827,7 +807,7 @@ function textoParaTela(t) {
       "está errada, seguimos então.",
       "não deu certo, seguimos."     
     ].map(msg =>
-      USER_NAME ? `${USER_NAME} (stp1) ${msg}` : msg
+      USER_NAME ? `${USER_NAME}, ${msg}` : msg
     );
 
       // ESCONDE TODAS
@@ -1364,8 +1344,7 @@ function textoParaTela(t) {
 
         const avanco = document.createElement("div");
         avanco.className = "chat-message system errado";
-        // avanco.textContent = msgAvanco;
-        avanco.textContent = textoParaTela(msgAvanco);
+        avanco.textContent = msgAvanco;
 
         lastMsgEl.after(avanco);
         lastMsgEl = avanco;
@@ -1377,7 +1356,7 @@ function textoParaTela(t) {
         const r = await fetch("/tts/line/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: textoParaFala(msgAvanco), lang: "pt" })
+          body: JSON.stringify({ text: msgAvanco, lang: "pt" })
         });
 
         const d = await r.json();
