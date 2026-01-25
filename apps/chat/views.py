@@ -67,41 +67,6 @@ def phrase_completed(request):
     })
 # FIM FRASES CONCLUIDAS
 
-# def resend_activation(request):
-#     if request.method == "POST":
-#         email = request.POST.get("email")
-#         user = User.objects.filter(email=email).first()
-        
-#         if not user:
-#             return render(request, "chat/resend_activation.html", {
-#                 "error": "E-mail não encontrado."
-#             })
-
-#         if user.is_active:
-#             return render(request, "chat/resend_activation.html", {
-#                 "error": "Esta conta já está ativada."
-#             })
-
-#         if user and not user.is_active:
-#             uid = urlsafe_base64_encode(force_bytes(user.pk))
-#             token = default_token_generator.make_token(user)
-#             activation_link = request.build_absolute_uri(
-#                 reverse("activate", kwargs={"uidb64": uid, "token": token})
-#             )
-
-#             send_mail(
-#                 "Reenvio de ativação",
-#                 f"Clique no link para ativar sua conta:\n{activation_link}",
-#                 None,
-#                 [user.email],
-#             )
-
-#         return redirect("login")
-
-#     return render(request, "chat/resend_activation.html")
-
-
-
 def resend_activation(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -161,18 +126,6 @@ def activate_account(request, uidb64, token):
         return redirect("login")
 
     return HttpResponse("Link de ativação inválido ou expirado.")
-
-# class ActiveOnlyPasswordResetView(PasswordResetView):
-#     def form_valid(self, form):
-#         email = form.cleaned_data["email"]
-#         user = User.objects.filter(email=email).first()
-
-#         if user and not user.is_active:
-#             form.add_error("email", "Conta não ativada. Reenvie o e-mail de ativação.")
-#             return self.form_invalid(form)
-
-#         return super().form_valid(form)
-
 
 
 class ActiveOnlyPasswordResetView(PasswordResetView):

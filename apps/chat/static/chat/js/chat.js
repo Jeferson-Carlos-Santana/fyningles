@@ -79,7 +79,7 @@ const USER_NAME = document.body.dataset.username || "";
 
       const TEMPO_BASE = 5000;          // 3s mínimos
       const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
-      const TEMPO_MAX = 12000;         // 12s máximo
+      const TEMPO_MAX = 12000;         // 12s máximo 
 
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
@@ -1050,7 +1050,7 @@ const USER_NAME = document.body.dataset.username || "";
           const data = await r.json();
               
 
-          if (!data.exists) {
+          if (!data.exists || data.nivel === 0) {
             document.getElementById("nivel-modal").style.display = "block";
             return;
           }
