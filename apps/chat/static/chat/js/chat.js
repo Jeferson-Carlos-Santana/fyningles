@@ -201,6 +201,8 @@ const USER_NAME = document.body.dataset.username || "";
         "itihas": "it has",
         "itihaas": "it has",
         "does to": "does it",
+        "hey": "he",
+        "ri": "he",
         "alright": "all right"
       };
 
