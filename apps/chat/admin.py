@@ -226,16 +226,6 @@ class ChatAdmin(admin.ModelAdmin):
     en_abbrev = self.contract_en(en_full)
     en_informal = self.gerar_informal(en_full)
     
-    # TROCA OS 2 CODIGOS DE: IMPLEMENTACAO 1, POR ESSE
-    # traduções base
-    # try:
-    #   pt = GoogleTranslator(source="en", target="pt").translate(en_full)
-    #   es = GoogleTranslator(source="en", target="es").translate(en_full)
-    #   fr = GoogleTranslator(source="en", target="fr").translate(en_full)
-    #   it = GoogleTranslator(source="en", target="it").translate(en_full)
-    # except Exception:
-    #   pt = es = fr = it = None
-    
     # IMPLEMENTACAO 1
     trads = traduz_com_retry(en_full)
     pt, es, fr, it = trads["pt"], trads["es"], trads["fr"], trads["it"]
@@ -243,15 +233,6 @@ class ChatAdmin(admin.ModelAdmin):
     # AQUI GRAVA NO JSON AS VARIAVEIS
     from apps.chat.utils.dictionary_writer import add_term, term_exists
 
-    # EN → todas as formas
-    # ingleses = [en_full, en_abbrev, en_informal]
-
-    # for txt in ingleses:
-    #     if txt:
-    #         term = re.sub(r"[.:!?]", "", txt).lower().strip()
-    #         if not term_exists("en", term):
-    #             add_term("en", term)
-    
     # --- DICIONÁRIO EN (novo / edição com limpeza) ---
     def clean_term(t: str) -> str:
         return re.sub(r"[.:!?]", "", t).lower().strip()
