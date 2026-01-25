@@ -1365,7 +1365,7 @@ function textoParaTela(t) {
         const avanco = document.createElement("div");
         avanco.className = "chat-message system errado";
         // avanco.textContent = msgAvanco;
-        vanco.textContent = textoParaTela(msgAvanco);
+        avanco.textContent = textoParaTela(msgAvanco);
 
         lastMsgEl.after(avanco);
         lastMsgEl = avanco;
