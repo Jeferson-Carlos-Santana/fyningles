@@ -27,7 +27,7 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.contrib.auth.views import PasswordResetView
-import requests, json, re
+import requests, json, re, math
 
 
 # TOTAL DE PONTOS POR DIA
@@ -255,7 +255,9 @@ def mark_learned(request):
 
     max_points = {1: 150, 2: 200, 3: 250}.get(nivel, 150)
 
-    points = int(max_points * (percent / 100))
+    #points = int(max_points * (percent / 100))
+    
+    points = math.ceil(max_points * percent / 100)
 
     with transaction.atomic():
         obj, _ = Progress.objects.get_or_create(
