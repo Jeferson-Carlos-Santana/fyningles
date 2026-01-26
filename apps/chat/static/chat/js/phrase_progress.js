@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const j = await r.json().catch(() => ({}));
   if (r.ok && j.ok) {
     //if (currentCard) currentCard.remove();
+    if (currentCard) window.location.reload();    
     modal.style.display = "none";
     currentChatId = null;
     currentCard = null;
