@@ -230,7 +230,6 @@ def phrase_progress(request):
 # FIM FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 
 
-
 @csrf_exempt
 @login_required
 @require_POST
@@ -238,6 +237,9 @@ def mark_learned(request):
     try:
         data = json.loads(request.body)
         chat_id = int(data.get("chat_id"))
+        percent = int(data.get("percent", 100))
+        if percent not in (25, 50, 75, 100):
+            raise ValueError
     except Exception:
         return JsonResponse({"ok": False, "error": "Dados inválidos"}, status=400)
 
@@ -253,6 +255,8 @@ def mark_learned(request):
 
     max_points = {1: 150, 2: 200, 3: 250}.get(nivel, 150)
 
+    points = int(max_points * (percent / 100))
+
     with transaction.atomic():
         obj, _ = Progress.objects.get_or_create(
             user=request.user,
@@ -260,14 +264,55 @@ def mark_learned(request):
             defaults={"lesson_id": chat.lesson_id, "points": 0}
         )
 
-        obj.lesson_id = chat.lesson_id
-        obj.points = max_points
-        obj.stage = 10
-        obj.status = 1
-        obj.concluded_at = timezone.now()
-        obj.save(update_fields=["lesson_id", "points", "stage", "status", "concluded_at"])
+        # converte nivel -> NIVEL interno
+        if nivel == 1:
+            NIVEL = 0
+        elif nivel == 2:
+            NIVEL = 5
+        elif nivel == 3:
+            NIVEL = 10
+        else:
+            NIVEL = 0
 
-    return JsonResponse({"ok": True})
+        # limites de stage
+        STAGES = [
+            (25  + NIVEL*1,  1),
+            (50  + NIVEL*2,  2),
+            (70  + NIVEL*3,  3),
+            (90  + NIVEL*4,  4),
+            (105 + NIVEL*5,  5),
+            (120 + NIVEL*6,  6),
+            (130 + NIVEL*7,  7),
+            (140 + NIVEL*8,  8),
+            (145 + NIVEL*9,  9),
+            (150 + NIVEL*10, 10),
+            (155 + NIVEL*10, 11),
+            (160 + NIVEL*10, 12),
+            (165 + NIVEL*10, 13),
+        ]
+
+        stage = 0
+        for limite, s in STAGES:
+            if points >= limite:
+                stage = s
+
+        obj.lesson_id = chat.lesson_id
+        obj.points = points
+        obj.stage = stage
+
+        if percent == 100:
+            obj.status = 1
+            obj.concluded_at = timezone.now()
+        else:
+            obj.status = 0
+            obj.concluded_at = None
+
+        obj.save(update_fields=[
+            "lesson_id", "points", "stage", "status", "concluded_at"
+        ])
+
+    return JsonResponse({"ok": True, "points": points})
+
 
 
 

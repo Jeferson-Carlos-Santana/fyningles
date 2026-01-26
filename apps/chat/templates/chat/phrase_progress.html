@@ -66,13 +66,20 @@
         </div>
         <!-- MODAL JÁ APRENDI -->
         <div id="learned-modal" class="nivel-modal" style="display:none;">
-        <div class="nivel-box">
-            <button class="nivel-close" aria-label="Fechar">×</button>
-            <h3>Marcar como aprendida?</h3>
-            <label>Ao confirmar, esta frase será marcada como concluída.</label>
-            <button id="btn-confirm-learned" type="button">Confirmar</button>
+            <div class="nivel-box">
+                <button class="nivel-close" aria-label="Fechar">×</button>
+
+                <h3>Quanto você já aprendeu?</h3>
+
+                <label><input type="radio" name="learned_percent" value="25"> Já aprendi 25%</label>
+                <label><input type="radio" name="learned_percent" value="50"> Já aprendi 50%</label>
+                <label><input type="radio" name="learned_percent" value="75"> Já aprendi 75%</label>
+                <label><input type="radio" name="learned_percent" value="100" checked> Já aprendi 100%</label>
+
+                <button id="btn-confirm-learned" type="button">Confirmar</button>
+            </div>
         </div>
-        </div>
+
 
 
         <script src="{% static 'chat/js/script.js' %}"></script>

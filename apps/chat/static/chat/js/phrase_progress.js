@@ -44,21 +44,52 @@ document.addEventListener("DOMContentLoaded", () => {
     currentCard = null;
   });
 
+  // confirmBtn.addEventListener("click", async () => {
+  //   if (!currentChatId) return;
+
+  //   const r = await fetch("/progress/mark-learned/", {
+  //     method: "POST",
+  //     headers: {"Content-Type": "application/json"},
+  //     body: JSON.stringify({ chat_id: currentChatId })
+  //   });
+
+  //   const j = await r.json().catch(() => ({}));
+  //   if (r.ok && j.ok) {
+  //     if (currentCard) currentCard.remove();
+  //     modal.style.display = "none";
+  //     currentChatId = null;
+  //     currentCard = null;
+  //   }
+  // });
+
   confirmBtn.addEventListener("click", async () => {
-    if (!currentChatId) return;
+  if (!currentChatId) return;
 
-    const r = await fetch("/progress/mark-learned/", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ chat_id: currentChatId })
-    });
+  const checked = document.querySelector(
+    'input[name="learned_percent"]:checked'
+  );
+  if (!checked) return;
 
-    const j = await r.json().catch(() => ({}));
-    if (r.ok && j.ok) {
-      if (currentCard) currentCard.remove();
-      modal.style.display = "none";
-      currentChatId = null;
-      currentCard = null;
-    }
+  const percent = parseInt(checked.value);
+
+  const r = await fetch("/progress/mark-learned/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: currentChatId,
+      percent: percent
+    })
   });
+
+  const j = await r.json().catch(() => ({}));
+  if (r.ok && j.ok) {
+    if (currentCard) currentCard.remove();
+    modal.style.display = "none";
+    currentChatId = null;
+    currentCard = null;
+  }
+});
+
+
+
 });
