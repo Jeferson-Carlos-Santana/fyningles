@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const j = await r.json().catch(() => ({}));
   if (r.ok && j.ok) {
-    if (currentCard) currentCard.remove();
+    //if (currentCard) currentCard.remove();
     modal.style.display = "none";
     currentChatId = null;
     currentCard = null;
