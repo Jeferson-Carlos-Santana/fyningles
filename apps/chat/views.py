@@ -208,6 +208,7 @@ def phrase_progress(request):
 
     progressos = (
         Progress.objects
+        .filter(user=user, points__lt=limite_por_frase) # aqui tira o 100% das frases em processo
         .filter(user=user)
         .select_related("chat")
         .order_by("-points")[:1000] # limita frases em andamento para usuario
@@ -229,7 +230,7 @@ def phrase_progress(request):
     })
 # FIM FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 
-
+# MODIFICA NA FUNCAO (já aprendi)
 @csrf_exempt
 @login_required
 @require_POST
@@ -315,23 +316,7 @@ def mark_learned(request):
 
     return JsonResponse({"ok": True, "points": points})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# FIM MODIFICA NA FUNCAO (já aprendi)
 
 @login_required
 def chat_home(request):
