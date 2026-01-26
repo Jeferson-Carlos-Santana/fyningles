@@ -210,7 +210,8 @@ def phrase_progress(request):
         Progress.objects
         .filter(user=user)
         .select_related("chat")
-        .order_by("-updated_at")[:100] # limita frases em andamento para usuario
+        #.order_by("-updated_at")[:100] 
+        .order_by("-points")[:100] # limita frases em andamento para usuario
     )
 
     frases = []
