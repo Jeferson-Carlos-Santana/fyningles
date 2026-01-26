@@ -25,6 +25,7 @@ urlpatterns = [
     path("phrases/completed/", views.phrase_completed, name="phrase_completed"),
     path("activate/<uidb64>/<token>/", views.activate_account, name="activate"),
     path("resend-activation/", views.resend_activation, name="resend_activation"),
+    path("progress/mark-learned/", views.mark_learned, name="mark_learned"),
 ]
 
 urlpatterns += [

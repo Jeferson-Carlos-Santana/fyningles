@@ -38,7 +38,8 @@
                         <input type="text" class="phrase-search" id="phraseSearch" placeholder="Buscar frase...">
                         {% for f in frases %}
                         <div class="phrase-item" data-text="{{ f.text|lower }}">
-                            <button class="btn-learned" data-chat-id="{{ f.chat_id }}">Já aprendi</button>
+                            
+                            <button class="btn-learned" type="button" data-chat-id="{{ f.chat_id }}">Já aprendi</button>
                             <div class="phrase-body">
                                 <div class="phrase-text">{{ f.text }}</div>
                                 <div class="phrase-text phrase-text-pt">{{ f.text_pt }}</div>
@@ -67,11 +68,12 @@
         <div id="learned-modal" class="nivel-modal" style="display:none;">
         <div class="nivel-box">
             <button class="nivel-close" aria-label="Fechar">×</button>
-            <h3>Marcar frase como aprendida?</h3>
-            <label>Ao confirmar, esta frase não aparecerá mais na lista.</label>
-            <button id="btn-confirm-learned">Confirmar</button>
+            <h3>Marcar como aprendida?</h3>
+            <label>Ao confirmar, esta frase será marcada como concluída.</label>
+            <button id="btn-confirm-learned" type="button">Confirmar</button>
         </div>
         </div>
+
 
         <script src="{% static 'chat/js/script.js' %}"></script>
         <script src="{% static 'chat/js/phrase_progress.js' %}"></script>  

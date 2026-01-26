@@ -7,7 +7,6 @@ from langdetect import detect, LangDetectException
 from apps.chat.services.language_detector import detectar_idioma
 from django.views.decorators.csrf import csrf_exempt
 from .models import Chat, Progress, ProgressTmp, UserNivel
-from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -29,6 +28,7 @@ from django.core.mail import send_mail
 from django.urls import reverse
 from django.contrib.auth.views import PasswordResetView
 import requests, json, re
+
 
 # TOTAL DE PONTOS POR DIA
 TOTAL_POINTS_DAY = 5
@@ -218,6 +218,7 @@ def phrase_progress(request):
         percent = min(int((p.points / limite_por_frase) * 100), 100)
 
         frases.append({
+            "chat_id": p.chat_id,
             "text": (p.chat.expected_en or "").strip(),
             "text_pt": (p.chat.expected_pt or "").strip(),
             "percent": percent,
@@ -227,6 +228,63 @@ def phrase_progress(request):
         "frases": frases
     })
 # FIM FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
+
+
+
+@csrf_exempt
+@login_required
+@require_POST
+def mark_learned(request):
+    try:
+        data = json.loads(request.body)
+        chat_id = int(data.get("chat_id"))
+    except Exception:
+        return JsonResponse({"ok": False, "error": "Dados inválidos"}, status=400)
+
+    try:
+        chat = Chat.objects.get(id=chat_id)
+    except Chat.DoesNotExist:
+        return JsonResponse({"ok": False, "error": "chat_id inexistente"}, status=400)
+
+    try:
+        nivel = UserNivel.objects.get(user=request.user).nivel
+    except UserNivel.DoesNotExist:
+        nivel = 1
+
+    max_points = {1: 150, 2: 200, 3: 250}.get(nivel, 150)
+
+    with transaction.atomic():
+        obj, _ = Progress.objects.get_or_create(
+            user=request.user,
+            chat=chat,
+            defaults={"lesson_id": chat.lesson_id, "points": 0}
+        )
+
+        obj.lesson_id = chat.lesson_id
+        obj.points = max_points
+        obj.stage = 10
+        obj.status = 1
+        obj.concluded_at = timezone.now()
+        obj.save(update_fields=["lesson_id", "points", "stage", "status", "concluded_at"])
+
+    return JsonResponse({"ok": True})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @login_required
 def chat_home(request):
