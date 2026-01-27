@@ -162,7 +162,7 @@
   margin-right: 8px;
 }
 
-#btn-confirm-completed {
+#btn-confirm-learned {
   margin-top: 18px;
   width: 100%;
   padding: 10px;
@@ -175,7 +175,7 @@
   transition: background 0.2s ease;
 }
 
-#btn-confirm-completed:hover {
+#btn-confirm-learned:hover {
   background: #ffc94d;
 }
 
