@@ -94,7 +94,7 @@
 
 .nivel-box {
   position: fixed;
-  top: 150px;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #1c2533;
