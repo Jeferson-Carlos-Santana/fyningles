@@ -116,7 +116,7 @@
     right: 6px;
     font-size: 11px;
     padding: 4px 8px;
-    background: var(--color-success);
+    background: var(--color-base-btn);
     color: #fff;
     border: none;
     border-radius: 4px;
