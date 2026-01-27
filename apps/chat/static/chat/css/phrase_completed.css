@@ -8,6 +8,7 @@
 }
 
 .phrase-item {
+    position: relative;
     background: var(--color-li);
     border: 1px solid var(--color-li-hover);
 }

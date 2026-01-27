@@ -8,6 +8,7 @@
 }
 
 .phrase-item {
+    position: relative;
     background: var(--color-li);
     border: 1px solid var(--color-li-hover);
 }
@@ -105,10 +106,6 @@
     box-shadow: 0 0 0 2px rgba(179, 119, 0, 0.3);
 }
 /* FIM BUSCA */
-
-.phrase-item {
-    position: relative;
-}
 
 .btn-learned { 
     position: absolute;
