@@ -69,6 +69,19 @@
 }
 /* FIM BUSCA */
 
+.btn-learned {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 11px;
+    padding: 4px 8px;
+    background: var(--color-success);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 /* RESPONSIVO */
 
 @media (min-width: 450px) {  
