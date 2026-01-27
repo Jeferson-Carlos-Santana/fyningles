@@ -203,6 +203,7 @@ const USER_NAME = document.body.dataset.username || "";
         "does to": "does it",
         "hey": "he",
         "ri": "he",
+        "how did yourself": "hold it yourself",
         "alright": "all right"
       };
 

@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
       item.style.display = text.includes(q) ? "" : "none";
     });
   });
-
   
   if (input) {
     input.addEventListener("input", function () {
@@ -44,24 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
     currentCard = null;
   });
 
-  // confirmBtn.addEventListener("click", async () => {
-  //   if (!currentChatId) return;
-
-  //   const r = await fetch("/progress/mark-learned/", {
-  //     method: "POST",
-  //     headers: {"Content-Type": "application/json"},
-  //     body: JSON.stringify({ chat_id: currentChatId })
-  //   });
-
-  //   const j = await r.json().catch(() => ({}));
-  //   if (r.ok && j.ok) {
-  //     if (currentCard) currentCard.remove();
-  //     modal.style.display = "none";
-  //     currentChatId = null;
-  //     currentCard = null;
-  //   }
-  // });
-
   confirmBtn.addEventListener("click", async () => {
   if (!currentChatId) return;
 
@@ -83,13 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const j = await r.json().catch(() => ({}));
   if (r.ok && j.ok) {
-    //if (currentCard) currentCard.remove();
-    if (currentCard) window.location.reload();    
-    modal.style.display = "none";
-    currentChatId = null;
-    currentCard = null;
-  }
-});
+      if (currentCard) window.location.reload();    
+      modal.style.display = "none";
+      currentChatId = null;
+      currentCard = null;
+    }
+  });
 
 
 

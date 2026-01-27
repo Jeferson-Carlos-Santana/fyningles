@@ -42,31 +42,6 @@ LESSON_TITLES = {
     3: "Presente contínuo (to have)",
 }
 
-# FRASES CONCLUIDAS
-@login_required
-def phrase_completed(request):
-    user = request.user
-
-    progressos = (
-        Progress.objects
-        .filter(user=user, stage__gte=10)
-        .select_related("chat")
-        .order_by("-updated_at")
-    )
-
-    frases = []
-    for p in progressos:
-        frases.append({
-            "text": (p.chat.expected_en or "").strip(),
-            "text_pt": (p.chat.expected_pt or "").strip(),
-            "stage": p.stage,
-        })
-
-    return render(request, "chat/phrase_completed.html", {
-        "frases": frases
-    })
-# FIM FRASES CONCLUIDAS
-
 def resend_activation(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -188,6 +163,48 @@ def register_user(request):
         "form": form
     })    
 
+# FRASES CONCLUIDAS
+@login_required
+def phrase_completed(request):
+    user = request.user
+
+    # nível do usuário
+    try:
+        nivel = UserNivel.objects.get(user=user).nivel
+    except UserNivel.DoesNotExist:
+        nivel = 1
+
+    limite_por_frase = {
+        1: 150,
+        2: 200,
+        3: 250,
+    }.get(nivel, 150)
+
+    progressos = (
+        Progress.objects
+        .filter(user=user, points__gt=0)   # AQUI: 0% em vez de 100%
+        .select_related("chat")
+        .order_by("-points")[:1000]
+    )
+
+    frases = []
+    for p in progressos:
+        percent = min(int((p.points / limite_por_frase) * 100), 100)
+
+        frases.append({
+            "chat_id": p.chat_id,
+            "text": (p.chat.expected_en or "").strip(),
+            "text_pt": (p.chat.expected_pt or "").strip(),
+            "percent": percent,
+        })
+
+    frases.sort(key=lambda f: f["percent"], reverse=True)
+
+    return render(request, "chat/phrase_completed.html", {
+        "frases": frases
+    })
+
+# FIM FRASES CONCLUIDAS
 
 # FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 @login_required
