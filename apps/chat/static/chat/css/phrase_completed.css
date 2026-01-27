@@ -70,6 +70,7 @@
 }
 /* FIM BUSCA */
 
+/* BOTAO CARDS */
 .btn-learned { 
     position: absolute;
     top: 6px;
@@ -82,6 +83,80 @@
     border-radius: 4px;
     cursor: pointer;
 }
+/* FIM BOTAO CARDS */
+/* MODAL COMPLETED */
+.nivel-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 99999;
+}
+
+.nivel-box {
+  position: fixed;
+  top: 41%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1c2533;
+  color: #fff;
+  width: 90%;
+  max-width: 500px;
+  padding: 24px 28px;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.nivel-box h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.nivel-box label {
+  display: block;
+  margin: 10px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nivel-box input[type="radio"] {
+  margin-right: 8px;
+}
+
+#btn-confirm-completed {
+  margin-top: 18px;
+  width: 100%;
+  padding: 10px;
+  background: #ffb300;
+  color: #1c2533;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#btn-confirm-completed:hover {
+  background: #ffc94d;
+}
+
+.nivel-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #ccc;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.nivel-close:hover {
+  color: #fff;
+}
+/* FIM MODAL COMPLETED */
 
 /* RESPONSIVO */
 

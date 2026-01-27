@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="{% static 'chat/css/phrase_completed.css' %}">
         <link rel="stylesheet" href="{% static 'chat/css/btn.css' %}">
         <link rel="stylesheet" href="{% static 'chat/css/others.css' %}">  
-        <link rel="stylesheet" href="{% static 'chat/css/chat.css' %}">   
+        <!-- <link rel="stylesheet" href="{% static 'chat/css/chat.css' %}">    -->
     </head>
     <body>
         <div class="layout">
@@ -59,19 +59,19 @@
             </main>
         </div>
         <div id="completed-modal" class="nivel-modal" style="display:none;">
-  <div class="nivel-box">
-    <button class="nivel-close" aria-label="Fechar">×</button>
+            <div class="nivel-box">
+                <button class="nivel-close" aria-label="Fechar">×</button>
 
-    <h3>Quanto você quer deixar essa frase?</h3>
+                <h3>Quanto você quer deixar essa frase?</h3>
 
-    <label><input type="radio" name="completed_percent" value="0" checked> 0%</label>
-    <label><input type="radio" name="completed_percent" value="25"> 25%</label>
-    <label><input type="radio" name="completed_percent" value="50"> 50%</label>
-    <label><input type="radio" name="completed_percent" value="75"> 75%</label>
+                <label><input type="radio" name="completed_percent" value="0" checked> 0%</label>
+                <label><input type="radio" name="completed_percent" value="25"> 25%</label>
+                <label><input type="radio" name="completed_percent" value="50"> 50%</label>
+                <label><input type="radio" name="completed_percent" value="75"> 75%</label>
 
-    <button id="btn-confirm-completed" type="button">Confirmar</button>
-  </div>
-</div>
+                <button id="btn-confirm-completed" type="button">Confirmar</button>
+            </div>
+        </div>
 
         <script src="{% static 'chat/js/script.js' %}"></script>
         <script src="{% static 'chat/js/phrase_completed.js' %}"></script>  
