@@ -94,13 +94,13 @@
 
 .nivel-box {
   position: fixed;
-  top: 41%;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #1c2533;
   color: #fff;
   width: 90%;
-  max-width: 500px;
+  max-width: 350px;
   padding: 24px 28px;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
