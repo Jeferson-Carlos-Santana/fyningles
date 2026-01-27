@@ -182,7 +182,7 @@ def phrase_completed(request):
 
     progressos = (
         Progress.objects
-        .filter(user=user, points__gt=0)   # AQUI: 0% em vez de 100%
+        .filter(user=user, points__gte=limite_por_frase)  # SOMENTE 100%
         .select_related("chat")
         .order_by("-points")[:1000]
     )
