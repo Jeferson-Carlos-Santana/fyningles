@@ -1227,9 +1227,12 @@ const USER_NAME = document.body.dataset.username || "";
 
 const LESSON_ID = Number(document.body.dataset.lessonId);
 const MODO_NOVO = (LESSON_ID === 4);
-if (MODO_NOVO) {
 
-   FLAG = 1;
+ if (!MODO_NOVO) {
+    if (FLAG !== 1) return;
+    if (!esperandoResposta) return;
+  }
+if (MODO_NOVO) {
 
 const rEval = await fetch("/speech/evaluate/", {
     method: "POST",
