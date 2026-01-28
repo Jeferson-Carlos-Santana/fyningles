@@ -1228,20 +1228,9 @@ const USER_NAME = document.body.dataset.username || "";
 const LESSON_ID = Number(document.body.dataset.lessonId);
 const MODO_NOVO = (LESSON_ID === 4);
 
- if (!MODO_NOVO) {
-    if (FLAG !== 1) return;
-    if (!esperandoResposta) return;
-  }
+
 if (MODO_NOVO) {
-
-
-
-  // estado válido mínimo
-  if (FLAG !== 1 || !esperandoResposta) {
-    liberarEntrada();
-    return;
-  }
-
+ 
   let evalData = null;
 
   try {
@@ -1298,9 +1287,10 @@ if (MODO_NOVO) {
   prof.className = "chat-message system";
   prof.innerHTML = feedbackHTML;
 
-  lastMsgEl.after(prof);
+  (lastMsgEl || msgs[index]).after(prof);
   lastMsgEl = prof;
   scrollChatToBottom();
+
 
   // ===== TTS FEEDBACK =====
   try {
