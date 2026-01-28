@@ -1234,34 +1234,65 @@ const MODO_NOVO = (LESSON_ID === 4);
   }
 if (MODO_NOVO) {
 
-const rEval = await fetch("/speech/evaluate/", {
-    method: "POST",
-    credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": getCSRFToken()
-    },
-    body: JSON.stringify({
-      expected: expectedAtual,
-      spoken: textoCorrigido
-    })
-  });
 
-  if (!rEval.ok) return;
 
-  const evalData = await rEval.json();
+  // estado válido mínimo
+  if (FLAG !== 1 || !esperandoResposta) {
+    liberarEntrada();
+    return;
+  }
 
+  let evalData = null;
+
+  try {
+    const rEval = await fetch("/speech/evaluate/", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCSRFToken()
+      },
+      body: JSON.stringify({
+        expected: expectedAtual,
+        spoken: textoCorrigido
+      })
+    });
+
+    if (!rEval.ok) throw new Error("evaluate failed");
+    evalData = await rEval.json();
+
+  } catch (e) {
+    console.error("Erro speech/evaluate", e);
+    FLAG = 0;
+    esperandoResposta = false;
+    liberarEntrada();
+    return;
+  }
+
+  // ===== MÉTRICAS =====
   const pontos = Math.max(evalData.correct || 0, 0);
-  const ok = pontos > 0;
+  const total  = Math.max(evalData.total_words || 1, 1);
+  const erros  = Math.max(evalData.errors || 0, 0);
+
+  const accuracy = pontos / total;
+
+  // ===== CRITÉRIO (SEM TENTATIVAS) =====
+  const ok = (erros === 0) || (accuracy >= 0.8);
 
   bloquearEntrada();
 
-  const msg = ok
+  // ===== FEEDBACK =====
+  const msgBase = ok
     ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
     : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
-  const feedbackHTML =
-    `${msg} <span class="hint">Pontos: <span style="color:red;">${pontos}/${evalData.total_words}</span></span>`;
+  const feedbackHTML = `
+    ${msgBase}
+    <span class="hint">
+      Pontos:
+      <span style="color:red;">${pontos}/${total}</span>
+    </span>
+  `;
 
   const prof = document.createElement("div");
   prof.className = "chat-message system";
@@ -1271,20 +1302,26 @@ const rEval = await fetch("/speech/evaluate/", {
   lastMsgEl = prof;
   scrollChatToBottom();
 
-  const rTts = await fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: prof.textContent, lang: "pt" })
-  });
+  // ===== TTS FEEDBACK =====
+  try {
+    const rTts = await fetch("/tts/line/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: prof.textContent, lang: "pt" })
+    });
 
-  const dTts = await rTts.json();
-  if (dTts.files && dTts.files.length) {
-    tocando = true;
-    await new Promise(r => setTimeout(r, 1100));
-    await tocarUm(dTts.files[0]);
-    tocando = false;
+    const dTts = await rTts.json();
+    if (dTts.files && dTts.files.length) {
+      tocando = true;
+      await new Promise(r => setTimeout(r, 800));
+      await tocarUm(dTts.files[0]);
+      tocando = false;
+    }
+  } catch (e) {
+    console.warn("TTS feedback falhou");
   }
 
+  // ===== PONTUAÇÃO =====
   pontosAndamento += pontos;
   atualizarPontosAndamento();
 
@@ -1302,6 +1339,7 @@ const rEval = await fetch("/speech/evaluate/", {
   atualizarPontosTotais();
   atualizarPontosFeitos();
 
+  // ===== AVANÇO GARANTIDO =====
   FLAG = 0;
   esperandoResposta = false;
   expectedAtual = "";
@@ -1313,6 +1351,7 @@ const rEval = await fetch("/speech/evaluate/", {
   }, 150);
 
   return;
+
 
 
 
