@@ -308,7 +308,12 @@ class ChatAdmin(admin.ModelAdmin):
         templates_pt = self.TEMPLATES_CONTENT_7_PT
         templates_es = self.TEMPLATES_CONTENT_7_ES
         templates_fr = self.TEMPLATES_CONTENT_7_FR
-        templates_it = self.TEMPLATES_CONTENT_7_IT  
+        templates_it = self.TEMPLATES_CONTENT_7_IT
+    elif template_choice == "8":
+        templates_pt = self.TEMPLATES_CONTENT_8_PT
+        templates_es = self.TEMPLATES_CONTENT_8_ES
+        templates_fr = self.TEMPLATES_CONTENT_8_FR
+        templates_it = self.TEMPLATES_CONTENT_8_IT
     else:
         # fallback seguro
         templates_pt = self.TEMPLATES_CONTENT_1_PT
@@ -1379,3 +1384,15 @@ class ChatAdmin(admin.ModelAdmin):
     "<span style='color:blue;'>{it}</span> Diciamo insieme."
   ]
 
+  TEMPLATES_CONTENT_8_PT = [
+    "{en_full}"
+  ]
+  TEMPLATES_CONTENT_8_FR = [
+    "{en_full}"
+  ]
+  TEMPLATES_CONTENT_8_ES = [
+    "{en_full}"
+  ]
+  TEMPLATES_CONTENT_8_IT = [
+    "{en_full}"
+  ]

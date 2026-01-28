@@ -247,7 +247,7 @@ def phrase_progress(request):
     })
 # FIM FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 
-# MODIFICA NA FUNCAO (já aprendi)
+# MODIFICA O PERCENTUAL DAS FRASES
 @csrf_exempt
 @login_required
 @require_POST
@@ -333,7 +333,7 @@ def mark_learned(request):
 
     return JsonResponse({"ok": True, "points": points})
 
-# FIM MODIFICA NA FUNCAO (já aprendi)
+# FIM MODIFICA O PERCENTUAL DAS FRASES
 
 @login_required
 def chat_home(request):

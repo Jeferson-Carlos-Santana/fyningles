@@ -18,7 +18,8 @@ class ChatAdminForm(forms.ModelForm):
         ("4", "🟢 Frase sem abreviação e informal"),
         ("5", "🟢 Frase com 2 traducões. Ex: He's home. or He's at home."),        
         ("6", "🟢 Verbos - Português e inglês."),
-        ("7", "🟠 Verbos - Português."),        
+        ("7", "🟠 Verbos - Português."),  
+        ("8", "🟢 Frases em inglês longa."),       
     ]
 
     template_choice = forms.ChoiceField(

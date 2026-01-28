@@ -204,6 +204,17 @@ const USER_NAME = document.body.dataset.username || "";
         "hey": "he",
         "ri": "he",
         "how did yourself": "hold it yourself",
+        "are you up in the door": "i open the door",
+        "are you open the door": "i open the door",
+        "are you ok the door": "i open the door",
+        "play lenny fast": "they learn fast",
+        "play learn fast": "they learn fast",
+        "dei learn fast": "they learn fast",
+        "today tell stories": "do they tell stories",
+        "play meet today": "they meet today",
+        "i'll wait to bed": "i went to bed",
+        "he doesn't often cold": "he doesn't often call",
+        "he doesn't off the cold": "he doesn't often call",
         "alright": "all right"
       };
 
@@ -1113,7 +1124,7 @@ const USER_NAME = document.body.dataset.username || "";
         // INCLUIR AQUI PALAVRAS SEMELHANTES A THEY
         if (!["day", "dey", "dei", "tei", "thei"].includes(w)) return w;
         // INCLUIR AQUI A PALAVRA DEPOIS DO THEY
-        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can", "understand", "worked", "help", "ask", "come", "be", "heard"].includes(next)) {
+        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can","understand","worked","help","ask","come","be","heard"].includes(next)) {
           return "they";
         }
         return "day";
@@ -1140,7 +1151,8 @@ const USER_NAME = document.body.dataset.username || "";
       // ########################################
       // FIM NORMALIZACOES
       // ########################################
-
+      
+    
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
@@ -1200,12 +1212,106 @@ const USER_NAME = document.body.dataset.username || "";
         user.textContent = exibicao;
 
         (lastMsgEl || msgs[index]).after(user);
-        lastMsgEl = user;
+        lastMsgEl = user;        
 
         // divide expected_en por OR / or
         const esperados = (expectedAtual || "")
           .split(/\s+or\s+/i)
           .map(e => normEn(e));
+
+
+
+
+
+          
+
+const LESSON_ID = Number(document.body.dataset.lessonId);
+const MODO_NOVO = (LESSON_ID === 4);
+if (MODO_NOVO) {
+
+  // avalia no backend (novo critério)
+  const rEval = await fetch("/speech/evaluate/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      expected: expectedAtual,
+      spoken: textoCorrigido
+    })
+  });
+  const data = await rEval.json(); // { total_words, correct, errors }
+
+  const pontos = Math.max(data.correct || 0, 0);
+  const ok = pontos > 0;
+
+  // bloqueia mic enquanto avalia
+  bloquearEntrada();
+
+  // ===== escolhe feedback (igual) =====
+  const msg = ok
+    ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
+    : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
+
+  // ===== monta feedback FINAL (adaptado) =====
+  let feedbackText = `${msg} Pontos: ${pontos}/${data.total_words}`;
+  let feedbackHTML = `${msg} <span class="hint">Pontos: <span style="color:red;">${pontos}/${data.total_words}</span></span>`;
+
+  const prof = document.createElement("div");
+  prof.className = "chat-message system";
+  prof.innerHTML = feedbackHTML;
+
+  lastMsgEl.after(prof);
+  lastMsgEl = prof;
+  scrollChatToBottom();
+
+  // ===== TTS (igual) =====
+  const rTts = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: prof.textContent, lang: "pt" })
+  });
+  const dTts = await rTts.json();
+  if (dTts.files && dTts.files.length) {
+    tocando = true;
+    await new Promise(r => setTimeout(r, 1100));
+    await tocarUm(dTts.files[0]);
+    tocando = false;
+  }
+
+  // ===== SALVA PROGRESSO (igual) =====
+  pontosAndamento += pontos;
+  atualizarPontosAndamento();
+
+  salvarProgresso({
+    chatId: msgs[index].dataset.id,
+    lessonId: LESSON_ID,
+    points: pontos
+  });
+
+  salvarProgressoTmp({
+    chatId: msgs[index].dataset.id,
+    points: pontos
+  });
+
+  atualizarPontosTotais();
+  atualizarPontosFeitos();
+
+  // ===== reseta e avança (igual) =====
+  FLAG = 0;
+  esperandoResposta = false;
+  expectedAtual = "";
+
+  setTimeout(() => {
+    index++;
+    lastMsgEl = null;
+    mostrarSistema();
+  }, 150);
+
+  return;
+
+
+
+} else {
+
 
         const ok = esperados.includes(recebido);
 
@@ -1240,7 +1346,7 @@ const USER_NAME = document.body.dataset.username || "";
           lastMsgEl = prof;
           scrollChatToBottom();
         }  
-        const LESSON_ID = Number(document.body.dataset.lessonId);
+        // const LESSON_ID = Number(document.body.dataset.lessonId);
         // ===== decisão de fluxo =====
         if (ok) {
           FLAG = 2;
@@ -1382,14 +1488,15 @@ const USER_NAME = document.body.dataset.username || "";
 
         // pode tentar de novo
         esperandoResposta = true;
-        liberarEntrada();        
-      };      
+        liberarEntrada();     
+        
+        } // essa chave fexa
+      };
     });    
     
     const btnSalvarNivel = document.getElementById("btn-salvar-nivel");
     if (btnSalvarNivel) {
       btnSalvarNivel.onclick = async function () {
-        // document.getElementById("btn-salvar-nivel").onclick = async function () {
         const nivel = document.querySelector("input[name='nivel']:checked");
 
         if (!nivel) {
