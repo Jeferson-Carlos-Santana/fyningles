@@ -40,6 +40,7 @@ LESSON_TITLES = {
     1: "Frases",
     2: "Presente simples (to have)",
     3: "Presente contínuo (to have)",
+    4: "Frases longas",
 }
 
 def resend_activation(request):
