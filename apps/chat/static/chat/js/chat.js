@@ -1228,32 +1228,34 @@ const USER_NAME = document.body.dataset.username || "";
 const LESSON_ID = Number(document.body.dataset.lessonId);
 const MODO_NOVO = (LESSON_ID === 4);
 if (MODO_NOVO) {
-
-  // avalia no backend (novo critério)
-  const rEval = await fetch("/speech/evaluate/", {
+const rEval = await fetch("/speech/evaluate/", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
+    },
     body: JSON.stringify({
       expected: expectedAtual,
       spoken: textoCorrigido
     })
   });
-  const data = await rEval.json(); // { total_words, correct, errors }
 
-  const pontos = Math.max(data.correct || 0, 0);
+  if (!rEval.ok) return;
+
+  const evalData = await rEval.json();
+
+  const pontos = Math.max(evalData.correct || 0, 0);
   const ok = pontos > 0;
 
-  // bloqueia mic enquanto avalia
   bloquearEntrada();
 
-  // ===== escolhe feedback (igual) =====
   const msg = ok
     ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
     : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
-  // ===== monta feedback FINAL (adaptado) =====
-  let feedbackText = `${msg} Pontos: ${pontos}/${data.total_words}`;
-  let feedbackHTML = `${msg} <span class="hint">Pontos: <span style="color:red;">${pontos}/${data.total_words}</span></span>`;
+  const feedbackHTML =
+    `${msg} <span class="hint">Pontos: <span style="color:red;">${pontos}/${evalData.total_words}</span></span>`;
 
   const prof = document.createElement("div");
   prof.className = "chat-message system";
@@ -1263,12 +1265,12 @@ if (MODO_NOVO) {
   lastMsgEl = prof;
   scrollChatToBottom();
 
-  // ===== TTS (igual) =====
   const rTts = await fetch("/tts/line/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text: prof.textContent, lang: "pt" })
   });
+
   const dTts = await rTts.json();
   if (dTts.files && dTts.files.length) {
     tocando = true;
@@ -1277,13 +1279,12 @@ if (MODO_NOVO) {
     tocando = false;
   }
 
-  // ===== SALVA PROGRESSO (igual) =====
   pontosAndamento += pontos;
   atualizarPontosAndamento();
 
   salvarProgresso({
     chatId: msgs[index].dataset.id,
-    lessonId: LESSON_ID,
+    lessonId: Number(document.body.dataset.lessonId),
     points: pontos
   });
 
@@ -1295,7 +1296,6 @@ if (MODO_NOVO) {
   atualizarPontosTotais();
   atualizarPontosFeitos();
 
-  // ===== reseta e avança (igual) =====
   FLAG = 0;
   esperandoResposta = false;
   expectedAtual = "";
@@ -1307,6 +1307,7 @@ if (MODO_NOVO) {
   }, 150);
 
   return;
+
 
 
 
