@@ -1399,7 +1399,8 @@ const USER_NAME = document.body.dataset.username || "";
           // const penalidade = Math.abs(totalFalado - totalEsperado);
           const diff = totalFalado - totalEsperado;
           const penalidade = Math.abs(diff);
-          const palavrasFaladas = pontos + penalidade;erros
+          const palavrasFaladas = pontos + penalidade;
+          const errosM = erros - palavrasFaladas - penalidade;
 
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
@@ -1408,9 +1409,9 @@ const USER_NAME = document.body.dataset.username || "";
           let msg;
 
           if (diff > 0) {
-            msg = `Você acertou ${palavrasFaladas} palavras, ganhou ${pontos} pontos, pois foi penalizado por falar ${penalidade} palavras a mais e errou ${erros}`;
+            msg = `Você acertou ${palavrasFaladas} palavras, ganhou ${pontos} pontos, pois foi penalizado por falar ${penalidade} palavras a mais e errou ${errosM}`;
           } else if (diff < 0) {
-            msg = `Você acertou ${palavrasFaladas} palavras, ganhou ${pontos} pontos, pois foi penalizado por falar ${penalidade} palavras a menos e errou ${erros}`;
+            msg = `Você acertou ${palavrasFaladas} palavras, ganhou ${pontos} pontos, pois foi penalizado por falar ${penalidade} palavras a menos e errou ${errosM}`;
           } else if (diff < 0) {
           } else {
             msg = `Você acertou ${palavrasFaladas} palavras e ganhou ${pontos} pontos.`;
