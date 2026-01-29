@@ -1231,6 +1231,28 @@ const MODO_NOVO = (LESSON_ID === 4);
 
 if (MODO_NOVO) {   
 
+  function marcarErros(expected, spoken) {
+    const exp = expected.trim().split(/\s+/);
+    const spk = spoken.trim().split(/\s+/);
+
+    let i = 0;
+    let j = 0;
+    const resultado = [];
+
+    while (j < spk.length) {
+      if (i < exp.length && spk[j] === exp[i]) {
+        resultado.push(spk[j]);
+        i++;
+      } else {
+        resultado.push(`<span class="errado">${spk[j]}</span>`);
+      }
+      j++;
+    }
+
+    return resultado.join(" ");
+  }
+
+
   // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
   let TEMPO_BASE = 3000;          // 3s mínimos
   let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
@@ -1251,6 +1273,7 @@ if (MODO_NOVO) {
   const pontos = Number(data.correct || 0);
 
   // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
+  const userMsgEl = lastMsgEl;
   const prof = document.createElement("div");
   prof.className = "chat-message system";
   prof.textContent = `Você acertou ${pontos} palavras, ganhou ${pontos} pontos.`;
@@ -1266,6 +1289,13 @@ if (MODO_NOVO) {
     if (prof) prof.classList.add("errado");
     if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
   }
+
+  if (userMsgEl) {
+    const textoMarcado = marcarErros(expectedAtual, textoCorrigido);
+    userMsgEl.innerHTML = textoMarcado;
+  }
+
+
 
   // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
   FLAG = 2;
