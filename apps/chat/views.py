@@ -27,7 +27,11 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.contrib.auth.views import PasswordResetView
+from apps.chat.services.speech_evaluator import evaluate
 import requests, json, re, math
+
+
+
 
 
 # TOTAL DE PONTOS POR DIA
@@ -42,6 +46,27 @@ LESSON_TITLES = {
     3: "Presente contínuo (to have)",
     4: "Frases longas",
 }
+
+
+
+
+
+def speech_evaluate(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "invalid method"}, status=405)
+
+    data = json.loads(request.body.decode("utf-8"))
+
+    expected = data.get("expected", "")
+    spoken   = data.get("spoken", "")
+
+    result = evaluate(expected, spoken)
+
+    return JsonResponse(result)
+
+
+
+
 
 def resend_activation(request):
     if request.method == "POST":
