@@ -1404,10 +1404,12 @@ const USER_NAME = document.body.dataset.username || "";
           const userMsgEl = lastMsgEl;
           const prof = document.createElement("div");
           prof.className = "chat-message system";
-          //prof.textContent = `Você acertou ${pontos} palavras, ganhou ${pontos} pontos.`;
-          const saldo = Math.max(pontos - penalidade, 0);
-          prof.textContent = `Você acertou ${pontos} palavras, penalidade ${penalidade}, total ${saldo} pontos.`;
+          let msg = `Você ganhou ${pontos} pontos.`;
+          if (totalFalado !== totalEsperado) {
+            msg += ` Penalidade por falar ${penalidade} palavras a mais ou a menos.`;
+          }
 
+          prof.textContent = msg;
 
           (lastMsgEl || msgs[index]).after(prof);
           lastMsgEl = prof;
