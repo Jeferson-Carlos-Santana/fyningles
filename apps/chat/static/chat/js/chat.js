@@ -1150,9 +1150,7 @@ const USER_NAME = document.body.dataset.username || "";
      
       // ########################################
       // FIM NORMALIZACOES
-      // ########################################
-      
-    
+      // ########################################    
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) {
@@ -1217,214 +1215,238 @@ const USER_NAME = document.body.dataset.username || "";
         // divide expected_en por OR / or
         const esperados = (expectedAtual || "")
           .split(/\s+or\s+/i)
-          .map(e => normEn(e));
+          .map(e => normEn(e));          
 
+        const LESSON_ID = Number(document.body.dataset.lessonId);
+        const MODO_NOVO = (LESSON_ID === 4);
 
+        if (MODO_NOVO) {   
 
+        function normalizeLikeBackend(text) {
+          if (!text) return "";
 
-
+          let t = text.toLowerCase();
           
+          const contractions = { 
+                "i'm": "i am",
+                "you're": "you are",
+                "he's": "he is",
+                "she's": "she is",
+                "it's": "it is",
+                "we're": "we are",
+                "they're": "they are",
+                "i've": "i have",
+                "you've": "you have",
+                "we've": "we have",
+                "they've": "they have",
+                "i'd": "i would",
+                "you'd": "you would",
+                "he'd": "he would",
+                "she'd": "she would",
+                "we'd": "we would",
+                "they'd": "they would",
+                "i'll": "i will",
+                "you'll": "you will",
+                "he'll": "he will",
+                "she'll": "she will",
+                "we'll": "we will",
+                "they'll": "they will",
+                "isn't": "is not",
+                "aren't": "are not",
+                "wasn't": "was not",
+                "weren't": "were not",
+                "don't": "do not",
+                "doesn't": "does not",
+                "didn't": "did not",
+                "haven't": "have not",
+                "hasn't": "has not",
+                "hadn't": "had not",
+                "can't": "can not",
+                "couldn't": "could not",
+                "shouldn't": "should not",
+                "wouldn't": "would not",
+                "mightn't": "might not",
+                "mustn't": "must not",
+                "won't": "will not",
+                "shan't": "shall not",
+                "could've": "could have",
+                "should've": "should have",
+                "would've": "would have",
+                "might've": "might have",
+                "must've": "must have",
+                "what's": "what is",
+                "where's": "where is",
+                "who's": "who is",
+                "how's": "how is",
+                "when's": "when is",
+                "why's": "why is",
+                "there's": "there is",
+                "here's": "here is",
+                "that's": "that is",
+                "this's": "this is",
+                "let's": "let us",
+                "gonna": "going to",
+                "wanna": "want to",
+                "gotta": "got to"
+            };
 
-const LESSON_ID = Number(document.body.dataset.lessonId);
-const MODO_NOVO = (LESSON_ID === 4);
+          for (const c in contractions) {
+            const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
+          }
 
+          const numbers = {
+            "zero":"0",
+            "one":"1",
+            "two":"2",
+            "three":"3",
+            "four":"4",
+            "five":"5",
+            "six":"6",
+            "seven":"7",
+            "eight":"8",
+            "nine":"9",
+            "ten":"10"
+          };
+          for (const w in numbers) {
+            t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
+          }
 
-if (MODO_NOVO) {   
+          t = t.replace(/[^\w\s]/g, "").replace(/\s+/g, " ").trim();
+          return t;
+        }
 
-function normalizeLikeBackend(text) {
-  if (!text) return "";
+        function lcsMatchedIndices(expectedTokens, spokenTokens) {
+          const n = expectedTokens.length, m = spokenTokens.length;
+          const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
 
-  let t = text.toLowerCase();
+          for (let i = 1; i <= n; i++) {
+            for (let j = 1; j <= m; j++) {
+              dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
+                ? dp[i - 1][j - 1] + 1
+                : Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+          }
 
-  const contractions = {
-    "don't": "do not",
-    "doesn't": "does not",
-    "didn't": "did not",
-    "i'm": "i am",
-    "you're": "you are",
-    "he's": "he is",
-    "she's": "she is",
-    "it's": "it is",
-    "we're": "we are",
-    "they're": "they are",
-    "can't": "can not",
-    "won't": "will not",
-  };
+          const ok = new Set();
+          let i = n, j = m;
+          while (i > 0 && j > 0) {
+            if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
+              ok.add(j - 1);
+              i--; j--;
+            } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+              i--;
+            } else {
+              j--;
+            }
+          }
+          return ok;
+        }
 
-  for (const c in contractions) {
-    const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
-  }
+        function marcarErros(expected, spoken) {
+          const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
+          const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
+          const spkRaw  = spoken.split(/\s+/);
 
-  const numbers = {
-    "zero":"0","one":"1","two":"2","three":"3","four":"4",
-    "five":"5","six":"6","seven":"7","eight":"8","nine":"9","ten":"10"
-  };
-  for (const w in numbers) {
-    t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
-  }
+          const okIdx = lcsMatchedIndices(exp, spkNorm);
 
-  t = t.replace(/[^\w\s]/g, "").replace(/\s+/g, " ").trim();
-  return t;
-}
-
-function lcsMatchedIndices(expectedTokens, spokenTokens) {
-  const n = expectedTokens.length, m = spokenTokens.length;
-  const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
-
-  for (let i = 1; i <= n; i++) {
-    for (let j = 1; j <= m; j++) {
-      dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
-        ? dp[i - 1][j - 1] + 1
-        : Math.max(dp[i - 1][j], dp[i][j - 1]);
-    }
-  }
-
-  const ok = new Set();
-  let i = n, j = m;
-  while (i > 0 && j > 0) {
-    if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
-      ok.add(j - 1);
-      i--; j--;
-    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
-      i--;
-    } else {
-      j--;
-    }
-  }
-  return ok;
-}
-
-function marcarErros(expected, spoken) {
-  const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
-  const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
-  const spkRaw  = spoken.split(/\s+/);
-
-  const okIdx = lcsMatchedIndices(exp, spkNorm);
-
-  return spkRaw.map((w, idx) =>
-    okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
-  ).join(" ");
-}
-
-
-  // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
-  let TEMPO_BASE = 3000;          // 3s mínimos
-  let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
-  let TEMPO_MAX = 20000;         // 12s máximo
-  
-  // chama avaliação (backend)
-  const rEval = await fetch("/speech/evaluate/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      expected: expectedAtual,
-      spoken: textoCorrigido
-    })
-  });
-
-  const data = await rEval.json();
-
-  const pontos = Number(data.correct || 0);
-
-  // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
-  const userMsgEl = lastMsgEl;
-  const prof = document.createElement("div");
-  prof.className = "chat-message system";
-  prof.textContent = `Você acertou ${pontos} palavras, ganhou ${pontos} pontos.`;
-
-  (lastMsgEl || msgs[index]).after(prof);
-  lastMsgEl = prof;
-  scrollChatToBottom();
-
-  if (pontos > 0) {
-    prof.classList.add("correto");
-    if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
-  } else {
-    if (prof) prof.classList.add("errado");
-    if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
-  }
-
-
-if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-
-
-
-  // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
-  FLAG = 2;
-  if (FLAG !== 2) return;
-
-  const rTts = await fetch("/tts/line/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: prof.textContent, lang: "pt" })
-  });
-
-  const d = await rTts.json();
-  if (d.files && d.files.length) {
-    tocando = true;
-    await new Promise(r => setTimeout(r, 1100));
-    await tocarUm(d.files[0]);
-    tocando = false;
-  }
-
-  // ===== PONTOS VISUAIS (mesmo padrão do else) =====
-  pontosAndamento += pontos;
-  atualizarPontosAndamento();
-
-  // ===== SALVA NAS 2 TABELAS (mesmas funções do else) =====
-  salvarProgresso({
-    chatId: msgs[index].dataset.id,
-    lessonId: LESSON_ID,
-    points: pontos
-  });
-
-  salvarProgressoTmp({
-    chatId: msgs[index].dataset.id,
-    points: pontos
-  });
-
-  atualizarPontosTotais();
-  atualizarPontosFeitos();
-
-  // ===== AVANÇA SEM REPETIR (modo novo) =====
-  FLAG = 0;
-  esperandoResposta = false;
-  expectedAtual = "";
-  tentativas = 0;
-
-  setTimeout(() => {
-    index++;
-    lastMsgEl = null;
-    mostrarSistema();
-  }, 150);
-
-  return;
+          return spkRaw.map((w, idx) =>
+            okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
+          ).join(" ");
+        }
 
 
+          // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
+          let TEMPO_BASE = 3000;          // 3s mínimos
+          let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
+          let TEMPO_MAX = 20000;         // 12s máximo
+          
+          // chama avaliação (backend)
+          const rEval = await fetch("/speech/evaluate/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              expected: expectedAtual,
+              spoken: textoCorrigido
+            })
+          });
 
-// const expected = expectedAtual;
-// const spoken   = textoCorrigido;
+          const data = await rEval.json();
 
-// fetch("/speech/evaluate/", {
-//     method: "POST",
-//     headers: {
-//         "Content-Type": "application/json"
-//     },
-//     body: JSON.stringify({
-//         expected: expected,
-//         spoken: spoken
-//     })
-// })
-// .then(r => r.json())
-// .then(data => {
-//     console.log("RESULTADO AVALIACAO:", data);
-// });
+          const pontos = Number(data.correct || 0);
 
+          // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
+          const userMsgEl = lastMsgEl;
+          const prof = document.createElement("div");
+          prof.className = "chat-message system";
+          prof.textContent = `Você acertou ${pontos} palavras, ganhou ${pontos} pontos.`;
 
+          (lastMsgEl || msgs[index]).after(prof);
+          lastMsgEl = prof;
+          scrollChatToBottom();
 
-} else {
+          if (pontos > 0) {
+            prof.classList.add("correto");
+            if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
+          } else {
+            if (prof) prof.classList.add("errado");
+            if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
+          }
 
+          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+
+          // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
+          FLAG = 2;
+          if (FLAG !== 2) return;
+
+          const rTts = await fetch("/tts/line/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: prof.textContent, lang: "pt" })
+          });
+
+          const d = await rTts.json();
+          if (d.files && d.files.length) {
+            tocando = true;
+            await new Promise(r => setTimeout(r, 1100));
+            await tocarUm(d.files[0]);
+            tocando = false;
+          }
+
+          // ===== PONTOS VISUAIS (mesmo padrão do else) =====
+          pontosAndamento += pontos;
+          atualizarPontosAndamento();
+
+          // ===== SALVA NAS 2 TABELAS (mesmas funções do else) =====
+          salvarProgresso({
+            chatId: msgs[index].dataset.id,
+            lessonId: LESSON_ID,
+            points: pontos
+          });
+
+          salvarProgressoTmp({
+            chatId: msgs[index].dataset.id,
+            points: pontos
+          });
+
+          atualizarPontosTotais();
+          atualizarPontosFeitos();
+
+          // ===== AVANÇA SEM REPETIR (modo novo) =====
+          FLAG = 0;
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;
+
+          setTimeout(() => {
+            index++;
+            lastMsgEl = null;
+            mostrarSistema();
+          }, 150);
+
+          return;
+
+        } else {
 
         const ok = esperados.includes(recebido);
 
