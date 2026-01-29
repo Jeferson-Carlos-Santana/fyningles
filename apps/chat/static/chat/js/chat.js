@@ -1231,31 +1231,85 @@ const MODO_NOVO = (LESSON_ID === 4);
 
 if (MODO_NOVO) {   
 
-function marcarErros(expected, spoken) {
-  const expRaw = expected.trim().split(/\s+/);
-  const spkRaw = spoken.trim().split(/\s+/);
+function normalizeLikeBackend(text) {
+  if (!text) return "";
 
-  const exp = expRaw.map(w => w.toLowerCase());
-  const spk = spkRaw.map(w => w.toLowerCase());
+  let t = text.toLowerCase();
 
-  const out = [];
+  const contractions = {
+    "don't": "do not",
+    "doesn't": "does not",
+    "didn't": "did not",
+    "i'm": "i am",
+    "you're": "you are",
+    "he's": "he is",
+    "she's": "she is",
+    "it's": "it is",
+    "we're": "we are",
+    "they're": "they are",
+    "can't": "can not",
+    "won't": "will not",
+  };
 
-  for (let i = 0; i < spkRaw.length; i++) {
-  const spkClean = spkRaw[i].toLowerCase().replace(/[^\w]/g, "");
-  const expClean = exp[i] ? exp[i].replace(/[^\w]/g, "") : "";
-
-  if (expClean && spkClean === expClean) {
-    out.push(spkRaw[i]); // mantém pontuação original
-  } else {
-    out.push(`<span style="color:red;font-weight:bold">${spkRaw[i]}</span>`);
+  for (const c in contractions) {
+    const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
   }
+
+  const numbers = {
+    "zero":"0","one":"1","two":"2","three":"3","four":"4",
+    "five":"5","six":"6","seven":"7","eight":"8","nine":"9","ten":"10"
+  };
+  for (const w in numbers) {
+    t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
+  }
+
+  t = t.replace(/[^\w\s]/g, "").replace(/\s+/g, " ").trim();
+  return t;
+}
+
+function lcsMatchedIndices(expectedTokens, spokenTokens) {
+  const n = expectedTokens.length, m = spokenTokens.length;
+  const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
+
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
+        ? dp[i - 1][j - 1] + 1
+        : Math.max(dp[i - 1][j], dp[i][j - 1]);
+    }
+  }
+
+  const ok = new Set();
+  let i = n, j = m;
+  while (i > 0 && j > 0) {
+    if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
+      ok.add(j - 1);
+      i--; j--;
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+      i--;
+    } else {
+      j--;
+    }
+  }
+  return ok;
+}
+
+function marcarErros(expected, spoken) {
+  const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
+  const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
+  const spkRaw  = spoken.split(/\s+/);
+
+  const okIdx = lcsMatchedIndices(exp, spkNorm);
+
+  return spkRaw.map((w, idx) =>
+    okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
+  ).join(" ");
 }
 
 
   return out.join(" ");
 }
-
-
 
   // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
   let TEMPO_BASE = 3000;          // 3s mínimos
@@ -1296,8 +1350,6 @@ function marcarErros(expected, spoken) {
 
 
 if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-
-
 
   // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
   FLAG = 2;
