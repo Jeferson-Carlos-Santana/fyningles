@@ -77,9 +77,9 @@ const USER_NAME = document.body.dataset.username || "";
       const btnAutoSkip = document.getElementById("btnAutoSkip");
       let autoSkipAtivo = false;
 
-      const TEMPO_BASE = 5000;          // 3s mínimos
-      const TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
-      const TEMPO_MAX = 12000;         // 12s máximo 
+      let TEMPO_BASE = 5000;          // 3s mínimos
+      let TEMPO_POR_PALAVRA = 1000;   // 0.7s por palavra
+      let TEMPO_MAX = 12000;         // 12s máximo 
 
       const beepPlayer = new Audio("/static/chat/audio/beep.mp3");
       beepPlayer.volume = 0.9;
@@ -1231,6 +1231,11 @@ const MODO_NOVO = (LESSON_ID === 4);
 
 if (MODO_NOVO) {   
 
+  // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
+  let TEMPO_BASE = 3000;          // 3s mínimos
+  let TEMPO_POR_PALAVRA = 700;   // 0.8s por palavra
+  let TEMPO_MAX = 20000;         // 12s máximo
+  
   // chama avaliação (backend)
   const rEval = await fetch("/speech/evaluate/", {
     method: "POST",
@@ -1255,14 +1260,12 @@ if (MODO_NOVO) {
   scrollChatToBottom();
 
   if (pontos > 0) {
-    prof.classList.add("msg-ok");      // <-- use o nome REAL do else
+    prof.classList.add("correto");
+    if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
   } else {
-    prof.classList.add("msg-error");   // <-- use o nome REAL do else
+    if (prof) prof.classList.add("errado");
+    if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
   }
-
-  setTimeout(() => {
-      prof.remove();
-  }, 1200);
 
   // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
   FLAG = 2;
