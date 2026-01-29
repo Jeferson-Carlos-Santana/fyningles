@@ -1396,7 +1396,9 @@ const USER_NAME = document.body.dataset.username || "";
           const pontos = Number(data.correct || 0);
           const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
-          const penalidade = Math.abs(totalFalado - totalEsperado);
+          // const penalidade = Math.abs(totalFalado - totalEsperado);
+          const diff = totalFalado - totalEsperado;
+          const penalidade = Math.abs(diff);
           const acertos = pontos + penalidade;
 
 
@@ -1404,11 +1406,16 @@ const USER_NAME = document.body.dataset.username || "";
           const userMsgEl = lastMsgEl;
           const prof = document.createElement("div");
           prof.className = "chat-message system";
+          let msg;
+
+          if (diff > 0) {
+            msg = `Você acertou ${acertos} palavras, ganhou ${pontos} pontos, pois foi penalizado por falar ${penalidade} palavras a mais.`;
+          } else if (diff < 0) {
+            msg = `Você acertou ${acertos} palavras, ganhou ${pontos} pontos, pois foi penalizado por falar ${penalidade} palavras a menos.`;
+          } else {
+            msg = `Você acertou ${acertos} palavras e ganhou ${pontos} pontos.`;
+          }          
           
-          let msg = `Você acertou ${acertos} e ganhou ${pontos} pontos.`;
-          if (totalFalado !== totalEsperado) {
-            msg += ` Penalidade por falar ${penalidade} palavras a mais ou a menos.`;
-          }
           prof.textContent = msg;
 
           (lastMsgEl || msgs[index]).after(prof);
