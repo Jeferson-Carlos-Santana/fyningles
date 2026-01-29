@@ -1244,7 +1244,7 @@ if (MODO_NOVO) {
         resultado.push(spk[j]);
         i++;
       } else {
-        resultado.push(`<span class="errado">${spk[j]}</span>`);
+        resultado.push(`<span style="color:red;font-weight:bold">${spk[j]}</span>`);
       }
       j++;
     }
