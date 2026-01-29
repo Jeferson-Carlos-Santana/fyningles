@@ -158,8 +158,12 @@ def evaluate(expected_text: str, spoken_text: str) -> dict:
     errors = total - correct
 
     # penalidade fixa por palavras a mais
-    if len(spoken_tokens) > len(expected_tokens):
-        errors += 1
+    # if len(spoken_tokens) > len(expected_tokens):
+    #     errors += 1
+    if len(spoken_tokens) != len(expected_tokens):
+        #errors += 1
+        errors += abs(len(spoken_tokens) - len(expected_tokens))
+
 
     # limite inferior: nunca negativo
     if errors > total:
