@@ -1234,7 +1234,7 @@ if (MODO_NOVO) {
 
 // dados já existentes no fluxo
 const expected = expectedAtual;          // frase esperada
-const spoken   = textoFaladoFinal;       // resposta do usuário (já normalizada ou não)
+const spoken = textoCorrigido;       // resposta do usuário (já normalizada ou não)
 
 // TESTE: enviar para a função nova
 fetch("/speech/evaluate/", {
