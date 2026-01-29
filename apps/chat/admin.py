@@ -1385,14 +1385,14 @@ class ChatAdmin(admin.ModelAdmin):
   ]
 
   TEMPLATES_CONTENT_8_PT = [
-    "{pt} {en_full}"
+    "<span style='color:blue;'>{pt}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_FR = [
-    "{fr} {en_full}"
+    "<span style='color:blue;'>{fr}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_ES = [
-    "{es} {en_full}"
+    "<span style='color:blue;'>{es}</span> <span style='color:red;'>{en_full}</span>"
   ]
   TEMPLATES_CONTENT_8_IT = [
-    "{it} {en_full}"
+    "<span style='color:blue;'>{it}</span> <span style='color:red;'>{en_full}</span>"
   ]
