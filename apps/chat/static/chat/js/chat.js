@@ -1392,7 +1392,7 @@ const USER_NAME = document.body.dataset.username || "";
           });
 
           const data = await rEval.json();
-
+          const erros = Number(data.errors || 0);
           const pontos = Number(data.correct || 0);
           const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
