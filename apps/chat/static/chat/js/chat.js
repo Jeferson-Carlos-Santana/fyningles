@@ -1394,21 +1394,21 @@ const USER_NAME = document.body.dataset.username || "";
           const data = await rEval.json();
 
           const pontos = Number(data.correct || 0);
-
           const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
           const penalidade = Math.abs(totalFalado - totalEsperado);
+          const acertos = pontos + penalidade;
 
 
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
           const prof = document.createElement("div");
           prof.className = "chat-message system";
-          let msg = `Você ganhou ${pontos} pontos.`;
+          
+          let msg = `Você acertou ${acertos} e ganhou ${pontos} pontos.`;
           if (totalFalado !== totalEsperado) {
             msg += ` Penalidade por falar ${penalidade} palavras a mais ou a menos.`;
           }
-
           prof.textContent = msg;
 
           (lastMsgEl || msgs[index]).after(prof);
