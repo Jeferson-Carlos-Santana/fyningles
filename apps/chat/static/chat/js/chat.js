@@ -1308,9 +1308,6 @@ function marcarErros(expected, spoken) {
 }
 
 
-  return out.join(" ");
-}
-
   // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
   let TEMPO_BASE = 3000;          // 3s mínimos
   let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
@@ -1350,6 +1347,8 @@ function marcarErros(expected, spoken) {
 
 
 if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+
+
 
   // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
   FLAG = 2;
