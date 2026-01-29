@@ -1232,16 +1232,13 @@ const MODO_NOVO = (LESSON_ID === 4);
 if (MODO_NOVO) {
  
 
-// dados já existentes no fluxo
-const expected = expectedAtual;          // frase esperada
-const spoken = textoCorrigido;       // resposta do usuário (já normalizada ou não)
+const expected = expectedAtual;
+const spoken   = textoCorrigido;
 
-// TESTE: enviar para a função nova
 fetch("/speech/evaluate/", {
     method: "POST",
     headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrftoken
+        "Content-Type": "application/json"
     },
     body: JSON.stringify({
         expected: expected,
@@ -1250,18 +1247,8 @@ fetch("/speech/evaluate/", {
 })
 .then(r => r.json())
 .then(data => {
-    // retorno esperado da função
-    const correct = data.correct;
-    const total   = data.total_words;
-
-    // teste visual simples
     console.log("RESULTADO AVALIACAO:", data);
-
-    prof.textContent = `Você acertou ${correct} de ${total} palavras`;
-
-})
-.catch(err => {
-    console.error("ERRO NA AVALIACAO:", err);
+    prof.textContent = `Você acertou ${data.correct} palavras`;
 });
 
 
