@@ -1385,14 +1385,14 @@ class ChatAdmin(admin.ModelAdmin):
   ]
 
   TEMPLATES_CONTENT_8_PT = [
-    "{en_full}"
+    "{pt} {en_full}"
   ]
   TEMPLATES_CONTENT_8_FR = [
-    "{en_full}"
+    "{fr} {en_full}"
   ]
   TEMPLATES_CONTENT_8_ES = [
-    "{en_full}"
+    "{es} {en_full}"
   ]
   TEMPLATES_CONTENT_8_IT = [
-    "{en_full}"
+    "{it} {en_full}"
   ]

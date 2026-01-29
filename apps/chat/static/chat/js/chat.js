@@ -1233,7 +1233,7 @@ if (MODO_NOVO) {
 
   // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
   let TEMPO_BASE = 3000;          // 3s mínimos
-  let TEMPO_POR_PALAVRA = 700;   // 0.8s por palavra
+  let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
   let TEMPO_MAX = 20000;         // 12s máximo
   
   // chama avaliação (backend)
