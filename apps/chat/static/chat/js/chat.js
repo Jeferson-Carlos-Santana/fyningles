@@ -1232,17 +1232,17 @@ const MODO_NOVO = (LESSON_ID === 4);
 if (MODO_NOVO) {   
 
 function marcarErros(expected, spoken) {
-  const expRaw = expected.trim().split(/\s+/);
-  const spkRaw = spoken.trim().split(/\s+/);
+  const norm = s => s.toLowerCase().replace(/[^\w\s]/g, "");
 
-  const exp = expRaw.map(w => w.toLowerCase());
-  const spk = spkRaw.map(w => w.toLowerCase());
+  const expNorm = norm(expected).split(/\s+/);
+  const spkNorm = norm(spoken).split(/\s+/);
 
+  const spkRaw = spoken.split(/\s+/);
   const out = [];
 
   for (let i = 0; i < spkRaw.length; i++) {
-    if (exp[i] && spk[i] === exp[i]) {
-      out.push(spkRaw[i]);
+    if (expNorm[i] && spkNorm[i] === expNorm[i]) {
+      out.push(spkRaw[i]); // mostra original (com pontuação)
     } else {
       out.push(`<span style="color:red;font-weight:bold">${spkRaw[i]}</span>`);
     }
@@ -1250,6 +1250,7 @@ function marcarErros(expected, spoken) {
 
   return out.join(" ");
 }
+
 
 
 
@@ -1292,8 +1293,6 @@ function marcarErros(expected, spoken) {
 
 
 if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-
-
 
   // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
   FLAG = 2;
