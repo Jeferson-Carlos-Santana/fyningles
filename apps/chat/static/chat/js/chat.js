@@ -1230,55 +1230,82 @@ const MODO_NOVO = (LESSON_ID === 4);
 
 
 if (MODO_NOVO) {
- // avaliação (já validada)
-    fetch("/speech/evaluate/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            expected: expectedAtual,
-            spoken: textoCorrigido
-        })
+
+  // chama avaliação (backend)
+  const rEval = await fetch("/speech/evaluate/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      expected: expectedAtual,
+      spoken: textoCorrigido
     })
-    .then(r => r.json())
-    .then(data => {
+  });
 
-        const pontos = data.correct;
+  const data = await rEval.json();
 
-        // === GRAVAÇÃO (MESMO PADRÃO DO ELSE) ===
-        // temporário
-        salvarProgressoTmp({
-            points: pontos,
-            lesson_id: lessonAtual,
-            phrase_id: fraseAtual
-        });
+  const pontos = Number(data.correct || 0);
 
-        // definitivo
-        salvarProgresso({
-            points: pontos,
-            lesson_id: lessonAtual,
-            phrase_id: fraseAtual
-        });
+  // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
+  const prof = document.createElement("div");
+  prof.className = "chat-message system";
+  prof.textContent = `Você acertou ${pontos} palavras, ganhou ${pontos} pontos.`;
 
-        // === FEEDBACK ===
-        FLAG = 2;
-        falarProfessor(`Você acertou ${pontos} palavras`);
+  (lastMsgEl || msgs[index]).after(prof);
+  lastMsgEl = prof;
+  scrollChatToBottom();
 
-        // === AVANÇO ===
-        setTimeout(() => {
-            FLAG = 0;
-            esperandoResposta = false;
-            expectedAtual = "";
-            tentativas = 0;
-            lastMsgEl = null;
+  // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
+  FLAG = 2;
+  if (FLAG !== 2) return;
 
-            index++;
-            mostrarSistema();
-        }, 800);
-    });
+  const rTts = await fetch("/tts/line/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: prof.textContent, lang: "pt" })
+  });
 
-    return;
+  const d = await rTts.json();
+  if (d.files && d.files.length) {
+    tocando = true;
+    await new Promise(r => setTimeout(r, 1100));
+    await tocarUm(d.files[0]);
+    tocando = false;
+  }
+
+  // ===== PONTOS VISUAIS (mesmo padrão do else) =====
+  pontosAndamento += pontos;
+  atualizarPontosAndamento();
+
+  // ===== SALVA NAS 2 TABELAS (mesmas funções do else) =====
+  salvarProgresso({
+    chatId: msgs[index].dataset.id,
+    lessonId: LESSON_ID,
+    points: pontos
+  });
+
+  salvarProgressoTmp({
+    chatId: msgs[index].dataset.id,
+    points: pontos
+  });
+
+  atualizarPontosTotais();
+  atualizarPontosFeitos();
+
+  // ===== AVANÇA SEM REPETIR (modo novo) =====
+  FLAG = 0;
+  esperandoResposta = false;
+  expectedAtual = "";
+  tentativas = 0;
+
+  setTimeout(() => {
+    index++;
+    lastMsgEl = null;
+    mostrarSistema();
+  }, 150);
+
+  return;
+
+
 
 // const expected = expectedAtual;
 // const spoken   = textoCorrigido;
