@@ -1232,7 +1232,38 @@ const MODO_NOVO = (LESSON_ID === 4);
 if (MODO_NOVO) {
  
 
-// codigo entra aqui
+// dados já existentes no fluxo
+const expected = expectedAtual;          // frase esperada
+const spoken   = textoFaladoFinal;       // resposta do usuário (já normalizada ou não)
+
+// TESTE: enviar para a função nova
+fetch("/speech/evaluate/", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken
+    },
+    body: JSON.stringify({
+        expected: expected,
+        spoken: spoken
+    })
+})
+.then(r => r.json())
+.then(data => {
+    // retorno esperado da função
+    const correct = data.correct;
+    const total   = data.total_words;
+
+    // teste visual simples
+    console.log("RESULTADO AVALIACAO:", data);
+
+    prof.textContent = `Você acertou ${correct} de ${total} palavras`;
+
+})
+.catch(err => {
+    console.error("ERRO NA AVALIACAO:", err);
+});
+
 
 
 } else {
