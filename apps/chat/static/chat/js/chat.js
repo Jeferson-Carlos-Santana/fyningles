@@ -1231,26 +1231,26 @@ const MODO_NOVO = (LESSON_ID === 4);
 
 if (MODO_NOVO) {   
 
-  function marcarErros(expected, spoken) {
-    const exp = expected.trim().split(/\s+/);
-    const spk = spoken.trim().split(/\s+/);
+function marcarErros(expected, spoken) {
+  const expRaw = expected.trim().split(/\s+/);
+  const spkRaw = spoken.trim().split(/\s+/);
 
-    let i = 0;
-    let j = 0;
-    const resultado = [];
+  const exp = expRaw.map(w => w.toLowerCase());
+  const spk = spkRaw.map(w => w.toLowerCase());
 
-    while (j < spk.length) {
-      if (i < exp.length && spk[j] === exp[i]) {
-        resultado.push(spk[j]);
-        i++;
-      } else {
-        resultado.push(`<span style="color:red;font-weight:bold">${spk[j]}</span>`);
-      }
-      j++;
+  const out = [];
+
+  for (let i = 0; i < spkRaw.length; i++) {
+    if (exp[i] && spk[i] === exp[i]) {
+      out.push(spkRaw[i]);
+    } else {
+      out.push(`<span style="color:red;font-weight:bold">${spkRaw[i]}</span>`);
     }
-
-    return resultado.join(" ");
   }
+
+  return out.join(" ");
+}
+
 
 
   // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
@@ -1290,10 +1290,8 @@ if (MODO_NOVO) {
     if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
   }
 
-  if (userMsgEl) {
-    const textoMarcado = marcarErros(expectedAtual, textoCorrigido);
-    userMsgEl.innerHTML = textoMarcado;
-  }
+
+if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
 
 
 
