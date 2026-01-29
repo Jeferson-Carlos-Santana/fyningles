@@ -1230,26 +1230,73 @@ const MODO_NOVO = (LESSON_ID === 4);
 
 
 if (MODO_NOVO) {
- 
-
-const expected = expectedAtual;
-const spoken   = textoCorrigido;
-
-fetch("/speech/evaluate/", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        expected: expected,
-        spoken: spoken
+ // avaliação (já validada)
+    fetch("/speech/evaluate/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            expected: expectedAtual,
+            spoken: textoCorrigido
+        })
     })
-})
-.then(r => r.json())
-.then(data => {
-    console.log("RESULTADO AVALIACAO:", data);
-    // prof.textContent = `Você acertou ${data.correct} palavras`;
-});
+    .then(r => r.json())
+    .then(data => {
+
+        const pontos = data.correct;
+
+        // === GRAVAÇÃO (MESMO PADRÃO DO ELSE) ===
+        // temporário
+        salvarProgressoTmp({
+            points: pontos,
+            lesson_id: lessonAtual,
+            phrase_id: fraseAtual
+        });
+
+        // definitivo
+        salvarProgresso({
+            points: pontos,
+            lesson_id: lessonAtual,
+            phrase_id: fraseAtual
+        });
+
+        // === FEEDBACK ===
+        FLAG = 2;
+        falarProfessor(`Você acertou ${pontos} palavras`);
+
+        // === AVANÇO ===
+        setTimeout(() => {
+            FLAG = 0;
+            esperandoResposta = false;
+            expectedAtual = "";
+            tentativas = 0;
+            lastMsgEl = null;
+
+            index++;
+            mostrarSistema();
+        }, 800);
+    });
+
+    return;
+
+// const expected = expectedAtual;
+// const spoken   = textoCorrigido;
+
+// fetch("/speech/evaluate/", {
+//     method: "POST",
+//     headers: {
+//         "Content-Type": "application/json"
+//     },
+//     body: JSON.stringify({
+//         expected: expected,
+//         spoken: spoken
+//     })
+// })
+// .then(r => r.json())
+// .then(data => {
+//     console.log("RESULTADO AVALIACAO:", data);
+// });
 
 
 
