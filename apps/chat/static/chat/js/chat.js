@@ -1248,7 +1248,7 @@ fetch("/speech/evaluate/", {
 .then(r => r.json())
 .then(data => {
     console.log("RESULTADO AVALIACAO:", data);
-    prof.textContent = `Você acertou ${data.correct} palavras`;
+    // prof.textContent = `Você acertou ${data.correct} palavras`;
 });
 
 
