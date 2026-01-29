@@ -1395,11 +1395,19 @@ const USER_NAME = document.body.dataset.username || "";
 
           const pontos = Number(data.correct || 0);
 
+          const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
+          const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
+          const penalidade = Math.abs(totalFalado - totalEsperado);
+
+
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
           const prof = document.createElement("div");
           prof.className = "chat-message system";
-          prof.textContent = `Você acertou ${pontos} palavras, ganhou ${pontos} pontos.`;
+          //prof.textContent = `Você acertou ${pontos} palavras, ganhou ${pontos} pontos.`;
+          const saldo = Math.max(pontos - penalidade, 0);
+          prof.textContent = `Você acertou ${pontos} palavras, penalidade ${penalidade}, total ${saldo} pontos.`;
+
 
           (lastMsgEl || msgs[index]).after(prof);
           lastMsgEl = prof;
