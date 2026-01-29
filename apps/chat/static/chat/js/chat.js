@@ -1400,7 +1400,7 @@ const USER_NAME = document.body.dataset.username || "";
           const diff = totalFalado - totalEsperado;
           const penalidade = Math.abs(diff);
           const palavrasFaladas = pontos + penalidade;
-          const errosM = erros - palavrasFaladas - penalidade;
+          const errosM = erros - palavrasFaladas + penalidade;
 
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
