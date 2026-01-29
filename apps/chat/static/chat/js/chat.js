@@ -1229,7 +1229,7 @@ const LESSON_ID = Number(document.body.dataset.lessonId);
 const MODO_NOVO = (LESSON_ID === 4);
 
 
-if (MODO_NOVO) {
+if (MODO_NOVO) {   
 
   // chama avaliação (backend)
   const rEval = await fetch("/speech/evaluate/", {
@@ -1253,6 +1253,16 @@ if (MODO_NOVO) {
   (lastMsgEl || msgs[index]).after(prof);
   lastMsgEl = prof;
   scrollChatToBottom();
+
+  if (pontos > 0) {
+    prof.classList.add("msg-ok");      // <-- use o nome REAL do else
+  } else {
+    prof.classList.add("msg-error");   // <-- use o nome REAL do else
+  }
+
+  setTimeout(() => {
+      prof.remove();
+  }, 1200);
 
   // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
   FLAG = 2;
