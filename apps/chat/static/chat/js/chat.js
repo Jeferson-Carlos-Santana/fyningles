@@ -1412,12 +1412,12 @@ const USER_NAME = document.body.dataset.username || "";
           const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
 
           if (diff > 0) {
-            msg = `Você ganhou ${pontos} pontos, e teve ${erros} baixas, pois foi penalizado em ${erroPenalidade} pontos por falar ${penalidade} palavras a mais, e teve ${errosVermelhos} erros`;
+            msg = `Você ganhou ${pontos} pontos, e teve ${erros} erros`;
           } else if (diff < 0) {
             msg = `Você ganhou ${pontos} pontos, e teve ${erros} baixas, pois foi penalizado em ${erroPenalidade} pontos por falar ${penalidade} palavras a menos, e teve ${errosVermelhos} erros`;
           } else if (diff < 0) {
           } else {
-            msg = `Você acertou ${palavrasFaladas} palavras e ganhou ${pontos} pontos.`;
+            msg = `Você ganhou ${pontos} pontos, e teve ${erros} erros`;
           } 
 
           prof.textContent = msg;
