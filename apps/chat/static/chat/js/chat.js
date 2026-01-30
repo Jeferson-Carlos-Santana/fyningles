@@ -1397,23 +1397,14 @@ const USER_NAME = document.body.dataset.username || "";
           const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
           const diff = totalFalado - totalEsperado;
-          const penalidade = Math.abs(diff);
+          const penalidade = Math.abs(diff);          
 
 
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
           const prof = document.createElement("div");
           prof.className = "chat-message system";
-          let msg;
-
-          if (diff > 0) {
-            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a mais.`;
-          } else if (diff < 0) {
-            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a menos.`;
-          } else if (diff < 0) {
-          } else {
-            msg = `Você acertou ${palavrasFaladas} palavras e ganhou ${pontos} pontos.`;
-          }          
+          let msg;                 
           
           prof.textContent = msg;
 
@@ -1430,6 +1421,17 @@ const USER_NAME = document.body.dataset.username || "";
           }
 
           if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+          const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
+
+          if (diff > 0) {
+            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a mais. ${errosVermelhos}`;
+          } else if (diff < 0) {
+            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a menos. ${errosVermelhos}`;
+          } else if (diff < 0) {
+          } else {
+            msg = `Você acertou ${palavrasFaladas} palavras e ganhou ${pontos} pontos.`;
+          } 
+
 
           // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
           FLAG = 2;
