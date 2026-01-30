@@ -1397,23 +1397,22 @@ const USER_NAME = document.body.dataset.username || "";
           const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
           const diff = totalFalado - totalEsperado;
-          const penalidade = Math.abs(diff);          
-
+          const penalidade = Math.abs(diff);       
+          const erroPenalidade = penalidade * 2;  
 
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
           const prof = document.createElement("div");
           prof.className = "chat-message system";
-          let msg;                 
-          
+          let msg;   
           
           if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
           const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
 
           if (diff > 0) {
-            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a mais. ${errosVermelhos}`;
+            msg = `Você ganhou ${pontos} pontos, e teve ${erros} baixas, pois foi penalizado em ${erroPenalidade} pontos por falar ${penalidade} palavras a mais, e teve ${errosVermelhos} erros`;
           } else if (diff < 0) {
-            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a menos. ${errosVermelhos}`;
+            msg = `Você ganhou ${pontos} pontos, e teve ${erros} baixas, pois foi penalizado em ${erroPenalidade} pontos por falar ${penalidade} palavras a menos, e teve ${errosVermelhos} erros`;
           } else if (diff < 0) {
           } else {
             msg = `Você acertou ${palavrasFaladas} palavras e ganhou ${pontos} pontos.`;
