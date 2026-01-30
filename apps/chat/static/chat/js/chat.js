@@ -1393,26 +1393,26 @@ const USER_NAME = document.body.dataset.username || "";
 
           const data = await rEval.json();
           const erros = Number(data.errors || 0);
-          const acertos = Number(data.correct || 0);
+          const pontos = Number(data.correct || 0);
           const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
           const diff = totalFalado - totalEsperado;
-          const penalidade = Math.abs(diff);          
+          const penalidade = Math.abs(diff);
+
 
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
-          
           const prof = document.createElement("div");
           prof.className = "chat-message system";
           let msg;
 
           if (diff > 0) {
-            msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a mais, e errou 0 plavras.`;
+            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a mais.`;
           } else if (diff < 0) {
-           msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a menos, e errou 0 plavras.`;
+            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a menos.`;
           } else if (diff < 0) {
           } else {
-            msg = `Você acertou ${acertos} palavras e ganhou ${erros} pontos.`;
+            msg = `Você acertou ${palavrasFaladas} palavras e ganhou ${pontos} pontos.`;
           }          
           
           prof.textContent = msg;
@@ -1420,9 +1420,6 @@ const USER_NAME = document.body.dataset.username || "";
           (lastMsgEl || msgs[index]).after(prof);
           lastMsgEl = prof;
           scrollChatToBottom();
-
-          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-  
 
           if (pontos > 0) {
             prof.classList.add("correto");
@@ -1432,7 +1429,8 @@ const USER_NAME = document.body.dataset.username || "";
             if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
           }
 
-          
+          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+
           // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
           FLAG = 2;
           if (FLAG !== 2) return;
