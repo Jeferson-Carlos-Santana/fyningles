@@ -1409,7 +1409,7 @@ const USER_NAME = document.body.dataset.username || "";
           if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
           const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
           const limite = totalEsperado - errosVermelhos;
-          const erroPenalidade = (penalidade * 2 >= limite) ? limite : penalidade * 2;
+          const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
 
           if (diff > 0) {
             msg = `Você ganhou ${pontos} pontos, e teve ${erros} baixas, pois foi penalizado em ${erroPenalidade} pontos por falar ${penalidade} palavras a mais, e teve ${errosVermelhos} erros`;
