@@ -1407,9 +1407,9 @@ const USER_NAME = document.body.dataset.username || "";
           let msg;
 
           if (diff > 0) {
-            msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a mais, e errou ${errosVermelhos} plavras.`;
+            msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a mais, e errou 0 plavras.`;
           } else if (diff < 0) {
-           msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a menos, e errou ${errosVermelhos} plavras.`;
+           msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a menos, e errou 0 plavras.`;
           } else if (diff < 0) {
           } else {
             msg = `Você acertou ${acertos} palavras e ganhou ${erros} pontos.`;
