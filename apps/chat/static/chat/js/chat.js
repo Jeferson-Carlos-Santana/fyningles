@@ -1406,6 +1406,19 @@ const USER_NAME = document.body.dataset.username || "";
           prof.className = "chat-message system";
           let msg;                 
           
+          
+          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+          const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
+
+          if (diff > 0) {
+            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a mais. ${errosVermelhos}`;
+          } else if (diff < 0) {
+            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a menos. ${errosVermelhos}`;
+          } else if (diff < 0) {
+          } else {
+            msg = `Você acertou ${palavrasFaladas} palavras e ganhou ${pontos} pontos.`;
+          } 
+
           prof.textContent = msg;
 
           (lastMsgEl || msgs[index]).after(prof);
@@ -1420,17 +1433,6 @@ const USER_NAME = document.body.dataset.username || "";
             if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
           }
 
-          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-          const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
-
-          if (diff > 0) {
-            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a mais. ${errosVermelhos}`;
-          } else if (diff < 0) {
-            msg = `Você ganhou ${pontos} pontos, e errou ${erros}, pois foi penalizado por falar ${penalidade} palavras a menos. ${errosVermelhos}`;
-          } else if (diff < 0) {
-          } else {
-            msg = `Você acertou ${palavrasFaladas} palavras e ganhou ${pontos} pontos.`;
-          } 
 
 
           // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
