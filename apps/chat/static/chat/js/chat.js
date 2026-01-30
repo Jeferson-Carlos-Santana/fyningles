@@ -1396,11 +1396,11 @@ const USER_NAME = document.body.dataset.username || "";
           const acertos = Number(data.correct || 0);
           const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
-
           const diff = totalFalado - totalEsperado;
           const penalidade = Math.abs(diff);
+          const errosVermelhos = userMsgEl.querySelectorAll(".errado").length;
 
-          const pontos = Math.abs(acertos - erros);
+          
 
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
@@ -1409,9 +1409,9 @@ const USER_NAME = document.body.dataset.username || "";
           let msg;
 
           if (diff > 0) {
-            msg = `Você acertou ${acertos} palavras, e errou ${erros} palavras e foi penalizado por falar ${penalidade} a mais, então ganhou 5 pontos`;
+            msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a mais, e errou ${errosVermelhos} plavras.`;
           } else if (diff < 0) {
-           msg = `Você acertou ${acertos} palavras, e errou ${erros} palavras e foi penalizado por falar ${penalidade} a menos, então ganhou 5 pontos`;
+           msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a menos, e errou ${errosVermelhos} plavras.`;
           } else if (diff < 0) {
           } else {
             msg = `Você acertou ${acertos} palavras e ganhou ${erros} pontos.`;
