@@ -1406,9 +1406,6 @@ const USER_NAME = document.body.dataset.username || "";
           prof.className = "chat-message system";
           let msg;
 
-          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-          const errosVermelhos = userMsgEl.querySelectorAll(".errado").length;
-
           if (diff > 0) {
             msg = `Você acertou ${acertos} palavras, falhou ${erros} situações, foi penalizado por falar ${penalidade} a mais, e errou ${errosVermelhos} plavras.`;
           } else if (diff < 0) {
@@ -1422,7 +1419,10 @@ const USER_NAME = document.body.dataset.username || "";
 
           (lastMsgEl || msgs[index]).after(prof);
           lastMsgEl = prof;
-          scrollChatToBottom();          
+          scrollChatToBottom();
+
+          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+  
 
           if (pontos > 0) {
             prof.classList.add("correto");
