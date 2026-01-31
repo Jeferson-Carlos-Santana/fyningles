@@ -17,7 +17,7 @@ const USER_NAME = document.body.dataset.username || "";
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
-    //if (FLAG === 1) return;
+    if (FLAG === 1) return;
     const input = document.getElementById("mensagem");
     const texto = input.value.trim();
     if (!texto) return;
@@ -309,6 +309,10 @@ const USER_NAME = document.body.dataset.username || "";
       btnMic.textContent = "🎙️";
       btnMic.classList.add("mic-gravando");
 
+      document.getElementById("mensagem").disabled = true;
+      document.getElementById("btnEnviar").disabled = true;
+
+
       recognition.start();
 
       // calcula tempo com base na frase esperada atual
@@ -391,6 +395,11 @@ const USER_NAME = document.body.dataset.username || "";
 
       btnEnviar.classList.remove("btn-disabled");
       btnEnviar.classList.add("btn-ready");
+
+      document.getElementById("mensagem").disabled = false;
+      document.getElementById("btnEnviar").disabled = false;
+
+
     }
 
     function iniciarTimerVisual() {
