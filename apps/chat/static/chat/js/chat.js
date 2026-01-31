@@ -13,15 +13,13 @@ const USER_NAME = document.body.dataset.username || "";
       document.getElementById("nivel-modal").style.display = "none";
     };
   }
-
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
-    btnMic.disabled = true;
-      btnEnviar.disabled = true;
-    if (FLAG === 1) return;
+    
     const input = document.getElementById("mensagem");
     const texto = input.value.trim();
+    if (FLAG === 1) return;
     if (!texto) return;
 
     input.value = "";  
