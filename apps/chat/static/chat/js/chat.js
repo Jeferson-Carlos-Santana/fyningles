@@ -16,7 +16,7 @@ const USER_NAME = document.body.dataset.username || "";
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
-    // if (FLAG === 1) return;
+
     const input = document.getElementById("mensagem");
     const texto = input.value.trim();
     
@@ -106,6 +106,16 @@ const USER_NAME = document.body.dataset.username || "";
       // px1
       let RENDER_VERSION = 0;
       // fim px1
+
+      let ultimoFeedback = 0;
+
+      function podeDarFeedback() {
+        const agora = Date.now();
+        if (agora - ultimoFeedback < 5000) return false;
+        ultimoFeedback = agora;
+        return true;
+      }
+
 
       // começa desabilitado
       if (btnStart) {
@@ -1628,7 +1638,10 @@ const USER_NAME = document.body.dataset.username || "";
         let feedbackHTML = msg;
 
         const tentativaAgora = tentativas + 1;
-        if (!ok) {      
+        if (!ok) {  
+          
+          if (!podeDarFeedback()) return;
+
           // px1
           if (offlinePause || v !== RENDER_VERSION) {
               esperandoResposta = false;
