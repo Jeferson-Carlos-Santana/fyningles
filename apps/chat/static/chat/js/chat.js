@@ -17,7 +17,7 @@ const USER_NAME = document.body.dataset.username || "";
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
-    if (FLAG === 1) return;
+    //if (FLAG === 1) return;
     const input = document.getElementById("mensagem");
     const texto = input.value.trim();
     if (!texto) return;
