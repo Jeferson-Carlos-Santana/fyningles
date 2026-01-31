@@ -1236,13 +1236,8 @@ const USER_NAME = document.body.dataset.username || "";
 
         if (FLAG !== 1) return;
 
-        const textoBruto = e.results[0][0].transcript;  
+        const textoBruto = e.results[0][0].transcript;          
         
-        FLAG = 2;
-esperandoResposta = false;
-encerrarMicrofone();
-bloquearEntrada();
-
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
 
@@ -1264,8 +1259,8 @@ bloquearEntrada();
           // limpa estado
           esperandoResposta = false;
           expectedAtual = "";
-          tentativas = 0;
-
+          tentativas = 0;          
+      
           // avança para próxima frase
           setTimeout(() => {
             RENDER_VERSION++;
@@ -1632,7 +1627,15 @@ bloquearEntrada();
         let feedbackHTML = msg;
 
         const tentativaAgora = tentativas + 1;
-        if (!ok) {          
+        if (!ok) {      
+          // px1
+          if (offlinePause || v !== RENDER_VERSION) {
+              esperandoResposta = false;
+              FLAG = 0;
+              return;
+          }
+          // fim px1   
+           
           if (tentativaAgora < MAX_TENTATIVAS) {
             const expectedRaw = expectedAtual || "";
             feedbackText = `${msg} Repita comigo: ${expectedRaw}`;
