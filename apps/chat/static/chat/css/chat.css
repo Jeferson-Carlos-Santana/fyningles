@@ -377,6 +377,22 @@
 }
 /* FIM MODAL NIVEL */
 
+.mic-alert {
+  animation: micFlash 1.5s ease-in-out 2;
+  border: 2px solid #f5c400 !important;
+}
+
+@keyframes micFlash {
+  0%   { box-shadow: 0 0 0 rgba(245,196,0,0); }
+  50%  { box-shadow: 0 0 10px rgba(245,196,0,.9); }
+  100% { box-shadow: 0 0 0 rgba(245,196,0,0); }
+}
+
+.mic-alert::after {
+  content: " ⚠️";
+}
+
+
 /* MOBILE */
 @media (max-width: 520px) {
   .chat-message {
