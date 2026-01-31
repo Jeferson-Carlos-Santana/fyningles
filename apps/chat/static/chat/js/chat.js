@@ -157,7 +157,7 @@ const USER_NAME = document.body.dataset.username || "";
         "cant": "cannot",
         "david": "they've",
         "everyday": "every day",
-        "ivy": "I've",
+        "ivy": "i've",
         "hue": "He'll",
         "cole": "call",
         "gunn": "gone",
@@ -1236,17 +1236,16 @@ const USER_NAME = document.body.dataset.username || "";
 
         if (FLAG !== 1) return;
 
-         // TRAVA IMEDIATA (anti reentrada, sem variável nova)
-        FLAG = 2;                // sai do modo "ouvindo"
-        esperandoResposta = false;
-        encerrarMicrofone();     // garante stop + limpa timeout
-        bloquearEntrada();
+        const textoBruto = e.results[0][0].transcript;  
+        
+        FLAG = 2;
+esperandoResposta = false;
+encerrarMicrofone();
+bloquearEntrada();
 
-
-        const textoBruto = e.results[0][0].transcript;        
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
-        //const texto = normEn(textoBruto);
+
         const texto = normEn(textoCorrigido);        
 
         if (["next", "skip"].includes(texto)) {
