@@ -24,6 +24,10 @@ const USER_NAME = document.body.dataset.username || "";
 
     input.value = "";
 
+    FLAG = 2;
+    esperandoResposta = false;
+    bloquearEntrada();
+
     window.recognition.onresult({
       results: [[{ transcript: texto }]]
     });
