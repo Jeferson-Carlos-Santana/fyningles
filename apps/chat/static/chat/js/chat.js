@@ -1071,6 +1071,14 @@ const USER_NAME = document.body.dataset.username || "";
         RENDER_VERSION++;
         // fim px1
 
+         FLAG = 0;
+        tocando = false;
+        esperandoResposta = false;
+        professorLock = false;
+        execAtiva = false;
+
+        liberarEntrada(); 
+
         // remove aviso
         chatArea.querySelectorAll(".chat-message.system")
           .forEach(el => {

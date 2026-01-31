@@ -49,11 +49,6 @@ LESSON_TITLES = {
 }
 
 
-
-
-
-
-
 @csrf_exempt
 def speech_evaluate(request):
     if request.method != "POST":
@@ -64,10 +59,6 @@ def speech_evaluate(request):
     spoken   = data.get("spoken", "")
 
     return JsonResponse(evaluate(expected, spoken))
-
-
-
-
 
 
 def resend_activation(request):
