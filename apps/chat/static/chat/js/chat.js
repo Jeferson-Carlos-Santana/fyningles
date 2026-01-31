@@ -22,11 +22,7 @@ const USER_NAME = document.body.dataset.username || "";
     const texto = input.value.trim();
     if (!texto) return;
 
-    input.value = "";
-
-    FLAG = 2;
-    esperandoResposta = false;
-    bloquearEntrada();
+    input.value = "";  
 
     window.recognition.onresult({
       results: [[{ transcript: texto }]]
