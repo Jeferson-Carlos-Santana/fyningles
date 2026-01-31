@@ -1235,6 +1235,14 @@ const USER_NAME = document.body.dataset.username || "";
         // fim px1
 
         if (FLAG !== 1) return;
+
+         // TRAVA IMEDIATA (anti reentrada, sem variável nova)
+        FLAG = 2;                // sai do modo "ouvindo"
+        esperandoResposta = false;
+        encerrarMicrofone();     // garante stop + limpa timeout
+        bloquearEntrada();
+
+
         const textoBruto = e.results[0][0].transcript;        
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
