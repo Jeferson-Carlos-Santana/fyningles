@@ -17,6 +17,7 @@ const USER_NAME = document.body.dataset.username || "";
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
+    if (FLAG === 1) return;
     const input = document.getElementById("mensagem");
     const texto = input.value.trim();
     if (!texto) return;
@@ -309,10 +310,6 @@ const USER_NAME = document.body.dataset.username || "";
       btnMic.classList.add("mic-gravando");
 
       recognition.start();
-      
-      // px1
-      recognition._micVersion = micVersion;
-      //fim px1
 
       // calcula tempo com base na frase esperada atual
       const tempoMic = calcularTempoMic(expectedAtual);
@@ -1236,8 +1233,6 @@ const USER_NAME = document.body.dataset.username || "";
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
-
-        if (recognition._micVersion !== RENDER_VERSION) return;
         // fim px1
 
         if (FLAG !== 1) return;
