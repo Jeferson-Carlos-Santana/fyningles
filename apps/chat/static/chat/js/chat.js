@@ -106,16 +106,17 @@ const USER_NAME = document.body.dataset.username || "";
       // px1
       let RENDER_VERSION = 0;
       // fim px1
-
+      
+      // px1
       let ultimoFeedback = 0;
 
       function podeDarFeedback() {
         const agora = Date.now();
-        if (agora - ultimoFeedback < 5000) return false;
+        if (agora - ultimoFeedback < 3000) return false;
         ultimoFeedback = agora;
         return true;
       }
-
+      // fim px1
 
       // começa desabilitado
       if (btnStart) {
@@ -1639,8 +1640,9 @@ const USER_NAME = document.body.dataset.username || "";
 
         const tentativaAgora = tentativas + 1;
         if (!ok) {  
-          
+          // px1
           if (!podeDarFeedback()) return;
+          // fim px1
 
           // px1
           if (offlinePause || v !== RENDER_VERSION) {
@@ -1659,6 +1661,9 @@ const USER_NAME = document.body.dataset.username || "";
         
         let prof = null;      
         if (ok || tentativaAgora < MAX_TENTATIVAS) {
+          // px1
+          if (!podeDarFeedback()) return;
+          // fim px1
           prof = document.createElement("div");
           prof.className = "chat-message system";
           prof.innerHTML = feedbackHTML;
@@ -1670,6 +1675,9 @@ const USER_NAME = document.body.dataset.username || "";
         // const LESSON_ID = Number(document.body.dataset.lessonId);
         // ===== decisão de fluxo =====
         if (ok) {
+          // px1
+          if (!podeDarFeedback()) return;
+          // fim px1
           FLAG = 2;
           if (prof) prof.classList.add("correto");
           if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
@@ -1757,6 +1765,9 @@ const USER_NAME = document.body.dataset.username || "";
         if (prof) setTimeout(() => prof.classList.remove("errado"), 7000);
 
       if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
+        // px1
+          if (!podeDarFeedback()) return;
+          // fim px1
         if (FLAG !== 1) return;
         
         // px1
@@ -1821,6 +1832,9 @@ const USER_NAME = document.body.dataset.username || "";
       }
 
       if (tentativas >= MAX_TENTATIVAS) {
+        // px1
+        if (!podeDarFeedback()) return;
+        // fim px1
         if (FLAG !== 1) return;
         
         // px1
