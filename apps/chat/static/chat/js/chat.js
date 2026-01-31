@@ -309,6 +309,10 @@ const USER_NAME = document.body.dataset.username || "";
       btnMic.classList.add("mic-gravando");
 
       recognition.start();
+      
+      // px1
+      recognition._micVersion = micVersion;
+      //fim px1
 
       // calcula tempo com base na frase esperada atual
       const tempoMic = calcularTempoMic(expectedAtual);
@@ -1199,7 +1203,7 @@ const USER_NAME = document.body.dataset.username || "";
         // INCLUIR AQUI PALAVRAS SEMELHANTES A THEY
         if (!["day", "dey", "dei", "tei", "thei"].includes(w)) return w;
         // INCLUIR AQUI A PALAVRA DEPOIS DO THEY
-        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can","understand","worked","help","ask","come","be","heard"].includes(next)) {
+        if (["are","were","have","will","do","need","follow","hear","learn","like","want","go","get","make","take","see","know","say","think","come","meet","can","understand","worked","help","ask","come","be","heard","left"].includes(next)) {
           return "they";
         }
         return "day";
@@ -1232,6 +1236,8 @@ const USER_NAME = document.body.dataset.username || "";
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
+
+        if (recognition._micVersion !== RENDER_VERSION) return;
         // fim px1
 
         if (FLAG !== 1) return;
@@ -1635,7 +1641,7 @@ const USER_NAME = document.body.dataset.username || "";
               return;
           }
           // fim px1   
-           
+
           if (tentativaAgora < MAX_TENTATIVAS) {
             const expectedRaw = expectedAtual || "";
             feedbackText = `${msg} Repita comigo: ${expectedRaw}`;
