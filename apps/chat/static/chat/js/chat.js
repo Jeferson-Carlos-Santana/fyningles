@@ -1286,28 +1286,28 @@ const USER_NAME = document.body.dataset.username || "";
       //     alertarMic(btnMic);
       //   }
       // };
-let houveResultado = true;
-
-
-recognition.onspeechstart = function () {
-  houveResultado = false;
-};
 
 
 
-recognition.onend = function () {
+      let houveResultado = true;
 
-    if (houveResultado) {
-      console.log("icone botao");
-    }
+      recognition.onspeechstart = function () {
+        houveResultado = false;
+      };
 
-    if (!houveResultado) {
-      console.log("sem icone botao");
-      // aqui você trata timeout/silêncio
-    }
+      recognition.onend = function () {
 
-  houveResultado = true;
-};
+          if (houveResultado) {
+            console.log("sem icone botao");
+          }
+
+          if (!houveResultado) {
+            console.log("icone botao");
+            alertarMic(btnMic);
+          }
+
+        houveResultado = true;
+      };
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
