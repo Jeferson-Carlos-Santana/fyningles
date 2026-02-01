@@ -56,6 +56,7 @@ const USER_NAME = document.body.dataset.username || "";
       recognition.lang = "en-GB";
       recognition.continuous = false;
       recognition.interimResults = false;
+      recognition.interimResults = true;
 
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");
@@ -330,9 +331,6 @@ const USER_NAME = document.body.dataset.username || "";
       // visual de gravando
       btnMic.textContent = "🎙️";
       btnMic.classList.add("mic-gravando");
-
-      houveResultado = false;
-      houveFala = false;
 
       recognition.start();
 
@@ -1264,11 +1262,6 @@ const USER_NAME = document.body.dataset.username || "";
         }, 2000);
       }
 
-      recognition.onspeechstart = function () {
-        houveFala = true; // usuário abriu a boca
-      };
-
-
       recognition.onend = function () {
          if (FLAG === 1 && esperandoResposta && houveFala && !houveResultado) {
           // não reconheceu nada
@@ -1285,7 +1278,7 @@ const USER_NAME = document.body.dataset.username || "";
         }
 
         houveResultado = false;
-         houveFala = false;
+        houveFala = false;
       };
 
       recognition.onerror = function (e) {
@@ -1297,8 +1290,11 @@ const USER_NAME = document.body.dataset.username || "";
      
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
-         houveResultado = true; 
-    
+         houveFala = true;
+          const res = e.results[e.resultIndex];
+          if (res && res.isFinal) {
+            houveResultado = true;
+          }    
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
