@@ -1254,13 +1254,13 @@ const USER_NAME = document.body.dataset.username || "";
 
       function alertarMic(btn) {
         if (!btn) return;
-
+        microfone.textContent = "🎤";
         btn.classList.add("mic-alert");
-        btn.classList.remove("mic-ready");   // remove microfone
+        microfone.classList.remove("mic-ready");   // remove microfone
 
         setTimeout(() => {
           btn.classList.remove("mic-alert"); // remove triângulo
-          btn.classList.add("mic-ready");    // volta microfone
+          microfone.classList.add("mic-ready");    // volta microfone
         }, 2000);
       }
 
