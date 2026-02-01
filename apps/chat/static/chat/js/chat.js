@@ -16,6 +16,7 @@ const USER_NAME = document.body.dataset.username || "";
   
   // ENVIAR MENSAGEM
   function enviarMensagem() {
+    if (!podeResponder()) return;
 
     const input = document.getElementById("mensagem");
     const texto = input.value.trim();
@@ -109,13 +110,23 @@ const USER_NAME = document.body.dataset.username || "";
       
       // px1
       let ultimoFeedback = 0;
+      let ultimaResposta = 0;
+
 
       function podeDarFeedback() {
         const agora = Date.now();
-        if (agora - ultimoFeedback < 5000) return false;
+        if (agora - ultimoFeedback < 4000) return false;
         ultimoFeedback = agora;
         return true;
       }
+
+      function podeResponder() {
+        const agora = Date.now();
+        if (agora - ultimaResposta < 4000) return false;
+        ultimaResposta = agora;
+        return true;
+      }
+
       // fim px1
 
 
@@ -1241,13 +1252,15 @@ const USER_NAME = document.body.dataset.username || "";
       // ########################################    
 
       // ===== RESPOSTA DO USUÁRIO =====
-      recognition.onresult = async function (e) {
+      recognition.onresult = async function (e) {        
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
         // fim px1
 
         if (FLAG !== 1) return;
+
+        if (!podeResponder()) return;
 
         const textoBruto = e.results[0][0].transcript;          
         
@@ -1820,6 +1833,7 @@ const USER_NAME = document.body.dataset.username || "";
         // fim px1
         
         ultimoFeedback = 0;
+        ultimaResposta = 0;
         esperandoResposta = true;
         liberarEntrada();
         return;
@@ -1914,6 +1928,7 @@ const USER_NAME = document.body.dataset.username || "";
 
       // pode tentar de novo
       ultimoFeedback = 0;
+      ultimaResposta = 0;
       esperandoResposta = true;
       liberarEntrada();     
       
