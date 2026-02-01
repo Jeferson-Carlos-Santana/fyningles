@@ -1254,39 +1254,17 @@ const USER_NAME = document.body.dataset.username || "";
 
       function alertarMic(btn) {
         if (!btn) return;
+
         btn.classList.add("mic-alert");
+        btn.classList.remove("mic-ready");   // remove microfone
+
         setTimeout(() => {
-          btn.classList.remove("mic-alert");
+          btn.classList.remove("mic-alert"); // remove triângulo
+          btn.classList.add("mic-ready");    // volta microfone
         }, 2000);
       }
+
       
-    
-     
-      // recognition.onend = function () {
-      //   if (FLAG === 1 && esperandoResposta && !houveResultado) {
-      //     // não reconheceu nada
-      //     encerrarMicrofone();
-
-      //     alertarMic(btnMic);
-      //     // exemplo: fechar rápido e permitir nova tentativa
-      //     ultimoFeedback = 0;
-      //     ultimaResposta = 0;
-
-      //     if (autoMicAtivo) {
-      //       setTimeout(() => abrirMicrofoneComTempo(), 200);
-      //     }
-      //   }
-
-      //   houveResultado = false;
-      // };
-
-      // recognition.onerror = function (e) {
-      //   if (FLAG === 1 && esperandoResposta) {
-      //     encerrarMicrofone();
-      //     alertarMic(btnMic);
-      //   }
-      // };
-
 
 
       let houveResultado = true;
