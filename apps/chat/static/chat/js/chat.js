@@ -1303,6 +1303,7 @@ const USER_NAME = document.body.dataset.username || "";
 
           if (!houveResultado) {
             console.log("icone botao");
+            encerrarMicrofone();
             alertarMic(btnMic);
           }
 
