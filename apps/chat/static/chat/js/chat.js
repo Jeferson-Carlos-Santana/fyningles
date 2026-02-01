@@ -1250,7 +1250,7 @@ const USER_NAME = document.body.dataset.username || "";
       // FIM NORMALIZACOES
       // ########################################  
 
-      let houveResultado = false;
+      
 
       function alertarMic(btn) {
         if (!btn) return;
@@ -1259,7 +1259,8 @@ const USER_NAME = document.body.dataset.username || "";
           btn.classList.remove("mic-alert");
         }, 2000);
       }
-
+      
+    
      
       // recognition.onend = function () {
       //   if (FLAG === 1 && esperandoResposta && !houveResultado) {
@@ -1285,10 +1286,39 @@ const USER_NAME = document.body.dataset.username || "";
       //     alertarMic(btnMic);
       //   }
       // };
-     
+let houveResultado = false;
+let houveFala = false;
+
+recognition.onspeechstart = function () {
+  houveFala = true;        // microfone captou voz
+  houveResultado = false; // ainda não reconheceu texto
+};
+
+recognition.onresult = function (e) {
+  houveResultado = true;  // texto reconhecido
+};
+
+recognition.onend = function () {
+  if (FLAG === 1 && esperandoResposta) {
+    if (houveFala && !houveResultado) {
+      console.log("Falou, mas nada foi reconhecido");
+      // aqui você trata como erro de reconhecimento
+    }
+
+    if (!houveFala) {
+      console.log("Microfone abriu, ninguém falou");
+      // aqui você trata timeout/silêncio
+    }
+  }
+
+  // reset obrigatório
+  houveFala = false;
+  houveResultado = false;
+};
+
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
-          
+        // houveResultado = true;  
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
