@@ -378,7 +378,7 @@
 /* FIM MODAL NIVEL */
 
 .mic-alert {
-  animation: micFlash 1.5s ease-in-out 2;
+  animation: micFlash 2s ease-in-out 1;
   border: 2px solid #f5c400 !important;
 }
 

@@ -1248,10 +1248,46 @@ const USER_NAME = document.body.dataset.username || "";
      
       // ########################################
       // FIM NORMALIZACOES
-      // ########################################    
+      // ########################################  
 
+      let houveResultado = false;
+
+      function alertarMic(btn) {
+        if (!btn) return;
+        btn.classList.add("mic-alert");
+        setTimeout(() => {
+          btn.classList.remove("mic-alert");
+        }, 2000);
+      }
+
+      recognition.onend = function () {
+        if (FLAG === 1 && esperandoResposta && !houveResultado) {
+          // não reconheceu nada
+          encerrarMicrofone();
+
+          alertarMic(btnMic);
+          // exemplo: fechar rápido e permitir nova tentativa
+          ultimoFeedback = 0;
+          ultimaResposta = 0;
+
+          if (autoMicAtivo) {
+            setTimeout(() => abrirMicrofoneComTempo(), 200);
+          }
+        }
+
+        houveResultado = false;
+      };
+
+      recognition.onerror = function (e) {
+        if (FLAG === 1 && esperandoResposta) {
+          encerrarMicrofone();
+          alertarMic(btnMic);
+        }
+      };
+     
       // ===== RESPOSTA DO USUÁRIO =====
-      recognition.onresult = async function (e) {        
+      recognition.onresult = async function (e) { 
+         houveResultado = true;       
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
@@ -1262,19 +1298,6 @@ const USER_NAME = document.body.dataset.username || "";
         if (!podeResponder()) return;
 
         const textoBruto = e.results[0][0].transcript;
-        
-        if (!textoBruto || !textoBruto.trim()) {
-          encerrarMicrofone();
-
-          btnMic.classList.add("mic-alert");
-          setTimeout(() => {
-            btnMic.classList.remove("mic-alert");
-          }, 2000);
-
-          esperandoResposta = true;
-          liberarEntrada();
-          return;
-        }
         
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
