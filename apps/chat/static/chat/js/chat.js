@@ -331,9 +331,6 @@ const USER_NAME = document.body.dataset.username || "";
       btnMic.textContent = "🎙️";
       btnMic.classList.add("mic-gravando");
 
-      houveResultado = false;
-      houveSom = false;
-
       recognition.start();
 
       // calcula tempo com base na frase esperada atual
@@ -343,6 +340,7 @@ const USER_NAME = document.body.dataset.username || "";
 
       micTimeout = setTimeout(() => {
         if (esperandoResposta) {
+           houveResultado = true;
           // fecha mic
           try { recognition.stop(); } catch (e) {}
           btnMic.textContent = "🎤";
@@ -1254,7 +1252,6 @@ const USER_NAME = document.body.dataset.username || "";
       // ########################################  
 
       let houveResultado = false;
-      let houveSom = false;
 
       function alertarMic(btn) {
         if (!btn) return;
@@ -1265,7 +1262,7 @@ const USER_NAME = document.body.dataset.username || "";
       }
 
       recognition.onend = function () {
-        if (FLAG === 1 && esperandoResposta && houveSom && !houveResultado) {
+        if (FLAG === 1 && esperandoResposta && !houveResultado) {
           // não reconheceu nada
           encerrarMicrofone();
 
@@ -1280,7 +1277,6 @@ const USER_NAME = document.body.dataset.username || "";
         }
 
         houveResultado = false;
-        houveSom = false;
       };
 
       recognition.onerror = function (e) {
@@ -1289,11 +1285,6 @@ const USER_NAME = document.body.dataset.username || "";
           alertarMic(btnMic);
         }
       };
-
-      recognition.onspeechstart = function () {
-        houveSom = true;
-      };
-
      
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
