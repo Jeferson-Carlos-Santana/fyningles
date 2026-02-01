@@ -59,10 +59,9 @@ const USER_NAME = document.body.dataset.username || "";
 
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");
-      // const btnStop = document.getElementById("btn-stop");
       const btnMic = document.getElementById("btn-mic");
       const btnEnviar = document.getElementById("btnEnviar");
-      // btnStop.disabled = true;
+
       let index = 0;
       let esperandoResposta = false;
       let expectedAtual = "";
@@ -101,16 +100,12 @@ const USER_NAME = document.body.dataset.username || "";
       let professorLock = false;
       let execAtiva = false;
 
-      let offlinePause = false;
-      
-      // px1
-      let RENDER_VERSION = 0;
-      // fim px1
-      
-      // px1
+      let offlinePause = false;   
+ 
+      let RENDER_VERSION = 0; 
+   
       let ultimoFeedback = 0;
       let ultimaResposta = 0;
-
 
       function podeDarFeedback() {
         const agora = Date.now();
@@ -124,10 +119,7 @@ const USER_NAME = document.body.dataset.username || "";
         if (agora - ultimaResposta < 4000) return false;
         ultimaResposta = agora;
         return true;
-      }
-
-      // fim px1
-
+      }    
 
       // começa desabilitado
       if (btnStart) {
@@ -447,7 +439,6 @@ const USER_NAME = document.body.dataset.username || "";
     }
     
     function resetarAula() {
-      // NOVO — reset total dos pontos visuais
       pontosAndamento = 0;
       atualizarPontosAndamento();
 
@@ -940,10 +931,8 @@ const USER_NAME = document.body.dataset.username || "";
         lastFalandoEl = msg;
 
         bloquearEntrada();
-
-        // px1
-        const v = RENDER_VERSION;
-        // fim px1    
+   
+        const v = RENDER_VERSION;          
 
         fetch("/tts/line/", {          
           method: "POST",
@@ -952,18 +941,16 @@ const USER_NAME = document.body.dataset.username || "";
         })
         
         .then(r => {
-          // px1
+   
           if (offlinePause || v !== RENDER_VERSION) {
             throw new Error("stale");
           }
-          // fim px1
-
+         
           if (!r.ok) {
             
             offlinePause = true;
-            // px1
-            RENDER_VERSION++;
-            // fim px1
+       
+            RENDER_VERSION++;        
 
             FLAG = 0;
             tocando = false;
@@ -979,9 +966,9 @@ const USER_NAME = document.body.dataset.username || "";
 
         // .then(r => r.json())
         .then(async d => {
-          // px1
+
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
+
           try {
 
           if (d.files && d.files.length) { 
@@ -989,11 +976,10 @@ const USER_NAME = document.body.dataset.username || "";
 
             await new Promise(r => setTimeout(r, 100));
             await falarComoAntigo(d.files);
-            // px1
-            if (offlinePause || v !== RENDER_VERSION) return;
-            // fim px1 
 
-            // ===== PRÉ-GERA ÁUDIO DA PRÓXIMA FRASE (SEM TOCAR) =====
+            if (offlinePause || v !== RENDER_VERSION) return;
+       
+            // PRÉ-GERA ÁUDIO DA PRÓXIMA FRASE (SEM TOCAR)
             const nextMsg = msgs[index + 1];
             if (nextMsg) {
               fetch("/tts/line/", {
@@ -1002,9 +988,7 @@ const USER_NAME = document.body.dataset.username || "";
                 body: JSON.stringify({ line_id: nextMsg.dataset.id })
               });
 
-              // px1
               if (offlinePause || v !== RENDER_VERSION) return;
-              // fim px1 
 
               // PRELOAD DA PRÓXIMA FRASE
               const nextLineId = nextMsg.dataset.id;
@@ -1028,15 +1012,12 @@ const USER_NAME = document.body.dataset.username || "";
             
           }      
           
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1 
 
           // SÓ AGORA DECIDE O PRÓXIMO PASSO
           if (end === 1) {
-            // px1
             if (offlinePause || v !== RENDER_VERSION) return;
-            // fim px1
+
             bloquearEntrada(); 
             RENDER_VERSION++;
             index++;
@@ -1064,9 +1045,8 @@ const USER_NAME = document.body.dataset.username || "";
     // SEM INTERNET
     window.addEventListener("offline", () => {
         offlinePause = true;
-        // px1
+
         RENDER_VERSION++;
-        // fim px1
 
         // pausa tudo
         try { recognition.stop(); } catch(e) {}
@@ -1090,9 +1070,7 @@ const USER_NAME = document.body.dataset.username || "";
 
         offlinePause = false;
 
-        // px1
         RENDER_VERSION++;
-        // fim px1
 
          FLAG = 0;
         tocando = false;
@@ -1102,7 +1080,6 @@ const USER_NAME = document.body.dataset.username || "";
 
         liberarEntrada(); 
 
-        // remove aviso
         chatArea.querySelectorAll(".chat-message.system")
           .forEach(el => {
             if (el.textContent.includes("Sem conexão")) el.remove();
@@ -1116,7 +1093,6 @@ const USER_NAME = document.body.dataset.username || "";
       // INCIAR LICAO
       function iniciarLicao() {
         FLAG = 0;
-        // btnStart.disabled = true;
         // remove mensagem de fim de aula, se existir
         chatArea.querySelectorAll(".fim-aula").forEach(el => el.remove());
         // LIMPA TUDO QUE FOI GERADO NA EXECUÇÃO ANTERIOR
@@ -1155,8 +1131,7 @@ const USER_NAME = document.body.dataset.username || "";
 
           // SE ESTIVER EM START → INICIAR (sem refresh)
           const r = await fetch("/user/nivel/");
-          const data = await r.json();
-              
+          const data = await r.json();              
 
           if (!data.exists || data.nivel === 0) {
             document.getElementById("nivel-modal").style.display = "block";
@@ -1178,7 +1153,7 @@ const USER_NAME = document.body.dataset.username || "";
       }      
 
       // RESPOSTA DO USUÁRIO
-      // ===== escreve avaliação do professor =====
+      // escreve avaliação do professor
       function escreverProfessor(text, afterEl) {
         const div = document.createElement("div");
         div.className = "chat-message system";
@@ -1248,9 +1223,7 @@ const USER_NAME = document.body.dataset.username || "";
      
       // ########################################
       // FIM NORMALIZACOES
-      // ########################################  
-
-      
+      // ########################################       
 
       function alertarMic(btn) {
         if (!btn) return;
@@ -1265,11 +1238,7 @@ const USER_NAME = document.body.dataset.username || "";
           btn.textContent = "🎤";
         }, 2000);
       }
-
-
-      
-
-
+      // mantenho aqui
       let houveResultado = true;
 
       recognition.onspeechstart = function () {
@@ -1304,7 +1273,6 @@ const USER_NAME = document.body.dataset.username || "";
         if (!podeResponder()) return;
 
         const textoBruto = e.results[0][0].transcript;
-
         
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
@@ -1350,10 +1318,9 @@ const USER_NAME = document.body.dataset.username || "";
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
         
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
-        // ===== escreve ALUNO (sempre após a última mensagem) =====
+
+        // escreve ALUNO (sempre após a última mensagem)
         const user = document.createElement("div");
         user.className = "chat-message user";
         
@@ -1373,7 +1340,8 @@ const USER_NAME = document.body.dataset.username || "";
 
         const LESSON_ID = Number(document.body.dataset.lessonId);
         const MODO_NOVO = (LESSON_ID === 4);
-
+        
+        // METODO DE FRASES GRANDE
         if (MODO_NOVO) {   
 
         function normalizeLikeBackend(text) {
@@ -1381,6 +1349,7 @@ const USER_NAME = document.body.dataset.username || "";
 
           let t = text.toLowerCase();
           
+          //NORMALIZACAO PARA ABREVIADOS
           const contractions = { 
                 "i'm": "i am",
                 "you're": "you are",
@@ -1448,7 +1417,8 @@ const USER_NAME = document.body.dataset.username || "";
             const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
           }
-
+          
+          // NORMALIZACAO PRA NUMEROS
           const numbers = {
             "zero":"0",
             "one":"1",
@@ -1465,8 +1435,19 @@ const USER_NAME = document.body.dataset.username || "";
           for (const w in numbers) {
             t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
           }
+          
+          // at nine / at 9 → at 9:00
+          t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
 
-          // horas "oclock" (hora exata)
+          // NORMALIZACAO AM / PM
+          t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
+            let hour = parseInt(h, 10);
+            if (p === "pm" && hour < 12) hour += 12;
+            if (p === "am" && hour === 12) hour = 0;
+            return `at ${hour}:00`;
+          });
+
+          // NORMALIZACAO PARRA horas "oclock"
           const hours = {
             "one":"1",
             "two":"2",
@@ -1484,8 +1465,7 @@ const USER_NAME = document.body.dataset.username || "";
           for (const w in hours) {
             t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
           }
-
-          //t = t.replace(/[^\w\s]/g, "").replace(/\s+/g, " ").trim();
+       
           t = t.replace(/[^\w\s:]/g, "").replace(/\s+/g, " ").trim();
 
           return t;
@@ -1526,9 +1506,9 @@ const USER_NAME = document.body.dataset.username || "";
           const okIdx = lcsMatchedIndices(exp, spkNorm);
 
           return spkRaw.map((w, idx) =>
-            okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
-          ).join(" ");
-        }
+              okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
+            ).join(" ");
+          }
 
           // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
           let TEMPO_BASE = 3000;          // 3s mínimos
@@ -1536,9 +1516,8 @@ const USER_NAME = document.body.dataset.username || "";
           let TEMPO_MAX = 20000;         // 12s máximo
           
           // chama avaliação (backend)
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
+
           const rEval = await fetch("/speech/evaluate/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1548,15 +1527,11 @@ const USER_NAME = document.body.dataset.username || "";
             })
           });
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
           const data = await rEval.json();
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
           const erros = Number(data.errors || 0);
           const pontos = Number(data.correct || 0);
@@ -1565,10 +1540,8 @@ const USER_NAME = document.body.dataset.username || "";
           const diff = totalFalado - totalEsperado;
           const penalidade = Math.abs(diff);          
           
-
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
+
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
           const userMsgEl = lastMsgEl;
           const prof = document.createElement("div");
@@ -1580,14 +1553,17 @@ const USER_NAME = document.body.dataset.username || "";
           const limite = totalEsperado - errosVermelhos;
           const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
 
+          function p(n, singular, plural) {
+            return n === 1 ? singular : plural;
+          }
+
           if (diff > 0) {
-            msg = `Você ganhou ${pontos} pontos, e teve ${erros} erros`;
+            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
           } else if (diff < 0) {
-            msg = `Você ganhou ${pontos} pontos, e teve ${erros} baixas, pois foi penalizado em ${erroPenalidade} pontos por falar ${penalidade} palavras a menos, e teve ${errosVermelhos} erros`;
-          } else if (diff < 0) {
+            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")} por falar ${penalidade} ${p(penalidade,"palavra","palavras")} a menos, e teve ${errosVermelhos} ${p(errosVermelhos,"erro","erros")}`;
           } else {
-            msg = `Você ganhou ${pontos} pontos, e teve ${erros} erros`;
-          } 
+            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
+          }
 
           prof.textContent = msg;
 
@@ -1603,7 +1579,7 @@ const USER_NAME = document.body.dataset.username || "";
             if (prof) setTimeout(() => prof.classList.remove("errado"), 6000);
           }
 
-          // ===== FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/) =====
+          // FEEDBACK POR VOZ (mesmo padrão do else: /tts/line/)
           FLAG = 2;
           if (FLAG !== 2) return;
 
@@ -1613,42 +1589,32 @@ const USER_NAME = document.body.dataset.username || "";
             body: JSON.stringify({ text: prof.textContent, lang: "pt" })
           });
           
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
           const d = await rTts.json();
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
           if (d.files && d.files.length) {
             tocando = true;
             await new Promise(r => setTimeout(r, 1100));
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
             await tocarUm(d.files[0]);
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
             tocando = false;
           }
           
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
-          // ===== PONTOS VISUAIS (mesmo padrão do else) =====
+          // PONTOS VISUAIS (mesmo padrão do else)
           pontosAndamento += pontos;
           atualizarPontosAndamento();
 
-          // ===== SALVA NAS 2 TABELAS (mesmas funções do else) =====
+          // SALVA NAS 2 TABELAS (mesmas funções do else)
           salvarProgresso({
             chatId: msgs[index].dataset.id,
             lessonId: LESSON_ID,
@@ -1663,7 +1629,7 @@ const USER_NAME = document.body.dataset.username || "";
           atualizarPontosTotais();
           atualizarPontosFeitos();
 
-          // ===== AVANÇA SEM REPETIR (modo novo) =====
+          // AVANÇA SEM REPETIR (modo novo)
           FLAG = 0;
           esperandoResposta = false;
           expectedAtual = "";
@@ -1685,29 +1651,24 @@ const USER_NAME = document.body.dataset.username || "";
         // bloqueia mic enquanto avalia
         bloquearEntrada(); 
 
-        // ===== escolhe feedback =====
+        // escolhe feedback
         const msg = ok
         ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
         : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
 
-        // ===== monta feedback FINAL (antes de imprimir) =====
+        // monta feedback FINAL (antes de imprimir)
         let feedbackText = msg;
         let feedbackHTML = msg;
 
         const tentativaAgora = tentativas + 1;
         if (!ok) {  
-          // px1
-          // if (!podeDarFeedback()) return;
           const pode = podeDarFeedback();
-          // fim px1
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) {
               esperandoResposta = false;
               FLAG = 0;
               return;
-          }
-          // fim px1   
+          }  
 
           if (pode && tentativaAgora < MAX_TENTATIVAS) {
             const expectedRaw = expectedAtual || "";
@@ -1726,8 +1687,8 @@ const USER_NAME = document.body.dataset.username || "";
           lastMsgEl = prof;
           scrollChatToBottom();
         }  
-        // const LESSON_ID = Number(document.body.dataset.lessonId);
-        // ===== decisão de fluxo =====
+
+        // decisão de fluxo
         if (ok) {
           FLAG = 2;
           if (prof) prof.classList.add("correto");
@@ -1735,43 +1696,34 @@ const USER_NAME = document.body.dataset.username || "";
 
           if (FLAG !== 2) return;
           
-          // px1
           const v = RENDER_VERSION;
-          // px1
+
           const r = await fetch("/tts/line/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text: msg, lang: "pt" })
           });  
           
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
           const d = await r.json(); 
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
           if (d.files && d.files.length) {
             tocando = true;
             await new Promise(r => setTimeout(r, 1100));
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
             await tocarUm(d.files[0]);
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
             tocando = false;
           }
 
-        // === SALVA PROGRESSO (ACERTO) ===
+        // SALVA PROGRESSO (ACERTO)
         const pontos =
           tentativas === 0 ? 5 :
           tentativas === 1 ? 3 :
@@ -1818,9 +1770,7 @@ const USER_NAME = document.body.dataset.username || "";
       if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
         if (FLAG !== 1) return;
         
-        // px1
         const v = RENDER_VERSION;
-        // fim px1
 
         const r = await fetch("/tts/line/", {
           method: "POST",
@@ -1828,51 +1778,37 @@ const USER_NAME = document.body.dataset.username || "";
           body: JSON.stringify({ text: feedbackText, lang: "pt" })
         });
         
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
         const d = await r.json();
 
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
         if (d.files && d.files.length) {
           tocando = true;
           await new Promise(r => setTimeout(r, 1100));
 
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
           await falarComoAntigo(d.files);
 
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
           tocando = false;
 
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
           tocarBeep();
 
           if (autoMicAtivo) {
             setTimeout(() => {
-                // px1
                 if (offlinePause || v !== RENDER_VERSION) return;
-                // fim px1
                 abrirMicrofoneComTempo();
               }, 150);
             }  
         }
 
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
         
         ultimoFeedback = 0;
         ultimaResposta = 0;
@@ -1884,9 +1820,7 @@ const USER_NAME = document.body.dataset.username || "";
       if (tentativas >= MAX_TENTATIVAS) {
         if (FLAG !== 1) return;
         
-        // px1
         const v = RENDER_VERSION;
-        // fim px1
 
         salvarProgresso({
           chatId: msgs[index].dataset.id,
@@ -1895,9 +1829,7 @@ const USER_NAME = document.body.dataset.username || "";
           points: 0
         });
         
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
         // mensagem de avanço (SUBSTITUI o último "Let's try again")
         const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
@@ -1911,9 +1843,7 @@ const USER_NAME = document.body.dataset.username || "";
         scrollChatToBottom();
 
         setTimeout(() => {
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
           avanco.classList.remove("errado")
         }, 8000);
         
@@ -1924,45 +1854,33 @@ const USER_NAME = document.body.dataset.username || "";
           body: JSON.stringify({ text: msgAvanco, lang: "pt" })
         });
 
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
         const d = await r.json();
 
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
         if (d.files && d.files.length) {
           tocando = true;
           await new Promise(r => setTimeout(r, 1100));
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
           await tocarUm(d.files[0]);
 
-          // px1
           if (offlinePause || v !== RENDER_VERSION) return;
-          // fim px1
 
           tocando = false;
         }
         
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
         // reseta e avança
         FLAG = 0;
         esperandoResposta = false;
         expectedAtual = "";
         tentativas = 0;
-        // px1
         if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
         index++;
         lastMsgEl = null;
         return mostrarSistema();
