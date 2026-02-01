@@ -1260,36 +1260,38 @@ const USER_NAME = document.body.dataset.username || "";
         }, 2000);
       }
 
-      recognition.onend = function () {
-        if (FLAG === 1 && esperandoResposta && !houveResultado) {
-          // não reconheceu nada
-          encerrarMicrofone();
+      recognition.onspeechstart = function () {
+  console.log("USUÁRIO FALOU", Date.now());
+};
 
-          alertarMic(btnMic);
-          // exemplo: fechar rápido e permitir nova tentativa
-          ultimoFeedback = 0;
-          ultimaResposta = 0;
+      // recognition.onend = function () {
+      //   if (FLAG === 1 && esperandoResposta && !houveResultado) {
+      //     // não reconheceu nada
+      //     encerrarMicrofone();
 
-          if (autoMicAtivo) {
-            setTimeout(() => abrirMicrofoneComTempo(), 200);
-          }
-        }
+      //     alertarMic(btnMic);
+      //     // exemplo: fechar rápido e permitir nova tentativa
+      //     ultimoFeedback = 0;
+      //     ultimaResposta = 0;
 
-        houveResultado = false;
-      };
+      //     if (autoMicAtivo) {
+      //       setTimeout(() => abrirMicrofoneComTempo(), 200);
+      //     }
+      //   }
 
-      recognition.onerror = function (e) {
-        if (FLAG === 1 && esperandoResposta) {
-          encerrarMicrofone();
-          alertarMic(btnMic);
-        }
-      };
+      //   houveResultado = false;
+      // };
 
-
+      // recognition.onerror = function (e) {
+      //   if (FLAG === 1 && esperandoResposta) {
+      //     encerrarMicrofone();
+      //     alertarMic(btnMic);
+      //   }
+      // };
      
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
-         houveResultado = true;       
+          
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
