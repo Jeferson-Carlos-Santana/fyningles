@@ -281,6 +281,8 @@ const USER_NAME = document.body.dataset.username || "";
         "shi clins here early": "she cleans here early",
         "chi clins here early": "she cleans here early",
         "xi clins here early": "she cleans here early",
+        "she blinks here early": "she cleans here early",
+        "she plays here early": "she cleans here early",
         "alright": "all right"
       };
 
