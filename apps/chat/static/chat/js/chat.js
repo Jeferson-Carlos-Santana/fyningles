@@ -15,8 +15,7 @@ const USER_NAME = document.body.dataset.username || "";
   }
   
   // ENVIAR MENSAGEM
-  function enviarMensagem() {
-    if (!podeResponder()) return;
+  function enviarMensagem() {    
 
     const input = document.getElementById("mensagem");
     const texto = input.value.trim();
@@ -1262,7 +1261,20 @@ const USER_NAME = document.body.dataset.username || "";
 
         if (!podeResponder()) return;
 
-        const textoBruto = e.results[0][0].transcript;          
+        const textoBruto = e.results[0][0].transcript;
+        
+        if (!textoBruto || !textoBruto.trim()) {
+          encerrarMicrofone();
+
+          btnMic.classList.add("mic-alert");
+          setTimeout(() => {
+            btnMic.classList.remove("mic-alert");
+          }, 2000);
+
+          esperandoResposta = true;
+          liberarEntrada();
+          return;
+        }
         
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
