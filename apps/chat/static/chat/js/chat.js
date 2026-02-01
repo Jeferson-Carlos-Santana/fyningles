@@ -1379,6 +1379,7 @@ const USER_NAME = document.body.dataset.username || "";
           //NORMALIZACAO PARA ABREVIADOS
           const contractions = { 
                 "i'm": "i am",
+                "i am": "i'm",
                 "you're": "you are",
                 "he's": "he is",
                 "she's": "she is",
