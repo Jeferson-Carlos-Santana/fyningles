@@ -331,6 +331,9 @@ const USER_NAME = document.body.dataset.username || "";
       btnMic.textContent = "🎙️";
       btnMic.classList.add("mic-gravando");
 
+      houveResultado = false;
+      houveFala = false;
+
       recognition.start();
 
       // calcula tempo com base na frase esperada atual
@@ -340,7 +343,6 @@ const USER_NAME = document.body.dataset.username || "";
 
       micTimeout = setTimeout(() => {
         if (esperandoResposta) {
-           houveResultado = true;
           // fecha mic
           try { recognition.stop(); } catch (e) {}
           btnMic.textContent = "🎤";
@@ -1252,6 +1254,7 @@ const USER_NAME = document.body.dataset.username || "";
       // ########################################  
 
       let houveResultado = false;
+      let houveFala = false;
 
       function alertarMic(btn) {
         if (!btn) return;
@@ -1261,8 +1264,13 @@ const USER_NAME = document.body.dataset.username || "";
         }, 2000);
       }
 
+      recognition.onspeechstart = function () {
+        houveFala = true; // usuário abriu a boca
+      };
+
+
       recognition.onend = function () {
-        if (FLAG === 1 && esperandoResposta && !houveResultado) {
+         if (FLAG === 1 && esperandoResposta && houveFala && !houveResultado) {
           // não reconheceu nada
           encerrarMicrofone();
 
@@ -1277,10 +1285,11 @@ const USER_NAME = document.body.dataset.username || "";
         }
 
         houveResultado = false;
+         houveFala = false;
       };
 
       recognition.onerror = function (e) {
-        if (FLAG === 1 && esperandoResposta) {
+        if (FLAG === 1 && esperandoResposta && houveFala) {
           encerrarMicrofone();
           alertarMic(btnMic);
         }
@@ -1288,7 +1297,8 @@ const USER_NAME = document.body.dataset.username || "";
      
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
-         houveResultado = true;       
+         houveResultado = true; 
+    
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
