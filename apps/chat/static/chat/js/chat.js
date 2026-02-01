@@ -56,7 +56,6 @@ const USER_NAME = document.body.dataset.username || "";
       recognition.lang = "en-GB";
       recognition.continuous = false;
       recognition.interimResults = false;
-      recognition.interimResults = true;
 
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");
@@ -1252,7 +1251,6 @@ const USER_NAME = document.body.dataset.username || "";
       // ########################################  
 
       let houveResultado = false;
-      let houveFala = false;
 
       function alertarMic(btn) {
         if (!btn) return;
@@ -1263,7 +1261,7 @@ const USER_NAME = document.body.dataset.username || "";
       }
 
       recognition.onend = function () {
-         if (FLAG === 1 && esperandoResposta && houveFala && !houveResultado) {
+        if (FLAG === 1 && esperandoResposta && !houveResultado) {
           // não reconheceu nada
           encerrarMicrofone();
 
@@ -1278,23 +1276,20 @@ const USER_NAME = document.body.dataset.username || "";
         }
 
         houveResultado = false;
-        houveFala = false;
       };
 
       recognition.onerror = function (e) {
-        if (FLAG === 1 && esperandoResposta && houveFala) {
+        if (FLAG === 1 && esperandoResposta) {
           encerrarMicrofone();
           alertarMic(btnMic);
         }
       };
+
+
      
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
-         houveFala = true;
-          const res = e.results[e.resultIndex];
-          if (res && res.isFinal) {
-            houveResultado = true;
-          }    
+         houveResultado = true;       
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
