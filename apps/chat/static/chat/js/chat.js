@@ -1286,32 +1286,27 @@ const USER_NAME = document.body.dataset.username || "";
       //     alertarMic(btnMic);
       //   }
       // };
-let houveResultado = false;
-let houveFala = false;
+let houveResultado = true;
+
 
 recognition.onspeechstart = function () {
-  houveFala = true;
   houveResultado = false;
 };
 
 
 
 recognition.onend = function () {
-  if (FLAG === 1 && esperandoResposta) {
-    if (houveFala && !houveResultado) {
-      console.log("Falou, mas nada foi reconhecido");
-      // aqui você trata como erro de reconhecimento
+
+    if (houveResultado) {
+      console.log("icone botao");
     }
 
-    if (!houveFala) {
-      console.log("Microfone abriu, ninguém falou");
+    if (!houveResultado) {
+      console.log("sem icone botao");
       // aqui você trata timeout/silêncio
     }
-  }
 
-  // reset obrigatório
-  houveFala = false;
-  houveResultado = false;
+  houveResultado = true;
 };
 
       // ===== RESPOSTA DO USUÁRIO =====
