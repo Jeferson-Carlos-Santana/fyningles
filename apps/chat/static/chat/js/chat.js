@@ -1290,13 +1290,11 @@ let houveResultado = false;
 let houveFala = false;
 
 recognition.onspeechstart = function () {
-  houveFala = true;        // microfone captou voz
-  houveResultado = false; // ainda não reconheceu texto
+  houveFala = true;
+  houveResultado = false;
 };
 
-recognition.onresult = function (e) {
-  houveResultado = true;  // texto reconhecido
-};
+
 
 recognition.onend = function () {
   if (FLAG === 1 && esperandoResposta) {
@@ -1318,7 +1316,7 @@ recognition.onend = function () {
 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
-        // houveResultado = true;  
+        houveResultado = true; 
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
@@ -1330,7 +1328,6 @@ recognition.onend = function () {
 
         const textoBruto = e.results[0][0].transcript;
 
-        console.log("textoBruto usado no fluxo:", textoBruto);
         
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
