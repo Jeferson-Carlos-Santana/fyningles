@@ -1254,15 +1254,18 @@ const USER_NAME = document.body.dataset.username || "";
 
       function alertarMic(btn) {
         if (!btn) return;
-        microfone.textContent = "🎤";
-        btn.classList.add("mic-alert");
-        microfone.classList.remove("mic-ready");   // remove microfone
+
+        btn.textContent = "";             
+        btn.classList.add("mic-alert");  
+        btn.classList.remove("mic-ready");
 
         setTimeout(() => {
-          btn.classList.remove("mic-alert"); // remove triângulo
-          microfone.classList.add("mic-ready");    // volta microfone
+          btn.classList.remove("mic-alert"); 
+          btn.classList.add("mic-ready");
+          btn.textContent = "🎤";
         }, 2000);
       }
+
 
       
 
