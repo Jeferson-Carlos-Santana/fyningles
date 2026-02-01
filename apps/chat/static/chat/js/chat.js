@@ -1260,10 +1260,7 @@ const USER_NAME = document.body.dataset.username || "";
         }, 2000);
       }
 
-      recognition.onspeechstart = function () {
-  console.log("USUÁRIO FALOU", Date.now());
-};
-
+     
       // recognition.onend = function () {
       //   if (FLAG === 1 && esperandoResposta && !houveResultado) {
       //     // não reconheceu nada
@@ -1302,6 +1299,8 @@ const USER_NAME = document.body.dataset.username || "";
         if (!podeResponder()) return;
 
         const textoBruto = e.results[0][0].transcript;
+
+        console.log("textoBruto usado no fluxo:", textoBruto);
         
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
