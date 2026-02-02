@@ -283,6 +283,10 @@ const USER_NAME = document.body.dataset.username || "";
         "xi clins here early": "she cleans here early",
         "she blinks here early": "she cleans here early",
         "she plays here early": "she cleans here early",
+        "dayline fast": "they learn fast",
+        "they didn't iran": "they didn't run",
+        "i said the table": "i set the table",
+        "the ask for help": "they ask for help",
         "alright": "all right"
       };
 
@@ -1592,6 +1596,14 @@ const USER_NAME = document.body.dataset.username || "";
           } else {
             msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
           }
+
+          // if (diff > 0) { 
+          //   msg = `Você ganhou ${pontos} pontos, e teve ${erros} erros`; 
+          // } else if (diff < 0) { 
+          //   msg = `Você ganhou ${pontos} pontos, e teve ${erros} baixas, pois foi penalizado em ${erroPenalidade} pontos por falar ${penalidade} palavras a menos, e teve ${errosVermelhos} erros`; 
+          // } else { 
+          //   msg = `Você ganhou ${pontos} pontos, e teve ${erros} erros`; 
+          // }
 
           prof.textContent = msg;
 
