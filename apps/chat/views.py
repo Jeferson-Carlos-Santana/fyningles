@@ -190,10 +190,10 @@ def phrase_completed(request):
         nivel = 1
 
     limite_por_frase = {
-        1: 150,
-        2: 200,
-        3: 250,
-    }.get(nivel, 150)
+        1: 165,
+        2: 215,
+        3: 265,
+    }.get(nivel, 165)
 
     progressos = (
         Progress.objects
@@ -233,10 +233,10 @@ def phrase_progress(request):
         nivel = 1
 
     limite_por_frase = {
-        1: 150,
-        2: 200,
-        3: 250,
-    }.get(nivel, 150)
+        1: 165,
+        2: 215,
+        3: 265,
+    }.get(nivel, 165)
 
     progressos = (
         Progress.objects
