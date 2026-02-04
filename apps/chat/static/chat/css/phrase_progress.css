@@ -34,7 +34,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .phrase-progress-bar {
@@ -111,7 +111,7 @@
 .btn-learned { 
     position: absolute;
     bottom: 6px;
-    left: 5px;
+    left: 10px;
     display: block;
     width: 70px;
     font-size: 11px;
