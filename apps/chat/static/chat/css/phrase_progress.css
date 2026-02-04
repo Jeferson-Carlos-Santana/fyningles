@@ -108,9 +108,9 @@
 
 /* BOTAO DOS CARDS */
 .btn-learned { 
-    position: absolute;
-    bottom: 10px;
-    left: 6px;
+    position: relative;
+    bottom: 6px;
+    left: 10px;
     display: block;
     width: 70px;
     font-size: 11px;
