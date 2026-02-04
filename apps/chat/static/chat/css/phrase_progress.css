@@ -14,7 +14,7 @@
 }
 
 .phrase-body { 
-    padding: 25px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -111,9 +111,9 @@
 .btn-learned { 
     position: absolute;
     bottom: 6px;
-    left: 6px;
+    left: 10px;
     font-size: 11px;
-    padding: 4px 8px;
+    padding: 10px 8px;
     background: var(--color-base-btn);
     color: #fff;
     border: none;
