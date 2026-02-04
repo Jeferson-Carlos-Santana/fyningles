@@ -43,13 +43,14 @@
                                 <div class="phrase-text">{{ f.text }}</div>
                                 <div class="phrase-text phrase-text-pt">{{ f.text_pt }}</div>
                                 <div class="phrase-progress">
+                                    <button class="btn-learned" type="button" data-chat-id="{{ f.chat_id }}">Já aprendi</button>
                                     <div class="phrase-progress-bar">
                                         <progress class="phrase-progress-fill"
                                                 value="{{ f.percent }}"
                                                 max="100"></progress>
                                     </div>
                                     <div class="phrase-progress-label">{{ f.percent }}%</div>
-                                     <button class="btn-learned" type="button" data-chat-id="{{ f.chat_id }}">Já aprendi</button>
+                                     
                                 </div>
                             </div>
                         </div>
