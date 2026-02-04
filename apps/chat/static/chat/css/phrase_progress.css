@@ -110,8 +110,8 @@
 /* BOTAO DOS CARDS */
 .btn-learned { 
     position: absolute;
-    top: 6px;
-    right: 6px;
+    bottom: 6px;
+    left: 6px;
     font-size: 11px;
     padding: 4px 8px;
     background: var(--color-base-btn);
