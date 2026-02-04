@@ -23,12 +23,11 @@
 .phrase-text {
     font-size: 16px;
     color: var(--color-white);
-    /* line-height: 1.4; */
 }
 
 .phrase-text-pt {
     font-size: 16px;
-    color: var(--color-warning);
+    color: var(--color-warning-middle);
 }
 
 .phrase-progress {
@@ -110,9 +109,9 @@
 /* BOTAO DOS CARDS */
 .btn-learned { 
     display: block;
-    width: 65px;
+    width: 70px;
     font-size: 11px;
-    padding: 5px 8px;
+    padding: 5px;
     background: var(--color-base-btn);
     color: #fff;
     border: none;
