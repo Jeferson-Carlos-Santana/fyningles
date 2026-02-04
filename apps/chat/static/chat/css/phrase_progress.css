@@ -113,9 +113,9 @@
     bottom: 6px;
     left: 10px; */
     display: block;
-    width: 100px;
+    width: 70px;
     font-size: 11px;
-    padding: 10px 8px;
+    padding: 5px 8px;
     background: var(--color-base-btn);
     color: #fff;
     border: none;
