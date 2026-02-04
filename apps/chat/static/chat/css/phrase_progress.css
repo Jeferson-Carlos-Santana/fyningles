@@ -113,6 +113,7 @@
     bottom: 6px;
     left: 10px; */
     display: block;
+    width: 40px;
     font-size: 11px;
     padding: 10px 8px;
     background: var(--color-base-btn);
