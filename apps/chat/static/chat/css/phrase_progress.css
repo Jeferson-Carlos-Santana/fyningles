@@ -13,8 +13,8 @@
     border: 1px solid var(--color-li-hover);
 }
 
-.phrase-body {
-    padding: 10px;
+.phrase-body { 
+    padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 10px;

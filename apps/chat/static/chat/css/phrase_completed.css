@@ -13,7 +13,7 @@
     border: 1px solid var(--color-li-hover);
 }
 
-.phrase-body {
+.phrase-body { 
     padding: 10px;
     display: flex;
     flex-direction: column;
