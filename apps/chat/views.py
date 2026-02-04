@@ -31,10 +31,6 @@ from apps.chat.services.speech_evaluator import evaluate
 import requests, json, re, math
 
 
-
-
-
-
 # TOTAL DE PONTOS POR DIA
 TOTAL_POINTS_DAY = 5
 
@@ -290,9 +286,7 @@ def mark_learned(request):
     except UserNivel.DoesNotExist:
         nivel = 1
 
-    max_points = {1: 150, 2: 200, 3: 250}.get(nivel, 150)
-
-    #points = int(max_points * (percent / 100))
+    max_points = {1: 165, 2: 215, 3: 265}.get(nivel, 165)
     
     points = math.ceil(max_points * percent / 100)
 
