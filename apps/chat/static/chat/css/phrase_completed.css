@@ -23,16 +23,16 @@
 .phrase-text {
     font-size: 16px;
     color: var(--color-white);
-    line-height: 1.4;
 }
 
 .phrase-text-pt {
     font-size: 16px;
-    color: var(--color-secondary-light);
+    color: var(--color-warning-middle);
 }
 
 .phrase-completed {
     margin-top: 4px;
+    margin-bottom: 20px;
 }
 
 .phrase-completed-label {
@@ -73,10 +73,12 @@
 /* BOTAO CARDS */
 .btn-learned { 
     position: absolute;
-    top: 6px;
-    right: 6px;
+    bottom: 6px;
+    left: 10px;
+    display: block;
+    width: 70px;
     font-size: 11px;
-    padding: 4px 8px;
+    padding: 5px;
     background: var(--color-base-btn);
     color: #fff;
     border: none;
