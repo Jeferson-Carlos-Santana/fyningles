@@ -1400,9 +1400,7 @@ const USER_NAME = document.body.dataset.username || "";
         let recebido = normEn(textoCorrigido);
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
-        recebido = normalizarPorTarget(recebido, expectedAtual);
-
-        console.log(recebido);
+        recebido = normalizarPorTarget(recebido, expectedAtual);   
         
         if (offlinePause || v !== RENDER_VERSION) return;
 
@@ -1410,10 +1408,11 @@ const USER_NAME = document.body.dataset.username || "";
         const user = document.createElement("div");
         user.className = "chat-message user";
         
-        // FALADO
+        // FALADO E EXIBIDO
         let exibicao = textoCorrigido;
         exibicao = normalizeTheyAnywhere(exibicao);
         exibicao = normalizeAskTense(exibicao, expectedAtual);
+        exibicao = normalizarPorTarget(exibicao, expectedAtual);
         user.textContent = exibicao;
 
         (lastMsgEl || msgs[index]).after(user);
