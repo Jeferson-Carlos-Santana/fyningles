@@ -1268,6 +1268,7 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "we cold home", target: "we call home" },
         { input: "we cole home", target: "we call home" },
         { input: "water surprise", target: "what a surprise" },
+        { input: "Enter your wait here.", target: "Enter your weight here." },
         { input: "way to here", target: "wait here" }
       ];
 
