@@ -1284,8 +1284,7 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "Enter your wait here", target: "Enter your weight here" },
         { input: "you will left alone", target: "you were left alone" },
         { input: "way to here", target: "wait here" }
-      ];
-      
+      ];      
       
       function limparTarget(t) {
         return t
@@ -1302,10 +1301,8 @@ const USER_NAME = document.body.dataset.username || "";
           r => limparTarget(r.input) === i && limparTarget(r.target) === t
         );
 
-        return regra ? regra.target : input;
+        return regra ? target : input;
       }
-
-
      
       // ########################################
       // FIM NORMALIZACOES
