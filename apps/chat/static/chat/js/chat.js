@@ -1301,8 +1301,7 @@ const USER_NAME = document.body.dataset.username || "";
           r => limparTarget(r.input) === i && limparTarget(r.target) === t
         );
         console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
-        // return regra ? regra.target : input;
-        return regra ? target : input;
+        return regra ? regra.target : input;
       }
      
       // ########################################
@@ -1402,6 +1401,8 @@ const USER_NAME = document.body.dataset.username || "";
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
         recebido = normalizarPorTarget(recebido, expectedAtual);
+
+        console.log(recebido);
         
         if (offlinePause || v !== RENDER_VERSION) return;
 
