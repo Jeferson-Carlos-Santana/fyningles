@@ -1287,22 +1287,24 @@ const USER_NAME = document.body.dataset.username || "";
       ];
       
       
-      // function normalizarPorTarget(input, target) {
-      //   const regra = NORMALIZACOES_POR_TARGET.find(
-      //     r => r.input === input && r.target === target
-      //   );
-      //   return regra ? regra.target : input;
-      // }
+      function limparTarget(t) {
+        return t
+          .toLowerCase()
+          .trim()
+          .replace(/[!?.,]+$/g, "");
+      }
 
       function normalizarPorTarget(input, target) {
-        const i = input.toLowerCase().trim();
-        const t = target.toLowerCase().trim();
-        console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
+        const i = limparTarget(input);
+        const t = limparTarget(target);
+
         const regra = NORMALIZACOES_POR_TARGET.find(
-          r => r.input.toLowerCase() === i && r.target.toLowerCase() === t
+          r => limparTarget(r.input) === i && limparTarget(r.target) === t
         );
+
         return regra ? regra.target : input;
       }
+
 
      
       // ########################################
