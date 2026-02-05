@@ -1294,22 +1294,16 @@ const USER_NAME = document.body.dataset.username || "";
       }
 
       function normalizarPorTarget(input, target) {
-          const i = limparTarget(input);
-          const t = limparTarget(target);
+        const i = limparTarget(input);
+        const t = limparTarget(target);
 
-          const regra = NORMALIZACOES_POR_TARGET.find(
-            r => limparTarget(r.input) === i && limparTarget(r.target) === t
-          );
-
-          console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
-
-          if (!regra) return input;
-
-          // usa o target atual (com maiúscula/pontuação), não o do array
-          return target;
-        }
-
-
+        const regra = NORMALIZACOES_POR_TARGET.find(
+          r => limparTarget(r.input) === i && limparTarget(r.target) === t
+        );
+        console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
+        return regra ? regra.target : input;
+      }
+     
       // ########################################
       // FIM NORMALIZACOES
       // ########################################       
@@ -1407,8 +1401,6 @@ const USER_NAME = document.body.dataset.username || "";
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
         recebido = normalizarPorTarget(recebido, expectedAtual);
-
-        console.log("DEPOIS NORMALIZAR:", recebido);
         
         if (offlinePause || v !== RENDER_VERSION) return;
 
