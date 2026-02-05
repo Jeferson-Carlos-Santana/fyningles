@@ -1301,7 +1301,8 @@ const USER_NAME = document.body.dataset.username || "";
           r => limparTarget(r.input) === i && limparTarget(r.target) === t
         );
         console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
-        return regra ? regra.target : input;
+        // return regra ? regra.target : input;
+        return regra ? target : input;
       }
      
       // ########################################
