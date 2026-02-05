@@ -1281,11 +1281,12 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "they don't it late", target: "they don't eat late" },
         { input: "they don't italate", target: "they don't eat late" },
         { input: "they don't each late", target: "they don't eat late" },
-        { input: "Enter your wait here.", target: "Enter your weight here." },
+        { input: "Enter your wait here", target: "Enter your weight here" },
         { input: "you will left alone", target: "you were left alone" },
         { input: "way to here", target: "wait here" }
       ];
-
+      
+      console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
       // function normalizarPorTarget(input, target) {
       //   const regra = NORMALIZACOES_POR_TARGET.find(
       //     r => r.input === input && r.target === target
