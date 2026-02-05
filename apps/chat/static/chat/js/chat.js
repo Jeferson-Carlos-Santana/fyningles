@@ -1286,12 +1286,23 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "way to here", target: "wait here" }
       ];
 
+      // function normalizarPorTarget(input, target) {
+      //   const regra = NORMALIZACOES_POR_TARGET.find(
+      //     r => r.input === input && r.target === target
+      //   );
+      //   return regra ? regra.target : input;
+      // }
+
       function normalizarPorTarget(input, target) {
+        const i = input.toLowerCase().trim();
+        const t = target.toLowerCase().trim();
+
         const regra = NORMALIZACOES_POR_TARGET.find(
-          r => r.input === input && r.target === target
+          r => r.input.toLowerCase() === i && r.target.toLowerCase() === t
         );
         return regra ? regra.target : input;
       }
+
      
       // ########################################
       // FIM NORMALIZACOES
