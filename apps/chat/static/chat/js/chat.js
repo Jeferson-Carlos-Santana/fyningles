@@ -1407,6 +1407,8 @@ const USER_NAME = document.body.dataset.username || "";
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
         recebido = normalizarPorTarget(recebido, expectedAtual);
+
+        console.log("DEPOIS NORMALIZAR:", recebido);
         
         if (offlinePause || v !== RENDER_VERSION) return;
 
