@@ -1268,7 +1268,21 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "we cold home", target: "we call home" },
         { input: "we cole home", target: "we call home" },
         { input: "water surprise", target: "what a surprise" },
+        { input: "what is surprise", target: "what a surprise" },
+        { input: "what are surprise", target: "what a surprise" },
+        { input: "what are surprised", target: "what a surprise" },
+        { input: "she cleansed here early", target: "she cleans here early" },
+        { input: "she cleansed healy", target: "she cleans here early" },
+        { input: "they walked yesterday", target: "they worked yesterday" },
+        { input: "they work tea yesterday", target: "they worked yesterday" },
+        { input: "does tea work", target: "does it work" },
+        { input: "does the work", target: "does it work" },
+        { input: "does it walk", target: "does it work" },
+        { input: "they don't it late", target: "they don't eat late" },
+        { input: "they don't italate", target: "they don't eat late" },
+        { input: "they don't each late", target: "they don't eat late" },
         { input: "Enter your wait here.", target: "Enter your weight here." },
+        { input: "you will left alone", target: "you were left alone" },
         { input: "way to here", target: "wait here" }
       ];
 
