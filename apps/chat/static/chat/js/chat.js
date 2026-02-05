@@ -287,6 +287,16 @@ const USER_NAME = document.body.dataset.username || "";
         "they didn't iran": "they didn't run",
         "i said the table": "i set the table",
         "the ask for help": "they ask for help",
+        "we cold home": "we call home",
+        "we cole home": "we call home",
+        "way to here": "wait here",
+        "way to hear": "wait here",
+        "wait to heare": "wait here",
+        "wait hear": "wait here",
+        "wet here": "wait here",
+        "wait heir": "wait here",
+        "waite here": "wait here",
+        "wate here": "wait here",
         "alright": "all right"
       };
 
@@ -1251,6 +1261,22 @@ const USER_NAME = document.body.dataset.username || "";
         // Substitui apenas "asked" isolado como verbo principal (não seguido de preposição)
         return texto.replace(/\basked\b(?!\s+(to|for|about|if|whether|me|him|her|them)\b)/gi, "ask");
       }
+      
+      // ESTABILIZA FRASE MESMO SE FOR COM O INGLES LEGITIMO NO INPUT.
+      const NORMALIZACOES_POR_TARGET = [
+        { input: "weight here", target: "wait here" },
+        { input: "we cold home", target: "we call home" },
+        { input: "we cole home", target: "we call home" },
+        { input: "water surprise", target: "what a surprise" },
+        { input: "way to here", target: "wait here" }
+      ];
+
+      function normalizarPorTarget(input, target) {
+        const regra = NORMALIZACOES_POR_TARGET.find(
+          r => r.input === input && r.target === target
+        );
+        return regra ? regra.target : input;
+      }
      
       // ########################################
       // FIM NORMALIZACOES
@@ -1348,6 +1374,7 @@ const USER_NAME = document.body.dataset.username || "";
         let recebido = normEn(textoCorrigido);
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
+        recebido = normalizarPorTarget(recebido, expectedAtual);
         
         if (offlinePause || v !== RENDER_VERSION) return;
 
