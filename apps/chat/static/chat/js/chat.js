@@ -1353,8 +1353,11 @@ const USER_NAME = document.body.dataset.username || "";
         
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+        console.log("CORRIGIDO:", textoCorrigido);
 
-        const texto = normEn(textoCorrigido);        
+        const texto = normEn(textoCorrigido);   
+        
+        console.log("NORMALIZADO:", texto);
 
         if (["next", "skip"].includes(texto)) {
           // corta mic imediatamente
@@ -1408,6 +1411,7 @@ const USER_NAME = document.body.dataset.username || "";
         exibicao = normalizeAskTense(exibicao, expectedAtual);
         exibicao = normalizarPorTarget(exibicao, expectedAtual);
         user.textContent = exibicao;
+        console.log("EXIBICAO FINAL:", exibicao);
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;        
