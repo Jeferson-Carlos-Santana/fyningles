@@ -1286,13 +1286,7 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "way to here", target: "wait here" }
       ];      
       
-      function limparTarget(t) {
-        return t
-          .toLowerCase()
-          .trim()
-          .replace(/[!?.,]+$/g, "");
-      }
-
+    
       function normalizarPorTarget(input, target) {
         const i = input;
         const t = target;
@@ -1300,7 +1294,7 @@ const USER_NAME = document.body.dataset.username || "";
         const regra = NORMALIZACOES_POR_TARGET.find(
           r => r.input === i && r.target === t
         );
-         console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
+        //  console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
         return regra ? regra.target : input;
       }
      
@@ -1409,7 +1403,7 @@ const USER_NAME = document.body.dataset.username || "";
         user.className = "chat-message user";
         
         // FALADO E EXIBIDO
-        let exibicao = textoCorrigido;
+        let exibicao = textoBruto;
         exibicao = normalizeTheyAnywhere(exibicao);
         exibicao = normalizeAskTense(exibicao, expectedAtual);
         exibicao = normalizarPorTarget(exibicao, expectedAtual);
@@ -1417,11 +1411,6 @@ const USER_NAME = document.body.dataset.username || "";
 
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;        
-
-        // divide expected_en por /
-        // const esperados = (expectedAtual || "")
-        //   .split(/\s+or\s+/i)
-        //   .map(e => normEn(e));
         
         const esperados = (expectedAtual || "")
           .split(/\s+\/\s+/)
@@ -1595,10 +1584,6 @@ const USER_NAME = document.body.dataset.username || "";
 
           const okIdx = lcsMatchedIndices(exp, spkNorm);
 
-          // return spkRaw.map((w, idx) =>
-          //     okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
-          //   ).join(" ");
-          // }
 
             return spkNorm.map((w, idx) =>
               okIdx.has(idx)
@@ -1662,14 +1647,6 @@ const USER_NAME = document.body.dataset.username || "";
           } else {
             msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
           }
-
-          // if (diff > 0) { 
-          //   msg = `Você ganhou ${pontos} pontos, e teve ${erros} erros`; 
-          // } else if (diff < 0) { 
-          //   msg = `Você ganhou ${pontos} pontos, e teve ${erros} baixas, pois foi penalizado em ${erroPenalidade} pontos por falar ${penalidade} palavras a menos, e teve ${errosVermelhos} erros`; 
-          // } else { 
-          //   msg = `Você ganhou ${pontos} pontos, e teve ${erros} erros`; 
-          // }
 
           prof.textContent = msg;
 
