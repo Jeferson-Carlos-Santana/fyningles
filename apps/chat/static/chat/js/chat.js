@@ -1295,10 +1295,10 @@ const USER_NAME = document.body.dataset.username || "";
 
       function normalizarPorTarget(input, target) {
         const i = input;
-        const t = limparTarget(target);
+        const t = target;
 
         const regra = NORMALIZACOES_POR_TARGET.find(
-          r => r.input === i && limparTarget(r.target) === t
+          r => r.input === i && r.target === t
         );
          console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
         return regra ? regra.target : input;
@@ -1418,10 +1418,15 @@ const USER_NAME = document.body.dataset.username || "";
         (lastMsgEl || msgs[index]).after(user);
         lastMsgEl = user;        
 
-        // divide expected_en por OR / or
+        // divide expected_en por /
+        // const esperados = (expectedAtual || "")
+        //   .split(/\s+or\s+/i)
+        //   .map(e => normEn(e));
+        
         const esperados = (expectedAtual || "")
-          .split(/\s+or\s+/i)
-          .map(e => normEn(e));          
+          .split(/\s+\/\s+/)
+          .map(e => normEn(e));
+
 
         const LESSON_ID = Number(document.body.dataset.lessonId);
         const MODO_NOVO = (LESSON_ID === 4);
