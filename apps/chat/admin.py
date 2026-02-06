@@ -240,8 +240,8 @@ class ChatAdmin(admin.ModelAdmin):
 
     ingleses = []
 
-    # frase completa com OR
-    if " or " in raw_expected.lower():
+    #### frase completa com OR
+    if " / " in raw_expected.lower():
         ingleses.append(raw_expected)
 
     # primeira forma
@@ -391,9 +391,9 @@ class ChatAdmin(admin.ModelAdmin):
             parts = re.split(r"\s+/\s+", text)
 
 
-            # forma completa com "or" normalizado
+            #### forma completa com "or" normalizado
             if len(parts) > 1:
-                full_or = " or ".join(p.strip() for p in parts)
+                full_or = " / ".join(p.strip() for p in parts)
                 candidates = [full_or] + parts
             else:
                 candidates = parts
