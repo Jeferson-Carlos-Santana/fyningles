@@ -1295,10 +1295,10 @@ const USER_NAME = document.body.dataset.username || "";
 
       function normalizarPorTarget(input, target) {
         const i = input;
-        const t = target;
+        const t = limparTarget(target);
 
         const regra = NORMALIZACOES_POR_TARGET.find(
-          r => r.input === i && r.target === t
+          r => r.input === i && limparTarget(r.target) === t
         );
          console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
         return regra ? regra.target : input;
