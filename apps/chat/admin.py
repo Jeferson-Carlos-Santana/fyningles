@@ -257,7 +257,6 @@ class ChatAdmin(admin.ModelAdmin):
         if term and not term_exists("en", term):
             add_term("en", term)
 
-
     # OUTROS IDIOMAS
     entries = {
         "pt": pt,
