@@ -76,7 +76,6 @@ def normalize(text: str) -> str:
         text = re.sub(rf"__TMP__{re.escape(b)}__", b, text)
 
 
-
     # normalização de números por extenso
     numbers = {
         "zero": "0",

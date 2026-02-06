@@ -1498,7 +1498,7 @@ const USER_NAME = document.body.dataset.username || "";
             "this's":"this is","this is":"this's",
             "let's":"let us","let us":"let's",
             "gonna":"going to","going to":"gonna",
-            "wanna":"want to","want to":"wanna",
+            "wanna":"want to",
             "gotta":"got to","got to":"gotta"
             };
 
