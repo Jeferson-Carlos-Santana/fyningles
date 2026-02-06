@@ -1427,7 +1427,6 @@ const USER_NAME = document.body.dataset.username || "";
           .split(/\s+\/\s+/)
           .map(e => normEn(e));
 
-
         const LESSON_ID = Number(document.body.dataset.lessonId);
         const MODO_NOVO = (LESSON_ID === 4);
         
@@ -1596,10 +1595,17 @@ const USER_NAME = document.body.dataset.username || "";
 
           const okIdx = lcsMatchedIndices(exp, spkNorm);
 
-          return spkRaw.map((w, idx) =>
-              okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
-            ).join(" ");
-          }
+          // return spkRaw.map((w, idx) =>
+          //     okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
+          //   ).join(" ");
+          // }
+
+          return spkNorm.map((w, idx) =>
+            okIdx.has(idx)
+              ? w
+              : `<span style="color:red;font-weight:bold">${w}</span>`
+          ).join(" ");
+
 
           // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
           let TEMPO_BASE = 3000;          // 3s mínimos
