@@ -1406,7 +1406,7 @@ const USER_NAME = document.body.dataset.username || "";
         user.className = "chat-message user";
         
         // FALADO E EXIBIDO
-        let exibicao = textoBruto;
+        let exibicao = textoCorrigido;
         exibicao = normalizeTheyAnywhere(exibicao);
         exibicao = normalizeAskTense(exibicao, expectedAtual);
         exibicao = normalizarPorTarget(exibicao, expectedAtual);
