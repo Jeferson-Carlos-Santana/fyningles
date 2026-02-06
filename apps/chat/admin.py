@@ -219,8 +219,9 @@ class ChatAdmin(admin.ModelAdmin):
     
     #en_full = obj.expected_en
     raw_expected = obj.expected_en or ""
-    # divide por OR / or (case-insensitive)
-    parts = re.split(r"\s+or\s+", raw_expected, flags=re.IGNORECASE)
+    #### divide por OR / or (case-insensitive)
+    #parts = re.split(r"\s+or\s+", raw_expected, flags=re.IGNORECASE)
+    parts = re.split(r"\s/\s", raw_expected)
     en_full = parts[0].strip() if len(parts) > 0 else ""
     en_full_M = parts[1].strip() if len(parts) > 1 else ""
     en_abbrev = self.contract_en(en_full)
@@ -385,8 +386,10 @@ class ChatAdmin(admin.ModelAdmin):
             if not text:
                 continue
 
-            # separa por "or" (case-insensitive)
-            parts = re.split(r"\s+or\s+", text, flags=re.IGNORECASE)
+            #### separa por "or" (case-insensitive)
+            #parts = re.split(r"\s+or\s+", text, flags=re.IGNORECASE)
+            parts = re.split(r"\s+/\s+", text)
+
 
             # forma completa com "or" normalizado
             if len(parts) > 1:
