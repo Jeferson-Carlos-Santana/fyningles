@@ -1600,11 +1600,12 @@ const USER_NAME = document.body.dataset.username || "";
           //   ).join(" ");
           // }
 
-          return spkNorm.map((w, idx) =>
-            okIdx.has(idx)
-              ? w
-              : `<span style="color:red;font-weight:bold">${w}</span>`
-          ).join(" ");
+            return spkNorm.map((w, idx) =>
+              okIdx.has(idx)
+                ? w
+                : `<span style="color:red;font-weight:bold">${w}</span>`
+            ).join(" ");
+          }
 
 
           // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
