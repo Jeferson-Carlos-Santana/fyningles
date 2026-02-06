@@ -69,10 +69,13 @@ def normalize(text: str) -> str:
         "wanna": "want to",
         "gotta": "got to"
     }
+    
+    for a, b in contractions.items():
+        text = re.sub(rf"\b{re.escape(a)}\b", f"__TMP__{b}__", text)
+    for a, b in contractions.items():
+        text = re.sub(rf"__TMP__{re.escape(b)}__", b, text)
 
 
-    for c, expanded in contractions.items():
-        text = re.sub(rf"\b{re.escape(c)}\b", expanded, text)
 
     # normalização de números por extenso
     numbers = {
