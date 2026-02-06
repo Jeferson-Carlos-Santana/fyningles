@@ -1355,8 +1355,7 @@ const USER_NAME = document.body.dataset.username || "";
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
         console.log("CORRIGIDO:", textoCorrigido);
 
-        const texto = normEn(textoCorrigido);   
-        
+        const texto = normEn(textoCorrigido);        
         console.log("NORMALIZADO:", texto);
 
         if (["next", "skip"].includes(texto)) {
@@ -1397,7 +1396,8 @@ const USER_NAME = document.body.dataset.username || "";
         let recebido = normEn(textoCorrigido);
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
-        recebido = normalizarPorTarget(recebido, expectedAtual);   
+        recebido = normalizarPorTarget(recebido, expectedAtual);
+        console.log("COMPARADO:", recebido);   
         
         if (offlinePause || v !== RENDER_VERSION) return;
 
