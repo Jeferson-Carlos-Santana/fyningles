@@ -1611,7 +1611,10 @@ function marcarErros(expected, spokenRaw) {
   const expNorm = normalizeLikeBackend(expected).split(" ").filter(Boolean);
 
   const { norm: spkNorm, map } = normalizeForCompareWithMap(spokenRaw);
-  const spkNormClean = spkNorm.map(w => normalizeLikeBackend(w)).filter(Boolean);
+  const spkNormClean = normalizeLikeBackend(spkNorm.join(" "))
+  .split(" ")
+  .filter(Boolean);
+
 
   const okIdx = lcsMatchedIndices(expNorm, spkNormClean);
 
