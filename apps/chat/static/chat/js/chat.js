@@ -1424,169 +1424,271 @@ const USER_NAME = document.body.dataset.username || "";
         const MODO_NOVO = (LESSON_ID === 4);
         
         // METODO DE FRASES GRANDE
-        if (MODO_NOVO) {   
+        if (MODO_NOVO) {  
+          
+          function normalizeForCompareWithMap(text) {
+  const raw = text.toLowerCase().split(/\s+/);
+  const norm = [];
+  const map = [];
 
-         function normalizeLikeBackend(text) {
-    if (!text) return "";
-    let t = text.toLowerCase();
-
-    const contractions = {
-      "i'm":"i am","you're":"you are","he's":"he is","she's":"she is","it's":"it is",
-      "we're":"we are","they're":"they are","i've":"i have","you've":"you have",
-      "we've":"we have","they've":"they have","i'd":"i would","you'd":"you would",
-      "he'd":"he would","she'd":"she would","we'd":"we would","they'd":"they would",
-      "i'll":"i will","you'll":"you will","he'll":"he will","she'll":"she will",
-      "we'll":"we will","they'll":"they will","isn't":"is not","aren't":"are not",
-      "wasn't":"was not","weren't":"were not","don't":"do not","doesn't":"does not",
-      "didn't":"did not","haven't":"have not","hasn't":"has not","hadn't":"had not",
-      "can't":"can not","couldn't":"could not","shouldn't":"should not",
-      "wouldn't":"would not","mightn't":"might not","mustn't":"must not",
-      "won't":"will not","shan't":"shall not","could've":"could have",
-      "should've":"should have","would've":"would have","might've":"might have",
-      "must've":"must have","what's":"what is","where's":"where is",
-      "who's":"who is","how's":"how is","when's":"when is","why's":"why is",
-      "there's":"there is","here's":"here is","that's":"that is",
-      "this's":"this is","let's":"let us","gonna":"going to",
-      "wanna":"want to","gotta":"got to"
-    };
-
-    for (const c in contractions) {
-      const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
+  for (let i = 0; i < raw.length; i++) {
+    // contrações específicas que viram 2 palavras
+    if (raw[i] === "they're") {
+      norm.push("they", "are");
+      map.push([i], [i]);
+    } else if (raw[i] === "let's") {
+      norm.push("let", "us");
+      map.push([i], [i]);
+    } else {
+      norm.push(raw[i]);
+      map.push([i]);
     }
-
-    const numbers = {
-      "zero":"0","one":"1","two":"2","three":"3","four":"4",
-      "five":"5","six":"6","seven":"7","eight":"8","nine":"9","ten":"10"
-    };
-    for (const w in numbers) {
-      t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
-    }
-
-    t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
-      let hour = parseInt(h, 10);
-      if (p === "pm" && hour < 12) hour += 12;
-      if (p === "am" && hour === 12) hour = 0;
-      return `at ${hour}:00`;
-    });
-
-    t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
-
-    const hours = {
-      "one":"1","two":"2","three":"3","four":"4","five":"5","six":"6",
-      "seven":"7","eight":"8","nine":"9","ten":"10","eleven":"11","twelve":"12"
-    };
-    for (const w in hours) {
-      t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
-    }
-
-    return t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
   }
-
-  function lcsMatchedIndices(expectedTokens, spokenTokens) {
-    const n = expectedTokens.length, m = spokenTokens.length;
-    const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
-
-    for (let i = 1; i <= n; i++) {
-      for (let j = 1; j <= m; j++) {
-        dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
-          ? dp[i - 1][j - 1] + 1
-          : Math.max(dp[i - 1][j], dp[i][j - 1]);
-      }
-    }
-
-    const ok = new Set();
-    let i = n, j = m;
-    while (i > 0 && j > 0) {
-      if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
-        ok.add(j - 1);
-        i--; j--;
-      } else if (dp[i - 1][j] >= dp[i][j - 1]) {
-        i--;
-      } else {
-        j--;
-      }
-    }
-    return ok;
-  }
-
-  // <<< MUDANÇA: agora compara com compare, mas pinta o visual
- function marcarErros(expected, spoken_original) {
-  const exp = normalizeLikeBackend(expected).split(" ");
-  const spkCmp = normalizeLikeBackend(spoken_original).split(" ");
-  const spkVis = spoken_original.split(/\s+/); // <<< ORIGINAL
-
-  const okIdx = lcsMatchedIndices(exp, spkCmp);
-
-  return spkVis.map((w, idx) =>
-    okIdx.has(idx)
-      ? w
-      : `<span style="color:red;font-weight:bold">${w}</span>`
-  ).join(" ");
+  return { norm, map };
 }
 
 
-  // <<< MUDANÇA: 2 saídas
-  const spoken_compare = normalizeLikeBackend(textoCorrigido);
+        function normalizeLikeBackend(text) {
+          if (!text) return "";
 
-  let spoken_visual = textoCorrigido;
-  // IMPORTANTe: visual NÃO deve expandir contrações
-  // então não passa por normalizeLikeBackend nem por algo que expanda
-  spoken_visual = normalizarPorTarget(spoken_visual, expectedAtual);
+          let t = text.toLowerCase();
 
-  // chama avaliação (backend)
-  if (offlinePause || v !== RENDER_VERSION) return;
+          // //NORMALIZACAO PARA ABREVIADOS
+          const contractions = {
+            "i'm":"i am",
+            "you're":"you are",
+            "he's":"he is",
+            "she's":"she is",
+            "it's":"it is",
+            "we're":"we are",
+            "they're":"they are",
+            "i've":"i have",
+            "you've":"you have",
+            "we've":"we have",
+            "they've":"they have",
+            "i'd":"i would",
+            "you'd":"you would",
+            "he'd":"he would",
+            "she'd":"she would",
+            "we'd":"we would",
+            "they'd":"they would",
+            "i'll":"i will",
+            "you'll":"you will",
+            "he'll":"he will",
+            "she'll":"she will",
+            "we'll":"we will",
+            "they'll":"they will",
+            "isn't":"is not",
+            "aren't":"are not",
+            "wasn't":"was not",
+            "weren't":"were not",
+            "don't":"do not",
+            "doesn't":"does not",
+            "didn't":"did not",
+            "haven't":"have not",
+            "hasn't":"has not",
+            "hadn't":"had not",
+            "can't":"can not",
+            "couldn't":"could not",
+            "shouldn't":"should not",
+            "wouldn't":"would not",
+            "mightn't":"might not",
+            "mustn't":"must not",
+            "won't":"will not",
+            "shan't":"shall not",
+            "could've":"could have",
+            "should've":"should have",
+            "would've":"would have",
+            "might've":"might have",
+            "must've":"must have",
+            "what's":"what is",
+            "where's":"where is",
+            "who's":"who is",
+            "how's":"how is",
+            "when's":"when is",
+            "why's":"why is",
+            "there's":"there is",
+            "here's":"here is",
+            "that's":"that is",
+            "this's":"this is",
+            "let's":"let us",
+            "gonna":"going to",
+            "wanna":"want to",
+            "gotta":"got to"
+            };
 
-  const rEval = await fetch("/speech/evaluate/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      expected: expectedAtual,
-      spoken: spoken_compare  // <<< MUDANÇA
-    })
+          for (const c in contractions) {
+            const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
+          }          
+          
+          // // NORMALIZACAO PRA NUMEROS
+          const numbers = {
+            "zero":"0",
+            "one":"1",
+            "two":"2",
+            "three":"3",
+            "four":"4",
+            "five":"5",
+            "six":"6",
+            "seven":"7",
+            "eight":"8",
+            "nine":"9",
+            "ten":"10"
+          };
+
+          for (const w in numbers) {
+            t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
+          }
+          
+          // NORMALIZACAO AM / PM (PRIMEIRO)
+          t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
+            let hour = parseInt(h, 10);
+            if (p === "pm" && hour < 12) hour += 12;
+            if (p === "am" && hour === 12) hour = 0;
+            return `at ${hour}:00`;
+          });
+
+          // at nine / at 9 → at 9:00 (DEPOIS)
+          t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
+
+          // NORMALIZACAO PARRA horas "oclock"
+          const hours = {
+            "one":"1",
+            "two":"2",
+            "three":"3",
+            "four":"4",
+            "five":"5",
+            "six":"6",
+            "seven":"7",
+            "eight":"8",
+            "nine":"9",
+            "ten":"10",
+            "eleven":"11",
+            "twelve":"12"
+          };
+          for (const w in hours) {
+            t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
+          }
+       
+          t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
+
+          return t;
+        }
+
+        function lcsMatchedIndices(expectedTokens, spokenTokens) {
+          const n = expectedTokens.length, m = spokenTokens.length;
+          const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
+
+          for (let i = 1; i <= n; i++) {
+            for (let j = 1; j <= m; j++) {
+              dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
+                ? dp[i - 1][j - 1] + 1
+                : Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+          }
+
+          const ok = new Set();
+          let i = n, j = m;
+          while (i > 0 && j > 0) {
+            if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
+              ok.add(j - 1);
+              i--; j--;
+            } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+              i--;
+            } else {
+              j--;
+            }
+          }
+          return ok;
+        }
+
+
+function marcarErros(expected, spokenRaw) {
+  const expNorm = normalizeLikeBackend(expected).split(" ").filter(Boolean);
+
+  const { norm: spkNorm, map } = normalizeForCompareWithMap(spokenRaw);
+  const spkNormClean = spkNorm.map(w => normalizeLikeBackend(w)).filter(Boolean);
+
+  const okIdx = lcsMatchedIndices(expNorm, spkNormClean);
+
+  const rawWords = spokenRaw.split(/\s+/);
+  const mark = new Array(rawWords.length).fill(false);
+
+  okIdx.forEach(i => {
+    map[i].forEach(rIdx => mark[rIdx] = true);
   });
 
-  if (offlinePause || v !== RENDER_VERSION) return;
+  return rawWords
+    .map((w, i) =>
+      mark[i]
+        ? w
+        : `<span style="color:red;font-weight:bold">${w}</span>`
+    )
+    .join(" ");
+}
 
-  const data = await rEval.json();
 
-  if (offlinePause || v !== RENDER_VERSION) return;
+          // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
+          let TEMPO_BASE = 3000;          // 3s mínimos
+          let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
+          let TEMPO_MAX = 20000;         // 12s máximo
+          
+          // chama avaliação (backend)
+          if (offlinePause || v !== RENDER_VERSION) return;
 
-  const erros = Number(data.errors || 0);
-  const pontos = Number(data.correct || 0);
+          const rEval = await fetch("/speech/evaluate/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              expected: expectedAtual,
+              spoken: textoCorrigido
+            })
+          });
 
-  const totalEsperado = expectedAtual.split(" ").length;
-  const totalFalado   = spoken_compare.split(" ").length; // <<< MUDANÇA
+          if (offlinePause || v !== RENDER_VERSION) return;
 
-  const diff = totalFalado - totalEsperado;
-  const penalidade = Math.abs(diff);
+          const data = await rEval.json();
 
-  if (offlinePause || v !== RENDER_VERSION) return;
+          if (offlinePause || v !== RENDER_VERSION) return;
 
-  // ===== FEEDBACK VISUAL =====
-  const userMsgEl = lastMsgEl;
-  const prof = document.createElement("div");
-  prof.className = "chat-message system";
-  let msg;
+          const erros = Number(data.errors || 0);
+          const pontos = Number(data.correct || 0);
+          // const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
+          // const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
 
-  // <<< MUDANÇA: aqui era que vazava "they are" na tela
-  if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, spoken_compare, spoken_visual);
+          const totalEsperado = expectedAtual.split(" ").length;
+          const totalFalado   = textoCorrigido.split(" ").length;
 
-  const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
-  const limite = totalEsperado - errosVermelhos;
-  const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
+          const diff = totalFalado - totalEsperado;
+          const penalidade = Math.abs(diff);          
+          
+          if (offlinePause || v !== RENDER_VERSION) return;
 
-  function p(n, singular, plural) { return n === 1 ? singular : plural; }
+          // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
+          const userMsgEl = lastMsgEl;
+          const prof = document.createElement("div");
+          prof.className = "chat-message system";
+          let msg;   
+          
+          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+          const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
+          const limite = totalEsperado - errosVermelhos;
+          const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
 
-  if (diff > 0) {
-    msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
-  } else if (diff < 0) {
-    msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")} por falar ${penalidade} ${p(penalidade,"palavra","palavras")} a menos, e teve ${errosVermelhos} ${p(errosVermelhos,"erro","erros")}`;
-  } else {
-    msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
-  }
+          function p(n, singular, plural) {
+            return n === 1 ? singular : plural;
+          }
 
-  prof.textContent = msg;
+          if (diff > 0) {
+            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
+          } else if (diff < 0) {
+            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")} por falar ${penalidade} ${p(penalidade,"palavra","palavras")} a menos, e teve ${errosVermelhos} ${p(errosVermelhos,"erro","erros")}`;
+          } else {
+            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
+          }
+
+          prof.textContent = msg;
 
          (lastMsgEl || msgs[index]).after(prof);
           lastMsgEl = prof;
