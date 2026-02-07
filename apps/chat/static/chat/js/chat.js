@@ -1660,7 +1660,7 @@ const USER_NAME = document.body.dataset.username || "";
           // const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           // const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
           const totalEsperado = normEn(expectedAtual).split(" ").length;
-          const totalFalado   = normEn(textoCorrigido).split(" ").length;
+          const totalFalado   = textoCorrigido.split(" ").length;
           const diff = totalFalado - totalEsperado;
           const penalidade = Math.abs(diff);          
           
@@ -1767,7 +1767,7 @@ const USER_NAME = document.body.dataset.username || "";
           }, 150);
 
           return;
-
+///////////////////
         } else {
 
         const ok = esperados.includes(recebido);
