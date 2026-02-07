@@ -1424,8 +1424,7 @@ const USER_NAME = document.body.dataset.username || "";
         const MODO_NOVO = (LESSON_ID === 4);
         
         // METODO DE FRASES GRANDE
-        if (MODO_NOVO) {  
-           
+        if (MODO_NOVO) {   
 
         function normalizeLikeBackend(text) {
           if (!text) return "";
@@ -1598,21 +1597,6 @@ const USER_NAME = document.body.dataset.username || "";
             ).join(" ");
           }
 
-          function marcarErrosVisual(expectedNormTokens, spokenRaw) {
-  const rawWords = spokenRaw.split(/\s+/);
-  const rawNorm = normalizeLikeBackend(spokenRaw).split(" ");
-
-  let p = 0;
-  return rawWords.map(w => {
-    if (rawNorm[p] === expectedNormTokens[p]) {
-      p++;
-      return w;
-    }
-    return `<span style="color:red;font-weight:bold">${w}</span>`;
-  }).join(" ");
-}
-
-
           // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
           let TEMPO_BASE = 3000;          // 3s mínimos
           let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
@@ -1655,21 +1639,7 @@ const USER_NAME = document.body.dataset.username || "";
           prof.className = "chat-message system";
           let msg;   
           
-          // if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-
-const spokenRaw = textoCorrigido; // VISUAL
-const spokenNorm = normalizeLikeBackend(spokenRaw);
-const expectedNorm = normalizeLikeBackend(expectedAtual);
-
-if (userMsgEl) {
-  userMsgEl.innerHTML = marcarErrosVisual(
-    expectedNorm.split(" "),
-    spokenRaw
-  );
-}
-
-
-
+          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
           const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
           const limite = totalEsperado - errosVermelhos;
           const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
@@ -1688,7 +1658,7 @@ if (userMsgEl) {
 
           prof.textContent = msg;
 
-         (lastMsgEl || msgs[index]).after(prof);
+          (lastMsgEl || msgs[index]).after(prof);
           lastMsgEl = prof;
           scrollChatToBottom();
 
