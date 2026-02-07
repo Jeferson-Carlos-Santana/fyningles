@@ -1425,31 +1425,7 @@ const USER_NAME = document.body.dataset.username || "";
         
         // METODO DE FRASES GRANDE
         if (MODO_NOVO) {  
-          
-          function normalizeForCompareWithMap(text) {
-  const raw = text.toLowerCase().split(/\s+/);
-  const norm = [];
-  const map = [];
-
-  for (let i = 0; i < raw.length; i++) {
-    // contrações específicas que viram 2 palavras
-    if (raw[i] === "they're") {
-      norm.push("they", "are");
-      map.push([i], [i]);
-    } else if (raw[i] === "let's") {
-      norm.push("let", "us");
-      map.push([i], [i]);
-    } else if (raw[i] === "doesn't") {
-      norm.push("does", "not");
-      map.push([i], [i]);
-    } else {
-      norm.push(raw[i]);
-      map.push([i]);
-    }
-  }
-  return { norm, map };
-}
-
+           
 
         function normalizeLikeBackend(text) {
           if (!text) return "";
@@ -1607,31 +1583,33 @@ const USER_NAME = document.body.dataset.username || "";
         }
 
 
-function marcarErros(expected, spokenRaw) {
-  const expNorm = normalizeLikeBackend(expected).split(" ").filter(Boolean);
+        function marcarErros(expected, spoken) {
+          const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
+          const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
 
-  const { norm: spkNorm, map } = normalizeForCompareWithMap(spokenRaw);
-  const spkNormClean = normalizeLikeBackend(spkNorm.join(" "))
-  .split(" ")
-  .filter(Boolean);
+          const spkRaw  = spoken.split(/\s+/);
 
+          const okIdx = lcsMatchedIndices(exp, spkNorm);
 
-  const okIdx = lcsMatchedIndices(expNorm, spkNormClean);
+            return spkNorm.map((w, idx) =>
+              okIdx.has(idx)
+                ? w
+                : `<span style="color:red;font-weight:bold">${w}</span>`
+            ).join(" ");
+          }
 
+          function marcarErrosVisual(expectedNormTokens, spokenRaw) {
   const rawWords = spokenRaw.split(/\s+/);
-  const mark = new Array(rawWords.length).fill(false);
+  const rawNorm = normalizeLikeBackend(spokenRaw).split(" ");
 
-  okIdx.forEach(i => {
-    map[i].forEach(rIdx => mark[rIdx] = true);
-  });
-
-  return rawWords
-    .map((w, i) =>
-      mark[i]
-        ? w
-        : `<span style="color:red;font-weight:bold">${w}</span>`
-    )
-    .join(" ");
+  let p = 0;
+  return rawWords.map(w => {
+    if (rawNorm[p] === expectedNormTokens[p]) {
+      p++;
+      return w;
+    }
+    return `<span style="color:red;font-weight:bold">${w}</span>`;
+  }).join(" ");
 }
 
 
@@ -1677,7 +1655,21 @@ function marcarErros(expected, spokenRaw) {
           prof.className = "chat-message system";
           let msg;   
           
-          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+          // if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+
+const spokenRaw = textoCorrigido; // VISUAL
+const spokenNorm = normalizeLikeBackend(spokenRaw);
+const expectedNorm = normalizeLikeBackend(expectedAtual);
+
+if (userMsgEl) {
+  userMsgEl.innerHTML = marcarErrosVisual(
+    expectedNorm.split(" "),
+    spokenRaw
+  );
+}
+
+
+
           const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
           const limite = totalEsperado - errosVermelhos;
           const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
