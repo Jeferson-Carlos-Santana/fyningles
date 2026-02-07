@@ -1533,23 +1533,23 @@ const USER_NAME = document.body.dataset.username || "";
 
 
           // NORMALIZACAO PARRA horas "oclock"
-          const hours = {
-            "one":"1",
-            "two":"2",
-            "three":"3",
-            "four":"4",
-            "five":"5",
-            "six":"6",
-            "seven":"7",
-            "eight":"8",
-            "nine":"9",
-            "ten":"10",
-            "eleven":"11",
-            "twelve":"12"
-          };
-          for (const w in hours) {
-            t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
-          }
+          // const hours = {
+          //   "one":"1",
+          //   "two":"2",
+          //   "three":"3",
+          //   "four":"4",
+          //   "five":"5",
+          //   "six":"6",
+          //   "seven":"7",
+          //   "eight":"8",
+          //   "nine":"9",
+          //   "ten":"10",
+          //   "eleven":"11",
+          //   "twelve":"12"
+          // };
+          // for (const w in hours) {
+          //   t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
+          // }
        
           t = t.replace(/[^\w\s:]/g, "").replace(/\s+/g, " ").trim();
 

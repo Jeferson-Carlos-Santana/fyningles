@@ -110,23 +110,23 @@ def normalize(text: str) -> str:
     # text = re.sub(r"\bat\s+(\d{1,2})\b", r"at \1:00", text)
         
     # horas em "oclock"
-    hours = {
-        "one": "1", 
-        "two": "2", 
-        "three": "3", 
-        "four": "4", 
-        "five": "5",
-        "six": "6", 
-        "seven": "7", 
-        "eight": "8", 
-        "nine": "9", 
-        "ten": "10",
-        "eleven": "11", 
-        "twelve": "12"
-    }
+    # hours = {
+    #     "one": "1", 
+    #     "two": "2", 
+    #     "three": "3", 
+    #     "four": "4", 
+    #     "five": "5",
+    #     "six": "6", 
+    #     "seven": "7", 
+    #     "eight": "8", 
+    #     "nine": "9", 
+    #     "ten": "10",
+    #     "eleven": "11", 
+    #     "twelve": "12"
+    # }
 
-    for word, num in hours.items():
-        text = re.sub(rf"\b{word}\s+oclock\b", f"{num}:00", text)
+    # for word, num in hours.items():
+    #     text = re.sub(rf"\b{word}\s+oclock\b", f"{num}:00", text)
 
     #text = re.sub(r"[^\w\s:]", "", text)
     text = re.sub(r"\s+", " ", text).strip()
