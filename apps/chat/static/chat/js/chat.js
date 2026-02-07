@@ -1656,8 +1656,11 @@ const USER_NAME = document.body.dataset.username || "";
 
           const erros = Number(data.errors || 0);
           const pontos = Number(data.correct || 0);
-           const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
-           const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
+          // const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
+          // const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
+
+          const totalEsperado = expectedAtual.split(" ").length;
+          const totalFalado   = textoCorrigido.split(" ").length;
 
           const diff = totalFalado - totalEsperado;
           const penalidade = Math.abs(diff);          
