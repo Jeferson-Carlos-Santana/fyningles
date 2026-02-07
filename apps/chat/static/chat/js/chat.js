@@ -1425,9 +1425,9 @@ const USER_NAME = document.body.dataset.username || "";
         
         // METODO DE FRASES GRANDE
         if (MODO_NOVO) {   
- function normalizeLikeBackend(text) {
-    if (!text) return "";
 
+         function normalizeLikeBackend(text) {
+    if (!text) return "";
     let t = text.toLowerCase();
 
     const contractions = {
@@ -1459,7 +1459,6 @@ const USER_NAME = document.body.dataset.username || "";
       "zero":"0","one":"1","two":"2","three":"3","four":"4",
       "five":"5","six":"6","seven":"7","eight":"8","nine":"9","ten":"10"
     };
-
     for (const w in numbers) {
       t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
     }
@@ -1477,13 +1476,11 @@ const USER_NAME = document.body.dataset.username || "";
       "one":"1","two":"2","three":"3","four":"4","five":"5","six":"6",
       "seven":"7","eight":"8","nine":"9","ten":"10","eleven":"11","twelve":"12"
     };
-
     for (const w in hours) {
       t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
     }
 
-    t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
-    return t;
+    return t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
   }
 
   function lcsMatchedIndices(expectedTokens, spokenTokens) {
@@ -1513,32 +1510,35 @@ const USER_NAME = document.body.dataset.username || "";
     return ok;
   }
 
-  function marcarErros(expected, spoken) {
+  // <<< MUDANÇA: agora compara com compare, mas pinta o visual
+  function marcarErros(expected, spoken_compare, spoken_visual) {
     const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
-    const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
+    const spkCmp = normalizeLikeBackend(spoken_compare).split(" ").filter(Boolean);
 
-    const okIdx = lcsMatchedIndices(exp, spkNorm);
+    // Render usa o visual (não expande)
+    const visTokens = (spoken_visual || "").split(/\s+/).filter(Boolean);
 
-    return spkNorm.map((w, idx) =>
+    const okIdx = lcsMatchedIndices(exp, spkCmp);
+
+    // Se tamanhos divergirem muito, cai no compare (pra não quebrar índice)
+    const renderTokens = (visTokens.length === spkCmp.length) ? visTokens : spkCmp;
+
+    return renderTokens.map((w, idx) =>
       okIdx.has(idx)
         ? w
         : `<span style="color:red;font-weight:bold">${w}</span>`
     ).join(" ");
   }
 
-  // ===== SAÍDAS DO MODO NOVO =====
-  const spoken_compare = normalizeLikeBackend(textoCorrigido);          // <<< MUDANÇA
+  // <<< MUDANÇA: 2 saídas
+  const spoken_compare = normalizeLikeBackend(textoCorrigido);
 
-  let spoken_visual = textoCorrigido;                                    // <<< MUDANÇA
-  spoken_visual = normalizeTheyAnywhere(spoken_visual);                 // <<< MUDANÇA
-  spoken_visual = normalizeAskTense(spoken_visual, expectedAtual);      // <<< MUDANÇA
-  spoken_visual = normalizarPorTarget(spoken_visual, expectedAtual);    // <<< MUDANÇA
-  // =================================
+  let spoken_visual = textoCorrigido;
+  // IMPORTANTe: visual NÃO deve expandir contrações
+  // então não passa por normalizeLikeBackend nem por algo que expanda
+  spoken_visual = normalizarPorTarget(spoken_visual, expectedAtual);
 
-  let TEMPO_BASE = 3000;
-  let TEMPO_POR_PALAVRA = 500;
-  let TEMPO_MAX = 20000;
-
+  // chama avaliação (backend)
   if (offlinePause || v !== RENDER_VERSION) return;
 
   const rEval = await fetch("/speech/evaluate/", {
@@ -1546,13 +1546,14 @@ const USER_NAME = document.body.dataset.username || "";
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       expected: expectedAtual,
-      spoken: spoken_compare                               // <<< MUDANÇA
+      spoken: spoken_compare  // <<< MUDANÇA
     })
   });
 
   if (offlinePause || v !== RENDER_VERSION) return;
 
   const data = await rEval.json();
+
   if (offlinePause || v !== RENDER_VERSION) return;
 
   const erros = Number(data.errors || 0);
@@ -1566,272 +1567,34 @@ const USER_NAME = document.body.dataset.username || "";
 
   if (offlinePause || v !== RENDER_VERSION) return;
 
+  // ===== FEEDBACK VISUAL =====
   const userMsgEl = lastMsgEl;
   const prof = document.createElement("div");
   prof.className = "chat-message system";
   let msg;
 
-  if (userMsgEl) {
-    userMsgEl.textContent = spoken_visual;                // <<< MUDANÇA
-    userMsgEl.innerHTML = marcarErros(
-      expectedAtual,
-      spoken_compare                                      // <<< MUDANÇA
-    );
-  }
+  // <<< MUDANÇA: aqui era que vazava "they are" na tela
+  if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, spoken_compare, spoken_visual);
 
   const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
   const limite = totalEsperado - errosVermelhos;
   const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
 
-  function p(n, s, p) { return n === 1 ? s : p; }
+  function p(n, singular, plural) { return n === 1 ? singular : plural; }
 
   if (diff > 0) {
     msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
   } else if (diff < 0) {
-    msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")}`;
+    msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")} por falar ${penalidade} ${p(penalidade,"palavra","palavras")} a menos, e teve ${errosVermelhos} ${p(errosVermelhos,"erro","erros")}`;
   } else {
     msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
   }
 
   prof.textContent = msg;
-  (lastMsgEl || msgs[index]).after(prof);
-  lastMsgEl = prof;
-  scrollChatToBottom();
-        // function normalizeLikeBackend(text) {
-        //   if (!text) return "";
 
-        //   let t = text.toLowerCase();
-
-        //   // //NORMALIZACAO PARA ABREVIADOS
-        //   const contractions = {
-        //     "i'm":"i am",
-        //     "you're":"you are",
-        //     "he's":"he is",
-        //     "she's":"she is",
-        //     "it's":"it is",
-        //     "we're":"we are",
-        //     "they're":"they are",
-        //     "i've":"i have",
-        //     "you've":"you have",
-        //     "we've":"we have",
-        //     "they've":"they have",
-        //     "i'd":"i would",
-        //     "you'd":"you would",
-        //     "he'd":"he would",
-        //     "she'd":"she would",
-        //     "we'd":"we would",
-        //     "they'd":"they would",
-        //     "i'll":"i will",
-        //     "you'll":"you will",
-        //     "he'll":"he will",
-        //     "she'll":"she will",
-        //     "we'll":"we will",
-        //     "they'll":"they will",
-        //     "isn't":"is not",
-        //     "aren't":"are not",
-        //     "wasn't":"was not",
-        //     "weren't":"were not",
-        //     "don't":"do not",
-        //     "doesn't":"does not",
-        //     "didn't":"did not",
-        //     "haven't":"have not",
-        //     "hasn't":"has not",
-        //     "hadn't":"had not",
-        //     "can't":"can not",
-        //     "couldn't":"could not",
-        //     "shouldn't":"should not",
-        //     "wouldn't":"would not",
-        //     "mightn't":"might not",
-        //     "mustn't":"must not",
-        //     "won't":"will not",
-        //     "shan't":"shall not",
-        //     "could've":"could have",
-        //     "should've":"should have",
-        //     "would've":"would have",
-        //     "might've":"might have",
-        //     "must've":"must have",
-        //     "what's":"what is",
-        //     "where's":"where is",
-        //     "who's":"who is",
-        //     "how's":"how is",
-        //     "when's":"when is",
-        //     "why's":"why is",
-        //     "there's":"there is",
-        //     "here's":"here is",
-        //     "that's":"that is",
-        //     "this's":"this is",
-        //     "let's":"let us",
-        //     "gonna":"going to",
-        //     "wanna":"want to",
-        //     "gotta":"got to"
-        //     };
-
-        //   for (const c in contractions) {
-        //     const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        //     t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
-        //   }          
-          
-        //   // // NORMALIZACAO PRA NUMEROS
-        //   const numbers = {
-        //     "zero":"0",
-        //     "one":"1",
-        //     "two":"2",
-        //     "three":"3",
-        //     "four":"4",
-        //     "five":"5",
-        //     "six":"6",
-        //     "seven":"7",
-        //     "eight":"8",
-        //     "nine":"9",
-        //     "ten":"10"
-        //   };
-
-        //   for (const w in numbers) {
-        //     t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
-        //   }
-          
-        //   // NORMALIZACAO AM / PM (PRIMEIRO)
-        //   t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
-        //     let hour = parseInt(h, 10);
-        //     if (p === "pm" && hour < 12) hour += 12;
-        //     if (p === "am" && hour === 12) hour = 0;
-        //     return `at ${hour}:00`;
-        //   });
-
-        //   // at nine / at 9 → at 9:00 (DEPOIS)
-        //   t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
-
-        //   // NORMALIZACAO PARRA horas "oclock"
-        //   const hours = {
-        //     "one":"1",
-        //     "two":"2",
-        //     "three":"3",
-        //     "four":"4",
-        //     "five":"5",
-        //     "six":"6",
-        //     "seven":"7",
-        //     "eight":"8",
-        //     "nine":"9",
-        //     "ten":"10",
-        //     "eleven":"11",
-        //     "twelve":"12"
-        //   };
-        //   for (const w in hours) {
-        //     t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
-        //   }
-       
-        //   t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
-
-        //   return t;
-        // }
-
-        // function lcsMatchedIndices(expectedTokens, spokenTokens) {
-        //   const n = expectedTokens.length, m = spokenTokens.length;
-        //   const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
-
-        //   for (let i = 1; i <= n; i++) {
-        //     for (let j = 1; j <= m; j++) {
-        //       dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
-        //         ? dp[i - 1][j - 1] + 1
-        //         : Math.max(dp[i - 1][j], dp[i][j - 1]);
-        //     }
-        //   }
-
-        //   const ok = new Set();
-        //   let i = n, j = m;
-        //   while (i > 0 && j > 0) {
-        //     if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
-        //       ok.add(j - 1);
-        //       i--; j--;
-        //     } else if (dp[i - 1][j] >= dp[i][j - 1]) {
-        //       i--;
-        //     } else {
-        //       j--;
-        //     }
-        //   }
-        //   return ok;
-        // }
-
-
-        // function marcarErros(expected, spoken) {
-        //   const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
-        //   const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
-
-        //   const spkRaw  = spoken.split(/\s+/);
-
-        //   const okIdx = lcsMatchedIndices(exp, spkNorm);
-
-        //     return spkNorm.map((w, idx) =>
-        //       okIdx.has(idx)
-        //         ? w
-        //         : `<span style="color:red;font-weight:bold">${w}</span>`
-        //     ).join(" ");
-        //   }
-
-        //   // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
-        //   let TEMPO_BASE = 3000;          // 3s mínimos
-        //   let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
-        //   let TEMPO_MAX = 20000;         // 12s máximo
-          
-        //   // chama avaliação (backend)
-        //   if (offlinePause || v !== RENDER_VERSION) return;
-
-        //   const rEval = await fetch("/speech/evaluate/", {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({
-        //       expected: expectedAtual,
-        //       spoken: textoCorrigido
-        //     })
-        //   });
-
-        //   if (offlinePause || v !== RENDER_VERSION) return;
-
-        //   const data = await rEval.json();
-
-        //   if (offlinePause || v !== RENDER_VERSION) return;
-
-        //   const erros = Number(data.errors || 0);
-        //   const pontos = Number(data.correct || 0);
-        //   // const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
-        //   // const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
-
-        //   const totalEsperado = expectedAtual.split(" ").length;
-        //   const totalFalado   = textoCorrigido.split(" ").length;
-
-        //   const diff = totalFalado - totalEsperado;
-        //   const penalidade = Math.abs(diff);          
-          
-        //   if (offlinePause || v !== RENDER_VERSION) return;
-
-        //   // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
-        //   const userMsgEl = lastMsgEl;
-        //   const prof = document.createElement("div");
-        //   prof.className = "chat-message system";
-        //   let msg;   
-          
-        //   if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-        //   const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
-        //   const limite = totalEsperado - errosVermelhos;
-        //   const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
-
-        //   function p(n, singular, plural) {
-        //     return n === 1 ? singular : plural;
-        //   }
-
-        //   if (diff > 0) {
-        //     msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
-        //   } else if (diff < 0) {
-        //     msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")} por falar ${penalidade} ${p(penalidade,"palavra","palavras")} a menos, e teve ${errosVermelhos} ${p(errosVermelhos,"erro","erros")}`;
-        //   } else {
-        //     msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
-        //   }
-
-        //   prof.textContent = msg;
-
-        //  (lastMsgEl || msgs[index]).after(prof);
-        //   lastMsgEl = prof;
-        //   scrollChatToBottom();
+         (lastMsgEl || msgs[index]).after(prof);
+          lastMsgEl = prof;
+          scrollChatToBottom();
 
           if (pontos > 0) {
             prof.classList.add("correto");
