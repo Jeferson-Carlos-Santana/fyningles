@@ -1511,24 +1511,20 @@ const USER_NAME = document.body.dataset.username || "";
   }
 
   // <<< MUDANÇA: agora compara com compare, mas pinta o visual
-  function marcarErros(expected, spoken_compare, spoken_visual) {
-    const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
-    const spkCmp = normalizeLikeBackend(spoken_compare).split(" ").filter(Boolean);
+ function marcarErros(expected, spoken_original) {
+  const exp = normalizeLikeBackend(expected).split(" ");
+  const spkCmp = normalizeLikeBackend(spoken_original).split(" ");
+  const spkVis = spoken_original.split(/\s+/); // <<< ORIGINAL
 
-    // Render usa o visual (não expande)
-    const visTokens = (spoken_visual || "").split(/\s+/).filter(Boolean);
+  const okIdx = lcsMatchedIndices(exp, spkCmp);
 
-    const okIdx = lcsMatchedIndices(exp, spkCmp);
+  return spkVis.map((w, idx) =>
+    okIdx.has(idx)
+      ? w
+      : `<span style="color:red;font-weight:bold">${w}</span>`
+  ).join(" ");
+}
 
-    // Se tamanhos divergirem muito, cai no compare (pra não quebrar índice)
-    const renderTokens = (visTokens.length === spkCmp.length) ? visTokens : spkCmp;
-
-    return renderTokens.map((w, idx) =>
-      okIdx.has(idx)
-        ? w
-        : `<span style="color:red;font-weight:bold">${w}</span>`
-    ).join(" ");
-  }
 
   // <<< MUDANÇA: 2 saídas
   const spoken_compare = normalizeLikeBackend(textoCorrigido);
