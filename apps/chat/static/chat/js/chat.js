@@ -1500,6 +1500,7 @@ const USER_NAME = document.body.dataset.username || "";
             const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
           }
+          
         //   const contractions = {
         //   "i'm":"i am",
         //   "you're":"you are",
