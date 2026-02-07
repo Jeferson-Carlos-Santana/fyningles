@@ -93,6 +93,21 @@ def normalize(text: str) -> str:
 
     for word, digit in numbers.items():
         text = re.sub(rf"\b{word}\b", digit, text)
+
+    # AM / PM PRIMEIRO
+    def _am_pm(m):
+        hour = int(m.group(1))
+        p = m.group(2)
+        if p == "pm" and hour < 12:
+            hour += 12
+        if p == "am" and hour == 12:
+            hour = 0
+        return f"at {hour}:00"
+
+    text = re.sub(r"\bat\s+(\d{1,2})\s*(am|pm)\b", _am_pm, text)
+
+    # depois at 9 -> at 9:00
+    text = re.sub(r"\bat\s+(\d{1,2})\b", r"at \1:00", text)
         
     # horas em "oclock"
     hours = {
@@ -113,10 +128,8 @@ def normalize(text: str) -> str:
     for word, num in hours.items():
         text = re.sub(rf"\b{word}\s+oclock\b", f"{num}:00", text)
 
-    # limpeza padrão (igual à versão antiga)
-    # text = re.sub(r"[^\w\s]", "", text)
-    text = re.sub(r"[^\w\s:]", "", text)  #[^\w\s:']
 
+    text = re.sub(r"[^\w\s:]", "", text)
     text = re.sub(r"\s+", " ", text).strip()
 
     return text
