@@ -1614,26 +1614,26 @@ const USER_NAME = document.body.dataset.username || "";
           return ok;
         }
 
+        function normalizeForCompare(text) {
+          return normalizeLikeBackend(text)
+            .replace(/\blet us\b/g, "lets");
+        }
+
+
         function marcarErros(expected, spoken) {
-          const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
-          const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
+          const exp = normalizeLikeBackend(normalizeForCompare(expected)).split(" ").filter(Boolean);
+          const spkNorm = normalizeLikeBackend(normalizeForCompare(spoken)).split(" ").filter(Boolean);
 
           const spkRaw  = spoken.split(/\s+/);
 
           const okIdx = lcsMatchedIndices(exp, spkNorm);
 
-
-            // return spkNorm.map((w, idx) =>
-            //   okIdx.has(idx)
-            //     ? w
-            //     : `<span style="color:red;font-weight:bold">${w}</span>`
-            // ).join(" ");
-            return spkRaw.map((w, idx) =>
-              okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
+            return spkNorm.map((w, idx) =>
+              okIdx.has(idx)
+                ? w
+                : `<span style="color:red;font-weight:bold">${w}</span>`
             ).join(" ");
-
           }
-
 
           // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
           let TEMPO_BASE = 3000;          // 3s mínimos
