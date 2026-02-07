@@ -1431,6 +1431,37 @@ const USER_NAME = document.body.dataset.username || "";
 
           let t = text.toLowerCase();
           
+          const contractions = {
+            "i'm":"i am","you're":"you are","he's":"he is","she's":"she is","it's":"it is",
+            "we're":"we are","they're":"they are","i've":"i have","you've":"you have",
+            "we've":"we have","they've":"they have","i'd":"i would","you'd":"you would",
+            "he'd":"he would","she'd":"she would","we'd":"we would","they'd":"they would",
+            "i'll":"i will","you'll":"you will","he'll":"he will","she'll":"she will",
+            "we'll":"we will","they'll":"they will","isn't":"is not","aren't":"are not",
+            "wasn't":"was not","weren't":"were not","don't":"do not","doesn't":"does not",
+            "didn't":"did not","haven't":"have not","hasn't":"has not","hadn't":"had not",
+            "can't":"can not","couldn't":"could not","shouldn't":"should not",
+            "wouldn't":"would not","mightn't":"might not","mustn't":"must not",
+            "won't":"will not","shan't":"shall not","could've":"could have",
+            "should've":"should have","would've":"would have","might've":"might have",
+            "must've":"must have","what's":"what is","where's":"where is","who's":"who is",
+            "how's":"how is","when's":"when is","why's":"why is","there's":"there is",
+            "here's":"here is","that's":"that is","this's":"this is","let's":"let us",
+            "gonna":"going to","wanna":"want to","gotta":"got to"
+          };
+
+          // 1ª passada
+          for (const [a,b] of Object.entries(contractions)) {
+            const esc = a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), `__TMP__${b}__`);
+          }
+
+          // 2ª passada
+          for (const b of Object.values(contractions)) {
+            const esc = b.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            t = t.replace(new RegExp(`__TMP__${esc}__`, "g"), b);
+          }
+
           //NORMALIZACAO PARA ABREVIADOS
           // const contractions = {
           //   "i'm":"i am","i am":"i'm",
@@ -1551,7 +1582,6 @@ const USER_NAME = document.body.dataset.username || "";
           //   t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
           // }
        
-          ////t = t.replace(/[^\w\s:]/g, "").replace(/\s+/g, " ").trim();
           t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
 
           return t;
