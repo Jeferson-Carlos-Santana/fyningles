@@ -70,10 +70,10 @@ def normalize(text: str) -> str:
         "gotta": "got to"
     }
     
-    for a, b in contractions.items():
-        text = re.sub(rf"\b{re.escape(a)}\b", f"__TMP__{b}__", text)
-    for a, b in contractions.items():
-        text = re.sub(rf"__TMP__{re.escape(b)}__", b, text)
+    # for a, b in contractions.items():
+    #     text = re.sub(rf"\b{re.escape(a)}\b", f"__TMP__{b}__", text)
+    # for a, b in contractions.items():
+    #     text = re.sub(rf"__TMP__{re.escape(b)}__", b, text)
 
 
     # normalização de números por extenso
