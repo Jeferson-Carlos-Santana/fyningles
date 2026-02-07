@@ -1496,10 +1496,23 @@ const USER_NAME = document.body.dataset.username || "";
             };
 
 
+          // for (const c in contractions) {
+          //   const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          //   t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
+          // }
+          // 1ª passada: marca
           for (const c in contractions) {
             const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
+            t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), `__TMP__${contractions[c]}__`);
           }
+
+          // 2ª passada: resolve
+          for (const c in contractions) {
+            const v = contractions[c];
+            const esc = v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            t = t.replace(new RegExp(`__TMP__${esc}__`, "g"), v);
+          }
+
           
         //   const contractions = {
         //   "i'm":"i am",
