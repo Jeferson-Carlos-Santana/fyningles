@@ -1463,74 +1463,74 @@ const USER_NAME = document.body.dataset.username || "";
           // }
 
           //NORMALIZACAO PARA ABREVIADOS
-          const contractions = {
-            "i'm":"i am","i am":"i'm",
-            "you're":"you are","you are":"you're",
-            "he's":"he is","he is":"he's",
-            "she's":"she is","she is":"she's",
-            "it's":"it is","it is":"it's",
-            "we're":"we are","we are":"we're",
-            "they're":"they are","they are":"they're",
-            "i've":"i have","i have":"i've",
-            "you've":"you have","you have":"you've",
-            "we've":"we have","we have":"we've",
-            "they've":"they have","they have":"they've",
-            "i'd":"i would","i would":"i'd",
-            "you'd":"you would","you would":"you'd",
-            "he'd":"he would","he would":"he'd",
-            "she'd":"she would","she would":"she'd",
-            "we'd":"we would","we would":"we'd",
-            "they'd":"they would","they would":"they'd",
-            "i'll":"i will","i will":"i'll",
-            "you'll":"you will","you will":"you'll",
-            "he'll":"he will","he will":"he'll",
-            "she'll":"she will","she will":"she'll",
-            "we'll":"we will","we will":"we'll",
-            "they'll":"they will","they will":"they'll",
-            "isn't":"is not","is not":"isn't",
-            "aren't":"are not","are not":"aren't",
-            "wasn't":"was not","was not":"wasn't",
-            "weren't":"were not","were not":"weren't",
-            "don't":"do not","do not":"don't",
-            "doesn't":"does not","does not":"doesn't",
-            "didn't":"did not","did not":"didn't",
-            "haven't":"have not","have not":"haven't",
-            "hasn't":"has not","has not":"hasn't",
-            "hadn't":"had not","had not":"hadn't",
-            "can't":"can not","can not":"can't",
-            "couldn't":"could not","could not":"couldn't",
-            "shouldn't":"should not","should not":"shouldn't",
-            "wouldn't":"would not","would not":"wouldn't",
-            "mightn't":"might not","might not":"mightn't",
-            "mustn't":"must not","must not":"mustn't",
-            "won't":"will not","will not":"won't",
-            "shan't":"shall not","shall not":"shan't",
-            "could've":"could have","could have":"could've",
-            "should've":"should have","should have":"should've",
-            "would've":"would have","would have":"would've",
-            "might've":"might have","might have":"might've",
-            "must've":"must have","must have":"must've",
-            "what's":"what is","what is":"what's",
-            "where's":"where is","where is":"where's",
-            "who's":"who is","who is":"who's",
-            "how's":"how is","how is":"how's",
-            "when's":"when is","when is":"when's",
-            "why's":"why is","why is":"why's",
-            "there's":"there is","there is":"there's",
-            "here's":"here is","here is":"here's",
-            "that's":"that is","that is":"that's",
-            "this's":"this is","this is":"this's",
-            "let's":"let us","let us":"let's",
-            "gonna":"going to","going to":"gonna",
-            "wanna":"want to",
-            "gotta":"got to","got to":"gotta"
-            };
+          // const contractions = {
+          //   "i'm":"i am","i am":"i'm",
+          //   "you're":"you are","you are":"you're",
+          //   "he's":"he is","he is":"he's",
+          //   "she's":"she is","she is":"she's",
+          //   "it's":"it is","it is":"it's",
+          //   "we're":"we are","we are":"we're",
+          //   "they're":"they are","they are":"they're",
+          //   "i've":"i have","i have":"i've",
+          //   "you've":"you have","you have":"you've",
+          //   "we've":"we have","we have":"we've",
+          //   "they've":"they have","they have":"they've",
+          //   "i'd":"i would","i would":"i'd",
+          //   "you'd":"you would","you would":"you'd",
+          //   "he'd":"he would","he would":"he'd",
+          //   "she'd":"she would","she would":"she'd",
+          //   "we'd":"we would","we would":"we'd",
+          //   "they'd":"they would","they would":"they'd",
+          //   "i'll":"i will","i will":"i'll",
+          //   "you'll":"you will","you will":"you'll",
+          //   "he'll":"he will","he will":"he'll",
+          //   "she'll":"she will","she will":"she'll",
+          //   "we'll":"we will","we will":"we'll",
+          //   "they'll":"they will","they will":"they'll",
+          //   "isn't":"is not","is not":"isn't",
+          //   "aren't":"are not","are not":"aren't",
+          //   "wasn't":"was not","was not":"wasn't",
+          //   "weren't":"were not","were not":"weren't",
+          //   "don't":"do not","do not":"don't",
+          //   "doesn't":"does not","does not":"doesn't",
+          //   "didn't":"did not","did not":"didn't",
+          //   "haven't":"have not","have not":"haven't",
+          //   "hasn't":"has not","has not":"hasn't",
+          //   "hadn't":"had not","had not":"hadn't",
+          //   "can't":"can not","can not":"can't",
+          //   "couldn't":"could not","could not":"couldn't",
+          //   "shouldn't":"should not","should not":"shouldn't",
+          //   "wouldn't":"would not","would not":"wouldn't",
+          //   "mightn't":"might not","might not":"mightn't",
+          //   "mustn't":"must not","must not":"mustn't",
+          //   "won't":"will not","will not":"won't",
+          //   "shan't":"shall not","shall not":"shan't",
+          //   "could've":"could have","could have":"could've",
+          //   "should've":"should have","should have":"should've",
+          //   "would've":"would have","would have":"would've",
+          //   "might've":"might have","might have":"might've",
+          //   "must've":"must have","must have":"must've",
+          //   "what's":"what is","what is":"what's",
+          //   "where's":"where is","where is":"where's",
+          //   "who's":"who is","who is":"who's",
+          //   "how's":"how is","how is":"how's",
+          //   "when's":"when is","when is":"when's",
+          //   "why's":"why is","why is":"why's",
+          //   "there's":"there is","there is":"there's",
+          //   "here's":"here is","here is":"here's",
+          //   "that's":"that is","that is":"that's",
+          //   "this's":"this is","this is":"this's",
+          //   "let's":"let us","let us":"let's",
+          //   "gonna":"going to","going to":"gonna",
+          //   "wanna":"want to",
+          //   "gotta":"got to","got to":"gotta"
+          //   };
 
 
-          for (const c in contractions) {
-            const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
-          }
+          // for (const c in contractions) {
+          //   const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          //   t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
+          // }
           
           
           // // NORMALIZACAO PRA NUMEROS
@@ -1623,11 +1623,15 @@ const USER_NAME = document.body.dataset.username || "";
           const okIdx = lcsMatchedIndices(exp, spkNorm);
 
 
-            return spkNorm.map((w, idx) =>
-              okIdx.has(idx)
-                ? w
-                : `<span style="color:red;font-weight:bold">${w}</span>`
+            // return spkNorm.map((w, idx) =>
+            //   okIdx.has(idx)
+            //     ? w
+            //     : `<span style="color:red;font-weight:bold">${w}</span>`
+            // ).join(" ");
+            return spkRaw.map((w, idx) =>
+              okIdx.has(idx) ? w : `<span style="color:red;font-weight:bold">${w}</span>`
             ).join(" ");
+
           }
 
 
@@ -1673,7 +1677,7 @@ const USER_NAME = document.body.dataset.username || "";
           prof.className = "chat-message system";
           let msg;   
           
-          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, normalizeLikeBackend(textoCorrigido));
+          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
           const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
           const limite = totalEsperado - errosVermelhos;
           const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
