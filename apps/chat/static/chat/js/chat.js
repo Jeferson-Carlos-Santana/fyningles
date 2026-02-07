@@ -1526,61 +1526,59 @@ const USER_NAME = document.body.dataset.username || "";
             "gotta":"got to","got to":"gotta"
             };
 
-
           for (const c in contractions) {
             const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
-          }
-          
+          }          
           
           // // NORMALIZACAO PRA NUMEROS
-          // const numbers = {
-          //   "zero":"0",
-          //   "one":"1",
-          //   "two":"2",
-          //   "three":"3",
-          //   "four":"4",
-          //   "five":"5",
-          //   "six":"6",
-          //   "seven":"7",
-          //   "eight":"8",
-          //   "nine":"9",
-          //   "ten":"10"
-          // };
-          // for (const w in numbers) {
-          //   t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
-          // }
+          const numbers = {
+            "zero":"0",
+            "one":"1",
+            "two":"2",
+            "three":"3",
+            "four":"4",
+            "five":"5",
+            "six":"6",
+            "seven":"7",
+            "eight":"8",
+            "nine":"9",
+            "ten":"10"
+          };
+
+          for (const w in numbers) {
+            t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
+          }
           
-          // // NORMALIZACAO AM / PM (PRIMEIRO)
-          // t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
-          //   let hour = parseInt(h, 10);
-          //   if (p === "pm" && hour < 12) hour += 12;
-          //   if (p === "am" && hour === 12) hour = 0;
-          //   return `at ${hour}:00`;
-          // });
+          // NORMALIZACAO AM / PM (PRIMEIRO)
+          t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
+            let hour = parseInt(h, 10);
+            if (p === "pm" && hour < 12) hour += 12;
+            if (p === "am" && hour === 12) hour = 0;
+            return `at ${hour}:00`;
+          });
 
-          // // at nine / at 9 → at 9:00 (DEPOIS)
-          // t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
-
+          // at nine / at 9 → at 9:00 (DEPOIS)
+          t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
 
           // NORMALIZACAO PARRA horas "oclock"
-          // const hours = {
-          //   "one":"1",
-          //   "two":"2",
-          //   "three":"3",
-          //   "four":"4",
-          //   "five":"5",
-          //   "six":"6",
-          //   "seven":"7",
-          //   "eight":"8",
-          //   "nine":"9",
-          //   "ten":"10",
-          //   "eleven":"11",
-          //   "twelve":"12"
-          // };
-          // for (const w in hours) {
-          //   t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
-          // }
+          const hours = {
+            "one":"1",
+            "two":"2",
+            "three":"3",
+            "four":"4",
+            "five":"5",
+            "six":"6",
+            "seven":"7",
+            "eight":"8",
+            "nine":"9",
+            "ten":"10",
+            "eleven":"11",
+            "twelve":"12"
+          };
+          for (const w in hours) {
+            t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
+          }
        
           t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
 
