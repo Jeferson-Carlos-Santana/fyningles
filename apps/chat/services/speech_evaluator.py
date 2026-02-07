@@ -57,7 +57,6 @@ def evaluate(expected_text: str, spoken_text: str) -> dict:
         #errors += 1
         errors += abs(len(spoken_tokens) - len(expected_tokens))
 
-
     # limite inferior: nunca negativo
     if errors > total:
         errors = total

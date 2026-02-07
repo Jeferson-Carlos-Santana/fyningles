@@ -1425,274 +1425,413 @@ const USER_NAME = document.body.dataset.username || "";
         
         // METODO DE FRASES GRANDE
         if (MODO_NOVO) {   
+ function normalizeLikeBackend(text) {
+    if (!text) return "";
 
-        function normalizeLikeBackend(text) {
-          if (!text) return "";
+    let t = text.toLowerCase();
 
-          let t = text.toLowerCase();
+    const contractions = {
+      "i'm":"i am","you're":"you are","he's":"he is","she's":"she is","it's":"it is",
+      "we're":"we are","they're":"they are","i've":"i have","you've":"you have",
+      "we've":"we have","they've":"they have","i'd":"i would","you'd":"you would",
+      "he'd":"he would","she'd":"she would","we'd":"we would","they'd":"they would",
+      "i'll":"i will","you'll":"you will","he'll":"he will","she'll":"she will",
+      "we'll":"we will","they'll":"they will","isn't":"is not","aren't":"are not",
+      "wasn't":"was not","weren't":"were not","don't":"do not","doesn't":"does not",
+      "didn't":"did not","haven't":"have not","hasn't":"has not","hadn't":"had not",
+      "can't":"can not","couldn't":"could not","shouldn't":"should not",
+      "wouldn't":"would not","mightn't":"might not","mustn't":"must not",
+      "won't":"will not","shan't":"shall not","could've":"could have",
+      "should've":"should have","would've":"would have","might've":"might have",
+      "must've":"must have","what's":"what is","where's":"where is",
+      "who's":"who is","how's":"how is","when's":"when is","why's":"why is",
+      "there's":"there is","here's":"here is","that's":"that is",
+      "this's":"this is","let's":"let us","gonna":"going to",
+      "wanna":"want to","gotta":"got to"
+    };
+
+    for (const c in contractions) {
+      const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
+    }
+
+    const numbers = {
+      "zero":"0","one":"1","two":"2","three":"3","four":"4",
+      "five":"5","six":"6","seven":"7","eight":"8","nine":"9","ten":"10"
+    };
+
+    for (const w in numbers) {
+      t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
+    }
+
+    t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
+      let hour = parseInt(h, 10);
+      if (p === "pm" && hour < 12) hour += 12;
+      if (p === "am" && hour === 12) hour = 0;
+      return `at ${hour}:00`;
+    });
+
+    t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
+
+    const hours = {
+      "one":"1","two":"2","three":"3","four":"4","five":"5","six":"6",
+      "seven":"7","eight":"8","nine":"9","ten":"10","eleven":"11","twelve":"12"
+    };
+
+    for (const w in hours) {
+      t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
+    }
+
+    t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
+    return t;
+  }
+
+  function lcsMatchedIndices(expectedTokens, spokenTokens) {
+    const n = expectedTokens.length, m = spokenTokens.length;
+    const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
+
+    for (let i = 1; i <= n; i++) {
+      for (let j = 1; j <= m; j++) {
+        dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
+          ? dp[i - 1][j - 1] + 1
+          : Math.max(dp[i - 1][j], dp[i][j - 1]);
+      }
+    }
+
+    const ok = new Set();
+    let i = n, j = m;
+    while (i > 0 && j > 0) {
+      if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
+        ok.add(j - 1);
+        i--; j--;
+      } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+        i--;
+      } else {
+        j--;
+      }
+    }
+    return ok;
+  }
+
+  function marcarErros(expected, spoken) {
+    const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
+    const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
+
+    const okIdx = lcsMatchedIndices(exp, spkNorm);
+
+    return spkNorm.map((w, idx) =>
+      okIdx.has(idx)
+        ? w
+        : `<span style="color:red;font-weight:bold">${w}</span>`
+    ).join(" ");
+  }
+
+  // ===== SAÍDAS DO MODO NOVO =====
+  const spoken_compare = normalizeLikeBackend(textoCorrigido);          // <<< MUDANÇA
+
+  let spoken_visual = textoCorrigido;                                    // <<< MUDANÇA
+  spoken_visual = normalizeTheyAnywhere(spoken_visual);                 // <<< MUDANÇA
+  spoken_visual = normalizeAskTense(spoken_visual, expectedAtual);      // <<< MUDANÇA
+  spoken_visual = normalizarPorTarget(spoken_visual, expectedAtual);    // <<< MUDANÇA
+  // =================================
+
+  let TEMPO_BASE = 3000;
+  let TEMPO_POR_PALAVRA = 500;
+  let TEMPO_MAX = 20000;
+
+  if (offlinePause || v !== RENDER_VERSION) return;
+
+  const rEval = await fetch("/speech/evaluate/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      expected: expectedAtual,
+      spoken: spoken_compare                               // <<< MUDANÇA
+    })
+  });
+
+  if (offlinePause || v !== RENDER_VERSION) return;
+
+  const data = await rEval.json();
+  if (offlinePause || v !== RENDER_VERSION) return;
+
+  const erros = Number(data.errors || 0);
+  const pontos = Number(data.correct || 0);
+
+  const totalEsperado = expectedAtual.split(" ").length;
+  const totalFalado   = spoken_compare.split(" ").length; // <<< MUDANÇA
+
+  const diff = totalFalado - totalEsperado;
+  const penalidade = Math.abs(diff);
+
+  if (offlinePause || v !== RENDER_VERSION) return;
+
+  const userMsgEl = lastMsgEl;
+  const prof = document.createElement("div");
+  prof.className = "chat-message system";
+  let msg;
+
+  if (userMsgEl) {
+    userMsgEl.textContent = spoken_visual;                // <<< MUDANÇA
+    userMsgEl.innerHTML = marcarErros(
+      expectedAtual,
+      spoken_compare                                      // <<< MUDANÇA
+    );
+  }
+
+  const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
+  const limite = totalEsperado - errosVermelhos;
+  const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
+
+  function p(n, s, p) { return n === 1 ? s : p; }
+
+  if (diff > 0) {
+    msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
+  } else if (diff < 0) {
+    msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")}`;
+  } else {
+    msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
+  }
+
+  prof.textContent = msg;
+  (lastMsgEl || msgs[index]).after(prof);
+  lastMsgEl = prof;
+  scrollChatToBottom();
+        // function normalizeLikeBackend(text) {
+        //   if (!text) return "";
+
+        //   let t = text.toLowerCase();
+
+        //   // //NORMALIZACAO PARA ABREVIADOS
+        //   const contractions = {
+        //     "i'm":"i am",
+        //     "you're":"you are",
+        //     "he's":"he is",
+        //     "she's":"she is",
+        //     "it's":"it is",
+        //     "we're":"we are",
+        //     "they're":"they are",
+        //     "i've":"i have",
+        //     "you've":"you have",
+        //     "we've":"we have",
+        //     "they've":"they have",
+        //     "i'd":"i would",
+        //     "you'd":"you would",
+        //     "he'd":"he would",
+        //     "she'd":"she would",
+        //     "we'd":"we would",
+        //     "they'd":"they would",
+        //     "i'll":"i will",
+        //     "you'll":"you will",
+        //     "he'll":"he will",
+        //     "she'll":"she will",
+        //     "we'll":"we will",
+        //     "they'll":"they will",
+        //     "isn't":"is not",
+        //     "aren't":"are not",
+        //     "wasn't":"was not",
+        //     "weren't":"were not",
+        //     "don't":"do not",
+        //     "doesn't":"does not",
+        //     "didn't":"did not",
+        //     "haven't":"have not",
+        //     "hasn't":"has not",
+        //     "hadn't":"had not",
+        //     "can't":"can not",
+        //     "couldn't":"could not",
+        //     "shouldn't":"should not",
+        //     "wouldn't":"would not",
+        //     "mightn't":"might not",
+        //     "mustn't":"must not",
+        //     "won't":"will not",
+        //     "shan't":"shall not",
+        //     "could've":"could have",
+        //     "should've":"should have",
+        //     "would've":"would have",
+        //     "might've":"might have",
+        //     "must've":"must have",
+        //     "what's":"what is",
+        //     "where's":"where is",
+        //     "who's":"who is",
+        //     "how's":"how is",
+        //     "when's":"when is",
+        //     "why's":"why is",
+        //     "there's":"there is",
+        //     "here's":"here is",
+        //     "that's":"that is",
+        //     "this's":"this is",
+        //     "let's":"let us",
+        //     "gonna":"going to",
+        //     "wanna":"want to",
+        //     "gotta":"got to"
+        //     };
+
+        //   for (const c in contractions) {
+        //     const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        //     t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
+        //   }          
           
-          const contractions = {
-            "i'm":"i am","you're":"you are","he's":"he is","she's":"she is","it's":"it is",
-            "we're":"we are","they're":"they are","i've":"i have","you've":"you have",
-            "we've":"we have","they've":"they have","i'd":"i would","you'd":"you would",
-            "he'd":"he would","she'd":"she would","we'd":"we would","they'd":"they would",
-            "i'll":"i will","you'll":"you will","he'll":"he will","she'll":"she will",
-            "we'll":"we will","they'll":"they will","isn't":"is not","aren't":"are not",
-            "wasn't":"was not","weren't":"were not","don't":"do not","doesn't":"does not",
-            "didn't":"did not","haven't":"have not","hasn't":"has not","hadn't":"had not",
-            "can't":"can not","couldn't":"could not","shouldn't":"should not",
-            "wouldn't":"would not","mightn't":"might not","mustn't":"must not",
-            "won't":"will not","shan't":"shall not","could've":"could have",
-            "should've":"should have","would've":"would have","might've":"might have",
-            "must've":"must have","what's":"what is","where's":"where is","who's":"who is",
-            "how's":"how is","when's":"when is","why's":"why is","there's":"there is",
-            "here's":"here is","that's":"that is","this's":"this is","let's":"let us",
-            "gonna":"going to","wanna":"want to","gotta":"got to"
-          };
+        //   // // NORMALIZACAO PRA NUMEROS
+        //   const numbers = {
+        //     "zero":"0",
+        //     "one":"1",
+        //     "two":"2",
+        //     "three":"3",
+        //     "four":"4",
+        //     "five":"5",
+        //     "six":"6",
+        //     "seven":"7",
+        //     "eight":"8",
+        //     "nine":"9",
+        //     "ten":"10"
+        //   };
 
-          // 1ª passada
-          for (const [a,b] of Object.entries(contractions)) {
-            const esc = a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), `__TMP__${b}__`);
-          }
-
-          // 2ª passada
-          for (const b of Object.values(contractions)) {
-            const esc = b.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            t = t.replace(new RegExp(`__TMP__${esc}__`, "g"), b);
-          }
-
-          // //NORMALIZACAO PARA ABREVIADOS
-          // const contractions = {
-          //   "i'm":"i am",
-          //   "i am":"i'm",
-          //   "you're":"you are","you are":"you're",
-          //   "he's":"he is","he is":"he's",
-          //   "she's":"she is","she is":"she's",
-          //   "it's":"it is","it is":"it's",
-          //   "we're":"we are","we are":"we're",
-          //   "they're":"they are","they are":"they're",
-          //   "i've":"i have","i have":"i've",
-          //   "you've":"you have","you have":"you've",
-          //   "we've":"we have","we have":"we've",
-          //   "they've":"they have","they have":"they've",
-          //   "i'd":"i would","i would":"i'd",
-          //   "you'd":"you would","you would":"you'd",
-          //   "he'd":"he would","he would":"he'd",
-          //   "she'd":"she would","she would":"she'd",
-          //   "we'd":"we would","we would":"we'd",
-          //   "they'd":"they would","they would":"they'd",
-          //   "i'll":"i will","i will":"i'll",
-          //   "you'll":"you will","you will":"you'll",
-          //   "he'll":"he will","he will":"he'll",
-          //   "she'll":"she will","she will":"she'll",
-          //   "we'll":"we will","we will":"we'll",
-          //   "they'll":"they will","they will":"they'll",
-          //   "isn't":"is not","is not":"isn't",
-          //   "aren't":"are not","are not":"aren't",
-          //   "wasn't":"was not","was not":"wasn't",
-          //   "weren't":"were not","were not":"weren't",
-          //   "don't":"do not","do not":"don't",
-          //   "doesn't":"does not","does not":"doesn't",
-          //   "didn't":"did not","did not":"didn't",
-          //   "haven't":"have not","have not":"haven't",
-          //   "hasn't":"has not","has not":"hasn't",
-          //   "hadn't":"had not","had not":"hadn't",
-          //   "can't":"can not","can not":"can't",
-          //   "couldn't":"could not","could not":"couldn't",
-          //   "shouldn't":"should not","should not":"shouldn't",
-          //   "wouldn't":"would not","would not":"wouldn't",
-          //   "mightn't":"might not","might not":"mightn't",
-          //   "mustn't":"must not","must not":"mustn't",
-          //   "won't":"will not","will not":"won't",
-          //   "shan't":"shall not","shall not":"shan't",
-          //   "could've":"could have","could have":"could've",
-          //   "should've":"should have","should have":"should've",
-          //   "would've":"would have","would have":"would've",
-          //   "might've":"might have","might have":"might've",
-          //   "must've":"must have","must have":"must've",
-          //   "what's":"what is","what is":"what's",
-          //   "where's":"where is","where is":"where's",
-          //   "who's":"who is","who is":"who's",
-          //   "how's":"how is","how is":"how's",
-          //   "when's":"when is","when is":"when's",
-          //   "why's":"why is","why is":"why's",
-          //   "there's":"there is","there is":"there's",
-          //   "here's":"here is","here is":"here's",
-          //   "that's":"that is","that is":"that's",
-          //   "this's":"this is","this is":"this's",
-          //   "let's":"let us","let us":"let's",
-          //   "gonna":"going to","going to":"gonna",
-          //   "wanna":"want to",
-          //   "gotta":"got to","got to":"gotta"
-          //   };
-
-          // for (const c in contractions) {
-          //   const esc = c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          //   t = t.replace(new RegExp(`\\b${esc}\\b`, "g"), contractions[c]);
-          // }          
+        //   for (const w in numbers) {
+        //     t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
+        //   }
           
-          // // NORMALIZACAO PRA NUMEROS
-          const numbers = {
-            "zero":"0",
-            "one":"1",
-            "two":"2",
-            "three":"3",
-            "four":"4",
-            "five":"5",
-            "six":"6",
-            "seven":"7",
-            "eight":"8",
-            "nine":"9",
-            "ten":"10"
-          };
+        //   // NORMALIZACAO AM / PM (PRIMEIRO)
+        //   t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
+        //     let hour = parseInt(h, 10);
+        //     if (p === "pm" && hour < 12) hour += 12;
+        //     if (p === "am" && hour === 12) hour = 0;
+        //     return `at ${hour}:00`;
+        //   });
 
-          for (const w in numbers) {
-            t = t.replace(new RegExp(`\\b${w}\\b`, "g"), numbers[w]);
-          }
-          
-          // NORMALIZACAO AM / PM (PRIMEIRO)
-          t = t.replace(/\bat\s+(\d{1,2})\s*(am|pm)\b/g, (_, h, p) => {
-            let hour = parseInt(h, 10);
-            if (p === "pm" && hour < 12) hour += 12;
-            if (p === "am" && hour === 12) hour = 0;
-            return `at ${hour}:00`;
-          });
+        //   // at nine / at 9 → at 9:00 (DEPOIS)
+        //   t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
 
-          // at nine / at 9 → at 9:00 (DEPOIS)
-          t = t.replace(/\bat\s+(\d{1,2})\b/g, "at $1:00");
-
-          // NORMALIZACAO PARRA horas "oclock"
-          const hours = {
-            "one":"1",
-            "two":"2",
-            "three":"3",
-            "four":"4",
-            "five":"5",
-            "six":"6",
-            "seven":"7",
-            "eight":"8",
-            "nine":"9",
-            "ten":"10",
-            "eleven":"11",
-            "twelve":"12"
-          };
-          for (const w in hours) {
-            t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
-          }
+        //   // NORMALIZACAO PARRA horas "oclock"
+        //   const hours = {
+        //     "one":"1",
+        //     "two":"2",
+        //     "three":"3",
+        //     "four":"4",
+        //     "five":"5",
+        //     "six":"6",
+        //     "seven":"7",
+        //     "eight":"8",
+        //     "nine":"9",
+        //     "ten":"10",
+        //     "eleven":"11",
+        //     "twelve":"12"
+        //   };
+        //   for (const w in hours) {
+        //     t = t.replace(new RegExp(`\\b${w}\\s+oclock\\b`, "g"), `${hours[w]}:00`);
+        //   }
        
-          t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
+        //   t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
 
-          return t;
-        }
+        //   return t;
+        // }
 
-        function lcsMatchedIndices(expectedTokens, spokenTokens) {
-          const n = expectedTokens.length, m = spokenTokens.length;
-          const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
+        // function lcsMatchedIndices(expectedTokens, spokenTokens) {
+        //   const n = expectedTokens.length, m = spokenTokens.length;
+        //   const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
 
-          for (let i = 1; i <= n; i++) {
-            for (let j = 1; j <= m; j++) {
-              dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
-                ? dp[i - 1][j - 1] + 1
-                : Math.max(dp[i - 1][j], dp[i][j - 1]);
-            }
-          }
+        //   for (let i = 1; i <= n; i++) {
+        //     for (let j = 1; j <= m; j++) {
+        //       dp[i][j] = (expectedTokens[i - 1] === spokenTokens[j - 1])
+        //         ? dp[i - 1][j - 1] + 1
+        //         : Math.max(dp[i - 1][j], dp[i][j - 1]);
+        //     }
+        //   }
 
-          const ok = new Set();
-          let i = n, j = m;
-          while (i > 0 && j > 0) {
-            if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
-              ok.add(j - 1);
-              i--; j--;
-            } else if (dp[i - 1][j] >= dp[i][j - 1]) {
-              i--;
-            } else {
-              j--;
-            }
-          }
-          return ok;
-        }
+        //   const ok = new Set();
+        //   let i = n, j = m;
+        //   while (i > 0 && j > 0) {
+        //     if (expectedTokens[i - 1] === spokenTokens[j - 1]) {
+        //       ok.add(j - 1);
+        //       i--; j--;
+        //     } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+        //       i--;
+        //     } else {
+        //       j--;
+        //     }
+        //   }
+        //   return ok;
+        // }
 
 
-        function marcarErros(expected, spoken) {
-          const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
-          const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
+        // function marcarErros(expected, spoken) {
+        //   const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
+        //   const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
 
-          const spkRaw  = spoken.split(/\s+/);
+        //   const spkRaw  = spoken.split(/\s+/);
 
-          const okIdx = lcsMatchedIndices(exp, spkNorm);
+        //   const okIdx = lcsMatchedIndices(exp, spkNorm);
 
-            return spkNorm.map((w, idx) =>
-              okIdx.has(idx)
-                ? w
-                : `<span style="color:red;font-weight:bold">${w}</span>`
-            ).join(" ");
-          }
+        //     return spkNorm.map((w, idx) =>
+        //       okIdx.has(idx)
+        //         ? w
+        //         : `<span style="color:red;font-weight:bold">${w}</span>`
+        //     ).join(" ");
+        //   }
 
-          // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
-          let TEMPO_BASE = 3000;          // 3s mínimos
-          let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
-          let TEMPO_MAX = 20000;         // 12s máximo
+        //   // uma frase de 10 palvras : 3s + (10*0.8s) = 11s
+        //   let TEMPO_BASE = 3000;          // 3s mínimos
+        //   let TEMPO_POR_PALAVRA = 500;   // 0.8s por palavra
+        //   let TEMPO_MAX = 20000;         // 12s máximo
           
-          // chama avaliação (backend)
-          if (offlinePause || v !== RENDER_VERSION) return;
+        //   // chama avaliação (backend)
+        //   if (offlinePause || v !== RENDER_VERSION) return;
 
-          const rEval = await fetch("/speech/evaluate/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              expected: expectedAtual,
-              spoken: textoCorrigido
-            })
-          });
+        //   const rEval = await fetch("/speech/evaluate/", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({
+        //       expected: expectedAtual,
+        //       spoken: textoCorrigido
+        //     })
+        //   });
 
-          if (offlinePause || v !== RENDER_VERSION) return;
+        //   if (offlinePause || v !== RENDER_VERSION) return;
 
-          const data = await rEval.json();
+        //   const data = await rEval.json();
 
-          if (offlinePause || v !== RENDER_VERSION) return;
+        //   if (offlinePause || v !== RENDER_VERSION) return;
 
-          const erros = Number(data.errors || 0);
-          const pontos = Number(data.correct || 0);
-          // const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
-          // const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
+        //   const erros = Number(data.errors || 0);
+        //   const pontos = Number(data.correct || 0);
+        //   // const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
+        //   // const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
 
-          const totalEsperado = expectedAtual.split(" ").length;
-          const totalFalado   = textoCorrigido.split(" ").length;
+        //   const totalEsperado = expectedAtual.split(" ").length;
+        //   const totalFalado   = textoCorrigido.split(" ").length;
 
-          const diff = totalFalado - totalEsperado;
-          const penalidade = Math.abs(diff);          
+        //   const diff = totalFalado - totalEsperado;
+        //   const penalidade = Math.abs(diff);          
           
-          if (offlinePause || v !== RENDER_VERSION) return;
+        //   if (offlinePause || v !== RENDER_VERSION) return;
 
-          // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
-          const userMsgEl = lastMsgEl;
-          const prof = document.createElement("div");
-          prof.className = "chat-message system";
-          let msg;   
+        //   // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
+        //   const userMsgEl = lastMsgEl;
+        //   const prof = document.createElement("div");
+        //   prof.className = "chat-message system";
+        //   let msg;   
           
-          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
-          const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
-          const limite = totalEsperado - errosVermelhos;
-          const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
+        //   if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+        //   const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
+        //   const limite = totalEsperado - errosVermelhos;
+        //   const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
 
-          function p(n, singular, plural) {
-            return n === 1 ? singular : plural;
-          }
+        //   function p(n, singular, plural) {
+        //     return n === 1 ? singular : plural;
+        //   }
 
-          if (diff > 0) {
-            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
-          } else if (diff < 0) {
-            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")} por falar ${penalidade} ${p(penalidade,"palavra","palavras")} a menos, e teve ${errosVermelhos} ${p(errosVermelhos,"erro","erros")}`;
-          } else {
-            msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
-          }
+        //   if (diff > 0) {
+        //     msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
+        //   } else if (diff < 0) {
+        //     msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"baixa","baixas")}, pois foi penalizado em ${erroPenalidade} ${p(erroPenalidade,"ponto","pontos")} por falar ${penalidade} ${p(penalidade,"palavra","palavras")} a menos, e teve ${errosVermelhos} ${p(errosVermelhos,"erro","erros")}`;
+        //   } else {
+        //     msg = `Você ganhou ${pontos} ${p(pontos,"ponto","pontos")}, e teve ${erros} ${p(erros,"erro","erros")}`;
+        //   }
 
-          prof.textContent = msg;
+        //   prof.textContent = msg;
 
-          (lastMsgEl || msgs[index]).after(prof);
-          lastMsgEl = prof;
-          scrollChatToBottom();
+        //  (lastMsgEl || msgs[index]).after(prof);
+        //   lastMsgEl = prof;
+        //   scrollChatToBottom();
 
           if (pontos > 0) {
             prof.classList.add("correto");
