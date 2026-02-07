@@ -1668,12 +1668,12 @@ const USER_NAME = document.body.dataset.username || "";
           if (offlinePause || v !== RENDER_VERSION) return;
 
           // ===== FEEDBACK VISUAL (mesmo padrão do else) =====
-          const userMsgEl = normalizeLikeBackend(lastMsgEl);
+          const userMsgEl = lastMsgEl;
           const prof = document.createElement("div");
           prof.className = "chat-message system";
           let msg;   
           
-          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, textoCorrigido);
+          if (userMsgEl) userMsgEl.innerHTML = marcarErros(expectedAtual, normalizeLikeBackend(textoCorrigido));
           const errosVermelhos = userMsgEl ? userMsgEl.querySelectorAll("span").length : 0;
           const limite = totalEsperado - errosVermelhos;
           const erroPenalidade = (penalidade * 2 >= totalEsperado) ? limite : penalidade * 2;
