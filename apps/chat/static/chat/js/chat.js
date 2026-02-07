@@ -1439,6 +1439,9 @@ const USER_NAME = document.body.dataset.username || "";
     } else if (raw[i] === "let's") {
       norm.push("let", "us");
       map.push([i], [i]);
+    } else if (raw[i] === "doesn't") {
+      norm.push("does", "not");
+      map.push([i], [i]);
     } else {
       norm.push(raw[i]);
       map.push([i]);
