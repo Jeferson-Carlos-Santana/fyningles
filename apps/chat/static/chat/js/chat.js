@@ -1552,6 +1552,7 @@ const USER_NAME = document.body.dataset.username || "";
           // }
        
           ////t = t.replace(/[^\w\s:]/g, "").replace(/\s+/g, " ").trim();
+          t = t.replace(/[^\w\s:']/g, "").replace(/\s+/g, " ").trim();
 
           return t;
         }
