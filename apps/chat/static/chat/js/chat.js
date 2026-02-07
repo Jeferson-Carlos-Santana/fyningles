@@ -1618,7 +1618,7 @@ const USER_NAME = document.body.dataset.username || "";
           // const exp = normalizeLikeBackend(expected).split(" ").filter(Boolean);
           // const spkNorm = normalizeLikeBackend(spoken).split(" ").filter(Boolean);
           const exp = expected.split(" ").filter(Boolean);
-          const spkNorm = normEn(spoken).split(" ").filter(Boolean);
+          const spkNorm = spoken.split(" ").filter(Boolean);
           const spkRaw  = spoken.split(/\s+/);
 
           const okIdx = lcsMatchedIndices(exp, spkNorm);
@@ -1659,7 +1659,7 @@ const USER_NAME = document.body.dataset.username || "";
           const pontos = Number(data.correct || 0);
           // const totalEsperado = normalizeLikeBackend(expectedAtual).split(" ").length;
           // const totalFalado   = normalizeLikeBackend(textoCorrigido).split(" ").length;
-          const totalEsperado = expectedAtual.split(" ").length;
+          const totalEsperado = normEn(expectedAtual).split(" ").length;
           const totalFalado   = textoCorrigido.split(" ").length;
           const diff = totalFalado - totalEsperado;
           const penalidade = Math.abs(diff);          
