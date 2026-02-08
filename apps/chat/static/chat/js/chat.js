@@ -297,6 +297,7 @@ const USER_NAME = document.body.dataset.username || "";
         "wait heir": "wait here",
         "waite here": "wait here",
         "wate here": "wait here",
+        "realised": "realized",
         "alright": "all right"
       };
 
@@ -1271,8 +1272,10 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "what is surprise", target: "what a surprise" },
         { input: "what are surprise", target: "what a surprise" },
         { input: "what are surprised", target: "what a surprise" },
+        { input: "watch a surprise", target: "what a surprise" },
         { input: "she cleansed here early", target: "she cleans here early" },
         { input: "she cleansed healy", target: "she cleans here early" },
+        { input: "she clings here early", target: "she cleans here early" },
         { input: "they walked yesterday", target: "they worked yesterday" },
         { input: "they work tea yesterday", target: "they worked yesterday" },
         { input: "does tea work", target: "does it work" },
@@ -1281,7 +1284,16 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "they don't it late", target: "they don't eat late" },
         { input: "they don't italate", target: "they don't eat late" },
         { input: "they don't each late", target: "they don't eat late" },
-        { input: "Enter your wait here", target: "Enter your weight here" },
+        { input: "Enter your wait here", target: "Enter your weight here" },        
+        { input: "which is up to you", target: "it is up to you" },
+        { input: "who has experience", target: "he has experience" },
+        { input: "children coffee", target: "she drank coffee" },
+        { input: "chould rent coffee", target: "she drank coffee" },
+        { input: "his helpiness", target: "he is helping us" },
+        { input: "de-ask for help", target: "they ask for help" },
+        { input: "real they come", target: "will they come" },
+        { input: "are you will this one", target: "i will use this one" },
+        { input: "are you this one", target: "i will use this one" },
         { input: "you will left alone", target: "you were left alone" },
         { input: "way to here", target: "wait here" }
       ];      
@@ -1306,19 +1318,7 @@ const USER_NAME = document.body.dataset.username || "";
         );
         console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
         return regra ? limparTarget(regra.target) : input;
-      }
-
-    
-      // function normalizarPorTarget(input, target) {
-      //   const i = input;
-      //   const t = target;
-
-      //   const regra = NORMALIZACOES_POR_TARGET.find(
-      //     r => r.input === i && r.target === t
-      //   );
-      //   //  console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
-      //   return regra ? regra.target : input;
-      // }
+      }     
      
       // ########################################
       // FIM NORMALIZACOES
