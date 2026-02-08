@@ -1265,6 +1265,7 @@ const USER_NAME = document.body.dataset.username || "";
       
       // ESTABILIZA FRASE MESMO SE FOR COM O INGLES LEGITIMO NO INPUT.
       // ATENCAO O target, precisa ser igual o en_full
+      // ATENVAO NAO COLOCAR ABREVIACOES
       const NORMALIZACOES_POR_TARGET = [
         { input: "weight here", target: "wait here" },
         { input: "we cold home", target: "we call home" },
@@ -1282,9 +1283,9 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "does tea work", target: "does it work" },
         { input: "does the work", target: "does it work" },
         { input: "does it walk", target: "does it work" },
-        { input: "they don't it late", target: "they don't eat late" },
-        { input: "they don't italate", target: "they don't eat late" },
-        { input: "they don't each late", target: "they don't eat late" },
+        { input: "they do not it late", target: "they do not eat late" },
+        { input: "they do not italate", target: "they do not eat late" },
+        { input: "they do not each late", target: "they do not eat late" },
         { input: "Enter your wait here", target: "Enter your weight here" },        
         { input: "which is up to you", target: "it is up to you" },
         { input: "who has experience", target: "he has experience" },
