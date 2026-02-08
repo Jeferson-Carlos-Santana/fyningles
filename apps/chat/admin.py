@@ -217,15 +217,18 @@ class ChatAdmin(admin.ModelAdmin):
   # TRADUZ, DEFINE FRASES ABREVIADAS E INFORMAIS, E ESCOLHE O TEMPLATE.
   def save_model(self, request, obj, form, change):
     
+    def normalize_apostrophe(text):
+        return (text or "").replace("’", "'")
+    
     #en_full = obj.expected_en
     raw_expected = obj.expected_en or ""
     #### divide por OR / or (case-insensitive)
     #parts = re.split(r"\s+or\s+", raw_expected, flags=re.IGNORECASE)
     parts = re.split(r"\s/\s", raw_expected)
-    en_full = parts[0].strip() if len(parts) > 0 else ""
-    en_full_M = parts[1].strip() if len(parts) > 1 else ""
-    en_abbrev = self.contract_en(en_full)
-    en_informal = self.gerar_informal(en_full)
+    en_full = normalize_apostrophe(parts[0].strip() if len(parts) > 0 else "")
+    en_full_M = normalize_apostrophe(parts[1].strip() if len(parts) > 1 else "")
+    en_abbrev = normalize_apostrophe(self.contract_en(en_full))
+    en_informal = normalize_apostrophe(self.gerar_informal(en_full))
     
     # IMPLEMENTACAO 1
     trads = traduz_com_retry(en_full)
