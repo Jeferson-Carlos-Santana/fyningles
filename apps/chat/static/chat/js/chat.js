@@ -1288,7 +1288,7 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "they do not each late", target: "they do not eat late" },
         { input: "Enter your wait here", target: "Enter your weight here" },        
         { input: "which is up to you", target: "it is up to you" },
-        { input: "who has experience", target: "he has experience he is experience" },
+        { input: "who has experience", target: "he has experience" },
         { input: "children coffee", target: "she drank coffee" },
         { input: "chould rent coffee", target: "she drank coffee" },
         { input: "his helpiness", target: "he is helping us" },
