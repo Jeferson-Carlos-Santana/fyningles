@@ -221,7 +221,8 @@ class ChatAdmin(admin.ModelAdmin):
         return (text or "").replace("’", "'")
     
     #en_full = obj.expected_en
-    raw_expected = obj.expected_en or ""
+    raw_expected = normalize_apostrophe(obj.expected_en or "")
+    obj.expected_en = raw_expected
     #### divide por OR / or (case-insensitive)
     #parts = re.split(r"\s+or\s+", raw_expected, flags=re.IGNORECASE)
     parts = re.split(r"\s/\s", raw_expected)
