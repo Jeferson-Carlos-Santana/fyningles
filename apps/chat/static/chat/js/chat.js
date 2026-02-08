@@ -1418,7 +1418,7 @@ const USER_NAME = document.body.dataset.username || "";
         let recebido = normEn(textoCorrigido);
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
-        recebido = normalizarPorTarget(recebido, expectedAtual);
+        recebido = normalizarPorTarget(textoCorrigido, expectedAtual);
         console.log("COMPARADO:", recebido);   
         
         if (offlinePause || v !== RENDER_VERSION) return;
