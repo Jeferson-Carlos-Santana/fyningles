@@ -634,7 +634,7 @@ const USER_NAME = document.body.dataset.username || "";
         .replace(/\bi[’']?m\b/gi, "i am")
         .replace(/\byou[’']?re\b/gi, "you are")
         .replace(/\bweren[’']?t\b/gi, "were not")
-        .replace(/\bwe[’']?re\b/gi, "we are")
+        .replace(/\bwe[’']re\b/gi, "we are") // aqui nao tem o (?), isso quer dizer que, we re nao faz mutacao, somente we'are
         .replace(/\bthey[’']?re\b/gi, "they are")
         .replace(/\bi[’']?ve\b/gi, "i have")
         .replace(/\byou[’']?ve\b/gi, "you have")
