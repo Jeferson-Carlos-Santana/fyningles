@@ -1268,6 +1268,7 @@ const USER_NAME = document.body.dataset.username || "";
       // ATENVAO NAO COLOCAR ABREVIACOES
       const NORMALIZACOES_POR_TARGET = [
         { input: "weight here", target: "wait here" },
+        { input: "way to here", target: "wait here" },
         { input: "we cold home", target: "we call home" },
         { input: "we cole home", target: "we call home" },
         { input: "water surprise", target: "what a surprise" },
@@ -1287,8 +1288,7 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "they do not italate", target: "they do not eat late" },
         { input: "they do not each late", target: "they do not eat late" },
         { input: "Enter your wait here", target: "Enter your weight here" },        
-        { input: "which is up to you", target: "it is up to you" },
-        { input: "who has experience", target: "he has experience" },
+        { input: "which is up to you", target: "it is up to you" },        
         { input: "children coffee", target: "she drank coffee" },
         { input: "chould rent coffee", target: "she drank coffee" },
         { input: "his helpiness", target: "he is helping us" },
@@ -1296,8 +1296,7 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "real they come", target: "will they come" },
         { input: "are you will this one", target: "i will use this one" },
         { input: "are you this one", target: "i will use this one" },
-        { input: "you will left alone", target: "you were left alone" },
-        { input: "way to here", target: "wait here" }
+        { input: "you will left alone", target: "you were left alone" }        
       ];      
       
       function limparTarget(text) {
