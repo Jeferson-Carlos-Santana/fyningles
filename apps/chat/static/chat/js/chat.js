@@ -1627,13 +1627,13 @@ const USER_NAME = document.body.dataset.username || "";
           
           // chama avaliação (backend)
           if (offlinePause || v !== RENDER_VERSION) return;
-
+          
           const rEval = await fetch("/speech/evaluate/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              expected: expectedAtual,
-              spoken: textoCorrigido
+              expected: normalizeLikeBackend(expectedAtual),
+              spoken: normalizeLikeBackend(textoCorrigido)
             })
           });
 
