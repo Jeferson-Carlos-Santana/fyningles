@@ -1419,7 +1419,7 @@ const USER_NAME = document.body.dataset.username || "";
         let recebido = normEn(textoCorrigido);
         recebido = normalizeTheyAnywhere(recebido);
         recebido = normalizeAskTense(recebido, expectedAtual);
-        recebido = normalizarPorTarget(recebido, expectedAtual);
+        recebido = normalizarPorTarget(recebido, normEn(expectedAtual));
         console.log("COMPARADO:", recebido);   
         
         if (offlinePause || v !== RENDER_VERSION) return;
@@ -1432,7 +1432,7 @@ const USER_NAME = document.body.dataset.username || "";
         let exibicao = textoCorrigido;
         exibicao = normalizeTheyAnywhere(exibicao);
         exibicao = normalizeAskTense(exibicao, expectedAtual);
-        exibicao = normalizarPorTarget(exibicao, expectedAtual);
+        exibicao = normalizarPorTarget(exibicao, normEn(expectedAtual));
         user.textContent = exibicao;
         console.log("EXIBICAO FINAL:", exibicao);
 
