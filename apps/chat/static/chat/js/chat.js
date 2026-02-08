@@ -1286,17 +1286,39 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "way to here", target: "wait here" }
       ];      
       
-    
+      function limparTarget(text) {
+        if (!text) return "";
+
+        return text
+          .toLowerCase()
+          .replace(/’/g, "'")      // apóstrofo tipográfico → ASCII
+          .replace(/[^a-z0-9'\s]/g, "") // remove pontuação estranha
+          .replace(/\s+/g, " ")    // espaços duplicados
+          .trim();
+      }
+
       function normalizarPorTarget(input, target) {
-        const i = input;
-        const t = target;
+        const i = limparTarget(input);
+        const t = limparTarget(target);
 
         const regra = NORMALIZACOES_POR_TARGET.find(
-          r => r.input === i && r.target === t
+          r => limparTarget(r.input) === i && limparTarget(r.target) === t
         );
-        //  console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
-        return regra ? regra.target : input;
+        console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
+        return regra ? limparTarget(regra.target) : input;
       }
+
+    
+      // function normalizarPorTarget(input, target) {
+      //   const i = input;
+      //   const t = target;
+
+      //   const regra = NORMALIZACOES_POR_TARGET.find(
+      //     r => r.input === i && r.target === t
+      //   );
+      //   //  console.log("INPUT:", JSON.stringify(input), "TARGET:", JSON.stringify(target));
+      //   return regra ? regra.target : input;
+      // }
      
       // ########################################
       // FIM NORMALIZACOES
