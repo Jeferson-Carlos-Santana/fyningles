@@ -1304,7 +1304,7 @@ const USER_NAME = document.body.dataset.username || "";
         return text
           .toLowerCase()
           .replace(/’/g, "'")      // apóstrofo tipográfico → ASCII
-          // .replace(/[^a-z0-9'\s]/g, "") // remove pontuação estranha
+          .replace(/[^a-z0-9'\s]/g, "") // remove pontuação estranha
           .replace(/\s+/g, " ")    // espaços duplicados
           .trim();
       }
