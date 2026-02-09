@@ -1411,9 +1411,12 @@ const USER_NAME = document.body.dataset.username || "";
 
           return;
         }
-
-        encerrarMicrofone();
-        bloquearEntrada(); 
+        
+        setTimeout(() => {
+          encerrarMicrofone();
+          bloquearEntrada(); 
+        }, 3000);
+        
 
         // COMPARADO
         let recebido = normEn(textoCorrigido);
