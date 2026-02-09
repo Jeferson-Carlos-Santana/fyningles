@@ -107,9 +107,8 @@ const USER_NAME = document.body.dataset.username || "";
       let ultimoFeedback = 0;
       let ultimaResposta = 0;
 
-      let inicioCapturaMic = 0;
-      let tempoMinimoFala = 0;
-
+      podeFinalizarFala = false;
+      ultimoTextoBruto = "";
 
       function podeDarFeedback() {
         const agora = Date.now();
@@ -360,6 +359,9 @@ const USER_NAME = document.body.dataset.username || "";
         TEMPO_MAX
       );
     }
+    
+    podeFinalizarFala = false;
+    ultimoTextoBruto = "";
 
     function abrirMicrofoneComTempo() {
       if (FLAG !== 1) return;
@@ -372,38 +374,12 @@ const USER_NAME = document.body.dataset.username || "";
       recognition.start();
 
       // calcula tempo com base na frase esperada atual
-      // const tempoMic = calcularTempoMic(expectedAtual);
-
-
-
-
-
-  const qtdPalavras = expectedAtual
-  ? expectedAtual.trim().split(/\s+/).length
-  : 0;
-
-  // tempo calculado bruto (ANTES do teto)
-  const tempoCalculado = TEMPO_BASE + qtdPalavras * TEMPO_POR_PALAVRA;
-
-  // tempo mínimo = tempo calculado − 15%
-  tempoMinimoFala = Math.floor(tempoCalculado * 0.85);
-
-  // tempo máximo continua exatamente igual
-  const tempoMic = Math.min(tempoCalculado, TEMPO_MAX);
-
-  // marca início real da captura
-  inicioCapturaMic = Date.now();
-
-
-
-
-
-
-
+      const tempoMic = calcularTempoMic(expectedAtual);
 
       if (micTimeout) clearTimeout(micTimeout);
 
       micTimeout = setTimeout(() => {
+        podeFinalizarFala = true;
         if (esperandoResposta) {
           // fecha mic
           try { recognition.stop(); } catch (e) {}
@@ -1404,9 +1380,19 @@ const USER_NAME = document.body.dataset.username || "";
         if (!podeResponder()) return;
 
         const textoBruto = e.results[0][0].transcript;
+
+        // sempre guarda o último texto reconhecido
+ultimoTextoBruto = textoBruto;
+
+// enquanto o tempo não acabou, NÃO faz nada
+if (!podeFinalizarFala) {
+  return;
+}
         
         if (!esperandoResposta) return;
-        const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+        //const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+        const textoCorrigido = aplicarCorrecoesVoz(ultimoTextoBruto);
+
         console.log("CORRIGIDO:", textoCorrigido);
 
         const texto = normEn(textoCorrigido);        
@@ -1442,18 +1428,6 @@ const USER_NAME = document.body.dataset.username || "";
 
           return;
         }
-
-        const agora = Date.now();
-          const tempoFalando = agora - inicioCapturaMic;
-
-          // ainda não atingiu o tempo mínimo → ignora fechamento
-          if (tempoFalando < tempoMinimoFala) {
-            // não encerra mic
-            // não bloqueia entrada
-            // não finaliza frase
-            return;
-          }
-
 
         encerrarMicrofone();
         bloquearEntrada(); 
