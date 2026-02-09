@@ -107,9 +107,6 @@ const USER_NAME = document.body.dataset.username || "";
       let ultimoFeedback = 0;
       let ultimaResposta = 0;
 
-      podeFinalizarFala = false;
-      ultimoTextoBruto = "";
-
       function podeDarFeedback() {
         const agora = Date.now();
         if (agora - ultimoFeedback < 4000) return false;
@@ -359,9 +356,6 @@ const USER_NAME = document.body.dataset.username || "";
         TEMPO_MAX
       );
     }
-    
-    podeFinalizarFala = false;
-    ultimoTextoBruto = "";
 
     function abrirMicrofoneComTempo() {
       if (FLAG !== 1) return;
@@ -379,7 +373,6 @@ const USER_NAME = document.body.dataset.username || "";
       if (micTimeout) clearTimeout(micTimeout);
 
       micTimeout = setTimeout(() => {
-        podeFinalizarFala = true;
         if (esperandoResposta) {
           // fecha mic
           try { recognition.stop(); } catch (e) {}
@@ -1380,23 +1373,13 @@ const USER_NAME = document.body.dataset.username || "";
         if (!podeResponder()) return;
 
         const textoBruto = e.results[0][0].transcript;
-
-        // sempre guarda o último texto reconhecido
-ultimoTextoBruto = textoBruto;
-
-// enquanto o tempo não acabou, NÃO faz nada
-if (!podeFinalizarFala) {
-  return;
-}
         
         if (!esperandoResposta) return;
-        //const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
-        const textoCorrigido = aplicarCorrecoesVoz(ultimoTextoBruto);
-
-        console.log("CORRIGIDO:", textoCorrigido);
+        const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+        // console.log("CORRIGIDO:", textoCorrigido);
 
         const texto = normEn(textoCorrigido);        
-        console.log("NORMALIZADO:", texto);
+        // console.log("NORMALIZADO:", texto);
 
         if (["next", "skip"].includes(texto)) {
           // corta mic imediatamente
