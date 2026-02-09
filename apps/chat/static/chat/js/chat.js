@@ -55,7 +55,7 @@ const USER_NAME = document.body.dataset.username || "";
       window.recognition = recognition;
       recognition.lang = "en-GB";
       recognition.continuous = false;
-      recognition.interimResults = true;
+      recognition.interimResults = false;
 
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");
