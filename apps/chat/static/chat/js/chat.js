@@ -107,6 +107,10 @@ const USER_NAME = document.body.dataset.username || "";
       let ultimoFeedback = 0;
       let ultimaResposta = 0;
 
+      let inicioCapturaMic = 0;
+      let tempoMinimoFala = 0;
+
+
       function podeDarFeedback() {
         const agora = Date.now();
         if (agora - ultimoFeedback < 4000) return false;
@@ -368,7 +372,34 @@ const USER_NAME = document.body.dataset.username || "";
       recognition.start();
 
       // calcula tempo com base na frase esperada atual
-      const tempoMic = calcularTempoMic(expectedAtual);
+      // const tempoMic = calcularTempoMic(expectedAtual);
+
+
+
+
+
+  const qtdPalavras = expectedAtual
+  ? expectedAtual.trim().split(/\s+/).length
+  : 0;
+
+  // tempo calculado bruto (ANTES do teto)
+  const tempoCalculado = TEMPO_BASE + qtdPalavras * TEMPO_POR_PALAVRA;
+
+  // tempo mínimo = tempo calculado − 15%
+  tempoMinimoFala = Math.floor(tempoCalculado * 0.85);
+
+  // tempo máximo continua exatamente igual
+  const tempoMic = Math.min(tempoCalculado, TEMPO_MAX);
+
+  // marca início real da captura
+  inicioCapturaMic = Date.now();
+
+
+
+
+
+
+
 
       if (micTimeout) clearTimeout(micTimeout);
 
@@ -1412,6 +1443,18 @@ const USER_NAME = document.body.dataset.username || "";
           return;
         }
 
+        const agora = Date.now();
+          const tempoFalando = agora - inicioCapturaMic;
+
+          // ainda não atingiu o tempo mínimo → ignora fechamento
+          if (tempoFalando < tempoMinimoFala) {
+            // não encerra mic
+            // não bloqueia entrada
+            // não finaliza frase
+            return;
+          }
+
+
         encerrarMicrofone();
         bloquearEntrada(); 
 
@@ -1447,7 +1490,7 @@ const USER_NAME = document.body.dataset.username || "";
         const MODO_NOVO = (LESSON_ID === 4);
         
         // METODO DE FRASES GRANDE
-        if (MODO_NOVO) {   
+        if (MODO_NOVO) {
 
         function normalizeLikeBackend(text) {
           if (!text) return "";
