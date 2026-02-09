@@ -1376,10 +1376,10 @@ const USER_NAME = document.body.dataset.username || "";
         
         if (!esperandoResposta) return;
         const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
-        // console.log("CORRIGIDO:", textoCorrigido);
+        console.log("CORRIGIDO:", textoCorrigido);
 
         const texto = normEn(textoCorrigido);        
-        // console.log("NORMALIZADO:", texto);
+        console.log("NORMALIZADO:", texto);
 
         if (["next", "skip"].includes(texto)) {
           // corta mic imediatamente
@@ -1447,7 +1447,7 @@ const USER_NAME = document.body.dataset.username || "";
         const MODO_NOVO = (LESSON_ID === 4);
         
         // METODO DE FRASES GRANDE
-        if (MODO_NOVO) {
+        if (MODO_NOVO) { 
 
         function normalizeLikeBackend(text) {
           if (!text) return "";
