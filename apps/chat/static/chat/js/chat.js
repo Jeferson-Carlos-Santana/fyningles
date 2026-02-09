@@ -1296,6 +1296,8 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "real they come", target: "will they come" },
         { input: "are you will this one", target: "i will use this one" },
         { input: "are you this one", target: "i will use this one" },
+        { input: "i usually wolf", target: "i usually walk" },
+        { input: "i usually work", target: "i usually walk" },
         { input: "you will left alone", target: "you were left alone" }        
       ];      
       
