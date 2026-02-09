@@ -54,7 +54,7 @@ const USER_NAME = document.body.dataset.username || "";
       const recognition = new SpeechRecognition(); 
       window.recognition = recognition;
       recognition.lang = "en-GB";
-      recognition.continuous = true;
+      recognition.continuous = false;
       recognition.interimResults = true;
 
       const msgs = document.querySelectorAll(".chat-message");
