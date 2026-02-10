@@ -51,11 +51,19 @@ const USER_NAME = document.body.dataset.username || "";
         console.warn("SpeechRecognition não suportado neste browser");
         return;
       }
+
+      const lessonId = Number(document.body.dataset.lessonId);
+      const MODO_NOVO = (lessonId === 4);
+      
       const recognition = new SpeechRecognition(); 
       window.recognition = recognition;
       recognition.lang = "en-GB";
       recognition.continuous = false;
       recognition.interimResults = false;
+
+      recognition.onresult = (lessonId === 4)
+      ? onResultModoNovo
+      : onResultModoAntigo;
 
       const msgs = document.querySelectorAll(".chat-message");
       const btnStart = document.getElementById("btn-start");
@@ -94,8 +102,7 @@ const USER_NAME = document.body.dataset.username || "";
       let pontosAndamento = 0;
       const META_DO_DIA = 1000;      
 
-      const lessonId = Number(document.body.dataset.lessonId);
-      const MODO_NOVO = (lessonId === 4);
+      
 
       let FLAG = 0;
       let professorLock = false;
@@ -1365,11 +1372,339 @@ const USER_NAME = document.body.dataset.username || "";
       };  
       
         
-      // METODO DE FRASES GRANDE xxx
-      if (MODO_NOVO) { 
-      // ===== RESPOSTA DO USUÁRIO =====
-      recognition.onresult = async function (e) { 
-        houveResultado = true; 
+
+
+     async function onResultModoAntigo(e) {
+    houveResultado = true; 
+        // px1
+        const v = RENDER_VERSION;
+        if (offlinePause || v !== RENDER_VERSION) return;
+        // fim px1
+
+        if (FLAG !== 1) return;
+
+        if (!podeResponder()) return;
+
+        const textoBruto = e.results[0][0].transcript;
+        
+        if (!esperandoResposta) return;
+        const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+        console.log("CORRIGIDO:", textoCorrigido);
+
+        const texto = normEn(textoCorrigido);        
+        console.log("NORMALIZADO:", texto);
+
+        if (["next", "skip"].includes(texto)) {
+          // corta mic imediatamente
+          encerrarMicrofone();
+
+          // bloqueia entradas
+          bloquearEntrada();
+
+          // mensagem visual opcional (recomendado)
+          const skip = document.createElement("div");
+          skip.className = "chat-message system";
+          skip.textContent = "Frase pulada.";
+          (lastMsgEl || msgs[index]).after(skip);
+
+          // limpa estado
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;          
+      
+          // avança para próxima frase
+          setTimeout(() => {
+            RENDER_VERSION++;
+            index++;
+            lastMsgEl = null;
+            mostrarSistema();
+          }, 150);
+
+          FLAG = 0;
+
+          return;
+        }
+           
+        encerrarMicrofone();
+        bloquearEntrada();         
+
+        // COMPARADO
+        let recebido = normEn(textoCorrigido);
+        recebido = normalizeTheyAnywhere(recebido);
+        recebido = normalizeAskTense(recebido, expectedAtual);
+        recebido = normalizarPorTarget(recebido, normEn(expectedAtual));
+        console.log("COMPARADO:", recebido);   
+        
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+        // escreve ALUNO (sempre após a última mensagem)
+        const user = document.createElement("div");
+        user.className = "chat-message user";
+        
+        // FALADO E EXIBIDO
+        let exibicao = textoCorrigido;
+        exibicao = normalizeTheyAnywhere(exibicao);
+        exibicao = normalizeAskTense(exibicao, expectedAtual);
+        exibicao = normalizarPorTarget(exibicao, normEn(expectedAtual));
+        user.textContent = exibicao;
+        console.log("EXIBICAO FINAL:", exibicao);
+
+        (lastMsgEl || msgs[index]).after(user);
+        lastMsgEl = user;        
+        
+        const esperados = (expectedAtual || "")
+          .split(/\s+\/\s+/)
+          .map(e => normEn(e));        
+
+        const ok = esperados.includes(recebido);
+
+        // bloqueia mic enquanto avalia
+        bloquearEntrada(); 
+
+        // escolhe feedback
+        const msg = ok
+        ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
+        : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
+
+        // monta feedback FINAL (antes de imprimir)
+        let feedbackText = msg;
+        let feedbackHTML = msg;
+
+        const tentativaAgora = tentativas + 1;
+        if (!ok) {  
+          const pode = podeDarFeedback();
+
+          if (offlinePause || v !== RENDER_VERSION) {
+              esperandoResposta = false;
+              FLAG = 0;
+              return;
+          }  
+
+          if (pode && tentativaAgora < MAX_TENTATIVAS) {
+            const expectedRaw = expectedAtual || "";
+            feedbackText = `${msg} Repita comigo: ${expectedRaw}`;
+            feedbackHTML = `${msg} <span class="hint">Repita comigo: <span style="color: red;">${expectedRaw}</span></span>`;
+          }
+        }
+        
+        let prof = null;      
+        if (ok || tentativaAgora < MAX_TENTATIVAS) {
+          prof = document.createElement("div");
+          prof.className = "chat-message system";
+          prof.innerHTML = feedbackHTML;
+
+          lastMsgEl.after(prof);
+          lastMsgEl = prof;
+          scrollChatToBottom();
+        }  
+
+        // decisão de fluxo
+        if (ok) {
+          FLAG = 2;
+          if (prof) prof.classList.add("correto");
+          if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
+
+          if (FLAG !== 2) return;
+          
+          const v = RENDER_VERSION;
+
+          const r = await fetch("/tts/line/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: msg, lang: "pt" })
+          });  
+          
+          if (offlinePause || v !== RENDER_VERSION) return;
+
+          const d = await r.json(); 
+
+          if (offlinePause || v !== RENDER_VERSION) return;
+
+          if (d.files && d.files.length) {
+            tocando = true;
+            await new Promise(r => setTimeout(r, 1100));
+
+          if (offlinePause || v !== RENDER_VERSION) return;
+
+            await tocarUm(d.files[0]);
+
+          if (offlinePause || v !== RENDER_VERSION) return;
+
+            tocando = false;
+          }
+
+        // SALVA PROGRESSO (ACERTO)
+        const pontos =
+          tentativas === 0 ? 5 :
+          tentativas === 1 ? 3 :
+          1;
+          
+          pontosAndamento += pontos;
+          atualizarPontosAndamento();
+          
+          salvarProgresso({
+            chatId: msgs[index].dataset.id,
+            lessonId: lessonId,
+            points: pontos
+          });          
+
+          salvarProgressoTmp({
+            chatId: msgs[index].dataset.id,
+            points: pontos
+          });
+
+          atualizarPontosTotais();
+          
+          atualizarPontosFeitos();
+          
+          FLAG = 0;
+
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;
+                    
+          setTimeout(() => {
+            RENDER_VERSION++;
+            index++;
+            lastMsgEl = null;
+            mostrarSistema();
+          }, 150);
+          return;          
+        }
+
+        // errou
+        tentativas++;
+        if (prof) prof.classList.add("errado");
+        if (prof) setTimeout(() => prof.classList.remove("errado"), 7000);
+
+      if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
+        if (FLAG !== 1) return;
+        
+        const v = RENDER_VERSION;
+
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: feedbackText, lang: "pt" })
+        });
+        
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+        const d = await r.json();
+
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1100));
+
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+          await falarComoAntigo(d.files);
+
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+          tocando = false;
+
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+          tocarBeep();
+
+          if (autoMicAtivo) {
+            setTimeout(() => {
+                if (offlinePause || v !== RENDER_VERSION) return;
+                abrirMicrofoneComTempo();
+              }, 150);
+            }  
+        }
+
+        if (offlinePause || v !== RENDER_VERSION) return;
+        
+        ultimoFeedback = 0;
+        ultimaResposta = 0;
+        esperandoResposta = true;
+        liberarEntrada();
+        return;
+      }
+
+      if (tentativas >= MAX_TENTATIVAS) {
+        if (FLAG !== 1) return;
+        
+        const v = RENDER_VERSION;
+
+        salvarProgresso({
+          chatId: msgs[index].dataset.id,
+          lessonId: lessonId,
+          attempts: MAX_TENTATIVAS,
+          points: 0
+        });
+        
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+        // mensagem de avanço (SUBSTITUI o último "Let's try again")
+        const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
+
+        const avanco = document.createElement("div");
+        avanco.className = "chat-message system errado";
+        avanco.textContent = msgAvanco;
+
+        lastMsgEl.after(avanco);
+        lastMsgEl = avanco;
+        scrollChatToBottom();
+
+        setTimeout(() => {
+          if (offlinePause || v !== RENDER_VERSION) return;
+          avanco.classList.remove("errado")
+        }, 8000);
+        
+        // fala a mensagem de avanço
+        const r = await fetch("/tts/line/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: msgAvanco, lang: "pt" })
+        });
+
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+        const d = await r.json();
+
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+        if (d.files && d.files.length) {
+          tocando = true;
+          await new Promise(r => setTimeout(r, 1100));
+
+          if (offlinePause || v !== RENDER_VERSION) return;
+
+          await tocarUm(d.files[0]);
+
+          if (offlinePause || v !== RENDER_VERSION) return;
+
+          tocando = false;
+        }
+        
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+        // reseta e avança
+        FLAG = 0;
+        esperandoResposta = false;
+        expectedAtual = "";
+        tentativas = 0;
+        if (offlinePause || v !== RENDER_VERSION) return;
+        index++;
+        lastMsgEl = null;
+        return mostrarSistema();
+      }
+
+      // pode tentar de novo
+      ultimoFeedback = 0;
+      ultimaResposta = 0;
+      esperandoResposta = true;
+      liberarEntrada();     
+}
+
+async function onResultModoNovo(e) {
+          houveResultado = true; 
         // px1
         const v = RENDER_VERSION;
         if (offlinePause || v !== RENDER_VERSION) return;
@@ -1734,7 +2069,7 @@ const USER_NAME = document.body.dataset.username || "";
           // SALVA NAS 2 TABELAS (mesmas funções do else)
           salvarProgresso({
             chatId: msgs[index].dataset.id,
-            lessonId: LESSON_ID,
+            lessonId: lessonId,
             points: pontos
           });
 
@@ -1760,349 +2095,15 @@ const USER_NAME = document.body.dataset.username || "";
           }, 150);
 
           return;
-    };
+}
 
-  // modo antigo xxx
-  } else {
 
-    // ===== RESPOSTA DO USUÁRIO =====
-      recognition.onresult = async function (e) { 
-        houveResultado = true; 
-        // px1
-        const v = RENDER_VERSION;
-        if (offlinePause || v !== RENDER_VERSION) return;
-        // fim px1
 
-        if (FLAG !== 1) return;
 
-        if (!podeResponder()) return;
 
-        const textoBruto = e.results[0][0].transcript;
-        
-        if (!esperandoResposta) return;
-        const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
-        console.log("CORRIGIDO:", textoCorrigido);
 
-        const texto = normEn(textoCorrigido);        
-        console.log("NORMALIZADO:", texto);
 
-        if (["next", "skip"].includes(texto)) {
-          // corta mic imediatamente
-          encerrarMicrofone();
 
-          // bloqueia entradas
-          bloquearEntrada();
-
-          // mensagem visual opcional (recomendado)
-          const skip = document.createElement("div");
-          skip.className = "chat-message system";
-          skip.textContent = "Frase pulada.";
-          (lastMsgEl || msgs[index]).after(skip);
-
-          // limpa estado
-          esperandoResposta = false;
-          expectedAtual = "";
-          tentativas = 0;          
-      
-          // avança para próxima frase
-          setTimeout(() => {
-            RENDER_VERSION++;
-            index++;
-            lastMsgEl = null;
-            mostrarSistema();
-          }, 150);
-
-          FLAG = 0;
-
-          return;
-        }
-           
-        encerrarMicrofone();
-        bloquearEntrada();         
-
-        // COMPARADO
-        let recebido = normEn(textoCorrigido);
-        recebido = normalizeTheyAnywhere(recebido);
-        recebido = normalizeAskTense(recebido, expectedAtual);
-        recebido = normalizarPorTarget(recebido, normEn(expectedAtual));
-        console.log("COMPARADO:", recebido);   
-        
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-        // escreve ALUNO (sempre após a última mensagem)
-        const user = document.createElement("div");
-        user.className = "chat-message user";
-        
-        // FALADO E EXIBIDO
-        let exibicao = textoCorrigido;
-        exibicao = normalizeTheyAnywhere(exibicao);
-        exibicao = normalizeAskTense(exibicao, expectedAtual);
-        exibicao = normalizarPorTarget(exibicao, normEn(expectedAtual));
-        user.textContent = exibicao;
-        console.log("EXIBICAO FINAL:", exibicao);
-
-        (lastMsgEl || msgs[index]).after(user);
-        lastMsgEl = user;        
-        
-        const esperados = (expectedAtual || "")
-          .split(/\s+\/\s+/)
-          .map(e => normEn(e));        
-
-        const ok = esperados.includes(recebido);
-
-        // bloqueia mic enquanto avalia
-        bloquearEntrada(); 
-
-        // escolhe feedback
-        const msg = ok
-        ? FEEDBACK_OK[Math.floor(Math.random() * FEEDBACK_OK.length)]
-        : FEEDBACK_ERR[Math.floor(Math.random() * FEEDBACK_ERR.length)];
-
-        // monta feedback FINAL (antes de imprimir)
-        let feedbackText = msg;
-        let feedbackHTML = msg;
-
-        const tentativaAgora = tentativas + 1;
-        if (!ok) {  
-          const pode = podeDarFeedback();
-
-          if (offlinePause || v !== RENDER_VERSION) {
-              esperandoResposta = false;
-              FLAG = 0;
-              return;
-          }  
-
-          if (pode && tentativaAgora < MAX_TENTATIVAS) {
-            const expectedRaw = expectedAtual || "";
-            feedbackText = `${msg} Repita comigo: ${expectedRaw}`;
-            feedbackHTML = `${msg} <span class="hint">Repita comigo: <span style="color: red;">${expectedRaw}</span></span>`;
-          }
-        }
-        
-        let prof = null;      
-        if (ok || tentativaAgora < MAX_TENTATIVAS) {
-          prof = document.createElement("div");
-          prof.className = "chat-message system";
-          prof.innerHTML = feedbackHTML;
-
-          lastMsgEl.after(prof);
-          lastMsgEl = prof;
-          scrollChatToBottom();
-        }  
-
-        // decisão de fluxo
-        if (ok) {
-          FLAG = 2;
-          if (prof) prof.classList.add("correto");
-          if (prof) setTimeout(() => prof.classList.remove("correto"), 6000);
-
-          if (FLAG !== 2) return;
-          
-          const v = RENDER_VERSION;
-
-          const r = await fetch("/tts/line/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: msg, lang: "pt" })
-          });  
-          
-          if (offlinePause || v !== RENDER_VERSION) return;
-
-          const d = await r.json(); 
-
-          if (offlinePause || v !== RENDER_VERSION) return;
-
-          if (d.files && d.files.length) {
-            tocando = true;
-            await new Promise(r => setTimeout(r, 1100));
-
-          if (offlinePause || v !== RENDER_VERSION) return;
-
-            await tocarUm(d.files[0]);
-
-          if (offlinePause || v !== RENDER_VERSION) return;
-
-            tocando = false;
-          }
-
-        // SALVA PROGRESSO (ACERTO)
-        const pontos =
-          tentativas === 0 ? 5 :
-          tentativas === 1 ? 3 :
-          1;
-          
-          pontosAndamento += pontos;
-          atualizarPontosAndamento();
-          
-          salvarProgresso({
-            chatId: msgs[index].dataset.id,
-            lessonId: LESSON_ID,
-            points: pontos
-          });          
-
-          salvarProgressoTmp({
-            chatId: msgs[index].dataset.id,
-            points: pontos
-          });
-
-          atualizarPontosTotais();
-          
-          atualizarPontosFeitos();
-          
-          FLAG = 0;
-
-          esperandoResposta = false;
-          expectedAtual = "";
-          tentativas = 0;
-                    
-          setTimeout(() => {
-            RENDER_VERSION++;
-            index++;
-            lastMsgEl = null;
-            mostrarSistema();
-          }, 150);
-          return;          
-        }
-
-        // errou
-        tentativas++;
-        if (prof) prof.classList.add("errado");
-        if (prof) setTimeout(() => prof.classList.remove("errado"), 7000);
-
-      if ((!ok) && (tentativas < MAX_TENTATIVAS)) {
-        if (FLAG !== 1) return;
-        
-        const v = RENDER_VERSION;
-
-        const r = await fetch("/tts/line/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: feedbackText, lang: "pt" })
-        });
-        
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-        const d = await r.json();
-
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-        if (d.files && d.files.length) {
-          tocando = true;
-          await new Promise(r => setTimeout(r, 1100));
-
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-          await falarComoAntigo(d.files);
-
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-          tocando = false;
-
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-          tocarBeep();
-
-          if (autoMicAtivo) {
-            setTimeout(() => {
-                if (offlinePause || v !== RENDER_VERSION) return;
-                abrirMicrofoneComTempo();
-              }, 150);
-            }  
-        }
-
-        if (offlinePause || v !== RENDER_VERSION) return;
-        
-        ultimoFeedback = 0;
-        ultimaResposta = 0;
-        esperandoResposta = true;
-        liberarEntrada();
-        return;
-      }
-
-      if (tentativas >= MAX_TENTATIVAS) {
-        if (FLAG !== 1) return;
-        
-        const v = RENDER_VERSION;
-
-        salvarProgresso({
-          chatId: msgs[index].dataset.id,
-          lessonId: LESSON_ID,
-          attempts: MAX_TENTATIVAS,
-          points: 0
-        });
-        
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-        // mensagem de avanço (SUBSTITUI o último "Let's try again")
-        const msgAvanco = MSG_AVANCO[Math.floor(Math.random() * MSG_AVANCO.length)];
-
-        const avanco = document.createElement("div");
-        avanco.className = "chat-message system errado";
-        avanco.textContent = msgAvanco;
-
-        lastMsgEl.after(avanco);
-        lastMsgEl = avanco;
-        scrollChatToBottom();
-
-        setTimeout(() => {
-          if (offlinePause || v !== RENDER_VERSION) return;
-          avanco.classList.remove("errado")
-        }, 8000);
-        
-        // fala a mensagem de avanço
-        const r = await fetch("/tts/line/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: msgAvanco, lang: "pt" })
-        });
-
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-        const d = await r.json();
-
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-        if (d.files && d.files.length) {
-          tocando = true;
-          await new Promise(r => setTimeout(r, 1100));
-
-          if (offlinePause || v !== RENDER_VERSION) return;
-
-          await tocarUm(d.files[0]);
-
-          if (offlinePause || v !== RENDER_VERSION) return;
-
-          tocando = false;
-        }
-        
-        if (offlinePause || v !== RENDER_VERSION) return;
-
-        // reseta e avança
-        FLAG = 0;
-        esperandoResposta = false;
-        expectedAtual = "";
-        tentativas = 0;
-        if (offlinePause || v !== RENDER_VERSION) return;
-        index++;
-        lastMsgEl = null;
-        return mostrarSistema();
-      }
-
-      // pode tentar de novo
-      ultimoFeedback = 0;
-      ultimaResposta = 0;
-      esperandoResposta = true;
-      liberarEntrada();     
-      
-    }; 
-
-
-
-
-
-
-
-  } // finalisa o else do modo
 
   }); // finaliza, document.addEventListener("DOMContentLoaded", function () {     
     
