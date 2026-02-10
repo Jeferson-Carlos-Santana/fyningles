@@ -94,7 +94,8 @@ const USER_NAME = document.body.dataset.username || "";
       let pontosAndamento = 0;
       const META_DO_DIA = 1000;      
 
-      const lessonId = document.body.dataset.lessonId;
+      const lessonId = Number(document.body.dataset.lessonId);
+      const MODO_NOVO = (lessonId === 4);
 
       let FLAG = 0;
       let professorLock = false;
@@ -1298,6 +1299,7 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "are you this one", target: "i will use this one" },
         { input: "i usually wolf", target: "i usually walk" },
         { input: "i usually work", target: "i usually walk" },
+        { input: "i usually work", target: "i usually wore" },
         { input: "you will left alone", target: "you were left alone" }        
       ];      
       
@@ -1360,8 +1362,11 @@ const USER_NAME = document.body.dataset.username || "";
           }
 
         houveResultado = true;
-      };
-
+      };  
+      
+        
+      // METODO DE FRASES GRANDE xxx
+      if (MODO_NOVO) { 
       // ===== RESPOSTA DO USUÁRIO =====
       recognition.onresult = async function (e) { 
         houveResultado = true; 
@@ -1445,11 +1450,7 @@ const USER_NAME = document.body.dataset.username || "";
           .split(/\s+\/\s+/)
           .map(e => normEn(e));
 
-        const LESSON_ID = Number(document.body.dataset.lessonId);
-        const MODO_NOVO = (LESSON_ID === 4);
-        
-        // METODO DE FRASES GRANDE
-        if (MODO_NOVO) { 
+          // daqui pra cima igual pra qualquer licao
 
         function normalizeLikeBackend(text) {
           if (!text) return "";
@@ -1759,8 +1760,93 @@ const USER_NAME = document.body.dataset.username || "";
           }, 150);
 
           return;
-///////////////////
-        } else {
+    };
+
+  // modo antigo xxx
+  } else {
+
+    // ===== RESPOSTA DO USUÁRIO =====
+      recognition.onresult = async function (e) { 
+        houveResultado = true; 
+        // px1
+        const v = RENDER_VERSION;
+        if (offlinePause || v !== RENDER_VERSION) return;
+        // fim px1
+
+        if (FLAG !== 1) return;
+
+        if (!podeResponder()) return;
+
+        const textoBruto = e.results[0][0].transcript;
+        
+        if (!esperandoResposta) return;
+        const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+        console.log("CORRIGIDO:", textoCorrigido);
+
+        const texto = normEn(textoCorrigido);        
+        console.log("NORMALIZADO:", texto);
+
+        if (["next", "skip"].includes(texto)) {
+          // corta mic imediatamente
+          encerrarMicrofone();
+
+          // bloqueia entradas
+          bloquearEntrada();
+
+          // mensagem visual opcional (recomendado)
+          const skip = document.createElement("div");
+          skip.className = "chat-message system";
+          skip.textContent = "Frase pulada.";
+          (lastMsgEl || msgs[index]).after(skip);
+
+          // limpa estado
+          esperandoResposta = false;
+          expectedAtual = "";
+          tentativas = 0;          
+      
+          // avança para próxima frase
+          setTimeout(() => {
+            RENDER_VERSION++;
+            index++;
+            lastMsgEl = null;
+            mostrarSistema();
+          }, 150);
+
+          FLAG = 0;
+
+          return;
+        }
+           
+        encerrarMicrofone();
+        bloquearEntrada();         
+
+        // COMPARADO
+        let recebido = normEn(textoCorrigido);
+        recebido = normalizeTheyAnywhere(recebido);
+        recebido = normalizeAskTense(recebido, expectedAtual);
+        recebido = normalizarPorTarget(recebido, normEn(expectedAtual));
+        console.log("COMPARADO:", recebido);   
+        
+        if (offlinePause || v !== RENDER_VERSION) return;
+
+        // escreve ALUNO (sempre após a última mensagem)
+        const user = document.createElement("div");
+        user.className = "chat-message user";
+        
+        // FALADO E EXIBIDO
+        let exibicao = textoCorrigido;
+        exibicao = normalizeTheyAnywhere(exibicao);
+        exibicao = normalizeAskTense(exibicao, expectedAtual);
+        exibicao = normalizarPorTarget(exibicao, normEn(expectedAtual));
+        user.textContent = exibicao;
+        console.log("EXIBICAO FINAL:", exibicao);
+
+        (lastMsgEl || msgs[index]).after(user);
+        lastMsgEl = user;        
+        
+        const esperados = (expectedAtual || "")
+          .split(/\s+\/\s+/)
+          .map(e => normEn(e));        
 
         const ok = esperados.includes(recebido);
 
@@ -2008,9 +2094,17 @@ const USER_NAME = document.body.dataset.username || "";
       esperandoResposta = true;
       liberarEntrada();     
       
-      } // essa chave fexa
-    };
-  });    
+    }; 
+
+
+
+
+
+
+
+  } // finalisa o else do modo
+
+  }); // finaliza, document.addEventListener("DOMContentLoaded", function () {     
     
     const btnSalvarNivel = document.getElementById("btn-salvar-nivel");
     if (btnSalvarNivel) {
