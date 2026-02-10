@@ -113,6 +113,20 @@ const USER_NAME = document.body.dataset.username || "";
       let ultimoFeedback = 0;
       let ultimaResposta = 0;
 
+      function iniciarEscutaModoNovo() {
+  recognition.stop();               // garante estado limpo
+  recognition.interimResults = true;
+  recognition.start();
+}
+
+
+function iniciarEscutaModoAntigo() {
+  recognition.stop();
+  recognition.interimResults = false;
+  recognition.start();
+}
+
+
       function podeDarFeedback() {
         const agora = Date.now();
         if (agora - ultimoFeedback < 4000) return false;
@@ -370,6 +384,16 @@ const USER_NAME = document.body.dataset.username || "";
       // visual de gravando
       btnMic.textContent = "🎙️";
       btnMic.classList.add("mic-gravando");
+
+      recognition.stop(); // garante estado limpo
+
+      if (lessonId === 4) {
+        // MODO NOVO
+        recognition.interimResults = true;
+      } else {
+        // MODO ANTIGO
+        recognition.interimResults = false;
+      }
 
       recognition.start();
 
@@ -1702,6 +1726,8 @@ const USER_NAME = document.body.dataset.username || "";
     const SILENCIO_ENTRE_PALAVRAS = 3000;
 
 
+
+    // MODO NOVO
   async function onResultModoNovo(e) {
 
   houveResultado = true;
