@@ -58,7 +58,7 @@ const USER_NAME = document.body.dataset.username || "";
       const recognition = new SpeechRecognition(); 
       window.recognition = recognition;
       recognition.lang = "en-GB";
-      recognition.continuous = false;
+      recognition.continuous = true;
       recognition.interimResults = false;
 
       recognition.onresult = (lessonId === 4)
@@ -1721,8 +1721,8 @@ const USER_NAME = document.body.dataset.username || "";
 
         if (["next", "skip"].includes(texto)) {
           
-          encerrarMicrofone();          
-          bloquearEntrada();
+          // encerrarMicrofone();          
+          // bloquearEntrada();
 
           // mensagem visual opcional (recomendado)
           const skip = document.createElement("div");
@@ -1748,8 +1748,8 @@ const USER_NAME = document.body.dataset.username || "";
           return;
         }
            
-        encerrarMicrofone();
-        bloquearEntrada();         
+        // encerrarMicrofone();
+        // bloquearEntrada();         
 
         // COMPARADO
         let recebido = normEn(textoCorrigido);
