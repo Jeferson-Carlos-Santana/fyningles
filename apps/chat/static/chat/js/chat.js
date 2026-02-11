@@ -1376,6 +1376,12 @@ const USER_NAME = document.body.dataset.username || "";
 
       recognition.onend = function () {
 
+          // === MODO NOVO: NÃO encerra aqui ===
+          if (lessonId === 4 && esperandoResposta) {
+            // deixa o timer de silêncio decidir
+            return;
+          }
+
           if (houveResultado) {
             console.log("sem icone botao");
           }
