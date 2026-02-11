@@ -1697,83 +1697,65 @@ const USER_NAME = document.body.dataset.username || "";
       liberarEntrada();     
     }
 
+    if (btnMic) {
+    btnMic.onclick = function () {
+
+        if (FLAG === 0) {
+            FLAG = 1;
+            recognition.start();
+            btnMic.textContent = "⏹️";
+        } else {
+            FLAG = 0;
+            recognition.stop();
+            btnMic.textContent = "🎤";
+        }
+    };
+}
+
+
   
     // MODO NOVO
     async function onResultModoNovo(e) {
 
-        houveResultado = true; 
+         houveResultado = true;
 
-        const v = RENDER_VERSION;
-        if (offlinePause || v !== RENDER_VERSION) return;
+    const v = RENDER_VERSION;
+    if (offlinePause || v !== RENDER_VERSION) return;
 
-        if (FLAG !== 1) return;
+    // 🔴 NÃO PROCESSA ENQUANTO ESTÁ GRAVANDO
+    if (FLAG !== 1) return;
+    if (!esperandoResposta) return;
 
-        if (!podeResponder()) return;
+    // 🔴 SÓ PROCESSA SE O MICROFONE JÁ ESTIVER FECHADO
+    if (recognition.recognizing) return;
 
-        const textoBruto = e.results[0][0].transcript;
-        
-        if (!esperandoResposta) return;
-        const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
-        console.log("CORRIGIDO:", textoCorrigido);
+    const textoBruto = e.results[0][0].transcript;
 
-        const texto = normEn(textoCorrigido);        
-        console.log("NORMALIZADO:", texto);
+    const textoCorrigido = aplicarCorrecoesVoz(textoBruto);
+    console.log("CORRIGIDO:", textoCorrigido);
 
-        if (["next", "skip"].includes(texto)) {
-          
-          // encerrarMicrofone();          
-          // bloquearEntrada();
+    let recebido = normEn(textoCorrigido);
+    recebido = normalizeTheyAnywhere(recebido);
+    recebido = normalizeAskTense(recebido, expectedAtual);
+    recebido = normalizarPorTarget(recebido, normEn(expectedAtual));
 
-          // mensagem visual opcional (recomendado)
-          const skip = document.createElement("div");
-          skip.className = "chat-message system";
-          skip.textContent = "Frase pulada.";
-          (lastMsgEl || msgs[index]).after(skip);
+    if (offlinePause || v !== RENDER_VERSION) return;
 
-          // limpa estado
-          esperandoResposta = false;
-          expectedAtual = "";
-          tentativas = 0;          
-      
-          // avança para próxima frase
-          setTimeout(() => {
-            RENDER_VERSION++;
-            index++;
-            lastMsgEl = null;
-            mostrarSistema();
-          }, 150);
+    const user = document.createElement("div");
+    user.className = "chat-message user";
 
-          FLAG = 0;
+    let exibicao = textoCorrigido;
+    exibicao = normalizeTheyAnywhere(exibicao);
+    exibicao = normalizeAskTense(exibicao, expectedAtual);
+    exibicao = normalizarPorTarget(exibicao, normEn(expectedAtual));
 
-          return;
-        }
-           
-        // encerrarMicrofone();
-        // bloquearEntrada();         
+    user.textContent = exibicao;
 
-        // COMPARADO
-        let recebido = normEn(textoCorrigido);
-        recebido = normalizeTheyAnywhere(recebido);
-        recebido = normalizeAskTense(recebido, expectedAtual);
-        recebido = normalizarPorTarget(recebido, normEn(expectedAtual));
-        console.log("COMPARADO:", recebido);   
-        
-        if (offlinePause || v !== RENDER_VERSION) return;
+    (lastMsgEl || msgs[index]).after(user);
+    lastMsgEl = user;
 
-        // escreve ALUNO (sempre após a última mensagem)
-        const user = document.createElement("div");
-        user.className = "chat-message user";
-        
-        // FALADO E EXIBIDO
-        let exibicao = textoCorrigido;
-        exibicao = normalizeTheyAnywhere(exibicao);
-        exibicao = normalizeAskTense(exibicao, expectedAtual);
-        exibicao = normalizarPorTarget(exibicao, normEn(expectedAtual));
-        user.textContent = exibicao;
-        console.log("EXIBICAO FINAL:", exibicao);
-
-        (lastMsgEl || msgs[index]).after(user);
-        lastMsgEl = user;        
+    scrollChatToBottom();
+    
         
         const esperados = (expectedAtual || "")
           .split(/\s+\/\s+/)
