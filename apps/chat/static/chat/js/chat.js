@@ -117,7 +117,7 @@ const USER_NAME = document.body.dataset.username || "";
       // ===== MODO NOVO – CONTROLE DE RESPIRO
 let bufferFalaNovo = "";
 let silenceTimerNovo = null;
-const SILENCE_DELAY_NOVO = 3000; // ms (ajuste se quiser)
+const SILENCE_DELAY_NOVO = 10000; // ms (ajuste se quiser)
 
 
       function podeDarFeedback() {
