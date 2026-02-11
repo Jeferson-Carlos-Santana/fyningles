@@ -1304,7 +1304,19 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "are you this one", target: "i will use this one" },
         { input: "i usually wolf", target: "i usually walk" },
         { input: "i usually work", target: "i usually walk" },
-        { input: "i usually work", target: "i usually wore" },
+        { input: "she leaves nearby", target: "she lives nearby" },
+        { input: "she lived nearby", target: "she lives nearby" },
+        { input: "are you work today", target: "i work today" },
+        { input: "are you working today", target: "i work today" },
+        { input: "irent they ready", target: "aren't they ready" },
+        { input: "are not there ready", target: "are not they ready" },
+        { input: "dehie music", target: "they hear music" },
+        { input: "they know was", target: "they know us" },
+        { input: "amy lost", target: "i am lost" },
+        { input: "you bring your water", target: "you bring water" },
+        { input: "will you drink your water", target: "will you drink water" },
+        { input: "which is fine", target: "it is fine" },
+        { input: "which fine", target: "it is fine" },
         { input: "you will left alone", target: "you were left alone" }        
       ];      
       
