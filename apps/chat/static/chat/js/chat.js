@@ -1317,6 +1317,7 @@ const USER_NAME = document.body.dataset.username || "";
         { input: "will you drink your water", target: "will you drink water" },
         { input: "which is fine", target: "it is fine" },
         { input: "which fine", target: "it is fine" },
+        { input: "i want to hear you", target: "i will not hear you" },
         { input: "you will left alone", target: "you were left alone" }        
       ];      
       
