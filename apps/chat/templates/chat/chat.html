@@ -132,6 +132,25 @@
   </div>
 </div>
 
+<!-- MODAL CREDITOS -->
+<div id="credit-modal" class="nivel-modal" style="display:none;">
+  <div class="nivel-box">
+    <button class="nivel-close" id="credit-close" aria-label="Fechar">×</button>
+
+    <h3>Seus Créditos</h3>
+
+    <p><strong>Créditos ganhos:</strong> {{ request.user.nivel.earned_credit }}</p>
+    <p><strong>Créditos utilizados:</strong> {{ request.user.nivel.spent_credit }}</p>
+    <p><strong>Disponíveis:</strong> {{ credit_display }}</p>
+
+    <p>
+      Cada alteração manual de percentual consome 1 crédito.
+      Você ganha 1 crédito a cada 5.000 pontos acumulados.
+    </p>
+  </div>
+</div>
+
+
 <script src="{% static 'chat/js/script.js' %}"></script> 
 <script src="{% static 'chat/js/chat.js' %}"></script>
 </body>

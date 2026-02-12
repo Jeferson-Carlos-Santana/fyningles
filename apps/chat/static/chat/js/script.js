@@ -36,16 +36,6 @@ document.addEventListener("click", (e) => {
 
 // CLICAR FORA DO MENU OU NOS LINKS DO MENU PRA FECHAR
 
-// BUSCA LICOES NO MENU LATERAL
-// const searchInput = document.querySelector(".lesson-search");
-// const lessonItems = document.querySelectorAll(".lessons li");
-// searchInput.addEventListener("input", () => {
-//     const value = searchInput.value.toLowerCase();
-//     lessonItems.forEach(li => {
-//         const text = li.innerText.toLowerCase();
-//         li.style.display = text.includes(value) ? "block" : "none";
-//     });
-// });
 const searchInput = document.querySelector(".lesson-search");
 const lessonItems = document.querySelectorAll(".lessons li");
 
@@ -93,5 +83,29 @@ if (searchInput) {
     });
   }, 5000);
 // FIM TEMPO DA MENSAGEM DE SUCESSO SUMIR
+
+
+const creditBtn = document.querySelector(".credit-btn");
+const creditModal = document.getElementById("credit-modal");
+const creditClose = document.getElementById("credit-close");
+
+if (creditBtn) {
+    creditBtn.addEventListener("click", () => {
+        creditModal.style.display = "block";
+    });
+}
+
+if (creditClose) {
+    creditClose.addEventListener("click", () => {
+        creditModal.style.display = "none";
+    });
+}
+
+window.addEventListener("click", (e) => {
+    if (e.target === creditModal) {
+        creditModal.style.display = "none";
+    }
+});
+
 
 });
