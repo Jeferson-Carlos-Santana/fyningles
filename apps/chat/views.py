@@ -291,6 +291,20 @@ def mark_learned(request):
     points = math.ceil(max_points * percent / 100)
 
     with transaction.atomic():
+        try:            
+            user_nivel = UserNivel.objects.select_for_update().get(user=request.user)
+        except UserNivel.DoesNotExist:
+            return JsonResponse({"ok": False, "error": "nivel inexistente"}, status=400)
+
+        creditos_disponiveis = user_nivel.earned_credit - user_nivel.spent_credit
+
+        if creditos_disponiveis <= 0:
+            return JsonResponse({"ok": False, "error": "sem_credito"}, status=403)
+
+        # consome 1 crédito
+        user_nivel.spent_credit += 1
+        user_nivel.save(update_fields=["spent_credit"])
+
         obj, _ = Progress.objects.get_or_create(
             user=request.user,
             chat=chat,
@@ -347,8 +361,6 @@ def mark_learned(request):
     return JsonResponse({"ok": True, "points": points})
 
 # FIM MODIFICA O PERCENTUAL DAS FRASES
-
-#
 # @login_required
 def chat_home(request):
     return render(request, "chat/chat.html", {
