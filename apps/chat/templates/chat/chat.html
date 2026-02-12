@@ -59,7 +59,16 @@
             <button class="menu-toggle" aria-label="Abrir menu">
               <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
             </button> 
-            <span>{{ lesson_title }}</span>    
+            <span>{{ lesson_title }}</span> 
+            
+            <div class="credit-notification">
+              <button class="credit-btn" aria-label="Créditos">
+                <img src="{% static 'chat/img/coin.png' %}" alt="Créditos" width="28">
+                <span class="credit-badge" id="credit-badge">{{ credit_display }}</span>
+              </button>
+            </div>
+
+            
             <form method="post" action="/logout/" class="logout-form">
               {% csrf_token %}
               <button class="btn-sair" type="submit" aria-label="Sair">

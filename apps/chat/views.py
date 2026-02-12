@@ -414,7 +414,35 @@ def quebrar_frases(text):
 def chat(request, lesson_id):
     
     user = request.user
-    now = timezone.now()    
+    now = timezone.now()  
+
+    # --- ATUALIZA CREDITOS ---
+    try:
+        user_nivel = UserNivel.objects.get(user=user)
+    except UserNivel.DoesNotExist:
+        user_nivel = None
+
+    if user_nivel:
+        total_points = (
+            Progress.objects
+            .filter(user=user)
+            .aggregate(total=Sum("points"))
+            .get("total") or 0
+        )
+
+        blocos = total_points // 5000
+
+        if blocos > user_nivel.earned_credit:
+            user_nivel.earned_credit = blocos
+            user_nivel.save(update_fields=["earned_credit"])
+
+    # --- FIM ATUALIZA CREDITOS ---
+    
+    credit_display = 0
+
+    if user_nivel:
+        credit_display = user_nivel.earned_credit - user_nivel.spent_credit
+ 
     
     # NIVEL condicionado pelo banco
     try:
@@ -566,6 +594,7 @@ def chat(request, lesson_id):
         "lesson_title": lesson_title,
         "lines": lines,
         "username": username,
+        "credit_display": credit_display,
     }) 
     
  
