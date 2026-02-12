@@ -216,7 +216,8 @@ def phrase_completed(request):
     frases.sort(key=lambda f: f["percent"], reverse=True)
 
     return render(request, "chat/phrase_completed.html", {
-        "frases": frases
+        "frases": frases,
+        "credit_display": get_credit_display(request.user),
     })
 
 # FIM FRASES CONCLUIDAS
@@ -258,7 +259,8 @@ def phrase_progress(request):
         })
     frases.sort(key=lambda f: f["percent"], reverse=True)
     return render(request, "chat/phrase_progress.html", {
-        "frases": frases
+        "frases": frases,
+        "credit_display": get_credit_display(request.user),
     })
 # FIM FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 
