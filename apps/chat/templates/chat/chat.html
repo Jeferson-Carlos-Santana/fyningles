@@ -139,9 +139,9 @@
 
     <h3>Seus Créditos</h3>
 
-    <p><strong>Créditos ganhos:</strong> {{ request.user.nivel.earned_credit }}</p>
-    <p><strong>Créditos utilizados:</strong> {{ request.user.nivel.spent_credit }}</p>
-    <p><strong>Disponíveis:</strong> {{ credit_display }}</p>
+    <p>Créditos ganhos:<span class="text-warning"> {{ request.user.nivel.earned_credit }}</span></p>
+    <p>Créditos utilizados:<span class="text-warning"> {{ request.user.nivel.spent_credit }}</span></p>
+    <p>Disponíveis:<span class="text-warning"> {{ credit_display }}</span></p>
 
     <p>Cada alteração manual de percentual na <span class="text-warning">Frases em andamento</span> consome 1 crédito.</p>
     <p>Cada alteração manual de percentual na <span class="text-warning">Frases concluídas</span> consome 1 crédito.</p>
