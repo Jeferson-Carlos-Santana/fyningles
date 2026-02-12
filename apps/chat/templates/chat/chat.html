@@ -143,9 +143,10 @@
     <p><strong>Créditos utilizados:</strong> {{ request.user.nivel.spent_credit }}</p>
     <p><strong>Disponíveis:</strong> {{ credit_display }}</p>
 
-    <p>
-      Cada alteração manual de percentual consome 1 crédito.
-      Você ganha 1 crédito a cada 5.000 pontos acumulados.
+    <p>Cada alteração manual de percentual na <span class="text-warning">Frases em andamento</span> consome 1 crédito.</p>
+    <p>Cada alteração manual de percentual na <span class="text-warning">Frases concluídas</span> consome 1 crédito.</p>
+    <p>     
+      Você ganha 1 crédito a cada <span class="text-warning">5.000</span> pontos acumulados.
     </p>
   </div>
 </div>
