@@ -208,6 +208,9 @@ class UserNivel(models.Model):
     
     last_activation_sent_at = models.DateTimeField(null=True, blank=True)
     last_password_reset_sent_at = models.DateTimeField(null=True, blank=True)
+    
+    earned_credit = models.IntegerField(default=0)
+    spent_credit = models.IntegerField(default=0)
 
     class Meta:
         db_table = "user_nivel"
