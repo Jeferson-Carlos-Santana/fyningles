@@ -409,6 +409,16 @@ def quebrar_frases(text):
     partes = re.findall(r'[^.!?:]+[.!?:]?', text)
     return [p.strip() for p in partes if p.strip()]
 
+
+# MOSTRAR SEMPRE O NUMERO DE CREDITOS
+def get_credit_display(user):
+    try:
+        user_nivel = UserNivel.objects.get(user=user)
+    except UserNivel.DoesNotExist:
+        return 0
+
+    return user_nivel.earned_credit - user_nivel.spent_credit
+
 # CHAMAR O CHAT NO HTML
 # @login_required
 def chat(request, lesson_id):
@@ -594,7 +604,7 @@ def chat(request, lesson_id):
         "lesson_title": lesson_title,
         "lines": lines,
         "username": username,
-        "credit_display": credit_display,
+        "credit_display": get_credit_display(request.user),
     }) 
     
  
@@ -1117,3 +1127,7 @@ def user_nivel_set(request):
     )
 
     return JsonResponse({"ok": True})
+
+
+
+
