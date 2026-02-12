@@ -358,6 +358,7 @@ def chat_home(request):
             "username",
             request.user.first_name if request.user.is_authenticated else ""
         ),
+        "credit_display": get_credit_display(request.user),
     })
 
 # @login_required
@@ -417,42 +418,28 @@ def get_credit_display(user):
     except UserNivel.DoesNotExist:
         return 0
 
+    total_points = (
+        Progress.objects
+        .filter(user=user)
+        .aggregate(total=Sum("points"))
+        .get("total") or 0
+    )
+
+    blocos = total_points // 5000
+
+    if blocos > user_nivel.earned_credit:
+        user_nivel.earned_credit = blocos
+        user_nivel.save(update_fields=["earned_credit"])
+
     return user_nivel.earned_credit - user_nivel.spent_credit
+
 
 # CHAMAR O CHAT NO HTML
 # @login_required
 def chat(request, lesson_id):
     
     user = request.user
-    now = timezone.now()  
-
-    # --- ATUALIZA CREDITOS ---
-    try:
-        user_nivel = UserNivel.objects.get(user=user)
-    except UserNivel.DoesNotExist:
-        user_nivel = None
-
-    if user_nivel:
-        total_points = (
-            Progress.objects
-            .filter(user=user)
-            .aggregate(total=Sum("points"))
-            .get("total") or 0
-        )
-
-        blocos = total_points // 5000
-
-        if blocos > user_nivel.earned_credit:
-            user_nivel.earned_credit = blocos
-            user_nivel.save(update_fields=["earned_credit"])
-
-    # --- FIM ATUALIZA CREDITOS ---
-    
-    credit_display = 0
-
-    if user_nivel:
-        credit_display = user_nivel.earned_credit - user_nivel.spent_credit
- 
+    now = timezone.now() 
     
     # NIVEL condicionado pelo banco
     try:
