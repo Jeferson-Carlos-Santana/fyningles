@@ -69,7 +69,17 @@
                 <label><input type="radio" name="completed_percent" value="50"> 50%</label>
                 <label><input type="radio" name="completed_percent" value="75"> 75%</label>
 
-                <button id="btn-confirm-completed" type="button">Confirmar</button>
+                <!-- <button id="btn-confirm-completed" type="button">Confirmar</button> -->
+
+                 {% if credit_display <= 0 %}
+                    <button id="btn-confirm-completed" type="button" disabled>
+                        Sem crédito no momento
+                    </button>
+                {% else %}
+                    <button id="btn-confirm-completed" type="button">
+                        Confirmar
+                    </button>
+                {% endif %}
             </div>
         </div>
 

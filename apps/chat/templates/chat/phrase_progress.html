@@ -78,7 +78,18 @@
                 <label><input type="radio" name="learned_percent" value="75"> Já aprendi 75%</label>
                 <label><input type="radio" name="learned_percent" value="100" checked> Já aprendi 100%</label>
 
-                <button id="btn-confirm-learned" type="button">Confirmar</button>
+                <!-- <button id="btn-confirm-learned" type="button">Confirmar</button> -->
+
+                {% if credit_display <= 0 %}
+                    <button id="btn-confirm-learned" type="button" disabled>
+                        Sem crédito no momento
+                    </button>
+                {% else %}
+                    <button id="btn-confirm-learned" type="button">
+                        Confirmar
+                    </button>
+                {% endif %}
+
             </div>
         </div>
         <script src="{% static 'chat/js/script.js' %}"></script>
