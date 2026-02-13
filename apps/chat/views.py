@@ -30,7 +30,6 @@ from django.contrib.auth.views import PasswordResetView
 from apps.chat.services.speech_evaluator import evaluate
 import requests, json, re, math
 
-
 # TOTAL DE PONTOS POR DIA
 TOTAL_POINTS_DAY = 5
 
@@ -43,7 +42,6 @@ LESSON_TITLES = {
     3: "Presente contínuo (to have)",
     4: "Frases longas",
 }
-
 
 @csrf_exempt
 def speech_evaluate(request):
@@ -179,7 +177,7 @@ def register_user(request):
     })    
 
 # FRASES CONCLUIDAS
-# @login_required
+@login_required
 def phrase_completed(request):
     user = request.user
 
@@ -223,7 +221,7 @@ def phrase_completed(request):
 # FIM FRASES CONCLUIDAS
 
 # FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
-# @login_required
+@login_required
 def phrase_progress(request):
     user = request.user
 
@@ -265,8 +263,8 @@ def phrase_progress(request):
 # FIM FRASES QUE ESTAO EM ANDAMENTO, POR USUARIO SESSAO ID, MARCANDO O PERCENTUAL EM BARRAS
 
 # MODIFICA O PERCENTUAL DAS FRASES
-@csrf_exempt
-# @login_required
+
+@login_required
 @require_POST
 def mark_learned(request):
     try:
@@ -363,7 +361,7 @@ def mark_learned(request):
     return JsonResponse({"ok": True, "points": points})
 
 # FIM MODIFICA O PERCENTUAL DAS FRASES
-# @login_required
+@login_required
 def chat_home(request):
     return render(request, "chat/chat.html", {
         "lesson_id": None,
@@ -375,7 +373,7 @@ def chat_home(request):
         "credit_display": get_credit_display(request.user),
     })
 
-# @login_required
+@login_required
 def index(request):
     return render(request, "chat/index.html")
 
@@ -449,7 +447,7 @@ def get_credit_display(user):
 
 
 # CHAMAR O CHAT NO HTML
-# @login_required
+@login_required
 def chat(request, lesson_id):
     
     user = request.user
@@ -698,7 +696,7 @@ def tts(request):
     return JsonResponse(r.json())
 
 # LISTAR DADOS DO JSON
-# @login_required
+@login_required
 def dictionary(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden("Acesso restrito ao superadmin")
@@ -712,15 +710,18 @@ def dictionary(request):
 # FIM LISTAR DADOS DO JSON
 
 # ADICIONAR DADOS NO JSON
-# @login_required
+@login_required
 def dictionary_add(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden("Acesso restrito ao superadmin")
+    
+    #lang = request.POST.get("lang")
+    lang = request.POST.get("lang") or request.GET.get("lang") or "pt"
+    
     if request.method != "POST":
-        # return redirect("dictionary")
         return redirect(f"/dictionary/?lang={lang}")
 
-    lang = request.POST.get("lang")
+    
     term = request.POST.get("term")
     term = re.sub(r"[.:!?]", "", term)
     term = term.lower().strip()
@@ -804,17 +805,17 @@ def dictionary_add(request):
 # FIM ADICIONAR DADOS NO JSON
 
 # APAGAR DADOS NO JSON
-# @login_required
+@login_required
 def dictionary_delete(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden("Acesso restrito ao superadmin")
     if request.method != "POST":
-        # return redirect("dictionary")
+        lang = request.GET.get("lang", "pt")
         return redirect(f"/dictionary/?lang={lang}")
 
     lang = request.POST.get("lang")
-    # term = request.POST.get("term")
-    term = request.POST.get("term").strip()
+    #term = request.POST.get("term").strip()
+    term = request.POST.get("term", "").strip()
     
     # bloqueia delete direto em idiomas não-base
     if lang not in ("pt", "en"):
@@ -1061,7 +1062,7 @@ def save_progress_tmp(request):
     })
 
 # CONTA O TOTAL DOS PONTOS DE CADA USUARIO
-# @login_required
+@login_required
 def total_points(request):
     total = (
         Progress.objects
@@ -1075,7 +1076,7 @@ def total_points(request):
     })
 
 # PONTOS FEITOS NO MESMO DIA
-# @login_required
+@login_required
 def points_feitos(request):
     now = timezone.now()
     inicio_dia = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -1095,7 +1096,7 @@ def points_feitos(request):
     })
 
 # VERIFICA O NIVEL DO USUARIO
-# @login_required
+@login_required
 @require_GET
 def user_nivel_get(request):
     try:
@@ -1110,7 +1111,7 @@ def user_nivel_get(request):
         })
 
 # CADASTRA USANDO A MODAL DO NIVEL
-# @login_required
+@login_required
 @require_POST
 def user_nivel_set(request):
     if UserNivel.objects.filter(user=request.user).exists():
