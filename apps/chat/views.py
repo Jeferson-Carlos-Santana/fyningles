@@ -375,7 +375,10 @@ def chat_home(request):
 
 @login_required
 def index(request):
-    return render(request, "chat/index.html")
+    # return render(request, "chat/index.html")
+    return render(request, "chat/index.html", {
+        "credit_display": get_credit_display(request.user),
+    })
 
 def limpar_html(text):
     return re.sub(r"<[^>]+>", "", text)

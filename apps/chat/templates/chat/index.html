@@ -46,7 +46,15 @@
                         <button class="menu-toggle" aria-label="Abrir menu">
                         <img src="{% static 'chat/img/sidebar.png' %}" alt="Menu">
                         </button> 
-                        <span>Dashboard</span>    
+                        <span>Dashboard</span>  
+                        
+                        <div class="credit-notification">
+                            <button class="credit-btn" aria-label="Créditos">
+                                <img src="{% static 'chat/img/coin.png' %}" alt="Créditos" width="35">
+                                <span class="credit-badge" id="credit-badge">{{ credit_display }}</span>
+                            </button>
+                        </div>
+
                         <form method="post" action="/logout/" class="logout-form">
                         {% csrf_token %}
                         <button class="btn-sair" type="submit" aria-label="Sair">
@@ -109,6 +117,24 @@
                     </div>                  
                 </div>
             </main>
+        </div>
+        <!-- MODAL CREDITOS -->
+        <div id="credit-modal" class="nivel-modal" style="display:none;">
+            <div class="nivel-box">
+                <button class="nivel-close" id="credit-close" aria-label="Fechar">×</button>
+
+                <h3>Seus Créditos</h3>
+
+                <p>Créditos ganhos:<span class="text-warning"> {{ request.user.nivel.earned_credit }}</span></p>
+                <p>Créditos utilizados:<span class="text-warning"> {{ request.user.nivel.spent_credit }}</span></p>
+                <p>Disponíveis:<span class="text-warning"> {{ credit_display }}</span></p>
+
+                <p>Cada alteração manual de percentual na <span class="text-warning">Frases em andamento</span> consome 1 crédito.</p>
+                <p>Cada alteração manual de percentual na <span class="text-warning">Frases concluídas</span> consome 1 crédito.</p>
+                <p>     
+                Você ganha 1 crédito a cada <span class="text-warning">5.000</span> pontos acumulados.
+                </p>
+            </div>
         </div>
         <script src="{% static 'chat/js/script.js' %}"></script>
         <script src="{% static 'chat/js/chat.js' %}"></script>
