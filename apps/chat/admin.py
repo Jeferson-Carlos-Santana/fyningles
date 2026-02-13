@@ -203,7 +203,7 @@ class ChatAdmin(admin.ModelAdmin):
     (r"\bIt will\b", "It'll"), (r"\bit will\b", "it'll"),
     (r"\bGoing to\b", "Gonna"), (r"\bgoing to\b", "gonna"),
     (r"\bLet us\b", "Let's"), (r"\blet us\b", "let's"),
-    (r"\bCan not\b", "Can't"), (r"\bcan not\b", "can't"),
+    (r"\bCannot\b", "Can't"), (r"\bcannot\b", "can't"),
     ]
 
     for regex, repl in reps:

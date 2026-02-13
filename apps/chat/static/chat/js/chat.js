@@ -304,6 +304,7 @@ const USER_NAME = document.body.dataset.username || "";
         "waite here": "wait here",
         "wate here": "wait here",
         "realised": "realized",
+        "can not": "cannot",
         "alright": "all right"
       };
 
@@ -687,7 +688,7 @@ const USER_NAME = document.body.dataset.username || "";
         .replace(/\bit[’']?ll\b/gi, "it will")
         .replace(/\bgonna\b/gi, "going to")
         .replace(/\blet[’']?s\b/gi, "let us")
-        .replace(/\bcan[’']?t\b/gi, "can not")
+        .replace(/\bcan[’']?t\b/gi, "cannot")
 
          return t;
     }
